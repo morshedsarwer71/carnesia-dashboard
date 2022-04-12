@@ -1,0 +1,35 @@
+﻿@page "/to-management"
+@using Carnesia.Shared.WMS.TO.CreateTo
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CreateTo ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateTo)">Create TO</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == TOSuggestions ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(TOSuggestions)">
+                TO Suggestions
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ManageTO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ManageTO)">Manage TO</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == CreateTo)
+{
+    <CreateTo />
+}
+
+@code {
+    // Pages
+    private string CreateTo = "Create TO";
+    private string TOSuggestions = "TO Suggestions";
+    private string ManageTO = "Manage TO";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Create TO";
+
+    // Change Current Page
+    void ChangePage(string pageName)
+    {
+        CurrentPage = pageName;
+    }
+}

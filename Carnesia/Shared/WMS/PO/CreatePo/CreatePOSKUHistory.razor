@@ -1,0 +1,35 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudTable Class="mt-5" Items="@history" Hover="true" Bordered="true" Dense="true">
+            <HeaderContent>
+                <MudTh>PO ID</MudTh>
+                <MudTh>QTY</MudTh>
+                <MudTh>Lifting Price</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="PO ID">@context.POID</MudTd>
+                <MudTd DataLabel="QTY">@context.QTY</MudTd>
+                <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+
+    public List<SKUHistory> history = new List<SKUHistory>();
+
+
+    public class SKUHistory
+    {
+        public string POID { get; set; }
+        public int QTY { get; set; }
+        public decimal LiftingPrice { get; set; }
+    }
+}

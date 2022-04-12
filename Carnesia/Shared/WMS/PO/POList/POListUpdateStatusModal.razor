@@ -1,0 +1,36 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="12">
+                <MudSelect T="string" Label="Status" @bind-Value="@statusValue" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("Cancel")" />
+                    <MudSelectItem Value="@("Close")" />
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12">
+                <div class="d-flex justify-end">
+                    <MudButton OnClick="ChangeStatus" Variant="Variant.Filled" Color="Color.Primary">Change Status</MudButton>
+                </div>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+
+    // Status Value
+    private string statusValue { get; set; }
+
+
+    // Change Status
+    private void ChangeStatus()
+    {
+        Console.WriteLine(statusValue);
+    }
+}

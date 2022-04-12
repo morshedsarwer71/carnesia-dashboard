@@ -1,0 +1,147 @@
+﻿@using Carnesia.Domain.WMS.PO.POCO
+@inject ISnackbar Snackbar
+
+<MudPaper Class="pa-16 ma-2" Elevation="0">
+    <MudContainer Fixed="true">
+        <MudPaper Width="400px" Square="true">
+            <MudList Clickable="true">
+                <MudListItem><MudText Typo="Typo.h4">PO ID: 123456</MudText></MudListItem>
+                <MudDivider />
+                <MudListItem>Supplier: Arham Trade International</MudListItem>
+                <MudDivider />
+                <MudListItem>Date: 24-Jan-2022 12:00:00 PM</MudListItem>
+            </MudList>
+        </MudPaper>
+    </MudContainer>
+</MudPaper>
+
+<MudPaper Class="pa-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudGrid Class="justify-center align-baseline">
+			<MudItem md="3">
+				<MudTextField @bind-Value="POID" Label="PO ID" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem md="3">
+				<div>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				</div>
+			</MudItem>
+		</MudGrid>
+
+        <MudTable Items="@Elements" Dense="@dense" Hover="@hover" CanCancelEdit="@true" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item               Updated"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true" Filter="new Func<ReceivePoPoco,bool>(FilterCycleCheck)"                Class="mt-5">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.SKU)">SKU Code</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.Name)">Product Name</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.PoQTY)">PO Quantity</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.LiftingPrice)">Lifting Price</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.QCPassed)">QC Passed</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.QCFailed)">QC Failed</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.NotArrived)">Not Arrived</MudTableSortLabel></MudTh>
+                <MudTh>Value</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="SKU Code">@context.SKU</MudTd>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="PO Quantity">@context.PoQTY</MudTd>
+                <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
+                <MudTd DataLabel="QC Passed">@context.QCPassed</MudTd>
+                <MudTd DataLabel="QC Failed">@context.QCFailed</MudTd>
+                <MudTd DataLabel="Not Arrived">@context.NotArrived</MudTd>
+                <MudTd DataLabel="Value">@(@context.QCPassed * @context.LiftingPrice)</MudTd>
+                <MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton></MudTd>
+            </RowTemplate>
+            <RowEditingTemplate>
+                <MudTd DataLabel="SKU Code">@context.SKU</MudTd>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="PO Quantity">@context.PoQTY</MudTd>
+                <MudTd DataLabel="Lifting Price">
+                    <MudNumericField @bind-Value="@context.LiftingPrice" Required Min="1" />
+                </MudTd>
+                <MudTd DataLabel="QC Passed">
+                    <MudNumericField @bind-Value="@context.QCPassed" Required />
+                </MudTd>
+                <MudTd DataLabel="QC Failed">
+                    <MudNumericField @bind-Value="@context.QCFailed" Required />
+                </MudTd>
+                <MudTd DataLabel="Not Arrived">
+                    <MudNumericField @bind-Value="@context.NotArrived" />
+                </MudTd>
+                <MudTd DataLabel="Value">@(@context.QCPassed * @context.LiftingPrice)</MudTd>
+                <MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton></MudTd>
+            </RowEditingTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
+        <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
+
+        <MudPaper Width="400px" Square="true" Class="mt-10">
+            <MudList Clickable="true">
+                <MudListItem>Total PO Quantity: 5000</MudListItem>
+                <MudDivider />
+                <MudListItem>Total Quantity Received: 500</MudListItem>
+                <MudDivider />
+                <MudListItem>Total PO Amount: 5000000</MudListItem>
+                <MudDivider />
+                <MudListItem>Total Received Amount: 5000000</MudListItem>
+            </MudList>
+        </MudPaper>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Filter
+    private string POID { get; set; }
+
+    // Search Term
+    private string SearchTerm { get; set; }
+
+    // Table Customization
+    private bool dense { get; set; }
+    private bool hover { get; set; }
+
+    // Table Content
+    private List<ReceivePoPoco> Elements = new List<ReceivePoPoco>();
+
+    // Before Edit
+    private ReceivePoPoco beforeEdit;
+
+    // Backup Item 
+    private void BackupItem(object element)
+    {
+        beforeEdit = new()
+        {
+            LiftingPrice = ((ReceivePoPoco)element).LiftingPrice,
+            QCPassed = ((ReceivePoPoco)element).QCPassed,
+            QCFailed = ((ReceivePoPoco)element).QCFailed,
+            NotArrived = ((ReceivePoPoco)element).NotArrived,
+        };
+    }
+
+    // Reset Items If Edit Cancel
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((ReceivePoPoco)element).LiftingPrice = beforeEdit.LiftingPrice;
+        ((ReceivePoPoco)element).QCPassed = beforeEdit.QCPassed;
+        ((ReceivePoPoco)element).QCFailed = beforeEdit.QCFailed;
+        ((ReceivePoPoco)element).NotArrived = beforeEdit.NotArrived;
+    }
+
+    // Search Function
+    private bool FilterCycleCheck(ReceivePoPoco item)
+	{
+        if (item.SKU.ToLower().Contains(SearchTerm.ToLower()))
+        {
+            return true;
+        }
+        return false;
+    }
+}

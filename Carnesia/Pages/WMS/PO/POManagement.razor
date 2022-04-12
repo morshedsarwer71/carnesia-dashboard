@@ -1,0 +1,61 @@
+﻿@page "/po-management"
+@using Carnesia.Shared.WMS.PO.CreatePo
+@using Carnesia.Shared.WMS.PO.POList
+@using Carnesia.Shared.WMS.PO.ReceivePo
+@using Carnesia.Shared.WMS.PO.AwaitingApproval
+@using Carnesia.Shared.WMS.PO.GenerateUID
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CreatePO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreatePO)">Create PO</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == AwaitingApproval ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AwaitingApproval)">
+                Awaiting Approval
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ReceivePO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReceivePO)">Receive PO</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateUID)">Generate UID</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == PurchaseOrderList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PurchaseOrderList)">
+                Purchase Order List
+            </MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == CreatePO)
+{
+    <CreatePO />
+}
+else if(CurrentPage == PurchaseOrderList)
+{
+    <POList />
+}
+else if(CurrentPage == ReceivePO)
+{
+    <ReceivePo />
+}
+else if(CurrentPage == AwaitingApproval)
+{
+    <AwaitingApproval />
+}
+else if(CurrentPage == GenerateUID)
+{
+    <GenerateUID />
+}
+
+@code {
+    // Pages
+    public string CreatePO = "Create PO";
+    public string AwaitingApproval = "Awaiting Approval";
+    public string ReceivePO = "Receive PO";
+    public string PurchaseOrderList = "Purchase Order List";
+    public string GenerateUID = "Generate UID";
+
+    // Current Page
+    public string CurrentPage { get; set; } = "Create PO";
+
+    // Change Current Page
+    void ChangePage(string pageName)
+    {
+        CurrentPage = pageName;
+    }
+}

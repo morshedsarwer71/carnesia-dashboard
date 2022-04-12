@@ -1,0 +1,104 @@
+﻿@using Carnesia.Domain.WMS.PO.POCO
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-16 ma-2 mt-10" Elevation="1">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline">
+			<MudItem md="2">
+				<MudTextField @bind-Value="filterInput.POID" Label="PO ID" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem md="2">
+				<MudTextField @bind-Value="filterInput.Supplier" Label="Supplier" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem md="2">
+				<MudTextField @bind-Value="filterInput.Status" Label="Status" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem md="2">
+				<MudDateRangePicker Label="Date range" />
+			</MudItem>
+			<MudItem md="2">
+				<div>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				</div>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Class="mt-10" Items="@poList" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<POListPoco,bool>(FilterCycleCheck)">
+			<ToolBarContent>
+				<MudSpacer />
+				<MudSpacer />
+				<MudTextField @bind-Value="searchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
+			</ToolBarContent>
+			<HeaderContent>
+				<MudTh>Date</MudTh>
+				<MudTh>PO ID</MudTh>
+				<MudTh>Supplier</MudTh>
+				<MudTh>Quantity</MudTh>
+				<MudTh>Amount</MudTh>
+				<MudTh>Status</MudTh>
+				<MudTh>Status Updated On</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Date">@context.Date</MudTd>
+				<MudTd DataLabel="PO Id">@context.POID</MudTd>
+				<MudTd DataLabel="Supplier">@context.Supplier</MudTd>
+				<MudTd DataLabel="Quantity">@context.Quantity</MudTd>
+				<MudTd DataLabel="Amount">@context.Amount</MudTd>
+				<MudTd DataLabel="Status">@context.Status</MudTd>
+				<MudTd DataLabel="Status Updated On">@context.StatusUpdateDate</MudTd>
+				<MudTd DataLabel="Action">
+					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" />
+					<MudIconButton Icon="@Icons.Filled.Edit" Color="Color.Success" aria-label="Edit" />
+				</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
+			<MudSpacer />
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Filter Class
+	public POFilterPoco filterInput = new POFilterPoco();
+
+	// PO List
+	public List<POListPoco> poList = new List<POListPoco>();
+
+	// Table Editor
+	private bool dense { get; set; }
+	private bool bordered { get; set; }
+	private bool hover { get; set; }
+	private bool striped { get; set; }
+
+	// Serach Term
+	private string searchTerm { get; set; }
+
+	// Search Function
+	private bool FilterCycleCheck(POListPoco item)
+	{
+        if (item.POID.ToLower().Contains(searchTerm.ToLower()) || item.Supplier.ToLower().Contains(searchTerm.ToLower()) || item.Status.ToLower().Contains(searchTerm.ToLower()))
+        {
+            return true;
+        }
+        return false;
+    }
+
+	// Status Modal
+    private void OpenStatusDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
+        DialogService.Show<POListUpdateStatusModal>("Change Status", options);
+    }
+	
+
+}

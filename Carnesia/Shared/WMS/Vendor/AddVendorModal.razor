@@ -1,0 +1,32 @@
+﻿@using Carnesia.Domain.Vendor.POCO
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField T="string" Label="Vendor Name" Required="true" RequiredError="Vendor name is required!"/>
+                    <MudTextField T="string" Label="Initial" Required="true" RequiredError="Initial is required!"/>
+                    <MudTextField T="string" Label="Owner" Required="true" RequiredError="Owner is required!"/>
+                    <MudTextField T="string" Label="Bank Account Details" Required="true" RequiredError="Bank account details is required!"/>
+                    <MudTextField T="string" Label="Manager Name" Required="true" RequiredError="Manager name is required!"/>
+                    <MudTextField T="string" Label="Phone Number" Required="true" RequiredError="Phone number is required!"/>
+                    
+                    <div class="d-flex justify-end mt-6">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Create Vendor</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+
+    // Form Refs
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Input Values
+    private PostVendorPoco vendorData = new PostVendorPoco();
+}

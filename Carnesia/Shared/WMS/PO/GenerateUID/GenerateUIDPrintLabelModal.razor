@@ -1,0 +1,58 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudDatePicker @bind-Date="labelForm.Date" Label="Expiry Date" Required="true" RequiredError="Expiray Date is required!" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="int" @bind-Value="labelForm.QTY" Label="Input Qty. of Same Expiry" Required="true" RequiredError="Input QTY is required!" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudCheckBox @bind-Checked="@labelForm.BSTI" Label="BSTI" Color="Color.Primary"></MudCheckBox>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudCheckBox @bind-Checked="@labelForm.MRP" Label="MRP" Color="Color.Primary"></MudCheckBox>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudCheckBox @bind-Checked="@labelForm.UID" Label="UID(barcode)" Color="Color.Primary"></MudCheckBox>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudCheckBox @bind-Checked="@labelForm.SKU" Label="SKU(barcode)" Color="Color.Primary"></MudCheckBox>
+                </MudItem>
+                <MudItem xs="12">
+                    <div class="d-flex justify-end">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Print Label</MudButton>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+
+    // Form Ref
+    MudForm form;
+    bool success;
+    string[] errors = { };
+
+    // Input Data Bind
+    public LabelForm labelForm = new LabelForm();
+
+
+    // Form Class
+    public class LabelForm
+    {
+        public DateTime? Date { get; set; }
+        public int QTY { get; set; }
+        public bool BSTI { get; set; }
+        public bool MRP { get; set; }
+        public bool UID { get; set; }
+        public bool SKU { get; set; }
+    }
+}

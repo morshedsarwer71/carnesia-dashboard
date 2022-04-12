@@ -1,0 +1,95 @@
+﻿@using Carnesia.Domain.WMS.PO.POCO
+@inject HttpClient Http
+
+<MudPaper Class="ma-2 pa-16" Elevation="1">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline">
+			<MudItem md="3">
+				<MudTextField @bind-Value="POID" Label="PO ID" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem md="3">
+				<div>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				</div>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Loading="loadingBar" Class="mt-10" Items="@elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<AwaitingApprovalPoco,bool>(FilterCycleCheck)">
+			<ToolBarContent>
+				<MudSpacer />
+				<MudSpacer />
+				<MudTextField @bind-Value="SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
+			</ToolBarContent>
+			<HeaderContent>
+				<MudTh>Date</MudTh>
+				<MudTh>PO ID</MudTh>
+				<MudTh>Supplier</MudTh>
+				<MudTh>Quantity</MudTh>
+				<MudTh>Value</MudTh>
+				<MudTh>Status</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Date">@context.OrderDate</MudTd>
+				<MudTd DataLabel="PO Id">@context.PoCode</MudTd>
+				<MudTd DataLabel="Supplier">@context.VendorName</MudTd>
+				<MudTd DataLabel="Quantity">@context.Quatity</MudTd>
+				<MudTd DataLabel="Status">@context.PoStatus</MudTd>
+				<MudTd DataLabel="Amount">@context.TotalAmount</MudTd>
+				<MudTd DataLabel="Action">
+					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" />
+					<MudIconButton Icon="@Icons.Filled.Check" Color="Color.Success" aria-label="Approve" />
+				</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
+			<MudSpacer />
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Filter
+	private string POID { get; set; }
+
+	// Table Loading BAr
+	private bool loadingBar { get; set; } = true;
+
+	// Table Customization
+	private bool dense { get; set; }
+	private bool hover { get; set; }
+	private bool bordered { get; set; }
+	private bool striped { get; set; }
+
+	// Search Term
+	private string SearchTerm { get; set; }
+
+	// Table Content
+	private AwaitingApprovalPoco[]? elements = new AwaitingApprovalPoco[50];
+
+	//protected override async Task OnInitializedAsync()
+	//{
+	//	elements = await Http.GetFromJsonAsync<AwaitingApprovalPoco[]>("https://carnesiaapi.bespokeit.io/api/PurchaseOrders/awaitingapprovalpo");
+		
+		
+	//}
+
+
+	// Search Function
+	private bool FilterCycleCheck(AwaitingApprovalPoco item)
+	{
+        if (item.PoCode.ToLower().Contains(SearchTerm.ToLower()) || item.VendorName.ToLower().Contains(SearchTerm.ToLower()))
+        {
+            return true;
+        }
+        return false;
+    }
+}

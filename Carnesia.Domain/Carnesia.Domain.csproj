@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Vendor\Models\" />
+    <Folder Include="Vendor\ViewModels\" />
+    <Folder Include="WMS\PO\Models\" />
+    <Folder Include="WMS\PO\ViewModels\" />
+  </ItemGroup>
+
+</Project>
