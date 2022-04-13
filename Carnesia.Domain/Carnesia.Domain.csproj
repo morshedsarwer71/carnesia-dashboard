@@ -11,6 +11,8 @@
     <Folder Include="Vendor\ViewModels\" />
     <Folder Include="WMS\PO\Models\" />
     <Folder Include="WMS\PO\ViewModels\" />
+    <Folder Include="WMS\TO\Models\" />
+    <Folder Include="WMS\TO\ViewModels\" />
   </ItemGroup>
 
 </Project>
