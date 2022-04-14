@@ -1,0 +1,45 @@
+﻿@using Carnesia.Domain.WMS.TO.POCO
+@using Carnesia.Domain.Common.POCO
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <div Style="max-height: 90vh; overflow-y: scroll">
+        <MudPaper Class="pa-16 ma-2">
+	        <MudContainer Fixed="true">
+	            <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover">
+                    <HeaderContent>
+                        <MudTh>Outlet</MudTh>
+                        <MudTh>Stock</MudTh>
+                        <MudTh>Request QTY</MudTh>
+                        <MudTh>Action</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Outlet">@context.Outlet</MudTd>
+                        <MudTd DataLabel="Stock">@context.Stock</MudTd>
+                        <MudTd DataLabel="Request QTY">@context.RequestQTY</MudTd>
+                        <MudTd DataLabel="Action">
+                            <MudIconButton Icon="@Icons.Filled.Add" Color="Color.Primary" aria-label="delete" />
+                        </MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager />
+                    </PagerContent>
+                </MudTable>
+
+                <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+                <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+	        </MudContainer>
+        </MudPaper>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<OrderPickupDetailsTablePoco> Elements = new List<OrderPickupDetailsTablePoco>();
+}

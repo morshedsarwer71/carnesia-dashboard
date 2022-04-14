@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Carnesia", "Carnesia.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Carnesia.Domain", "..\Carnesia.Domain\Carnesia.Domain.csproj", "{ECCB620F-D0BE-4332-8771-E6C95A628128}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carnesia.Application", "..\Carnesia.Application\Carnesia.Application.csproj", "{2741F90A-CEDC-420B-8D02-960975F8275E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Carnesia.Application", "..\Carnesia.Application\Carnesia.Application.csproj", "{2741F90A-CEDC-420B-8D02-960975F8275E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

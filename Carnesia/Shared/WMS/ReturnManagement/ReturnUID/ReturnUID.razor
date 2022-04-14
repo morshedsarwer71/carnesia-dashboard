@@ -1,0 +1,50 @@
+﻿@using Carnesia.Domain.WMS.ReturnManagement.POCO
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem md="3">
+				<MudTextField @bind-Value="UID" Label="Scan UID" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem md="3">
+				<div>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Secondary">Remove</MudButton>
+				</div>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Breakpoint="Breakpoint.Sm">
+			<HeaderContent>
+				<MudTh>PO ID</MudTh>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Vendor Name</MudTh>
+				<MudTh>Lifting Price</MudTh>
+				<MudTh>Return QTY</MudTh>
+				<MudTh>Return Amount</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="PO ID">@context.POID</MudTd>
+				<MudTd DataLabel="SKU">@context.SKU</MudTd>
+				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+				<MudTd DataLabel="Vendor Name">@context.VendorName</MudTd>
+				<MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
+				<MudTd DataLabel="Return QTY">@context.ReturnQTY</MudTd>
+				<MudTd DataLabel="Return Amount">@(context.LiftingPrice * context.ReturnQTY)</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+		<div class="mt-5 d-flex justify-end">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Create Vendor Return</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// UID
+	private string UID { get; set; }
+
+	// Table Content
+	private IEnumerable<ReturnUIDTablePoco> Elements = new List<ReturnUIDTablePoco>();
+}

@@ -1,0 +1,122 @@
+﻿@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.WMS.TO.POCO
+@inject IDialogService DialogService
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem lg="2" md="4" sm="6">
+				<MudAutocomplete T="string" Label="Source Warehouse" @bind-Value="reStockFilter.SourceWH" SearchFunc="@AutoCompleteSearch" ResetValueOnEmptyText="true" />
+			</MudItem>
+
+			<MudItem lg="2" md="4" sm="6">
+				<MudAutocomplete T="string" Label="Destination Warehouse" @bind-Value="reStockFilter.DestinationWH" SearchFunc="@AutoCompleteSearch" ResetValueOnEmptyText="true" />
+			</MudItem>
+			
+			<MudItem lg="2" md="4" sm="6">
+				<MudTextField @bind-Value="reStockFilter.SKU" Label="SKU" Variant="Variant.Text" />
+			</MudItem>
+			
+			<MudItem lg="2" md="4" sm="6">
+				<MudSelect T="string" @bind-Value="reStockFilter.Condition" Label="Condition" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Less Than")" />
+					<MudSelectItem Value="@("Greater Than")" />
+					<MudSelectItem Value="@("Equals To")" />
+				</MudSelect>
+			</MudItem>
+
+			<MudItem lg="2" md="4" sm="6">
+				<MudTextField @bind-Value="reStockFilter.ConditionNumber" Label="Condition Value" Variant="Variant.Text" />
+			</MudItem>
+
+			<MudItem lg="2" md="4" sm="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" MultiSelection="true"
+        @bind-SelectedItems="SelectedStocks">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Periodic Elements</MudText>
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                    Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Details</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Source WH Stock</MudTh>
+                <MudTh>Avg. Sale/Day</MudTh>
+                <MudTh>Quantity</MudTh>
+                <MudTh>Suggested Outlet</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Details"><MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="delete" /></MudTd>
+                <MudTd DataLabel="SKU">@context.SKU</MudTd>
+                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="Source WH Stock">@context.SourceWHStock</MudTd>
+                <MudTd DataLabel="Avg. Sale/Day">@context.AvgSale</MudTd>
+                <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
+                <MudTd DataLabel="Suggested Outlet">@context.Outlate</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+
+        <div class="d-flex justify-end mt-5">
+            <MudButton Color="Color.Primary" Variant="Variant.Filled">Submit</MudButton>
+        </div>
+	</MudContainer>
+</MudPaper>
+@code {
+    // Filter Input
+    private ReStockFilterPoco reStockFilter = new ReStockFilterPoco();
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<ReStockTablePoco> Elements = new List<ReStockTablePoco>();
+
+    // Selected Stocks
+    private HashSet<ReStockTablePoco> SelectedStocks = new HashSet<ReStockTablePoco>();
+
+
+	// Autocomplete Temp Data
+	private string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands",
+	};
+
+	// Autocomplete Search Function
+	private async Task<IEnumerable<string>> AutoCompleteSearch(string value)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return states;
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    // Order Pickup Details Modal
+    private void OpenReStockDetailsDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true, MaxWidth=MaxWidth.Large };
+        DialogService.Show<ReStockDetailsTable>("", options);
+    }
+}

@@ -1,0 +1,38 @@
+﻿@page "/vendor-return"
+@using Carnesia.Shared.WMS.ReturnManagement.ReturnUID
+@using Carnesia.Shared.WMS.ReturnManagement.ReturnList
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ReturnByUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReturnByUID)">@ReturnByUID</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ReturnByList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReturnByList)">
+                @ReturnByList
+            </MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if (CurrentPage == ReturnByUID)
+{
+    <ReturnUID />
+}
+else if(CurrentPage == ReturnByList)
+{
+    <ReturnList />
+}
+
+@code {
+    // Pages
+    private string ReturnByUID = "Return By UID";
+    private string ReturnByList = "Return By List";
+
+    // Current Page 
+    private string CurrentPage { get; set; } = "Return By UID";
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

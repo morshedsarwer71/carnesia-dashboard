@@ -1,0 +1,48 @@
+﻿@using Carnesia.Domain.WMS.TO.POCO
+@using Carnesia.Domain.Common.POCO
+
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <div Style="max-height: 90vh; overflow-y: scroll">
+        <MudPaper Class="pa-16 ma-2">
+	        <MudContainer Fixed="true">
+	            <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover">
+                    <HeaderContent>
+                        <MudTh>Destination WH</MudTh>
+                        <MudTh>Stock</MudTh>
+                        <MudTh>Avg. Sale/Day</MudTh>
+                        <MudTh>Transfer QTY</MudTh>
+                        <MudTh>Action</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Destination WH">@context.DestinationWH</MudTd>
+                        <MudTd DataLabel="Stock">@context.Stock</MudTd>
+                        <MudTd DataLabel="Avg. Sale/Day">@context.AvgSale</MudTd>
+                        <MudTd DataLabel="Transfer QTY">@context.TransferQTY</MudTd>
+                        <MudTd DataLabel="Action">
+                            <MudIconButton Icon="@Icons.Filled.Add" Color="Color.Primary" aria-label="delete" />
+                            <MudIconButton Icon="@Icons.Filled.Replay" Color="Color.Warning" aria-label="delete" />
+                        </MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager />
+                    </PagerContent>
+                </MudTable>
+
+                <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+                <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+	        </MudContainer>
+        </MudPaper>
+        </div>
+    </DialogContent>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<ReStockDetailsTablePoco> Elements = new List<ReStockDetailsTablePoco>();
+}

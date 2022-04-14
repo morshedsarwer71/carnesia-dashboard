@@ -1,0 +1,30 @@
+﻿@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudText>Do you really want to delete this Item? This process cannot be undone.</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="@Color.Error" Variant="Variant.Filled" OnClick="DeleteItem">Delete Item</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    // Delete Function
+    private async Task DeleteItem()
+    {
+        Submit();
+        SuccessToast("Item Deleted Successfully!");
+    }
+
+
+    private void SuccessToast(string msg)
+    {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+        Snackbar.Add(msg, Severity.Success);
+    }
+}

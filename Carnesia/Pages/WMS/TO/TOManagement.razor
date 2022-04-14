@@ -1,13 +1,16 @@
 ﻿@page "/to-management"
 @using Carnesia.Shared.WMS.TO.CreateTo
+@using Carnesia.Shared.WMS.TO.OrderPickup
+@using Carnesia.Shared.WMS.TO.ReStock
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
             <MudButton Color="Color.Primary" Variant="CurrentPage == CreateTo ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateTo)">Create TO</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == TOSuggestions ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(TOSuggestions)">
-                TO Suggestions
+            <MudButton Color="Color.Primary" Variant="CurrentPage == OrderPickup ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(OrderPickup)">
+                Order Pickup
             </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == Restock ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Restock)">Re-Stock</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == ManageTO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ManageTO)">Manage TO</MudButton>
         </MudButtonGroup>
     </MudContainer>
@@ -17,11 +20,20 @@
 {
     <CreateTo />
 }
+else if(CurrentPage == OrderPickup)
+{
+    <OrderPickup />
+}
+else if(CurrentPage == Restock)
+{
+    <ReStock />
+}
 
 @code {
     // Pages
     private string CreateTo = "Create TO";
-    private string TOSuggestions = "TO Suggestions";
+    private string OrderPickup = "Order Pickup";
+    private string Restock = "Re-Stock";
     private string ManageTO = "Manage TO";
 
     // Current Page

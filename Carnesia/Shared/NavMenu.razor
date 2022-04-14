@@ -1,11 +1,19 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="/dashboard" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+
+    <MudNavLink Href="/" Disabled="true">WMS</MudNavLink>
     <MudNavGroup Title="Inbound Management" Expanded="false">
         <MudNavLink Href="/po-management" Match="NavLinkMatch.Prefix">PO Management</MudNavLink>
     </MudNavGroup>
+
     <MudNavGroup Title="Stock Transfer" Expanded="false">
         <MudNavLink Href="/to-management" Match="NavLinkMatch.Prefix">TO Management</MudNavLink>
     </MudNavGroup>
+
+    <MudNavGroup Title="Return Management" Expanded="false">
+        <MudNavLink Href="/vendor-return" Match="NavLinkMatch.Prefix">Vendor Return</MudNavLink>
+    </MudNavGroup>
+
     <MudNavGroup Title="Vendor Management" Expanded="false">
         <MudNavLink Href="/vendor" Match="NavLinkMatch.Prefix">Vendor</MudNavLink>
     </MudNavGroup>
