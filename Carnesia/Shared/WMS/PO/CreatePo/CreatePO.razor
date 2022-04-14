@@ -1,5 +1,9 @@
-﻿@using Carnesia.Domain.WMS.PO.POCO
+﻿@using Carnesia.Domain.WMS.PO.Models
+@using Carnesia.Domain.WMS.PO.POCO
+@using Carnesia.Domain.WMS.PO.ViewModels
 @inject IDialogService DialogService
+@inject IPurchaseOrder order
+@inject ISnackbar snackbar
 
 
 
@@ -67,11 +71,11 @@
                 <MudTd DataLabel="QTY">@context.QTY</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
                 <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
-                <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() =>                            OpenDeleteDialog()" /></MudTd>
+                <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() =>OpenDeleteDialog()" /></MudTd>
             </RowTemplate>
         </MudTable>
         <div class="mt-5 d-flex justify-end">
-            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")">Submit</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="SubmitPO">Submit</MudButton>
         </div>
 	</MudContainer>
 </MudPaper>
@@ -163,22 +167,39 @@
     };
 
     // Form Submit
-    private void AddProduct()
+    private async Task SubmitPO()
     {
-        products.Add(new ProductPOCO
+        CreatePODTO create = new CreatePODTO()
+        {
+            description="Test description",
+            poRcvStoreId=1,
+            receiveDate=DateTime.Now,
+            vendorId=1,
+            poType="Cash"
+
+        };
+
+        var products = new List<PoProductDTO>();
+        PoProductDTO product = new PoProductDTO
             {
-                SKU = product.SKU,
-                Name = "Products",
-                QTY = product.QTY,
-                LiftingPrice = product.LiftingPrice,
-                TotalPrice = product.QTY * product.LiftingPrice
-            });
+                liftingPrice = 20,
+                quantity = 10,
+                sku = "SKU1",
+                productName="name of the product"
+            };
+        products.Add(product);
 
+        PurchaseOrder purchaseOrder = new PurchaseOrder()
+        {
+           createPODTO=create,
+           poProductDTOs=products
+        };
 
-            product.SKU = "";
-            product.QTY = 1;
-            product.LiftingPrice = 1;
-    }
+        var data = await order.AddPurchaseOrder(purchaseOrder);
+        if (!string.IsNullOrEmpty(data)){
+            snackbar.Add(data);
+        }
+}
 
     // Autocomplite Search Func
     private async Task<IEnumerable<string>> SupplierSearch(string value)

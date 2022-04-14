@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Carnesia.Application\Carnesia.Application.csproj" />
     <ProjectReference Include="..\Carnesia.Domain\Carnesia.Domain.csproj" />
   </ItemGroup>
 

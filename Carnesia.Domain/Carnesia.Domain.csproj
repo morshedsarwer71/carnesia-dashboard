@@ -7,10 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="CMS\Product\" />
     <Folder Include="Vendor\Models\" />
     <Folder Include="Vendor\ViewModels\" />
-    <Folder Include="WMS\PO\Models\" />
-    <Folder Include="WMS\PO\ViewModels\" />
     <Folder Include="WMS\ReturnManagement\Models\" />
     <Folder Include="WMS\ReturnManagement\ViewModels\" />
     <Folder Include="WMS\TO\Models\" />
