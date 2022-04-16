@@ -1,9 +1,10 @@
 ﻿using Carnesia.Domain.Common.ResponseData;
 using Carnesia.Domain.WMS.PO.Models;
 using Carnesia.Domain.WMS.PO.ViewModels;
-using ClosedXML.Excel;
+using Microsoft.JSInterop;
 using Newtonsoft.Json;
-using Syncfusion.XlsIO;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,6 +12,8 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Forms;
+using ClosedXML.Excel;
 
 namespace Carnesia.Application.WMS.PO.Services
 {
@@ -42,36 +45,47 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
-        public async Task<MemoryStream> DownLoadExcel()
+        public async Task DownLoadExcel(IJSRuntime jSRuntime)
         {
             try
             {
-                using (ExcelEngine excelEngine = new ExcelEngine())
+                byte[] fileContents;
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using(var package=new ExcelPackage())
                 {
-                    IApplication application = excelEngine.Excel;
-                    application.DefaultVersion = ExcelVersion.Xlsx;
+                    var workSheet = package.Workbook.Worksheets.Add("Sheet1");
 
-                    //Create a workbook.
-                    IWorkbook workbook = application.Workbooks.Create(1);
-                    IWorksheet worksheet = workbook.Worksheets[0];
+                    #region Header Row
+                    workSheet.Cells[1, 1].Value = "SKU";
+                    workSheet.Cells[1, 1].Style.Font.Size = 12;
+                    workSheet.Cells[1, 1].Style.Font.Bold = true;
+                    workSheet.Cells[1, 1].Style.Border.Top.Style = ExcelBorderStyle.Hair;
+                    
+                    workSheet.Cells[1, 2].Value = "Quantity";
+                    workSheet.Cells[1, 2].Style.Font.Size = 12;
+                    workSheet.Cells[1, 2].Style.Font.Bold = true;
+                    workSheet.Cells[1, 2].Style.Border.Top.Style = ExcelBorderStyle.Hair;
+                    
+                    workSheet.Cells[1, 3].Value = "Lifting Price";
+                    workSheet.Cells[1, 3].Style.Font.Size = 12;
+                    workSheet.Cells[1, 3].Style.Font.Bold = true;
+                    workSheet.Cells[1, 3].Style.Border.Top.Style = ExcelBorderStyle.Hair;
 
-                    //Initialize DataTable and data get from SampleDataTable method.
-                    DataTable table = SampleDataTable();
 
-                    //Export data from DataTable to Excel worksheet.
-                    worksheet.ImportDataTable(table, true, 1, 1);
-
-                    worksheet.UsedRange.AutofitColumns();
-
-                    //Save the document as a stream and return the stream.
-                    using (MemoryStream stream = new MemoryStream())
-                    {
-                        //Save the created Excel document to MemoryStream.
-                        workbook.SaveAs(stream);
-                        return stream;
-                    }
+                    #endregion
+                    //
+                    // #region Body 1st Row
+                    // workSheet.Cells[2, 1].Value = "Sakib";
+                    // workSheet.Cells[1, 1].Style.Border.Top.Style = ExcelBorderStyle.Hair;
+                    // #endregion
+                    fileContents = package.GetAsByteArray();
                 }
-                return null;
+
+                await jSRuntime.InvokeAsync<object>(
+                        "saveAsFile",
+                        "ProductList.xlsx",
+                        Convert.ToBase64String(fileContents));
+
             }
             catch (Exception)
             {
@@ -80,21 +94,52 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
-        private DataTable SampleDataTable()
+        public async Task<List<PoProductDTO>> UploadExcelFile(IBrowserFile file)
         {
-            DataTable reports = new DataTable();
+            try
+            {
+                
+                var list = new List<PoProductDTO>();
+                using (MemoryStream stream=new MemoryStream())
+                {
+                    
+                    await file.OpenReadStream(file.Size).CopyToAsync(stream);
+                    using (ExcelPackage package=new ExcelPackage(stream))
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
+                        int colCount = worksheet.Dimension.End.Column;
+                        int rowCount = worksheet.Dimension.End.Row;
+                        PoProductDTO poProductDto = new PoProductDTO();
+                        for (int row = 0; row <= rowCount; row++)
+                        {
+                            for (int col = 0; col < colCount; col++)
+                            {
+                                if (col == 1)
+                                {
+                                    poProductDto.sku = worksheet.Cells[row, col].Value.ToString();
+                                }
+                                else if (col==2)
+                                {
+                                    poProductDto.quantity = 10;
+                                }
+                                else if (col==3)
+                                {
+                                    poProductDto.liftingPrice = 100;
+                                }
+                            }
+                            list.Add(poProductDto);
+                        }
+                    }
+                    
+                }
 
-            reports.Columns.Add("SalesPerson");
-            reports.Columns.Add("Age", typeof(int));
-            reports.Columns.Add("Salary", typeof(int));
-
-            reports.Rows.Add("Andy Bernard", 21, 30000);
-            reports.Rows.Add("Jim Halpert", 25, 40000);
-            reports.Rows.Add("Karen Fillippelli", 30, 50000);
-            reports.Rows.Add("Phyllis Lapin", 34, 39000);
-            reports.Rows.Add("Stanley Hudson", 45, 58000);
-
-            return reports;
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

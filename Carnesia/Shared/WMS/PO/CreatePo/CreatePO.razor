@@ -1,5 +1,4 @@
-﻿@using Carnesia.Application.Common
-@using Carnesia.Domain.Vendor.Models
+﻿@using Carnesia.Domain.Vendor.Models
 @using Carnesia.Domain.WMS.PO.Models
 @using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Domain.WMS.PO.ViewModels
@@ -9,7 +8,7 @@
 @inject IVendor _vendor
 @inject IStore _store
 @inject IProduct _product
-@inject Microsoft.JSInterop.IJSRuntime JS
+@inject IJSRuntime iJSRuntime
 
 
 
@@ -97,7 +96,7 @@
                 Download CSV Template
             </MudButton>
 
-            <InputFile id="fileInput" hidden />
+            <InputFile id="fileInput" hidden OnChange="UploadFiles" />
             <MudButton HtmlTag="label"
                        Variant="Variant.Filled"
                        Color="Color.Primary"
@@ -135,7 +134,7 @@
 </MudPaper>
 
 @code {
-     MemoryStream excelStream;
+    MemoryStream excelStream;
 
     public IEnumerable<VendorDTO> Vendors;
     public CreatePODTO createPO = new CreatePODTO();
@@ -154,11 +153,22 @@
     {
         await GetVendors();
     }
-
+    private async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        products =await _order.UploadExcelFile(e.File);
+        StateHasChanged();
+        foreach (var product in products)
+        {
+            Console.WriteLine(product.sku);
+        }
+    }
     private async Task Download()
     {
-        excelStream= await _order.DownLoadExcel();
-        await JS.SaveAs("Sample.xlsx", excelStream.ToArray());
+        bool confirmed = await iJSRuntime.InvokeAsync<bool>("confirm", "Are you sure?"); // Confirm
+        if (confirmed)
+        {
+            await _order.DownLoadExcel(iJSRuntime);
+        }
     }
 
     private async Task GetVendors()
