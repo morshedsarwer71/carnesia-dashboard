@@ -62,3 +62,7 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.mud-input > textarea.mud-input-root{
+    margin: 5px 0 2px !important;
+}

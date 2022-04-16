@@ -13,7 +13,8 @@ namespace Carnesia.Domain.WMS.Adminastration.POCO
         public string lastName { get; set; }
         public string phoneNumber { get; set; }
         public string email { get; set; }
-        public string password { get; set; }
+        public string password { get; set; } 
+        public string storeName { get; set; }
         public int storeId { get; set; }
     }
 }

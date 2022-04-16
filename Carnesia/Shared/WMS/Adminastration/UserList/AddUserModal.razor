@@ -1,5 +1,5 @@
 ﻿@using Carnesia.Domain.WMS.Adminastration.POCO
-
+@inject IStore _store 
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
@@ -8,6 +8,7 @@
                     <MudTextField T="string" @bind-Value="userData.username" Label="Username" Required="true" RequiredError="Username is required!"/>
                     <MudTextField T="string" @bind-Value="userData.email" Label="Email" Required="true" RequiredError="Email is required!"/>
                     <MudTextField T="string" @bind-Value="userData.phoneNumber" Label="Phone Number" Required="true" RequiredError="Phone number is required!"/>
+                    <MudAutocomplete T="string" Label="Store" @bind-Value="userData.storeName" SearchFunc="@StoresSearch" ResetValueOnEmptyText="@true" />
                     <div class="d-flex align-center justify-end mt-6">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
                     </div>
@@ -16,13 +17,30 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
 
     // Form ref
-    private MudForm form;
+    private MudForm? form;
     private bool success;
     private string[] errors = {};
 
+    // Stores
+    private string[]? Stores; 
+
     // Form Data
     private AddUserPoco userData = new AddUserPoco();
+
+    // Page On Load 
+    protected override async Task OnInitializedAsync()
+    {
+        Stores = await _store.GetStoreNameAsString();
+    }
+
+    // Store Autocomplete Search
+    private async Task<IEnumerable<string>> StoresSearch(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Stores;
+        return Stores.Where(x => x.Contains(value,StringComparison.InvariantCultureIgnoreCase));
+    } 
 }

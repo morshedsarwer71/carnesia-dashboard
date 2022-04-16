@@ -1,0 +1,58 @@
+﻿@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.CMS.Product
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                    Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>Code</MudTh>
+                <MudTh>Weight</MudTh>
+                <MudTh>Dimension</MudTh>
+                <MudTh>Brand</MudTh>
+                <MudTh>Is Pre-Order</MudTh>
+                <MudTh>Pre-Order Time(Day)</MudTh>
+                <MudTh>Is Publish</MudTh>
+                <MudTh>Is Has Free Products</MudTh>
+                <MudTh>Description</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Name">@context.productName</MudTd>
+                <MudTd DataLabel="SKU">@context.productsku</MudTd>
+                <MudTd DataLabel="Code">@context.productCode</MudTd>
+                <MudTd DataLabel="Weight">@context.weight</MudTd>
+                <MudTd DataLabel="Dimension">@context.productDimension</MudTd>
+                <MudTd DataLabel="Brand">@context.brandId</MudTd>
+                <MudTd DataLabel="Is Pre-Order">@context.isPreOrder</MudTd>
+                <MudTd DataLabel="Pre-Order Time(Day)">@context.delivaryDayPreorder</MudTd>
+                <MudTd DataLabel="Is Publish">@context.isPublish</MudTd>
+                <MudTd DataLabel="Is Has Free Products">@context.isHasFreeProd</MudTd>
+                <MudTd DataLabel="Description">@context.description</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<ProductDTO> Elements = new List<ProductDTO>();
+}
