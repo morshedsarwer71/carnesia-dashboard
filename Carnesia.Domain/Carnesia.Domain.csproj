@@ -10,6 +10,8 @@
     <Folder Include="CMS\Product\" />
     <Folder Include="Vendor\Models\" />
     <Folder Include="Vendor\ViewModels\" />
+    <Folder Include="WMS\Adminastration\Models\" />
+    <Folder Include="WMS\Adminastration\ViewModels\" />
     <Folder Include="WMS\ReturnManagement\Models\" />
     <Folder Include="WMS\ReturnManagement\ViewModels\" />
     <Folder Include="WMS\TO\Models\" />

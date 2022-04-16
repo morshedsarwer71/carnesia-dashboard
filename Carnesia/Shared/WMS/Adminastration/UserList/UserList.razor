@@ -1,0 +1,55 @@
+﻿@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.WMS.Adminastration.POCO
+@inject IDialogService DialogService
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" >
+            <ToolBarContent>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">New User</MudButton>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                    Class="mt-0"/> 
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>Phone Number</MudTh>
+                <MudTh>Email</MudTh>
+                <MudTh>User Type</MudTh>
+                <MudTh>Active</MudTh>
+            </HeaderContent>
+            <RowTemplate> 
+                <MudTd DataLabel="Name">@context.name</MudTd>
+                <MudTd DataLabel="Phone Number">@context.phone</MudTd>
+                <MudTd DataLabel="Email">@context.email</MudTd>
+                <MudTd DataLabel="User Type">@context.userType</MudTd>
+                <MudTd DataLabel="Action">@context.isActive</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<UserListPoco> Elements = new List<UserListPoco>(); 
+
+    // New user Modal
+    private void OpenOrderPickupDetailsDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
+        DialogService.Show<AddUserModal>("New User", options);
+    }
+}

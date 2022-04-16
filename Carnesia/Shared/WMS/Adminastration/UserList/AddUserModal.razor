@@ -1,0 +1,28 @@
+﻿@using Carnesia.Domain.WMS.Adminastration.POCO
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField T="string" @bind-Value="userData.firstName" Label="First Name" Required="true" RequiredError="First name is required!"/>
+                    <MudTextField T="string" @bind-Value="userData.lastName" Label="Last Name" Required="true" RequiredError="Last name is required!"/>
+                    <MudTextField T="string" @bind-Value="userData.username" Label="Username" Required="true" RequiredError="Username is required!"/>
+                    <MudTextField T="string" @bind-Value="userData.email" Label="Email" Required="true" RequiredError="Email is required!"/>
+                    <MudTextField T="string" @bind-Value="userData.phoneNumber" Label="Phone Number" Required="true" RequiredError="Phone number is required!"/>
+                    <div class="d-flex align-center justify-end mt-6">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                    </div>
+            </MudForm> 
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Form ref
+    private MudForm form;
+    private bool success;
+    private string[] errors = {};
+
+    // Form Data
+    private AddUserPoco userData = new AddUserPoco();
+}
