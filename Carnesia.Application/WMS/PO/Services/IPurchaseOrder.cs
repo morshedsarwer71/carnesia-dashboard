@@ -11,5 +11,6 @@ namespace Carnesia.Application.WMS.PO.Services
     public interface IPurchaseOrder
     {
         Task<string> AddPurchaseOrder(PurchaseOrder purchaseOrder);
+        Task<MemoryStream> DownLoadExcel();
     }
 }

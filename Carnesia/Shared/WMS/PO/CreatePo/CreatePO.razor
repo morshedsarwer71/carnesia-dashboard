@@ -1,58 +1,64 @@
-﻿@using Carnesia.Domain.WMS.PO.Models
+﻿@using Carnesia.Application.Common
+@using Carnesia.Domain.Vendor.Models
+@using Carnesia.Domain.WMS.PO.Models
 @using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Domain.WMS.PO.ViewModels
 @inject IDialogService DialogService
-@inject IPurchaseOrder order
+@inject IPurchaseOrder _order
 @inject ISnackbar snackbar
+@inject IVendor _vendor
+@inject IStore _store
+@inject IProduct _product
+@inject Microsoft.JSInterop.IJSRuntime JS
 
 
 
 <MudPaper Class="pa-16 ma-2" Elevation="1">
     <MudContainer Fixed="true">
         <MudGrid>
-		    <MudItem xs="12" sm="6" md="3">
-			    <MudAutocomplete T="string" Label="Supplier Name" @bind-Value="SupplierName" SearchFunc="@SupplierSearch"
-                            ResetValueOnEmptyText="@true" />
-		    </MudItem>
             <MudItem xs="12" sm="6" md="3">
-			    <MudAutocomplete T="string" Label="Receiving Warehouse" @bind-Value="ReceivingWarehouse" SearchFunc="@SupplierSearch"
-                            ResetValueOnEmptyText="@true" />
-		    </MudItem>
+                <MudAutocomplete T="string" Label="Supplier Name" @bind-Value="createPO.vendorName" SearchFunc="@SupplierSearch"
+                                 ResetValueOnEmptyText="@true" />
+            </MudItem>
             <MudItem xs="12" sm="6" md="3">
-			    <MudSelect T="string" Label="PO Type" @bind-SelectedValues="@POType" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Cash")" >Cash</MudSelectItem>
-                    <MudSelectItem Value="@("Consignment")" >Consignment</MudSelectItem>
-                    <MudSelectItem Value="@("Credit")" >Credit</MudSelectItem>
+                <MudAutocomplete T="string" Label="Receiving Warehouse" @bind-Value="createPO.storeName" SearchFunc="@StoresSearch"
+                                 ResetValueOnEmptyText="@true" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudSelect Label="PO Type" @bind-Value="createPO.poType" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("Cash")">Cash</MudSelectItem>
+                    <MudSelectItem Value="@("Consignment")">Consignment</MudSelectItem>
+                    <MudSelectItem Value="@("Credit")">Credit</MudSelectItem>
                 </MudSelect>
-		    </MudItem>
+            </MudItem>
             <MudItem xs="12" sm="6" md="3">
-			    <MudDatePicker Label="Receiving Date" @bind-Date="ReceivingDate"/>
-		    </MudItem>
-	    </MudGrid>
+                <MudDatePicker Label="Receiving Date" @bind-Date="createPO.receiveDate" />
+            </MudItem>
+        </MudGrid>
     </MudContainer>
 </MudPaper>
 
 <MudPaper Class="ps-16 pe-16 pb-16 pt-10 ma-2 mt-10" Elevation="1">
-	<MudContainer Fixed="true">
+    <MudContainer Fixed="true">
         <div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
             <MudText Class="px-15 py-2" Typo="Typo.h6">Purchase Order</MudText>
         </div>
         <MudForm @ref="form" @bind-IsValid="@Success">
             <MudGrid>
                 <MudItem sm="12" md="4">
-                    <MudTextField Immediate="true" @bind-Value="product.SKU" Label="SKU" Variant="Variant.Text" Required="true" RequiredError="SKU is required!" />
+                    <MudTextField Immediate="true" @bind-Value="PoProduct.sku" Label="SKU" Variant="Variant.Text" Required="true" RequiredError="SKU is required!" />
                 </MudItem>
 
                 <MudItem sm="6" md="4">
-                    <MudNumericField Immediate="true" @bind-Value="product.QTY" Label="Quantity" Variant="Variant.Text" Min="1" Required="true" RequiredError="Quantity is required!" />
+                    <MudNumericField Immediate="true" @bind-Value="PoProduct.quantity" Label="Quantity" Variant="Variant.Text" Min="1" Required="true" RequiredError="Quantity is required!" />
                 </MudItem>
 
                 <MudItem sm="6" md="4">
-                    <MudNumericField Immediate="true" @bind-Value="product.LiftingPrice" Label="Lifting Price" Variant="Variant.Text" Min="0.01m" Required="true" RequiredError="Listing                            price is required!" />
+                    <MudNumericField Immediate="true" @bind-Value="PoProduct.liftingPrice" Label="Lifting Price" Variant="Variant.Text" Min="0.01m" Required="true" RequiredError="Listing price is required!" />
                 </MudItem>
             </MudGrid>
             <div class="mt-5 d-flex justify-end">
-                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Disabled="@(!Success)">Add</MudButton>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Disabled="@(!Success)" OnClick="()=>AddProduct(PoProduct)">Add</MudButton>
             </div>
         </MudForm>
 
@@ -66,18 +72,18 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="SKU" onclick="@(() => OpenSKUHistoryDialog())">@context.SKU</MudTd>
-                <MudTd DataLabel="Product Name">@context.Name</MudTd>
-                <MudTd DataLabel="QTY">@context.QTY</MudTd>
-                <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
-                <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
+                <MudTd DataLabel="SKU" onclick="@(() => OpenSKUHistoryDialog())">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="QTY">@context.quantity</MudTd>
+                <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
+                <MudTd DataLabel="Total Price">@context.liftingPrice * @context.quantity</MudTd>
                 <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() =>OpenDeleteDialog()" /></MudTd>
             </RowTemplate>
         </MudTable>
         <div class="mt-5 d-flex justify-end">
             <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="SubmitPO">Submit</MudButton>
         </div>
-	</MudContainer>
+    </MudContainer>
 </MudPaper>
 
 <MudPaper Class="ps-16 pe-16 pb-16 pt-10 ma-2 mt-10" Elevation="1">
@@ -87,18 +93,18 @@
         </div>
 
         <div class="d-flex justify-center">
-           <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
-               Download CSV Template
-           </MudButton>
+            <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;" OnClick="Download">
+                Download CSV Template
+            </MudButton>
 
-           <InputFile id="fileInput" hidden />
-           <MudButton HtmlTag="label"
-           Variant="Variant.Filled"
-           Color="Color.Primary"
-           StartIcon="@Icons.Filled.CloudUpload"
-           for="fileInput">
-            Upload Files
-           </MudButton>
+            <InputFile id="fileInput" hidden />
+            <MudButton HtmlTag="label"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Filled.CloudUpload"
+                       for="fileInput">
+                Upload Files
+            </MudButton>
         </div>
 
         <MudTable Class="mt-5" Items="@products" Hover="false" Bordered="true" Dense="true">
@@ -111,11 +117,11 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="SKU">@context.SKU</MudTd>
-                <MudTd DataLabel="Product Name">@context.Name</MudTd>
-                <MudTd DataLabel="QTY">@context.QTY</MudTd>
-                <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
-                <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
+                <MudTd DataLabel="SKU">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="QTY">@context.quantity</MudTd>
+                <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
+                <MudTd DataLabel="Total Price">@total</MudTd>
                 <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" /></MudTd>
             </RowTemplate>
         </MudTable>
@@ -129,101 +135,105 @@
 </MudPaper>
 
 @code {
-    // Product List
-    public List<ProductPOCO> products = new List<ProductPOCO>();
-    public POPoco product = new POPoco();
+     MemoryStream excelStream;
+
+    public IEnumerable<VendorDTO> Vendors;
+    public CreatePODTO createPO = new CreatePODTO();
+    public PoProductDTO PoProduct = new PoProductDTO();
+    public List<PoProductDTO> products = new List<PoProductDTO>();
+    public decimal total { get; set; }
 
     // Form Reference
     private MudForm form;
     private bool Success;
 
-    // Input Values
-    private string SupplierName { get; set; }
-    private string ReceivingWarehouse { get; set; }
-    private DateTime? ReceivingDate { get; set; }
-    private IEnumerable<string> POType { get; set; }
+    private string[] Suppliers;
+    private string[] Stores;
 
-    public string SKU { get; set; }
-    public int QTY { get; set; } = 1;
-    public decimal LiftingPrice { get; set; } = 1;
-
-    // Autocomplite Options
-    private string[] states =
+    protected override async Task OnInitializedAsync()
     {
-        "Alabama", "Alaska", "American Samoa", "Arizona",
-        "Arkansas", "California", "Colorado", "Connecticut",
-        "Delaware", "District of Columbia", "Federated States of Micronesia",
-        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
-        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
-        "Louisiana", "Maine", "Marshall Islands", "Maryland",
-        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
-        "Missouri", "Montana", "Nebraska", "Nevada",
-        "New Hampshire", "New Jersey", "New Mexico", "New York",
-        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
-        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
-        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
-        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
-        "Washington", "West Virginia", "Wisconsin", "Wyoming",
-    };
+        await GetVendors();
+    }
+
+    private async Task Download()
+    {
+        excelStream= await _order.DownLoadExcel();
+        await JS.SaveAs("Sample.xlsx", excelStream.ToArray());
+    }
+
+    private async Task GetVendors()
+    {
+        Suppliers = await _vendor.GetVendorsNameAsString();
+        Stores = await _store.GetStoreNameAsString();
+    }
 
     // Form Submit
     private async Task SubmitPO()
     {
-        CreatePODTO create = new CreatePODTO()
-        {
-            description="Test description",
-            poRcvStoreId=1,
-            receiveDate=DateTime.Now,
-            vendorId=1,
-            poType="Cash"
-
-        };
-
-        var products = new List<PoProductDTO>();
-        PoProductDTO product = new PoProductDTO
+        var vendorId = await _vendor.GetVendor(createPO.vendorName);
+        var storeId = await _store.GetStore(createPO.storeName);
+        createPO.vendorId = vendorId.vendorId;
+        createPO.poRcvStoreId = storeId.storeId;
+        createPO.description = "Creating po with out description";
+        PurchaseOrder purchaseOrder = new PurchaseOrder
             {
-                liftingPrice = 20,
-                quantity = 10,
-                sku = "SKU1",
-                productName="name of the product"
+                createPODTO = createPO,
+                poProductDTOs = products
             };
-        products.Add(product);
+        var result = await _order.AddPurchaseOrder(purchaseOrder);
+        snackbar.Add(result);
+        products.Clear();
+    }
 
-        PurchaseOrder purchaseOrder = new PurchaseOrder()
+    private async Task AddProduct(PoProductDTO poco)
+    {
+        //snackbar.Add("dfdfd");
+        var skuProduct = await _product.GetProducBySku(poco.sku);
+        if (skuProduct.productsku != null)
         {
-           createPODTO=create,
-           poProductDTOs=products
-        };
-
-        var data = await order.AddPurchaseOrder(purchaseOrder);
-        if (!string.IsNullOrEmpty(data)){
-            snackbar.Add(data);
+            total = poco.liftingPrice * poco.quantity;
+            var poProd = new PoProductDTO()
+                {
+                    liftingPrice = poco.liftingPrice,
+                    productName = skuProduct.productName,
+                    quantity = poco.quantity,
+                    sku = skuProduct.productsku,
+                    TotalPrice = total
+                };
+            products.Add(poProd);
         }
-}
+        else
+        {
+            snackbar.Add($"SKU:- {poco.sku} does not exists");
+        }
+    }
 
     // Autocomplite Search Func
     private async Task<IEnumerable<string>> SupplierSearch(string value)
     {
-        // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
-
-        // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return Suppliers;
+        return Suppliers.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<string>> StoresSearch(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Stores;
+        return Stores.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     // Delete Item Modal
     private void OpenDeleteDialog()
     {
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
+        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
         DialogService.Show<CreatePODeleteModal>("Delete Item?", options);
     }
-    
+
     // Delete Item Modal
     private void OpenSKUHistoryDialog()
     {
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
+        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
         DialogService.Show<CreatePOSKUHistory>("SKU History", options);
     }
 }
