@@ -15,6 +15,6 @@ namespace Carnesia.Application.WMS.PO.Services
     {
         Task<string> AddPurchaseOrder(PurchaseOrder purchaseOrder);
         Task DownLoadExcel(IJSRuntime jSRuntime);
-        Task<List<PoProductDTO>> UploadExcelFile(IBrowserFile file);
+        Task<DataTable> UploadExcelFile(InputFileChangeEventArgs file);
     }
 }

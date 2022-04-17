@@ -16,4 +16,8 @@
     <Folder Include="WMS\TO\ViewModels\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NPOI" Version="2.5.5" />
+  </ItemGroup>
+
 </Project>
