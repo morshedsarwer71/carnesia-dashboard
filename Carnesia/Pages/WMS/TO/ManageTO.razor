@@ -1,0 +1,62 @@
+﻿@page "/manage-to"
+@using Carnesia.Shared.WMS.TO.ManageTO
+@using Carnesia.Shared.WMS.TO.OutScan
+@using Carnesia.Shared.WMS.TO.ReceiveTo
+@using Carnesia.Shared.WMS.TO.AssignCarrier
+@using Carnesia.Shared.WMS.TO.InTransit
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ManageTo ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ManageTo)">@ManageTo</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == OutScan ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(OutScan)">@OutScan</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ReceiveTO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReceiveTO)">@ReceiveTO</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == AssignCarrier ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AssignCarrier)">
+                @AssignCarrier
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == InTransit ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(InTransit)">
+                @InTransit
+            </MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == ManageTo)
+{
+    <ManageTOSection />
+}
+else if(CurrentPage == OutScan)
+{
+    <OutScan />
+}
+else if(CurrentPage == ReceiveTO)
+{
+    <ReceiveTo />
+}
+else if(CurrentPage == AssignCarrier)
+{
+    <AssignCarrier />
+}
+else if(CurrentPage == InTransit)
+{
+    <InTransit />
+}
+
+@code {
+    // Pages
+    private string ManageTo = "Manage TO";
+    private string OutScan = "Out Scan";
+    private string ReceiveTO = "Receive TO";
+    private string AssignCarrier = "Assign Carrier";
+    private string InTransit = "In-Transit";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Manage TO";
+
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

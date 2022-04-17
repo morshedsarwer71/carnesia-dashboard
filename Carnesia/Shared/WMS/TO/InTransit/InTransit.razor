@@ -1,0 +1,68 @@
+﻿@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.WMS.InTransit
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem md="4">
+				<MudTextField T="string" Label="Scan TO" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Delivered")" />
+					<MudSelectItem Value="@("Failed")" />
+					<MudSelectItem Value="@("Cancelled")" />
+					<MudSelectItem Value="@("Lost")" />
+					
+				</MudSelect>
+			</MudItem>
+			<MudItem md="4">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Created on</MudTh>
+                <MudTh>TO ID</MudTh>
+                <MudTh>Source Warehouse</MudTh>
+                <MudTh>Destination Warehouse</MudTh>
+                <MudTh>Attemted by</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Status Updated on</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Created on">@context.CreationData</MudTd>
+                <MudTd DataLabel="TO ID">@context.TOID</MudTd>
+                <MudTd DataLabel="Source Warehouse">@context.SourceWH</MudTd>
+                <MudTd DataLabel="Destination Warehouse">@context.DestinationWH</MudTd>
+                <MudTd DataLabel="Attemted by">@context.AttemtedBy</MudTd>
+                <MudTd DataLabel="Status">@context.Status</MudTd>
+                <MudTd DataLabel="Status Updated on">@context.StatusUpdateDate</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Customization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<InTransitDTO> Elements = new List<InTransitDTO>();
+}

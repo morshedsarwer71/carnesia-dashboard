@@ -1,0 +1,83 @@
+﻿@using Carnesia.Domain.WMS.ManageTO
+@using Carnesia.Domain.Common.POCO
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="align-baseline justify-center">
+			<MudItem lg="2" md="4">
+				<MudDateRangePicker Label="Date Range"/>
+			</MudItem>
+			<MudItem lg="2" md="4">
+				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Open")" />
+					<MudSelectItem Value="@("Picklist Created")" />
+					<MudSelectItem Value="@("Dispatched")" />
+					<MudSelectItem Value="@("Picked")" />
+					<MudSelectItem Value="@("Received")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="2" md="4">
+				<MudAutocomplete T="string" Label="Source WH" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem lg="2" md="4">
+				<MudAutocomplete T="string" Label="Destination WH" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem lg="2" md="4">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+			<ToolBarContent>
+				<MudSpacer />
+				<MudSpacer />
+				<MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+			</ToolBarContent>
+			<HeaderContent>
+				<MudTh>Created on</MudTh>
+				<MudTh>TO ID</MudTh>
+				<MudTh>Source Warehouse</MudTh>
+				<MudTh>Destination Warehouse</MudTh>
+				<MudTh>TO Type</MudTh>
+				<MudTh>Status</MudTh>
+				<MudTh>Last Updated on</MudTh>
+				<MudTh>TO Product Quantity</MudTh>
+				<MudTh>Picklist ID</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Created on">@context.CreationDate</MudTd>
+				<MudTd DataLabel="TO ID">@context.TOID</MudTd>
+				<MudTd DataLabel="Source Warehouse">@context.SourceWH</MudTd>
+				<MudTd DataLabel="Destination Warehouse">@context.DestinationWH</MudTd>
+				<MudTd DataLabel="TO Type">@context.ToType</MudTd>
+				<MudTd DataLabel="Status">@context.Status</MudTd>
+				<MudTd DataLabel="Last Updated on">@context.UpadetDate</MudTd>
+				<MudTd DataLabel="TO Product Quantity">@context.ToProductQuantity</MudTd>
+				<MudTd DataLabel="Picklist ID">@context.PickListID</MudTd>
+				<MudTd DataLabel="Action">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Generate Picklist</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Out Scan</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">View</MudButton>
+				</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<ManageToDTO> Elements = new List<ManageToDTO>(); 
+}

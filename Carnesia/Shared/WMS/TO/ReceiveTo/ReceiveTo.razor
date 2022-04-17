@@ -1,0 +1,67 @@
+﻿@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.WMS.ReceiveTo
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+        <MudGrid Class="align-baseline justify-center mb-5">
+            <MudItem md="4" xs="6">
+                <MudTextField T="string" Label="Enter TO ID" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem md="4" xs="6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Enter TO ID</MudButton>
+            </MudItem>
+        </MudGrid>
+
+        <MudGrid Class="align-baseline justify-center justify-md-start mb-5">
+            <MudItem md="4" xs="6">
+                <MudTextField T="string" Label="Enter UID" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem md="4" xs="6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Enter TO ID</MudButton>
+            </MudItem>
+        </MudGrid>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>SKU Code</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>TO Quantity</MudTh>
+                <MudTh>Rcv. QTY</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="SKU Code">@context.SKU</MudTd>
+                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="TO Quantity">@context.ToQTY</MudTd>
+                <MudTd DataLabel="Rcv. QTY">@context.ReceiveQTY</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+
+        <div class="d-flex align-end flex-column">
+            <MudText Typo="Typo.h6">Total QTY: 123</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Submit Print Acknowledgement</MudButton>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Customization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<ReceiveToDTO> Elements = new List<ReceiveToDTO>();
+}

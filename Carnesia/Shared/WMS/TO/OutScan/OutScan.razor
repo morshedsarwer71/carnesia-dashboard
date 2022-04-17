@@ -1,0 +1,72 @@
+﻿@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.WMS.OutScan
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline">
+			<MudItem md="4">
+				<MudTextField T="string" Label="Picklist ID" Variant="Variant.Text" />
+			</MudItem>
+
+			<MudItem md="4">
+				<MudTextField T="string" Label="Scan UID" Variant="Variant.Text" />
+			</MudItem>
+
+			<MudItem md="4">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Picklist ID</MudTh>
+                <MudTh>Item Code</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Image</MudTh>
+                <MudTh>QTY.</MudTh>
+                <MudTh>BIN Code</MudTh>
+                <MudTh>Picked QTY</MudTh>
+                <MudTh>To Be Scanned</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Picklist ID">@context.PickListID</MudTd>
+                <MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
+                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+                </MudTd>
+                <MudTd DataLabel="QTY.">@context.QTY</MudTd>
+                <MudTd DataLabel="BIN Code">@context.BinCode</MudTd>
+                <MudTd DataLabel="Picked QTY">@context.PickedQTY</MudTd>
+                <MudTd DataLabel="To Be Scanned">@context.ToBeScanned</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+
+        <div class="mt-5 d-flex justify-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<OutScanDTO> Elements = new List<OutScanDTO>();
+}
