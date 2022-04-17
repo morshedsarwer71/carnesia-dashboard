@@ -94,46 +94,13 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
-        public async Task<List<PoProductDTO>> UploadExcelFile(IBrowserFile file)
+        public async Task<DataTable> UploadExcelFile(InputFileChangeEventArgs file)
         {
             try
             {
+                DataTable dtTable = new DataTable();
+                return dtTable;
                 
-                var list = new List<PoProductDTO>();
-                using (MemoryStream stream=new MemoryStream())
-                {
-                    
-                    await file.OpenReadStream(file.Size).CopyToAsync(stream);
-                    using (ExcelPackage package=new ExcelPackage(stream))
-                    {
-                        ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
-                        int colCount = worksheet.Dimension.End.Column;
-                        int rowCount = worksheet.Dimension.End.Row;
-                        PoProductDTO poProductDto = new PoProductDTO();
-                        for (int row = 0; row <= rowCount; row++)
-                        {
-                            for (int col = 0; col < colCount; col++)
-                            {
-                                if (col == 1)
-                                {
-                                    poProductDto.sku = worksheet.Cells[row, col].Value.ToString();
-                                }
-                                else if (col==2)
-                                {
-                                    poProductDto.quantity = 10;
-                                }
-                                else if (col==3)
-                                {
-                                    poProductDto.liftingPrice = 100;
-                                }
-                            }
-                            list.Add(poProductDto);
-                        }
-                    }
-                    
-                }
-
-                return list;
             }
             catch (Exception e)
             {
@@ -141,5 +108,53 @@ namespace Carnesia.Application.WMS.PO.Services
                 throw;
             }
         }
+
+        // public async Task<List<PoProductDTO>> UploadExcelFile(IBrowserFile file)
+        // {
+        //     try
+        //     {
+        //         
+        //         var list = new List<PoProductDTO>();
+        //         using (MemoryStream stream=new MemoryStream())
+        //         {
+        //             
+        //             await file.OpenReadStream(file.Size).CopyToAsync(stream);
+        //             using (ExcelPackage package=new ExcelPackage(stream))
+        //             {
+        //                 ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
+        //                 int colCount = worksheet.Dimension.End.Column;
+        //                 int rowCount = worksheet.Dimension.End.Row;
+        //                 PoProductDTO poProductDto = new PoProductDTO();
+        //                 for (int row = 0; row <= rowCount; row++)
+        //                 {
+        //                     for (int col = 0; col < colCount; col++)
+        //                     {
+        //                         if (col == 1)
+        //                         {
+        //                             poProductDto.sku = worksheet.Cells[row, col].Value.ToString();
+        //                         }
+        //                         else if (col==2)
+        //                         {
+        //                             poProductDto.quantity = 10;
+        //                         }
+        //                         else if (col==3)
+        //                         {
+        //                             poProductDto.liftingPrice = 100;
+        //                         }
+        //                     }
+        //                     list.Add(poProductDto);
+        //                 }
+        //             }
+        //             
+        //         }
+        //
+        //         return list;
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Console.WriteLine(e);
+        //         throw;
+        //     }
+        // }
     }
 }

@@ -2,6 +2,9 @@
 @using Carnesia.Domain.WMS.PO.Models
 @using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Domain.WMS.PO.ViewModels
+@using System.Data
+@using NPOI.SS.UserModel
+@using NPOI.XSSF.UserModel
 @inject IDialogService DialogService
 @inject IPurchaseOrder _order
 @inject ISnackbar snackbar
@@ -9,6 +12,8 @@
 @inject IStore _store
 @inject IProduct _product
 @inject IJSRuntime iJSRuntime
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Data
 
 
 
@@ -140,6 +145,7 @@
     public CreatePODTO createPO = new CreatePODTO();
     public PoProductDTO PoProduct = new PoProductDTO();
     public List<PoProductDTO> products = new List<PoProductDTO>();
+    
     public decimal total { get; set; }
 
     // Form Reference
@@ -155,12 +161,51 @@
     }
     private async Task UploadFiles(InputFileChangeEventArgs e)
     {
-        products =await _order.UploadExcelFile(e.File);
-        StateHasChanged();
-        foreach (var product in products)
+        try
         {
-            Console.WriteLine(product.sku);
+            DataTable dt = new DataTable();
+            var fileStream = e.File.OpenReadStream();
+            var ms = new MemoryStream();
+            await fileStream.CopyToAsync(ms);
+            fileStream.Close();
+            ms.Position = 0;
+            ISheet sheet;
+            var xsswb = new XSSFWorkbook(ms);
+            sheet = xsswb.GetSheetAt(0);
+            IRow hr = sheet.GetRow(0);
+            var rl = new List<string>();
+            int cc = hr.LastCellNum;
+            for (int j = 0; j < cc; j++)
+            {
+                ICell cell = hr.GetCell(j);
+                dt.Columns.Add(cell.ToString());
+            }
+            for (int j = (sheet.FirstRowNum+1); j <= sheet.LastRowNum; j++)
+            {
+                var r = sheet.GetRow(j);
+                for (int i = r.FirstCellNum; i < cc; i++)
+                {
+                    rl.Add(r.GetCell(i).ToString());
+                }
+                if (rl.Count>0)
+                {
+                    dt.Rows.Add(rl.ToArray());
+                }
+                rl.Clear();
+            }
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var name = row.Field<string>("SKU");
+                Console.WriteLine(name);
+            }
         }
+        catch (Exception)
+        {
+            Console.WriteLine("error");
+            throw;
+        }
+        
     }
     private async Task Download()
     {
