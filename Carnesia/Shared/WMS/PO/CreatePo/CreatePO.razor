@@ -66,7 +66,9 @@
             </div>
         </MudForm>
 
-        <MudTable Class="mt-5" Items="@products" Hover="false" Bordered="true" Dense="true">
+        @if (products != null)
+        {
+            <MudTable Class="mt-5" Items="@products" Hover="false" Bordered="true" Dense="true">
             <HeaderContent>
                 <MudTh>SKU</MudTh>
                 <MudTh>Product Name</MudTh>
@@ -87,6 +89,7 @@
         <div class="mt-5 d-flex justify-end">
             <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="SubmitPO">Submit</MudButton>
         </div>
+        }
     </MudContainer>
 </MudPaper>
 
