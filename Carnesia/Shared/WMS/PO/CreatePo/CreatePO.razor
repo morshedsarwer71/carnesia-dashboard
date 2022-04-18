@@ -80,7 +80,7 @@
                     <MudTd DataLabel="Product Name">@context.productName</MudTd>
                     <MudTd DataLabel="QTY">@context.quantity</MudTd>
                     <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
-                    <MudTd DataLabel="Total Price">@context.liftingPrice * @context.quantity</MudTd>
+                    <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
                     <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() =>OpenDeleteDialog()" /></MudTd>
                 </RowTemplate>
             </MudTable>
@@ -147,8 +147,6 @@
     public PoProductDTO PoProduct = new PoProductDTO();
     public List<PoProductDTO> products=new List<PoProductDTO>();
     public List<PoProductDTO> poExcelProducts = new List<PoProductDTO>();
-    
-    public decimal total { get; set; }
 
     // Form Reference
     private MudForm form;
@@ -177,11 +175,7 @@
     }
     private async Task Download()
     {
-        bool confirmed = await iJSRuntime.InvokeAsync<bool>("confirm", "Are you sure?"); // Confirm
-        if (confirmed)
-        {
             await _order.DownLoadExcel(iJSRuntime);
-        }
     }
 
     private async Task GetVendors()

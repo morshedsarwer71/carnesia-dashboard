@@ -14,6 +14,7 @@ using Carnesia.Application.CMS.Services;
 using Microsoft.AspNetCore.Components.Forms;
 using ClosedXML.Excel;
 using NPOI.SS.UserModel;
+using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 
 namespace Carnesia.Application.WMS.PO.Services
@@ -85,7 +86,7 @@ namespace Carnesia.Application.WMS.PO.Services
 
                 await jSRuntime.InvokeAsync<object>(
                         "saveAsFile",
-                        "PoProduct.xlsx",
+                        "PoProducts.xlsx",
                         Convert.ToBase64String(fileContents));
 
             }
@@ -152,7 +153,8 @@ namespace Carnesia.Application.WMS.PO.Services
                         poProducts.Add(pop);
                     }
                 }
-                return poProducts;
+
+                return poProducts.Where(x => x.productName != null).ToList();
             }
             catch (Exception)
             {
