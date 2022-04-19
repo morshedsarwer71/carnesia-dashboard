@@ -1,7 +1,8 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Shared.CommonComponents
+@using Carnesia.Domain.WMS.PO.Models.Awaiting
 @inject IDialogService DialogService
-@inject HttpClient Http
+@inject IPurchaseOrder _order
 
 <MudPaper Class="ma-2 pa-16" Elevation="1">
 	<MudContainer Fixed="true">
@@ -11,12 +12,13 @@
 			</MudItem>
 			<MudItem md="3">
 				<div>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenPOListDetailsDialog">Filter</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetPoByPocode">Filter</MudButton>
 				</div>
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Loading="loadingBar" Class="mt-10" Items="@elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<AwaitingApprovalPoco,bool>(FilterCycleCheck)">
+		<MudTable Loading="loadingBar" Class="mt-10" Items="@awaitingPos" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped">
+		@* <MudTable Loading="loadingBar" Class="mt-10" Items="@awaitingPos" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<AwaitingPo,bool>(FilterCycleCheck)"> *@
 			<ToolBarContent>
 				<MudSpacer />
 				<MudSpacer />
@@ -28,18 +30,16 @@
 				<MudTh>Supplier</MudTh>
 				<MudTh>Quantity</MudTh>
 				<MudTh>Value</MudTh>
-				<MudTh>Status</MudTh>
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Date">@context.OrderDate</MudTd>
-				<MudTd DataLabel="PO Id">@context.PoCode</MudTd>
-				<MudTd DataLabel="Supplier">@context.VendorName</MudTd>
-				<MudTd DataLabel="Quantity">@context.Quatity</MudTd>
-				<MudTd DataLabel="Status">@context.PoStatus</MudTd>
-				<MudTd DataLabel="Amount">@context.TotalAmount</MudTd>
+				<MudTd DataLabel="Date">@context.orderDate</MudTd>
+				<MudTd DataLabel="PO Id">@context.poCode</MudTd>
+				<MudTd DataLabel="Supplier">@context.vendorName</MudTd>
+				<MudTd DataLabel="Quantity">@context.quatity</MudTd>
+				<MudTd DataLabel="Amount">@context.totalAmount</MudTd>
 				<MudTd DataLabel="Action">
-					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" />
+					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" OnClick="OpenPOListDetailsDialog" />
 					<MudIconButton Icon="@Icons.Filled.Check" Color="Color.Success" aria-label="Approve" />
 				</MudTd>
 			</RowTemplate>
@@ -75,12 +75,23 @@
 	private string SearchTerm { get; set; }
 
 	// Table Content
-	private IEnumerable<AwaitingApprovalPoco> elements = new List<AwaitingApprovalPoco>();
+	private List<AwaitingPo> awaitingPos = new List<AwaitingPo>();
+	protected override async Task OnInitializedAsync()
+	{
+		awaitingPos = await _order.AwaitingPo();
+		loadingBar = false;
+	}
+
+	private async Task GetPoByPocode()
+	{
+		awaitingPos.Clear();
+		awaitingPos = await _order.AwaitingPoByPoCode(POID);
+	}
 
 	// Search Function
-	private bool FilterCycleCheck(AwaitingApprovalPoco item)
+	private bool FilterCycleCheck(AwaitingPo item)
 	{
-        if (item.PoCode.ToLower().Contains(SearchTerm.ToLower()) || item.VendorName.ToLower().Contains(SearchTerm.ToLower()))
+        if (item.poCode.ToLower().Contains(SearchTerm.ToLower()) || item.vendorName.ToLower().Contains(SearchTerm.ToLower()))
         {
             return true;
         }
@@ -90,7 +101,7 @@
 	// PO List Details Modal
     private void OpenPOListDetailsDialog()
     {
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true, MaxWidth=MaxWidth.Large };
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth=true, CloseButton=true, MaxWidth=MaxWidth.Large };
         DialogService.Show<POListDetails>("", options);
     }
 }

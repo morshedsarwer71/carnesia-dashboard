@@ -11,6 +11,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Carnesia.Application.CMS.Services;
+using Carnesia.Domain.WMS.PO.Models.Awaiting;
 using Microsoft.AspNetCore.Components.Forms;
 using ClosedXML.Excel;
 using NPOI.SS.UserModel;
@@ -167,23 +168,47 @@ namespace Carnesia.Application.WMS.PO.Services
             try
             {
                     var skuProduct = await _product.GetProducBySku(poProductDto.sku);
-                    if (skuProduct!=null)
+                    if (skuProduct == null) return null;
+                    var total = poProductDto.liftingPrice * poProductDto.quantity;
+                    var poProd = new PoProductDTO()
                     {
-                        var total = poProductDto.liftingPrice * poProductDto.quantity;
-                        var poProd = new PoProductDTO()
-                        {
-                            liftingPrice = poProductDto.liftingPrice,
-                            productName = skuProduct.productName,
-                            quantity = poProductDto.quantity,
-                            sku = skuProduct.productsku,
-                            TotalPrice = total
-                        };
-                        return poProd;
-                    }
-                    return null;
+                        liftingPrice = poProductDto.liftingPrice,
+                        productName = skuProduct.productName,
+                        quantity = poProductDto.quantity,
+                        sku = skuProduct.productsku,
+                        TotalPrice = total
+                    };
+                    return poProd;
 
             }
             catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<AwaitingPo>> AwaitingPo()
+        {
+            try
+            {
+                var orders = await _httpClient.GetFromJsonAsync<List<AwaitingPo>>("PurchaseOrders/awaitingapprovalpo");
+                return orders;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<AwaitingPo>> AwaitingPoByPoCode(string poCode)
+        {
+            try
+            {
+                var order = await _httpClient.GetFromJsonAsync<List<AwaitingPo>>(
+                    $"PurchaseOrders/awaitingapprovalpobycode/{poCode}");
+                return order;
+            }
+            catch (Exception )
             {
                 throw;
             }
