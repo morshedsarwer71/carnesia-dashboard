@@ -156,7 +156,7 @@
         </MudTable>
 
         <div class="mt-5 d-flex justify-end">
-            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="() => SubmitBulkPO()">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="() => SubmitBulkPo()">
                 Bulk Submit
             </MudButton>
         </div>
@@ -236,7 +236,7 @@
         createPO.vendorId = vendorId.vendorId;
         createPO.poRcvStoreId = storeId.storeId;
         createPO.description = "Creating po with out description";
-        PurchaseOrder purchaseOrder = new PurchaseOrder
+        var purchaseOrder = new PurchaseOrder
             {
                 createPODTO = createPO,
                 poProductDTOs = products
@@ -245,14 +245,14 @@
         snackbar.Add(result);
         products.Clear();
     }
-    private async Task SubmitBulkPO()
+    private async Task SubmitBulkPo()
     {
         var vendorId = await _vendor.GetVendor(createPO.vendorName);
         var storeId = await _store.GetStore(createPO.storeName);
         createPO.vendorId = vendorId.vendorId;
         createPO.poRcvStoreId = storeId.storeId;
         createPO.description = "Creating po without description";
-        PurchaseOrder purchaseOrder = new PurchaseOrder
+        var purchaseOrder = new PurchaseOrder
         {
             createPODTO = createPO,
             poProductDTOs = poExcelProducts
@@ -287,16 +287,12 @@
     // Autocomplite Search Func
     private async Task<IEnumerable<string>> SupplierSearch(string value)
     {
-        if (string.IsNullOrEmpty(value))
-            return Suppliers;
-        return Suppliers.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return string.IsNullOrEmpty(value) ? Suppliers : Suppliers.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     private async Task<IEnumerable<string>> StoresSearch(string value)
     {
-        if (string.IsNullOrEmpty(value))
-            return Stores;
-        return Stores.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return string.IsNullOrEmpty(value) ? Stores : Stores.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     // Delete Item Modal
