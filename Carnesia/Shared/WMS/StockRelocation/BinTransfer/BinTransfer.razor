@@ -1,0 +1,45 @@
+﻿@using Carnesia.Domain.WMS.BinTransfer
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-end mb-5">
+			<MudItem md="4">
+				<MudTextField T="string" Label="Destination Bin" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudTextField T="string" Label="UID" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+			</MudItem>
+
+			<MudTable Items="@Elements" Hover="true">
+				<HeaderContent>
+					<MudTh>Item Code</MudTh>
+					<MudTh>Product Name</MudTh>
+					<MudTh>Input QTY.</MudTh>
+					<MudTh>BIN</MudTh>
+					<MudTh>Image</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
+					<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+					<MudTd DataLabel="Input QTY.">@context.QTY</MudTd>
+					<MudTd DataLabel="BIN">@context.BIN</MudTd>
+					<MudTd DataLabel="Image">
+						<MudImage Src="@context.Image" Alt="" Elevation="25" Class="rounded-lg"/>
+					</MudTd>
+				</RowTemplate>
+			</MudTable>
+
+			<div class="d-flex justify-end mt-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+			</div>
+		</MudGrid>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<BinTransferDTO> Elements = new List<BinTransferDTO>();
+}

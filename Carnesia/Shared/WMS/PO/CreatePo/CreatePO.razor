@@ -66,7 +66,7 @@
                 <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Disabled="@(!Success)" OnClick="()=>AddProduct(PoProduct)">Add</MudButton>
             </div>
         </MudForm>
-            <MudTable Class="mt-5" Items="@products" Hover="false" Bordered="true" Dense="true" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" CommitEditTooltip="Commit Edit"                  RowEditCancel="ResetItemToOriginalValues" RowEditPreview="BackupItem">
+            <MudTable Class="mt-5" Items="@products" Hover="false" Dense="true">
                 <HeaderContent>
                     <MudTh>SKU</MudTh>
                     <MudTh>Product Name</MudTh>
@@ -83,18 +83,6 @@
                     <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
                     <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() =>OpenDeleteDialog()" /></MudTd>
                 </RowTemplate>
-                <RowEditingTemplate>
-                    <MudTd DataLabel="SKU">@context.sku</MudTd>
-                    <MudTd DataLabel="Product Name">@context.productName</MudTd>
-                    <MudTd DataLabel="QTY">
-                        <MudNumericField @bind-Value="@context.quantity" Required Min="1" />
-                    </MudTd>
-                    <MudTd DataLabel="Lifting Price">
-                        <MudNumericField @bind-Value="@context.liftingPrice" Required Min="0.1" />
-                    </MudTd>
-                    <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
-                    <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" /></MudTd>
-                </RowEditingTemplate>
             </MudTable>
             <div class="mt-5 d-flex justify-end">
                 <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="SubmitPO">Submit</MudButton>
@@ -124,7 +112,7 @@
             </MudButton>
         </div>
 
-        <MudTable Class="mt-5" Items="@poExcelProducts" Hover="false" Bordered="true" Dense="true" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" CommitEditTooltip="Commit Edit"                  RowEditCancel="ResetItemToOriginalValues" RowEditPreview="BackupItem">
+        <MudTable Class="mt-5" Items="@poExcelProducts" Hover="false" Dense="true">
             <HeaderContent>
                 <MudTh>SKU</MudTh>
                 <MudTh>Product Name</MudTh>
@@ -134,25 +122,13 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="SKU">@context.sku</MudTd>
+                <MudTd DataLabel="SKU"><a href="">@context.sku</a></MudTd>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
                 <MudTd DataLabel="QTY">@context.quantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
                 <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
                 <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() => OpenDeleteDialog()" /></MudTd>
             </RowTemplate>
-            <RowEditingTemplate>
-                    <MudTd DataLabel="SKU">@context.sku</MudTd>
-                    <MudTd DataLabel="Product Name">@context.productName</MudTd>
-                    <MudTd DataLabel="QTY">
-                        <MudNumericField @bind-Value="@context.quantity" Required Min="1" />
-                    </MudTd>
-                    <MudTd DataLabel="Lifting Price">
-                        <MudNumericField @bind-Value="@context.liftingPrice" Required Min="0.1" />
-                    </MudTd>
-                    <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
-                    <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" /></MudTd>
-                </RowEditingTemplate>
         </MudTable>
 
         <div class="mt-5 d-flex justify-end">
@@ -171,9 +147,6 @@
     public PoProductDTO PoProduct = new PoProductDTO();
     public List<PoProductDTO> products=new List<PoProductDTO>();
     public List<PoProductDTO> poExcelProducts = new List<PoProductDTO>();
-    
-    // Backup For Edit
-    private PoProductDTO productsBeforeEdit;
 
     // Form Reference
     private MudForm form;
@@ -182,27 +155,12 @@
     private string[] Suppliers;
     private string[] Stores;
 
-    // Backup Item Function
-    private void BackupItem(object element)
-    {
-        productsBeforeEdit = new()
-        {
-            quantity = ((PoProductDTO)element).quantity,
-            liftingPrice = ((PoProductDTO)element).liftingPrice
-        };
-    }
-
-    // Cancel Edit
-    private void ResetItemToOriginalValues(object element)
-    {
-        ((PoProductDTO)element).quantity = productsBeforeEdit.quantity;
-        ((PoProductDTO)element).liftingPrice = productsBeforeEdit.liftingPrice;
-    }
-
     protected override async Task OnInitializedAsync()
     {
         await GetVendors();
     }
+
+
     private async Task UploadFiles(InputFileChangeEventArgs e)
     {
         try
@@ -302,7 +260,7 @@
         DialogService.Show<CreatePODeleteModal>("Delete Item?", options);
     }
 
-    // Delete Item Modal
+    // Modal Sku History
     private void OpenSKUHistoryDialog()
     {
         var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
