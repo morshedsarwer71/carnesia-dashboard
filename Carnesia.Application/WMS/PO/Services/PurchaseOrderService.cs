@@ -5,24 +5,28 @@ using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Carnesia.Application.CMS.Services;
 using Microsoft.AspNetCore.Components.Forms;
 using ClosedXML.Excel;
+using NPOI.SS.UserModel;
+using NPOI.SS.Util;
+using NPOI.XSSF.UserModel;
 
 namespace Carnesia.Application.WMS.PO.Services
 {
     public class PurchaseOrderService : IPurchaseOrder
     {
         private readonly HttpClient _httpClient;
-        public PurchaseOrderService(HttpClient httpClient)
+        private readonly IProduct _product;
+        public PurchaseOrderService(HttpClient httpClient,IProduct product)
         {
             _httpClient = httpClient;
+            _product = product;
         }
         public async Task<string> AddPurchaseOrder(PurchaseOrder purchaseOrder)
         {
@@ -66,11 +70,10 @@ namespace Carnesia.Application.WMS.PO.Services
                     workSheet.Cells[1, 2].Style.Font.Bold = true;
                     workSheet.Cells[1, 2].Style.Border.Top.Style = ExcelBorderStyle.Hair;
                     
-                    workSheet.Cells[1, 3].Value = "Lifting Price";
+                    workSheet.Cells[1, 3].Value = "LiftingPrice";
                     workSheet.Cells[1, 3].Style.Font.Size = 12;
                     workSheet.Cells[1, 3].Style.Font.Bold = true;
                     workSheet.Cells[1, 3].Style.Border.Top.Style = ExcelBorderStyle.Hair;
-
 
                     #endregion
                     //
@@ -83,7 +86,7 @@ namespace Carnesia.Application.WMS.PO.Services
 
                 await jSRuntime.InvokeAsync<object>(
                         "saveAsFile",
-                        "ProductList.xlsx",
+                        "PoProducts.xlsx",
                         Convert.ToBase64String(fileContents));
 
             }
@@ -94,67 +97,96 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
-        public async Task<DataTable> UploadExcelFile(InputFileChangeEventArgs file)
+        public async Task<List<PoProductDTO>> UploadExcelFile(InputFileChangeEventArgs e)
         {
             try
             {
-                DataTable dtTable = new DataTable();
-                return dtTable;
+                var poProducts = new List<PoProductDTO>();
+                DataTable dt = new DataTable();
+                var fileStream = e.File.OpenReadStream();
+                var ms = new MemoryStream();
+                await fileStream.CopyToAsync(ms);
+                fileStream.Close();
+                ms.Position = 0;
+                ISheet sheet;
+                var xsswb = new XSSFWorkbook(ms);
+                sheet = xsswb.GetSheetAt(0);
+                IRow hr = sheet.GetRow(0);
+                var rl = new List<string>();
+                int cc = hr.LastCellNum;
+                for (int j = 0; j < cc; j++)
+                {
+                    ICell cell = hr.GetCell(j);
+                    dt.Columns.Add(cell.ToString());
+                }
+                for (int j = (sheet.FirstRowNum+1); j <= sheet.LastRowNum; j++)
+                {
+                    var r = sheet.GetRow(j);
+                    for (int i = r.FirstCellNum; i < cc; i++)
+                    {
+                        rl.Add(r.GetCell(i).ToString());
+                    }
+                    if (rl.Count>0)
+                    {
+                        dt.Rows.Add(rl.ToArray());
+                    }
+                    rl.Clear();
+                }
                 
+                foreach (DataRow row in dt.Rows)
+                {
+                    var sku = row.Field<string>("SKU");
+                    var qty = Convert.ToInt32(row.Field<string>("Quantity"));
+                    var price=Convert.ToDecimal(row.Field<string>("LiftingPrice"));
+                    var total = qty * price;
+                    var skuProduct = await _product.GetProducBySku(sku);
+                    if (skuProduct!=null)
+                    {
+                        var pop = new PoProductDTO()
+                        {
+                            sku = sku,
+                            quantity = qty,
+                            liftingPrice = price,
+                            TotalPrice = total,
+                            productName = skuProduct.productName
+                        };
+                        poProducts.Add(pop);
+                    }
+                }
+
+                return poProducts.Where(x => x.productName != null).ToList();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
                 throw;
             }
         }
 
-        // public async Task<List<PoProductDTO>> UploadExcelFile(IBrowserFile file)
-        // {
-        //     try
-        //     {
-        //         
-        //         var list = new List<PoProductDTO>();
-        //         using (MemoryStream stream=new MemoryStream())
-        //         {
-        //             
-        //             await file.OpenReadStream(file.Size).CopyToAsync(stream);
-        //             using (ExcelPackage package=new ExcelPackage(stream))
-        //             {
-        //                 ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
-        //                 int colCount = worksheet.Dimension.End.Column;
-        //                 int rowCount = worksheet.Dimension.End.Row;
-        //                 PoProductDTO poProductDto = new PoProductDTO();
-        //                 for (int row = 0; row <= rowCount; row++)
-        //                 {
-        //                     for (int col = 0; col < colCount; col++)
-        //                     {
-        //                         if (col == 1)
-        //                         {
-        //                             poProductDto.sku = worksheet.Cells[row, col].Value.ToString();
-        //                         }
-        //                         else if (col==2)
-        //                         {
-        //                             poProductDto.quantity = 10;
-        //                         }
-        //                         else if (col==3)
-        //                         {
-        //                             poProductDto.liftingPrice = 100;
-        //                         }
-        //                     }
-        //                     list.Add(poProductDto);
-        //                 }
-        //             }
-        //             
-        //         }
-        //
-        //         return list;
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         Console.WriteLine(e);
-        //         throw;
-        //     }
-        // }
+        public async Task<PoProductDTO> AddProduct(PoProductDTO poProductDto)
+        {
+            try
+            {
+                    var skuProduct = await _product.GetProducBySku(poProductDto.sku);
+                    if (skuProduct!=null)
+                    {
+                        var total = poProductDto.liftingPrice * poProductDto.quantity;
+                        var poProd = new PoProductDTO()
+                        {
+                            liftingPrice = poProductDto.liftingPrice,
+                            productName = skuProduct.productName,
+                            quantity = poProductDto.quantity,
+                            sku = skuProduct.productsku,
+                            TotalPrice = total
+                        };
+                        return poProd;
+                    }
+                    return null;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
