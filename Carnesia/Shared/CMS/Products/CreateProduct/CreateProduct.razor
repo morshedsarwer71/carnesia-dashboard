@@ -1,18 +1,20 @@
-﻿@using Carnesia.Domain.CMS.Product
+﻿@using Carnesia.Domain.CMS.Models
+@inject IProduct _product
+@inject ISnackbar _snackbar
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudGrid>
                     <MudItem md="6">
-                        <MudTextField T="string" Label="Product Name" Required="true" RequiredError="Product name is required!"/>
-                        <MudTextField T="string" Label="Product SKU" Required="true" RequiredError="Product SKU is required!"/>
-                        <MudAutocomplete T="string" Label="Brand" ResetValueOnEmptyText="@true" Required="true" RequiredError="Product SKU is required!" />
-                        <MudTextField T="int?" Label="Delivary Day Preorder" Required="true" RequiredError="Delivary Day Preorder is required!"/>
+                        <MudTextField T="string" @bind-Value="productDto.productName" Label="Product Name" Required="true" RequiredError="Product name is required!"/>
+                        <MudTextField T="string" @bind-Value="productDto.productsku" Label="Product SKU" Required="true" RequiredError="Product SKU is required!"/>
+                        <MudAutocomplete T="int" @bind-Value="productDto.brandId" Label="Brand" ResetValueOnEmptyText="@true" Required="true" RequiredError="Product SKU is required!" />
+                        <MudTextField T="int" @bind-Value="productDto.delivaryDayPreorder" Label="Delivary Day Preorder" Required="true" RequiredError="Delivary Day Preorder is required!"/>
                     </MudItem>
                     <MudItem md="6">
-                        <MudTextField T="string" Label="Product Weight" Required="true" RequiredError="Product weight is required!"/>
-                        <MudTextField T="string" Label="Product Dimension" Required="true" RequiredError="Product dimension is required!"/>
-                        <MudTextField Style="margin-top: 0;" T="string" Label="Description" Required="true" RequiredError="Description is required!" Lines="5"/>
+                        <MudTextField T="string" @bind-Value="productDto.weight" Label="Product Weight" Required="true" RequiredError="Product weight is required!"/>
+                        <MudTextField T="string" @bind-Value="productDto.productDimension" Label="Product Dimension" Required="true" RequiredError="Product dimension is required!"/>
+                        <MudTextField Style="margin-top: 0;" T="string" @bind-Value="productDto.description" Label="Description" Required="true" RequiredError="Description is required!" Lines="5"/>
                     </MudItem>
                 </MudGrid>
 
@@ -23,15 +25,31 @@
                 </div>
 
                 <div class="d-flex align-center justify-end mt-6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="AddProduct">Submit</MudButton>
                 </div>
         </MudForm>
 	</MudContainer>
 </MudPaper>
 
 @code {
+    public ProductDTO productDto = new ProductDTO();
     // Form Ref
     private MudForm form;
     private bool success;
     private string[] errors = { };
+
+    private async Task AddProduct()
+    {
+        var product = new CreateProductDTO()
+        {
+           productDTO = productDto
+        };
+        var result = await _product.CreateProduct(product);
+        _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+        _snackbar.Add(result, Severity.Success);
+        
+    }
+    
+    
+
 }

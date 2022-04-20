@@ -1,5 +1,6 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
 @inject IDialogService DialogService
+@inject IPurchaseOrder _order
 
 <MudPaper Class="pa-16 ma-2 mt-10" Elevation="1">
 	<MudContainer Fixed="true">
@@ -23,7 +24,8 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Class="mt-10" Items="@poList" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<POListPoco,bool>(FilterCycleCheck)">
+		@* <MudTable Class="mt-10" Items="@poList" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<POListPoco,bool>(FilterCycleCheck)"> *@
+		<MudTable Class="mt-10" Items="@poList" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped">
 			<ToolBarContent>
 				<MudSpacer />
 				<MudSpacer />
@@ -40,13 +42,13 @@
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Date">@context.Date</MudTd>
-				<MudTd DataLabel="PO Id">@context.POID</MudTd>
-				<MudTd DataLabel="Supplier">@context.Supplier</MudTd>
-				<MudTd DataLabel="Quantity">@context.Quantity</MudTd>
-				<MudTd DataLabel="Amount">@context.Amount</MudTd>
-				<MudTd DataLabel="Status">@context.Status</MudTd>
-				<MudTd DataLabel="Status Updated On">@context.StatusUpdateDate</MudTd>
+				<MudTd DataLabel="Date">@context.orderDate</MudTd>
+				<MudTd DataLabel="PO Id">@context.poCode</MudTd>
+				<MudTd DataLabel="Supplier">@context.vendorName</MudTd>
+				<MudTd DataLabel="Quantity">@context.quatity</MudTd>
+				<MudTd DataLabel="Amount">@context.totalAmount</MudTd>
+				<MudTd DataLabel="Status">@context.poStatus</MudTd>
+				<MudTd DataLabel="Status Updated On">@context.statusUpdateDate</MudTd>
 				<MudTd DataLabel="Action">
 					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" />
 					<MudIconButton Icon="@Icons.Filled.Edit" Color="Color.Success" aria-label="Edit" />
@@ -83,10 +85,15 @@
 	// Serach Term
 	private string searchTerm { get; set; }
 
+	protected override async Task OnInitializedAsync()
+	{
+		poList = await _order.GetPoList();
+	}
+
 	// Search Function
 	private bool FilterCycleCheck(POListPoco item)
 	{
-        if (item.POID.ToLower().Contains(searchTerm.ToLower()) || item.Supplier.ToLower().Contains(searchTerm.ToLower()) || item.Status.ToLower().Contains(searchTerm.ToLower()))
+        if (item.poCode.ToLower().Contains(searchTerm.ToLower()) || item.vendorName.ToLower().Contains(searchTerm.ToLower()) || item.poStatus.ToLower().Contains(searchTerm.ToLower()))
         {
             return true;
         }
