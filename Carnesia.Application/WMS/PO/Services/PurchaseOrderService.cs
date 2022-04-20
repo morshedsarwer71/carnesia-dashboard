@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Carnesia.Application.CMS.Services;
 using Carnesia.Domain.WMS.PO.Models.Awaiting;
+using Carnesia.Domain.WMS.PO.POCO;
+using Carnesia.Domain.WMS.PO.ViewModels.Awaiting;
 using Microsoft.AspNetCore.Components.Forms;
 using ClosedXML.Excel;
 using NPOI.SS.UserModel;
@@ -210,6 +212,46 @@ namespace Carnesia.Application.WMS.PO.Services
             }
             catch (Exception )
             {
+                throw;
+            }
+        }
+
+        public async Task<Response> PoApprove(string poCode)
+        {
+            try
+            {
+                var res = await _httpClient.GetFromJsonAsync<Response>($"PurchaseOrders/poapprove/{poCode}");
+                return res;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<AwaitingPoVM> AwaitingPoDetails(string poCode)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<AwaitingPoVM>($"PurchaseOrders/receivepobycode/{poCode}");
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<POListPoco>> GetPoList()
+        {
+            try
+            {
+                var poList = await _httpClient.GetFromJsonAsync<List<POListPoco>>("PurchaseOrders/approvedpo");
+                return poList;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
                 throw;
             }
         }

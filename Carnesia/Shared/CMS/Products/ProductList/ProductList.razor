@@ -1,5 +1,6 @@
 ﻿@using Carnesia.Domain.Common.POCO
-@using Carnesia.Domain.CMS.Product
+@using Carnesia.Domain.CMS.Models
+@inject IProduct _product
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -10,6 +11,7 @@
                 <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                    Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
+                <MudTh>Sl</MudTh>
                 <MudTh>Name</MudTh>
                 <MudTh>SKU</MudTh>
                 <MudTh>Code</MudTh>
@@ -23,6 +25,7 @@
                 <MudTh>Description</MudTh>
             </HeaderContent>
             <RowTemplate>
+                <MudTd DataLabel="Name">@Increment()</MudTd>
                 <MudTd DataLabel="Name">@context.productName</MudTd>
                 <MudTd DataLabel="SKU">@context.productsku</MudTd>
                 <MudTd DataLabel="Code">@context.productCode</MudTd>
@@ -50,9 +53,20 @@
 </MudPaper>
 
 @code {
+    public int serial { get; set; } = 0;
+
+    private int Increment()
+    {
+        return serial++;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await _product.GetProducts();
+    }
+
     // Table Customization
     private TableCommon tableCommon = new TableCommon();
 
     // Table Content
-    private IEnumerable<ProductDTO> Elements = new List<ProductDTO>();
+    private List<ProductDTO> Elements = new List<ProductDTO>();
 }

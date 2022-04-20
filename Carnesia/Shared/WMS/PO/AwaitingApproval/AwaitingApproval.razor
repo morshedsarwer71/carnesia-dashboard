@@ -3,6 +3,7 @@
 @using Carnesia.Domain.WMS.PO.Models.Awaiting
 @inject IDialogService DialogService
 @inject IPurchaseOrder _order
+@inject ISnackbar snackbar
 
 <MudPaper Class="ma-2 pa-16" Elevation="1">
 	<MudContainer Fixed="true">
@@ -39,8 +40,8 @@
 				<MudTd DataLabel="Quantity">@context.quatity</MudTd>
 				<MudTd DataLabel="Amount">@context.totalAmount</MudTd>
 				<MudTd DataLabel="Action">
-					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" OnClick="OpenPOListDetailsDialog" />
-					<MudIconButton Icon="@Icons.Filled.Check" Color="Color.Success" aria-label="Approve" />
+					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" OnClick="() => OpenPOListDetailsDialog(context.poCode)" />
+					<MudIconButton Icon="@Icons.Filled.Check" Color="Color.Success" aria-label="Approve" OnClick="() => ChangePoStatus(context.poCode)" />
 				</MudTd>
 			</RowTemplate>
 			<PagerContent>
@@ -61,6 +62,7 @@
 @code {
 	// Filter
 	private string POID { get; set; }
+	
 
 	// Table Loading BAr
 	private bool loadingBar { get; set; } = true;
@@ -87,6 +89,14 @@
 		awaitingPos.Clear();
 		awaitingPos = await _order.AwaitingPoByPoCode(POID);
 	}
+	private async Task ChangePoStatus(string poCode)
+	{
+		var result = await _order.PoApprove(poCode);
+		snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+		awaitingPos.Clear();
+		awaitingPos = await _order.AwaitingPo();
+		snackbar.Add(result.Message, Severity.Success);
+	}
 
 	// Search Function
 	private bool FilterCycleCheck(AwaitingPo item)
@@ -99,9 +109,10 @@
     }
 
 	// PO List Details Modal
-    private void OpenPOListDetailsDialog()
+    private void OpenPOListDetailsDialog(string poCode)
     {
+	    var parameters = new DialogParameters { ["poCode"]=poCode };
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth=true, CloseButton=true, MaxWidth=MaxWidth.Large };
-        DialogService.Show<POListDetails>("", options);
+        DialogService.Show<POListDetails>("", parameters,options);
     }
 }

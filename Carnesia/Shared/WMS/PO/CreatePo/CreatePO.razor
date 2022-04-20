@@ -14,7 +14,6 @@
 @inject IJSRuntime iJSRuntime
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Data
-@using Carnesia.Domain.CMS.Product
 
 
 
@@ -177,7 +176,7 @@
     }
     private async Task Download()
     {
-            await _order.DownLoadExcel(iJSRuntime);
+        await _order.DownLoadExcel(iJSRuntime);
     }
 
     private async Task GetVendors()

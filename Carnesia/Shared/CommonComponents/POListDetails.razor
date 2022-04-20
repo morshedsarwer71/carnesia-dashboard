@@ -1,6 +1,9 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.WMS.PO.Models
+@using Carnesia.Domain.WMS.PO.ViewModels.Awaiting
 @inject ISnackbar Snackbar
+@inject IPurchaseOrder _order
 
 <MudDialog DisableSidePadding="true">
     <DialogContent>
@@ -9,15 +12,15 @@
                 <MudContainer Fixed="true">
                     <MudPaper Width="400px" Square="true">
                         <MudList Clickable="true">
-                            <MudListItem><MudText Typo="Typo.h4">PO ID: 123456</MudText></MudListItem>
+                            <MudListItem><MudText Typo="Typo.h4">PO ID: @poCode</MudText></MudListItem>
                             <MudDivider />
-                            <MudListItem>Created On: 22-Jan-2022</MudListItem>
+                            <MudListItem>Created On: @awaitingPoVm.orderDate</MudListItem>
                             <MudDivider />
-                            <MudListItem>Supplier: Arham Trade International</MudListItem>
+                            <MudListItem>Supplier: @awaitingPoVm.vendorName</MudListItem>
                             <MudDivider />
-                            <MudListItem>Receiving Warehouse: Dhanmondi-W102</MudListItem>
+                            <MudListItem>Receiving Warehouse: @awaitingPoVm.rcvStoreName</MudListItem>
                             <MudDivider />
-                            <MudListItem>Arriving Time: 24-Jan-2022 12:00:00 PM</MudListItem>
+                            <MudListItem>Arriving Time: @awaitingPoVm.rcvDate</MudListItem>
                         </MudList>
                     </MudPaper>
                 </MudContainer>
@@ -25,35 +28,35 @@
 
         <MudPaper Class="pa-16 ma-2">
 	        <MudContainer Fixed="true">
-	            <MudTable Items="@Elements" MultiSelection="true" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" CanCancelEdit="@true" @bind-SelectedItems="@selectedItems"                              SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated"))" RowEditPreview="BackupItem"                                                  RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
+	            <MudTable Items="@awaitingPoVm.products" MultiSelection="true" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" CanCancelEdit="@true" @bind-SelectedItems="@selectedItems" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated"))" RowEditPreview="BackupItem"                                                  RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
                     <ToolBarContent>
                         <MudText Typo="Typo.h6">PO List Details</MudText>
                         <MudSpacer />
                     </ToolBarContent>
                     <HeaderContent>
-                        <MudTh><MudTableSortLabel SortBy="new Func<POListViewDetailsPoco, object>(x=>x.SKU)">SKU Code</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<POListViewDetailsPoco, object>(x=>x.Name)">Product Name</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<POListViewDetailsPoco, object>(x=>x.QTY)">PO Quantity</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<POListViewDetailsPoco, object>(x=>x.LiftingPrice)">Lifting Price</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.sku)">SKU Code</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.productName)">Product Name</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.quantity)">PO Quantity</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.liftingPrice)">Lifting Price</MudTableSortLabel></MudTh>
                         <MudTh>Value</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd DataLabel="SKU Code">@context.SKU</MudTd>
-                        <MudTd DataLabel="Name">@context.Name</MudTd>
-                        <MudTd DataLabel="PO Quantity">@context.QTY</MudTd>
-                        <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
-                        <MudTd DataLabel="Value">@(@context.QTY * @context.LiftingPrice)</MudTd>
+                        <MudTd DataLabel="SKU Code">@context.sku</MudTd>
+                        <MudTd DataLabel="Name">@context.productName</MudTd>
+                        <MudTd DataLabel="PO Quantity">@context.quantity</MudTd>
+                        <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
+                        <MudTd DataLabel="Value">@context.TotalPrice</MudTd>
                     </RowTemplate>
                     <RowEditingTemplate>
-                        <MudTd DataLabel="SKU Code">@context.SKU</MudTd>
-                        <MudTd DataLabel="Name">@context.Name</MudTd>
+                        <MudTd DataLabel="SKU Code">SKU</MudTd>
+                        <MudTd DataLabel="Name">SKU</MudTd>
                         <MudTd DataLabel="PO Quantity">
-                            <MudTextField @bind-Value="@context.QTY" Required />
+                            @* <MudTextField @bind-Value="SKU" Required /> *@
                         </MudTd>
                         <MudTd DataLabel="Lifting Price">
-                            <MudNumericField @bind-Value="@context.LiftingPrice" Required Min="1" />
+                            @* <MudNumericField @bind-Value="SKU" Required Min="1" /> *@
                         </MudTd>
-                        <MudTd DataLabel="Value">@(@context.QTY * @context.LiftingPrice)</MudTd>
+                        <MudTd DataLabel="Value">SKU</MudTd>
                     </RowEditingTemplate>
                     <PagerContent>
                         <MudTablePager />
@@ -94,32 +97,36 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
+    [Parameter]
+    public string poCode { get; set; }
+
     // Table Customization
     private TableCommon tableCommon = new TableCommon();
-
-    // Table Content
-    private IEnumerable<POListViewDetailsPoco> Elements = new List<POListViewDetailsPoco>();
-
     // Selected Item
-    private HashSet<POListViewDetailsPoco> selectedItems = new HashSet<POListViewDetailsPoco>();
+    private HashSet<PoProductDTO> selectedItems = new HashSet<PoProductDTO>();
 
     // Before Edit
-    private POListViewDetailsPoco beforeEdit;
+    private PoProductDTO beforeEdit;
 
+    public AwaitingPoVM awaitingPoVm = new AwaitingPoVM();
+
+    protected override async Task OnInitializedAsync()
+    {
+        awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+    }
     // Backup Item 
     private void BackupItem(object element)
     {
         beforeEdit = new()
         {
-            QTY = ((POListViewDetailsPoco)element).QTY,
-            LiftingPrice = ((POListViewDetailsPoco)element).LiftingPrice
+            quantity = ((PoProductDTO)element).quantity,
+            liftingPrice = ((PoProductDTO)element).liftingPrice
         };
     }
-
     // Reset Items If Edit Cancel
     private void ResetItemToOriginalValues(object element)
     {
-        ((POListViewDetailsPoco)element).QTY = beforeEdit.QTY;
-        ((POListViewDetailsPoco)element).LiftingPrice = beforeEdit.LiftingPrice;
+        ((PoProductDTO)element).quantity = beforeEdit.quantity;
+        ((POListViewDetailsPoco)element).LiftingPrice = beforeEdit.liftingPrice;
     }
 }
