@@ -1,0 +1,59 @@
+﻿@page "/po-report"
+@using Carnesia.Domain.WMS.POReport
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center mb-5">
+			<MudItem lg="3" md="6">
+				<MudAutocomplete T="string" Label="Warehouse" ResetValueOnEmptyText="true"/>
+			</MudItem>
+            <MudItem lg="3" md="6">
+				<MudTextField T="string" Label="PO ID" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDateRangePicker Label="Date Range" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="SKU" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end mb-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
+        </div>
+
+		<MudTable Items="@Elements" Hover="true">
+            <HeaderContent>
+                <MudTh>PO ID</MudTh>
+                <MudTh>Receiving Warehouse</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Lifting Price</MudTh>
+                <MudTh>PO Qty</MudTh>
+                <MudTh>Receiving Qty</MudTh>
+                <MudTh>Received Value</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="PO ID">@context.POID</MudTd>
+                <MudTd DataLabel="Receiving Warehouse">@context.ReceivingWH</MudTd>
+                <MudTd DataLabel="SKU">@context.SKU</MudTd>
+                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
+                <MudTd DataLabel="PO Qty">@context.POQTY</MudTd>
+                <MudTd DataLabel="Receiving Qty">@context.ReceivingQTY</MudTd>
+                <MudTd DataLabel="Received Value">@context.ReceivedValue</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<POReportDTO> Elements = new List<POReportDTO>();
+}

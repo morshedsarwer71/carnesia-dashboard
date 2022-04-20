@@ -1,0 +1,53 @@
+﻿@using Carnesia.Domain.WMS.BinAudit
+@inject IDialogService DialogService
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center mb-5">
+			<MudItem md="4">
+				<MudTextField T="string" Label="Bin Code" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudTextField T="string" Label="Scan Found UID" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Hover="true">
+			<HeaderContent>
+				<MudTh>Item Code</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>QTY</MudTh>
+				<MudTh>Found QTY</MudTh>
+				<MudTh>Missing QTY</MudTh>
+				<MudTh>BIN</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
+				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+				<MudTd DataLabel="QTY">@context.QTY</MudTd>
+				<MudTd DataLabel="Fount Qty">@context.FoundQTY</MudTd>
+				<MudTd DataLabel="Missing QTY">@context.MissingQTY</MudTd>
+				<MudTd DataLabel="BIN">@context.BIN</MudTd>
+			</RowTemplate>
+		</MudTable>
+		
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<BinAuditDTO> Elements = new List<BinAuditDTO>();
+
+	// Modal
+	private void OpenDialog()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<BinAuditModal>("Submit Bin Audit?", options);
+    }
+ }

@@ -1,0 +1,43 @@
+﻿@page "/counting-report"
+@using Carnesia.Shared.WMS.CycleCount.CountReport.BinAudit
+@using Carnesia.Shared.WMS.CycleCount.CountReport.CountByPO
+@using Carnesia.Shared.WMS.CycleCount.CountReport.BySKU
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BinAudit ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinAudit)">@BinAudit</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CountByPO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CountByPO)">@CountByPO</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BySKU ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BySKU)">@BySKU</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == BinAudit)
+{
+    <BinAudit />
+}
+else if(CurrentPage == CountByPO)
+{
+    <CountByPO />
+}
+else if(CurrentPage == BySKU)
+{
+    <BySKU />
+}
+
+@code {
+    // Pages
+    private string BinAudit = "Bin Audit";
+    private string CountByPO = "Count By PO";
+    private string BySKU = "By SKU";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Bin Audit";
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

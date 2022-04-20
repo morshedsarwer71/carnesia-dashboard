@@ -1,0 +1,58 @@
+﻿@using Carnesia.Domain.WMS.CreateByPO
+@inject IDialogService DialogService
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center mb-5">
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="PO ID" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Bin Code" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Scan Found UID" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Hover="true">
+			<HeaderContent>
+				<MudTh>PO ID</MudTh>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>BIN</MudTh>
+				<MudTh>Available Qty</MudTh>
+				<MudTh>Found</MudTh>
+				<MudTh>Missing</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="PO ID">@context.POID</MudTd>
+				<MudTd DataLabel="SKU">@context.SKU</MudTd>
+				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+				<MudTd DataLabel="BIN">@context.BIN</MudTd>
+				<MudTd DataLabel="Available Qty">@context.AvailableQTY</MudTd>
+				<MudTd DataLabel="Fount">@context.Found</MudTd>
+				<MudTd DataLabel="Missing">@context.Missing</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<CreateByPODTO> Elements = new List<CreateByPODTO>();
+
+	// Modal
+	private void OpenDialog()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<CountByPOModal>("Submit Count By PO?", options);
+    }
+}
