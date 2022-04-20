@@ -65,7 +65,7 @@
                 <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Disabled="@(!Success)" OnClick="()=>AddProduct(PoProduct)">Add</MudButton>
             </div>
         </MudForm>
-            <MudTable Class="mt-5" Items="@products" Hover="false" Bordered="true" Dense="true">
+            <MudTable Class="mt-5" Items="@products" Hover="false" Dense="true">
                 <HeaderContent>
                     <MudTh>SKU</MudTh>
                     <MudTh>Product Name</MudTh>
@@ -111,7 +111,7 @@
             </MudButton>
         </div>
 
-        <MudTable Class="mt-5" Items="@poExcelProducts" Hover="false" Bordered="true" Dense="true">
+        <MudTable Class="mt-5" Items="@poExcelProducts" Hover="false" Dense="true">
             <HeaderContent>
                 <MudTh>SKU</MudTh>
                 <MudTh>Product Name</MudTh>
@@ -121,7 +121,7 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="SKU">@context.sku</MudTd>
+                <MudTd DataLabel="SKU"><a href="">@context.sku</a></MudTd>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
                 <MudTd DataLabel="QTY">@context.quantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
@@ -158,6 +158,8 @@
     {
         await GetVendors();
     }
+
+
     private async Task UploadFiles(InputFileChangeEventArgs e)
     {
         try
@@ -257,7 +259,7 @@
         DialogService.Show<CreatePODeleteModal>("Delete Item?", options);
     }
 
-    // Delete Item Modal
+    // Modal Sku History
     private void OpenSKUHistoryDialog()
     {
         var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };

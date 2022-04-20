@@ -1,0 +1,38 @@
+﻿@using Carnesia.Domain.WMS.BinDetails
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid>
+			<MudItem md="4">
+				<MudTextField T="string" Label="Bin Number" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Hover="true">
+            <HeaderContent>
+                <MudTh>Item Code</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>QTY</MudTh>
+                <MudTh>BIN</MudTh>
+                <MudTh>Download CSV</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
+                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="QTY">@context.QTY</MudTd>
+                <MudTd DataLabel="BIN">@context.BIN</MudTd>
+                <MudTd DataLabel="Download CSV">
+                    <MudButton Color="Color.Primary">Download CSV</MudButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<BinDetailsDTO> Elements = new List<BinDetailsDTO>();
+}

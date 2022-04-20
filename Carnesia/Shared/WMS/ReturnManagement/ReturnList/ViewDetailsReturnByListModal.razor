@@ -1,0 +1,54 @@
+﻿@using Carnesia.Domain.WMS.ReturnManagement.POCO
+
+<MudDialog DisableSidePadding="true">
+	<DialogContent>
+		<div Style="max-height: 90vh; overflow-y: scroll">
+			<MudPaper Class="pa-10 ma-2">
+				<MudContainer Fixed="true">
+					<MudText>Return Warehouse: Central Warehouse-W100</MudText>
+					<MudText>Return Number: 345678</MudText>
+					<MudText>Created on: 14-Feb-2022 2:00 PM</MudText>
+					<MudText>Created by:</MudText>
+					<MudText>Updated by:</MudText>
+					<MudText>Last Status Updated on:</MudText>
+					<MudText>Supplier:</MudText>
+
+					<MudTable Class="my-5" Items="@Elements" Hover="true">
+						<HeaderContent>
+							<MudTh>SKU</MudTh>
+							<MudTh>Sign</MudTh>
+							<MudTh>Name</MudTh>
+							<MudTh>Position</MudTh>
+							<MudTh>Molar mass</MudTh>
+						</HeaderContent>
+						<RowTemplate>
+							<MudTd DataLabel="SKU">@context.SKU</MudTd>
+							<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+							<MudTd DataLabel="QTY.">@context.QTY</MudTd>
+							<MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
+							<MudTd DataLabel="Total Cost">@context.TotalCost</MudTd>
+							<MudTd DataLabel="Action">
+								<MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" />
+							</MudTd>
+						</RowTemplate>
+					</MudTable>
+
+					<MudText>Total QTY: 10</MudText>
+					<MudText>Grand Total: 6000</MudText>
+
+					<div class="d-flex justify-end g-3">
+						<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+						<MudButton Variant="Variant.Filled" Color="Color.Success">Print</MudButton>
+					</div>
+				</MudContainer>
+			</MudPaper>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	// Table Content
+	private IEnumerable<ViewDetailsForReturnListPoco> Elements = new List<ViewDetailsForReturnListPoco>();
+}

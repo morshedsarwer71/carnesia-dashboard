@@ -1,0 +1,43 @@
+﻿@page "/putaway"
+@using Carnesia.Shared.WMS.TO.BinInscan
+@using Carnesia.Shared.WMS.TO.BinDetails
+@using Carnesia.Shared.WMS.TO.TrackUID
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BinInscan ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinInscan)">@BinInscan</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BinDetails ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinDetails)">@BinDetails</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == TrackUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(TrackUID)">@TrackUID</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if (CurrentPage == BinInscan)
+{
+    <BinInscan />
+}
+else if(CurrentPage == BinDetails)
+{
+    <BinDetails />
+}
+else if(CurrentPage == TrackUID)
+{
+    <TrackUID />
+}
+
+@code {
+    // Pages
+    private string BinInscan = "Bin Inscan";
+    private string BinDetails = "Bin Details";
+    private string TrackUID = "Track UID";
+
+    // Current Page 
+    private string CurrentPage { get; set; } = "Bin Inscan";
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

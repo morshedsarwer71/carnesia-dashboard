@@ -1,0 +1,92 @@
+﻿@using Carnesia.Domain.WMS.BinInscan
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
+            <MudText Class="px-15 py-2" Typo="Typo.h6">Bin Inscan</MudText>
+        </div>
+		<MudGrid>
+			<MudItem md="4">
+				<MudTextField T="string" Label="Bin Number" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudTextField T="string" Label="UID" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary">Add</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@SingleBin" Hover="true">
+			<HeaderContent>
+				<MudTh>Item Code</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Input QTY</MudTh>
+				<MudTh>BIN</MudTh>
+				<MudTh>Image</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
+				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+				<MudTd DataLabel="Input QTY">@context.InputQTY</MudTd>
+				<MudTd DataLabel="BIN">@context.BIN</MudTd>
+				<MudTd DataLabel="Image">
+					<MudImage Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+				</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+		<div class="mt-5 d-flex justify-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
+            <MudText Class="px-15 py-2" Typo="Typo.h6">Bulk Bin Inscan</MudText>
+        </div>
+
+		<MudGrid>
+			<MudItem md="4">
+				<MudTextField T="string" Label="Bin Number" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudTextField T="string" Label="PO ID" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary">Add</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@BulkBin" Hover="true">
+			<HeaderContent>
+				<MudTh>Item Code</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Input QTY</MudTh>
+				<MudTh>BIN</MudTh>
+				<MudTh>Image</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
+				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+				<MudTd DataLabel="Input QTY">@context.InputQTY</MudTd>
+				<MudTd DataLabel="BIN">@context.BIN</MudTd>
+				<MudTd DataLabel="Image">
+					<MudImage Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+				</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+		<div class="mt-5 d-flex justify-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Bulk Submit</MudButton>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<BinInscanDTO> SingleBin = new List<BinInscanDTO>();
+	private IEnumerable<BinInscanDTO> BulkBin = new List<BinInscanDTO>();
+}
