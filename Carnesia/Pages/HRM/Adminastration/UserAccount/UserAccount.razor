@@ -1,0 +1,36 @@
+﻿@page "/user-account"
+@using Carnesia.Shared.HRM.Adminastration.UserAccount.UserList
+@using Carnesia.Shared.HRM.Adminastration.UserAccount.NewUser
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == UserList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(UserList)">@UserList</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == NewUser ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(NewUser)">@NewUser</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == UserList)
+{
+    <UserList />
+}
+else if(CurrentPage == NewUser)
+{
+    <NewUser />
+}
+
+@code {
+    // Pages
+    private string UserList = "User List";
+    private string NewUser = "New User";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "User List";
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

@@ -1,0 +1,59 @@
+﻿@using Carnesia.Domain.WMS.AllWarehouseStock
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem lg="3" md="6">
+				<MudAutocomplete T="string" Label="Warehouse" ResetValueOnEmptyText="true"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="SKU" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudAutocomplete T="string" Label="Category" ResetValueOnEmptyText="true"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+        <div class="d-flex justify-end mb-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
+        </div>
+
+		<MudTable Items="@Elements" Hover="true">
+            <HeaderContent>
+                <MudTh>SKU</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>COGS</MudTh>
+                <MudTh>MRP</MudTh>
+                <MudTh>Selling Price</MudTh>
+                <MudTh>Central Warehouse-W100</MudTh>
+                <MudTh>Dhanmondi-W101</MudTh>
+                <MudTh>Mirpur-W102</MudTh>
+                <MudTh>Total Qty</MudTh>
+                <MudTh>Total COGS</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="SKU">@context.SKU</MudTd>
+                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="COGS">@context.COGS</MudTd>
+                <MudTd DataLabel="MRP">@context.MRP</MudTd>
+                <MudTd DataLabel="Selling Price">@context.SellingPrice</MudTd>
+                <MudTd DataLabel="Central Warehouse-W100">@context.CentralWH</MudTd>
+                <MudTd DataLabel="Dhanmondi-W101">@context.DhanmondiWH</MudTd>
+                <MudTd DataLabel="Mirpur-W102">@context.MirpurWH</MudTd>
+                <MudTd DataLabel="Total Qty">@context.TotalQTY</MudTd>
+                <MudTd DataLabel="Total COGS">@context.TotalCOGS</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<AllwarehouseStockDTO> Elements = new List<AllwarehouseStockDTO>();
+}

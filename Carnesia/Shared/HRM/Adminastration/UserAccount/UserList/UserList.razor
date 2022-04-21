@@ -1,15 +1,13 @@
 ﻿@using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.WMS.Adminastration.POCO
-@inject IDialogService DialogService
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" >
             <ToolBarContent>
-                <MudButton OnClick="OpenNewUserDialog" Variant="Variant.Filled" Color="Color.Primary">New User</MudButton>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                    Class="mt-0"/> 
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/> 
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>Name</MudTh>
@@ -40,16 +38,9 @@
 </MudPaper>
 
 @code {
-    // Table Customization
+	// Table Customization
     private TableCommon tableCommon = new TableCommon();
 
     // Table Content
     private IEnumerable<UserListPoco> Elements = new List<UserListPoco>(); 
-
-    // New user Modal
-    private void OpenNewUserDialog()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        DialogService.Show<AddUserModal>("New User", options);
-    }
 }

@@ -1,72 +1,38 @@
 ﻿@page "/vendor"
-@inject HttpClient Http
-@inject IDialogService DialogService
-@using System.Net.Http.Json
-@using Carnesia.Domain.Vendor.POCO
-@using Carnesia.Domain.Common.POCO
-@using Carnesia.Shared.WMS.Vendor
+@using Carnesia.Shared.VendorManagement.VendorList
+@using Carnesia.Shared.VendorManagement.NewVendor
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2">
-	<MudContainer Fixed="true">
-		<MudTable Items="@Vendors" Dense="@table.Dense" Hover="@table.Hover" Bordered="@table.Bordered" Striped="@table.Striped" Filter="new Func<VendorPoco,bool>(FilterCycleCheck)">
-            <ToolBarContent>
-                <MudButton OnClick="OpenCreateVendor" Variant="Variant.Filled" Color="Color.Primary">Create Vendor</MudButton>
-                <MudSpacer />
-                <MudSpacer />
-                <MudTextField @bind-Value="table.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                             Class="mt-0"/>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>Vendor Name</MudTh>
-                <MudTh>Initial</MudTh>
-                <MudTh>Owner</MudTh>
-                <MudTh>Phone Number</MudTh>
-                <MudTh>Bank Account Details</MudTh>
-                <MudTh>Manager Name</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Vendor Name">@context.name</MudTd>
-                <MudTd DataLabel="Initial">@context.initial</MudTd>
-                <MudTd DataLabel="Owner">@context.owner</MudTd>
-                <MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
-                <MudTd DataLabel="Bank Account Details">@context.bankAccountDetails</MudTd>
-                <MudTd DataLabel="Manager Name">@context.managerName</MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
-	</MudContainer>
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == VendorList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(VendorList)">@VendorList</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == NewVendor ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(NewVendor)">@NewVendor</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
 </MudPaper>
 
+@if (CurrentPage == VendorList)
+{
+    <VendorList />
+}
+else if(CurrentPage == NewVendor)
+{
+    <NewVendor />
+}
+
+
 @code {
-    // Table Content
-    private IEnumerable<VendorPoco> Vendors = new List<VendorPoco>();
+    // Pages
+    private string VendorList = "Vendor List";
+    private string NewVendor = "New Vendor";
 
-    // Table Customization
-    public TableCommon table = new TableCommon();
+    // Current Page
+    private string CurrentPage { get; set; } = "Vendor List";
 
-
-    // Page On Load
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    Vendors = await Http.GetFromJsonAsync<List<VendorPoco>>("https://carnesiaapi.bespokeit.io/api/Vendors");
-    //}
-
-    // Search Function
-    private bool FilterCycleCheck(VendorPoco item)
+    // Change Page
+    private void ChangePage(string page)
     {
-        if (item.name.ToLower().Contains(table.SearchTerm.ToLower()) || item.phoneNumber.ToLower().Contains(table.SearchTerm.ToLower()))
-        {
-            return true;
-        }
-        return false;
-    }
-
-    // Print Label Modal
-    private void OpenCreateVendor()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        DialogService.Show<AddVendorModal>("Create Vendor", options);
+        CurrentPage = page;
     }
 
 }

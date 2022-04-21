@@ -1,0 +1,53 @@
+﻿@page "/report"
+@using Carnesia.Shared.WMS.Report.AllWarehouseStock
+@using Carnesia.Shared.WMS.Report.BinList
+@using Carnesia.Shared.WMS.Report.POReport
+@using Carnesia.Shared.WMS.Report.UIDReport
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == AllWarehouseStock ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AllWarehouseStock)">
+                @AllWarehouseStock
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BinList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinList)">@BinList</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == POReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(POReport)">@POReport</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == UIDReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(UIDReport)">@UIDReport</MudButton>
+
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == AllWarehouseStock)
+{
+    <AllWarehouseStock />
+}
+else if (CurrentPage == BinList)
+{
+    <BinList />
+}
+else if (CurrentPage == POReport)
+{
+    <POReport />
+}
+else if (CurrentPage == UIDReport)
+{
+    <UIDReport />
+}
+
+@code {
+    // Pages
+    private string AllWarehouseStock = "All Warehouse Stock";
+    private string BinList = "BIN List";
+    private string POReport = "PO Report";
+    private string UIDReport = "UID Report";
+    // Current Page
+    private string CurrentPage { get; set; } = "All Warehouse Stock";
+
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

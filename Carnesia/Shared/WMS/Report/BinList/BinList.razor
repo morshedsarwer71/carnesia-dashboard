@@ -1,0 +1,56 @@
+﻿@using Carnesia.Domain.WMS.BinList
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem lg="3" md="6">
+				<MudAutocomplete T="string" Label="Warehouse" ResetValueOnEmptyText="true"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="BIN" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Active")" />
+					<MudSelectItem Value="@("Deactive")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end mb-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Hover="true">
+            <HeaderContent>
+                <MudTh>BIN</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Warehouse</MudTh>
+                <MudTh>Created on</MudTh>
+                <MudTh>Created by</MudTh>
+                <MudTh>Current Capacity</MudTh>
+                <MudTh>Current Stock</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="BIN">@context.BIN</MudTd>
+                <MudTd DataLabel="Status">@context.Status</MudTd>
+                <MudTd DataLabel="Warehouse">@context.Warehouse</MudTd>
+                <MudTd DataLabel="Created on">@context.CreationDate</MudTd>
+                <MudTd DataLabel="Created by">@context.CreatedBy</MudTd>
+                <MudTd DataLabel="Current Capacity">@context.CurrentCap</MudTd>
+                <MudTd DataLabel="Current Stock">@context.CurrentStock</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<BinListDTO> Elements = new List<BinListDTO>();
+}

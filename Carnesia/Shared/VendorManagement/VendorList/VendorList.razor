@@ -1,0 +1,48 @@
+﻿@using Carnesia.Domain.Vendor.POCO
+@using Carnesia.Domain.Common.POCO
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Vendors" Dense="@table.Dense" Hover="@table.Hover" Bordered="@table.Bordered" Striped="@table.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="table.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                             Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Vendor Name</MudTh>
+                <MudTh>Initial</MudTh>
+                <MudTh>Owner</MudTh>
+                <MudTh>Phone Number</MudTh>
+                <MudTh>Bank Account Details</MudTh>
+                <MudTh>Manager Name</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Vendor Name">@context.name</MudTd>
+                <MudTd DataLabel="Initial">@context.initial</MudTd>
+                <MudTd DataLabel="Owner">@context.owner</MudTd>
+                <MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+                <MudTd DataLabel="Bank Account Details">@context.bankAccountDetails</MudTd>
+                <MudTd DataLabel="Manager Name">@context.managerName</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@table.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@table.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@table.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@table.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Table Content
+    private IEnumerable<VendorPoco> Vendors = new List<VendorPoco>();
+
+    // Table Customization
+    public TableCommon table = new TableCommon();
+}

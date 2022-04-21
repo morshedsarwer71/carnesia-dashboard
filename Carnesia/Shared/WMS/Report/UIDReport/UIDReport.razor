@@ -1,0 +1,102 @@
+﻿@using Carnesia.Domain.WMS.UIDReport
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem lg="3" md="6">
+				<MudAutocomplete T="string" Label="Warehouse" ResetValueOnEmptyText="true"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="PO" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDateRangePicker Label="Action Date Range" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Received")" />
+					<MudSelectItem Value="@("In BIN")" />
+					<MudSelectItem Value="@("To Created")" />
+					<MudSelectItem Value="@("To Received")" />
+					<MudSelectItem Value="@("Transferred")" />
+					<MudSelectItem Value="@("Missing")" />
+					<MudSelectItem Value="@("Packed")" />
+					<MudSelectItem Value="@("In Transit")" />
+					<MudSelectItem Value="@("Delivered")" />
+					<MudSelectItem Value="@("Damaged")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="SKU" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Team" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Inventory")" />
+					<MudSelectItem Value="@("E-Com")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDateRangePicker Label="PO Creation Date Range" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDateRangePicker Label="PO Closed Date Range" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end mb-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Hover="true">
+            <HeaderContent>
+                <MudTh>PO Created on</MudTh>
+                <MudTh>Po Closed on</MudTh>
+                <MudTh>PO ID</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>UID</MudTh>
+                <MudTh>Lifting Price</MudTh>
+                <MudTh>Expiry Date</MudTh>
+                <MudTh>Expiry Status</MudTh>
+                <MudTh>Last Order</MudTh>
+                <MudTh>Last TO ID</MudTh>
+                <MudTh>Last Picklist ID</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Status Updated on</MudTh>
+                <MudTh>Team</MudTh>
+                <MudTh>Status Updated by</MudTh>
+                <MudTh>Last BIN</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="PO Created on">@context.PoCreationDate</MudTd>
+                <MudTd DataLabel="Po Closed on">@context.PoCloseDate</MudTd>
+                <MudTd DataLabel="PO ID">@context.POID</MudTd>
+                <MudTd DataLabel="SKU">@context.SKU</MudTd>
+                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="UID">@context.UID</MudTd>
+                <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
+                <MudTd DataLabel="Expiry Date">@context.ExpiryDate</MudTd>
+                <MudTd DataLabel="Expiry Status">@context.ExpiryStatus</MudTd>
+                <MudTd DataLabel="Last Order">@context.LastOrder</MudTd>
+                <MudTd DataLabel="Last TO ID">@context.LastTOID</MudTd>
+                <MudTd DataLabel="Last Picklist ID">@context.LastPickListID</MudTd>
+                <MudTd DataLabel="Status">@context.Status</MudTd>
+                <MudTd DataLabel="Status Updated on">@context.StatusUpdateDate</MudTd>
+                <MudTd DataLabel="Team">@context.Team</MudTd>
+                <MudTd DataLabel="Status Updated by">@context.StatusUpdateBy</MudTd>
+                <MudTd DataLabel="Last BIN">@context.LastBin</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// table Content
+	private IEnumerable<UIDReportDTO> Elements = new List<UIDReportDTO>();
+}

@@ -1,0 +1,37 @@
+﻿<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudGrid>
+				<MudItem md="6">
+					<MudTextField T="string" Label="First Name" Required="true" RequiredError="First name is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField T="string" Label="Last Name" Required="true" RequiredError="Last name is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField T="string" Label="Username" Required="true" RequiredError="Username is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField T="string" Label="Phone Number" Required="true" RequiredError="Phone number is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudAutocomplete T="string" Label="Store" ResetValueOnEmptyText="@true" />
+				</MudItem>
+			</MudGrid>
+
+			<div class="d-flex align-center justify-end mt-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+            </div>
+		</MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Form ref
+    private MudForm? form;
+    private bool success;
+    private string[] errors = {};
+}

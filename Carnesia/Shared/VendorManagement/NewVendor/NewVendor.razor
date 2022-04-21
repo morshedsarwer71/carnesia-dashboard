@@ -1,0 +1,38 @@
+﻿
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudGrid>
+				<MudItem md="6">
+					<MudTextField T="string" Label="Vendor Name" Required="true" RequiredError="Vendor name is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField T="string" Label="Phone Number" Required="true" RequiredError="Phone number is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField T="string" Label="Initial" Required="true" RequiredError="Initial is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField T="string" Label="Owner" Required="true" RequiredError="Owner is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField T="string" Label="Manager Name" Required="true" RequiredError="Manager name is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField T="string" Label="Bank Account Details" Required="true" RequiredError="Bank account details is required!"/>
+				</MudItem>
+			</MudGrid>
+
+			<div class="d-flex justify-end mt-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+            </div>
+		</MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Form Refs
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}
