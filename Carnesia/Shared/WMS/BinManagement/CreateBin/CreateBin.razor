@@ -1,0 +1,25 @@
+﻿<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudGrid Class="justify-center">
+				<MudItem md="6">
+					<MudTextField T="string" Label="Bin" Required="true" RequiredError="Bin is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField T="int?" Label="Capacity" Required="true" RequiredError="Capacity is required!"/>
+				</MudItem>
+			</MudGrid>
+
+			<div class="d-flex justify-end mt-5"> 
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)">Submit</MudButton>
+			</div>
+		</MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Form Ref
+	bool success;
+    string[] errors = { };
+    MudForm form;
+}

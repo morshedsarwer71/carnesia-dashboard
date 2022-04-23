@@ -1,0 +1,37 @@
+﻿@page "/bin-management"
+@using Carnesia.Shared.WMS.BinManagement.BinList
+@using Carnesia.Shared.WMS.BinManagement.CreateBin
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BinList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinList)">@BinList</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CreateBin ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateBin)">@CreateBin</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == BinList)
+{
+    <BinList />
+}
+else if(CurrentPage == CreateBin)
+{
+    <CreateBin />
+}
+
+@code {
+    // Pages
+    private string BinList = "Bin List";
+    private string CreateBin = "Create Bin";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Bin List";
+
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

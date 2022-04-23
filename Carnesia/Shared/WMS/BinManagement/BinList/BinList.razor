@@ -1,0 +1,67 @@
+﻿@using Carnesia.Domain.WMS.BinList
+@using Carnesia.Domain.Common.POCO
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem md="2">
+				<MudAutocomplete T="string" Label="Warehouse" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem md="2">
+				<MudTextField T="string" Label="Bin" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="2">
+				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Active")" />
+					<MudSelectItem Value="@("Deactivated")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="2">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <HeaderContent>
+                <MudTh>BIN</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Warehouse</MudTh>
+                <MudTh>Created on</MudTh>
+                <MudTh>Created by</MudTh>
+                <MudTh>Current Capacity</MudTh>
+                <MudTh>Current Stock</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="BIN">@context.BIN</MudTd>
+                <MudTd DataLabel="Status">@context.Status</MudTd>
+                <MudTd DataLabel="Warehouse">@context.Warehouse</MudTd>
+                <MudTd DataLabel="Created on">@context.CreationDate</MudTd>
+                <MudTd DataLabel="Created by">@context.CreatedBy</MudTd>
+                <MudTd DataLabel="Current Capacity">@context.CurrentCap</MudTd>
+				<MudTd DataLabel="Current Stock">
+					@if (context.Status == "Active") { <MudButton Variant="Variant.Filled" Color=Color.Secondary>Deactivate</MudButton>}
+					else if (context.Status == "Deactivated") { <MudButton Variant="Variant.Filled" Color=Color.Success>Active</MudButton>}
+				</MudTd>
+				</RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+		<div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Customization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<BinListDTO> Elements = new List<BinListDTO>();
+ }
