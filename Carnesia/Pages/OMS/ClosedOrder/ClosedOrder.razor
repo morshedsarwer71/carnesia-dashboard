@@ -1,0 +1,108 @@
+﻿@page "/closed-orders"
+@using Carnesia.Domain.OMS.ClosedOrder
+@using Carnesia.Shared.OMS.ClosedOrder
+@inject IDialogService DialogService
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid Class="align-baseline mb-5">
+			<MudItem lg="2" md="4">
+				<MudTextField T="string" Label="Order Id" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="2" md="4">
+				<MudTextField T="string" Label="Customer Name" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="2" md="4">
+				<MudTextField T="string" Label="Phone Number" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="2" md="4">
+				<MudAutocomplete T="string" Label="Shipping Area" ResetValueOnEmptyText="true"/>
+			</MudItem>
+			<MudItem lg="2" md="4">
+				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Delivered")" />
+					<MudSelectItem Value="@("Returned")" />
+					<MudSelectItem Value="@("Cancelled")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="2" md="4">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem md="3">
+				<MudAutocomplete T="string" Label="Select Agent" ResetValueOnEmptyText="true"/>
+			</MudItem>
+			<MudItem md="3">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Assign Selected</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end mb-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Success">Download CSV</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Hover="true" MultiSelection="true" @bind-SelectedItems="@SelectedItems" HorizontalScrollbar="true" >
+			 <HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Tracking</MudTh>
+				<MudTh>Order ID</MudTh>
+				<MudTh>Order Date</MudTh>
+				<MudTh>Amount</MudTh>
+				<MudTh>Payment Method</MudTh>
+				<MudTh>Payment Status</MudTh>
+				<MudTh>To Be Collected</MudTh>
+				<MudTh>Customer Name</MudTh>
+				<MudTh>Phone Number</MudTh>
+				<MudTh>Address</MudTh>
+				<MudTh>Status</MudTh>
+				<MudTh>Hub</MudTh>
+				<MudTh>Assign To</MudTh>
+				<MudTh>Action</MudTh>
+				<MudTh>Rating</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel=""><MudIcon Icon="@Icons.Filled.Add" Title="Show" /></MudTd>
+				<MudTd DataLabel="Tracking">@context.Tracking</MudTd>
+				<MudTd DataLabel="Order ID">@context.OrderID</MudTd>
+				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
+				<MudTd DataLabel="Amount">@context.Amount</MudTd>
+				<MudTd DataLabel="Payment Method">@context.PaymentMethod</MudTd>
+				<MudTd DataLabel="Payment Status">@context.PaymentStatus</MudTd>
+				<MudTd DataLabel="To Be Collected">@context.ToBeCollected</MudTd>
+				<MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
+				<MudTd DataLabel="Phone Number">@context.Phone</MudTd>
+				<MudTd DataLabel="Address">@context.Address</MudTd>
+				<MudTd DataLabel="Status">@context.Status</MudTd>
+				<MudTd DataLabel="Hub">@context.HUB</MudTd>
+				<MudTd DataLabel="Assign To">@context.AssignTo</MudTd>
+				<MudTd DataLabel="Action"><MudButton Variant="Variant.Outlined" Color="Color.Warning">@context.Feedback</MudButton></MudTd>
+				<MudTd DataLabel="Rating">@context.Rating</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<ClosedOrderDTO> Elements = new List<ClosedOrderDTO>();
+	private HashSet<ClosedOrderDTO> SelectedItems = new HashSet<ClosedOrderDTO>();
+
+	// Modal
+	private void OpenProductsDialog()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Large, FullWidth=true, CloseButton=true  };
+        DialogService.Show<ProductsModal>("", options);
+    }
+	
+	private void OpenTrackingDialog()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth=true, CloseButton=true  };
+        DialogService.Show<FeedBackModal>("Feedback Details", options);
+    }
+}

@@ -1,0 +1,144 @@
+﻿@page "/place-order"
+@using Carnesia.Domain.OMS.PlaceOrder
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center mb-5"> 
+			<MudItem md="3">
+				<MudSelect T="string" Label="Source" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("FB")" />
+					<MudSelectItem Value="@("Phone")" />
+					<MudSelectItem Value="@("WhatsApp")" />
+				</MudSelect>
+			</MudItem>
+		</MudGrid>
+
+		<MudText Typo="Typo.h4">Details</MudText>
+		<MudDivider />
+
+		<MudGrid Class="justify-center my-5">
+			<MudItem md="3">
+				<MudGrid>
+					<MudItem xs="12">
+						<MudAutocomplete T="string" Label="Product" ResetValueOnEmptyText="true" />
+					</MudItem>
+					<MudItem xs="12" Class="d-flex justify-end">
+						<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary">Add</MudButton>
+					</MudItem>
+				</MudGrid>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Dense="true" Hover="true" CanCancelEdit="true" CommitEditTooltip="Commit Edit" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"           IsEditRowSwitchingBlocked="true">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Item List</MudText>
+            </ToolBarContent>
+            <ColGroup>
+                <col style="width:50%;" />
+                <col />
+                <col />
+                <col />
+            </ColGroup>
+            <HeaderContent>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Quantity</MudTh>
+                <MudTh>Price</MudTh>
+                <MudTh>Amount</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="Quantity">@context.QTY</MudTd>
+                <MudTd DataLabel="Price">@context.Price</MudTd>
+                <MudTd Style="text-align: right;" DataLabel="Amount">@context.Amount</MudTd>
+            </RowTemplate>
+            <RowEditingTemplate>
+                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="Quantity">
+                    <MudTextField @bind-Value="@context.QTY" Required />
+                </MudTd>
+                <MudTd DataLabel="Price">@context.Price</MudTd>
+                <MudTd Style="text-align: right;" DataLabel="Amount">@context.Amount</MudTd>
+            </RowEditingTemplate>
+            <GroupFooterTemplate>
+                <MudTh Style="text-align: right;" colspan="4">Total: 500</MudTh>
+                <MudTh Style="text-align: right;" colspan="4">Shipping: 500</MudTh>
+                <MudTh Style="text-align: right;" colspan="4">Discount: 500</MudTh>
+                <MudTh Style="text-align: right;" colspan="4">Coupon Used: 500</MudTh>
+                <MudTh Style="text-align: right;" colspan="4">Paid Amount: 500</MudTh>
+                <MudTh Style="text-align: right;" colspan="4">To N=Be Collected: 500</MudTh>
+            </GroupFooterTemplate>
+        </MudTable>
+
+        <MudGrid Class="justify-center my-5">
+			<MudItem md="3">
+				<MudGrid>
+					<MudItem xs="12">
+						<MudTextField T="string" Label="Coupon" Variant="Variant.Text"/>
+					</MudItem>
+					<MudItem xs="12" Class="d-flex justify-end">
+						<MudButton Variant="Variant.Filled" Color="Color.Primary">Apply</MudButton>
+					</MudItem>
+				</MudGrid>
+			</MudItem>
+		</MudGrid>
+
+        <MudText Typo="Typo.h4">Customer Details</MudText>
+		<MudDivider />
+
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid>
+                <MudItem md="6">
+                    <MudTextField T="string" Label="Phone Number" Required="true" RequiredError="Phone Number is required!"/>
+                </MudItem>
+                <MudItem md="6">
+                    <MudTextField T="string" Label="Customer Name" Required="true" RequiredError="Customer Name is required!"/>
+                </MudItem>
+                <MudItem md="6">
+                    <MudTextField T="string" Label="Address" Required="true" RequiredError="Address is required!"/>
+                </MudItem>
+                <MudItem md="6">
+                    <MudTextField T="string" Label="Area/Thana" Required="true" RequiredError="Area/Thana is required!"/>
+                </MudItem>
+                <MudItem md="6">
+                    <MudTextField T="string" Label="District" Required="true" RequiredError="District is required!"/>
+                </MudItem>
+                <MudItem md="6">
+                    <MudTextField T="string" Label="Division" Required="true" RequiredError="Division is required!"/>
+                </MudItem>
+                <MudItem md="6">
+                    <MudTextField T="string" Label="Comment" Required="true" RequiredError="Comment is required!"/>
+                </MudItem>
+            </MudGrid>
+
+            <div class="d-flex justify-end mt-5">
+                <MudButton Variant="Variant.Filled" Color="Color.Info" Class="me-3">Send OTP</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)">Submit</MudButton>
+            </div>
+        </MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Table Content
+    private IEnumerable<ProductTableDTO> Elements = new List<ProductTableDTO>();
+    private ProductTableDTO BeforeEdit;
+
+
+    private void BackupItem(object element)
+    {
+        BeforeEdit = new()
+        {
+            QTY = ((ProductTableDTO)element).QTY,
+        };
+    }
+
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((ProductTableDTO)element).QTY = BeforeEdit.QTY;
+    }
+}

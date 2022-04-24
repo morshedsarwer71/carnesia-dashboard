@@ -1,0 +1,195 @@
+﻿@page "/order-details"
+@using Carnesia.Domain.OMS.OrderDetails
+@using Carnesia.Shared.OMS.OrderDetails
+@inject IDialogService DialogService
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="align-baseline mb-5">
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Order Id" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDatePicker Label="Order Date"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDatePicker Label="Packing Date"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDatePicker Label="Dispatch Date"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Sort by Date" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Newest to Oldes")" />
+					<MudSelectItem Value="@("Oldest to Newest")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="SKU" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Product Name" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Shipping Area" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Inside Dhaka")" />
+					<MudSelectItem Value="@("Dhaka Suburb")" />
+					<MudSelectItem Value="@("Outside Dhaka")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudAutocomplete T="string" Label="Zone" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Order type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Regular")" />
+					<MudSelectItem Value="@("Achomka")" />
+					<MudSelectItem Value="@("Big Sale")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Order Source" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("FB")" />
+					<MudSelectItem Value="@("Web")" />
+					<MudSelectItem Value="@("App")" />
+					<MudSelectItem Value="@("Admin")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Customer Name" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Phone Number" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Courier" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("REDX")" />
+					<MudSelectItem Value="@("E-Courier")" />
+					<MudSelectItem Value="@("Shatota")" />
+					<MudSelectItem Value="@("Own Fleet")" />
+					<MudSelectItem Value="@("Panna Bahok")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Pending")" />
+					<MudSelectItem Value="@("CA Assigned")" />
+					<MudSelectItem Value="@("Cancelled")" />
+					<MudSelectItem Value="@("Verified")" />
+					<MudSelectItem Value="@("Awaiting Pickup")" />
+					<MudSelectItem Value="@("Packed")" />
+					<MudSelectItem Value="@("Awaiting Dispatch")" />
+					<MudSelectItem Value="@("Dispatched")" />
+					<MudSelectItem Value="@("Delivered")" />
+					<MudSelectItem Value="@("Returned")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Warning">Clear Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center align-baseline mb-4">
+			<MudItem md="3">
+				<MudSelect T="string" Label="Section" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("All")" />
+					<MudSelectItem Value="@("Delivery")" />
+					<MudSelectItem Value="@("Return")" />
+					<MudSelectItem Value="@("Cancellation")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="3">
+				<MudSelect T="string" Label="Download Type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("With SKU")" />
+					<MudSelectItem Value="@("Only Order")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="3">
+				<MudButton Variant="Variant.Filled" Color="Color.Success">Download CSV</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" MultiSelection="true" Hover="true" @bind-SelectedItems="@SelectedItems">
+			<ColGroup>
+				<col />
+				<col />
+				<col />
+				<col style="width:150px;" />
+				<col />
+				<col />
+				<col />
+				<col />
+				<col />
+				<col />
+				<col style="width:250px;" />
+				<col style="width:150px;" />
+				<col style="width:150px;" />
+				<col />
+				<col />
+				<col />
+				<col style="width:150px;" />
+			</ColGroup>
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Tracking</MudTh>
+				<MudTh>Order ID</MudTh>
+				<MudTh>Order Date</MudTh>
+				<MudTh>Amount</MudTh>
+				<MudTh>Payment Method</MudTh>
+				<MudTh>Payment Status</MudTh>
+				<MudTh>To Be Collected</MudTh>
+				<MudTh>Customer Name</MudTh>
+				<MudTh>Phone Number</MudTh>
+				<MudTh>Address</MudTh>
+				<MudTh>Verified On</MudTh>
+				<MudTh>Dispatched On</MudTh>
+				<MudTh>Status</MudTh>
+				<MudTh>Hub</MudTh>
+				<MudTh>Run Number</MudTh>
+				<MudTh>Last Updated On</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel=""><MudIcon Icon="@Icons.Filled.Add" Title="Favorite" /></MudTd>
+				<MudTd DataLabel="Tracking">@context.Tracking</MudTd>
+				<MudTd DataLabel="Order ID">@context.OrderID</MudTd>
+				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
+				<MudTd DataLabel="Amount">@context.Amount</MudTd>
+				<MudTd DataLabel="Payment Method">@context.PaymentMethod</MudTd>
+				<MudTd DataLabel="Payment Status">@context.PaymentStatus</MudTd>
+				<MudTd DataLabel="To Be Collected">@context.ToBeCollected</MudTd>
+				<MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
+				<MudTd DataLabel="Phone Number">@context.Phone</MudTd>
+				<MudTd DataLabel="Address">@context.Address</MudTd>
+				<MudTd DataLabel="Verified On">@context.VerificationDate</MudTd>
+				<MudTd DataLabel="Dispatched On">@context.DispatchedDate</MudTd>
+				<MudTd DataLabel="Status">@context.Status</MudTd>
+				<MudTd DataLabel="Hub">@context.HUB</MudTd>
+				<MudTd DataLabel="Run Number">@context.RunNumber</MudTd>
+				<MudTd DataLabel="Last Updated On">@context.LastUpdateDate</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<OrderDetailsDTO> Elements = new List<OrderDetailsDTO>();
+	private HashSet<OrderDetailsDTO> SelectedItems = new HashSet<OrderDetailsDTO>();
+
+	// Modal
+	private void OpenProductsDialog()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Large, FullWidth=true, CloseButton=true  };
+        DialogService.Show<ProductsModal>("", options);
+    }
+	
+	private void OpenTrackingDialog()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Large, FullWidth=true, CloseButton=true  };
+        DialogService.Show<TrackingModal>("", options);
+    }
+}

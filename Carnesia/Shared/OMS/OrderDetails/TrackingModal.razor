@@ -1,0 +1,35 @@
+﻿@using Carnesia.Domain.OMS.OrderDetails
+
+<MudDialog>
+	<DialogContent>
+		<div Style="max-height: 90vh; overflow-y: scroll">
+			<MudTable Items="@Elements" Hover="true">
+                <HeaderContent>
+                    <MudTh>Status</MudTh>
+                    <MudTh>Updated On</MudTh>
+                    <MudTh>Comments</MudTh>
+                    <MudTh>Attemted by (Delivery)</MudTh>
+                    <MudTh>Updated By</MudTh>
+                    <MudTh>Hub</MudTh>
+                    <MudTh>Customer Instructions</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Status">@context.Status</MudTd>
+                    <MudTd DataLabel="Updated On">@context.UpdateDate</MudTd>
+                    <MudTd DataLabel="Comments">@context.Comments</MudTd>
+                    <MudTd DataLabel="Attemted by (Delivery)">@context.AttendedBy</MudTd>
+                    <MudTd DataLabel="Updated By">@context.UpdateBy</MudTd>
+                    <MudTd DataLabel="Hub">@context.HUB</MudTd>
+                    <MudTd DataLabel="Customer Instructions">@context.Instruction</MudTd>
+                </RowTemplate>
+            </MudTable>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Table Content
+    private IEnumerable<OrderDetailsTrackingDTO> Elements = new List<OrderDetailsTrackingDTO>();
+}

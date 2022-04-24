@@ -1,0 +1,38 @@
+﻿@using Carnesia.Domain.OMS.ClosedOrder
+
+<MudDialog>
+	<DialogContent>
+		<div Style="max-height: 90vh; overflow-y: scroll">
+			<MudTable Items="@Elements" Hover="true" Bordered="true">
+                <HeaderContent>
+                    <MudTh>SKU</MudTh>
+                    <MudTh>Product Name</MudTh>
+                    <MudTh>Quantity</MudTh>
+                    <MudTh>Price</MudTh>
+                    <MudTh>Amount</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="SKU">@context.SKU</MudTd>
+                    <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                    <MudTd DataLabel="Quantity">@context.QTY</MudTd>
+                    <MudTd DataLabel="Price">@context.Price</MudTd>
+                    <MudTd Style="text-align: right" DataLabel="Amount">@context.Amount</MudTd>
+                </RowTemplate>
+                <GroupFooterTemplate>
+                    <MudTh Style="text-align: right; font-weight: 600" Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Total: 1050</MudTh>
+                    <MudTh Style="text-align: right" Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Shipping: 1050</MudTh>
+                    <MudTh Style="text-align: right" Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Discount: 1050</MudTh>
+                    <MudTh Style="text-align: right; font-weight: 600" Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Grand Total: 1050</MudTh>
+                </GroupFooterTemplate>
+            </MudTable>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Table Content
+    private IEnumerable<ClosedOrderProductsDTO> Elements = new List<ClosedOrderProductsDTO>();
+
+}

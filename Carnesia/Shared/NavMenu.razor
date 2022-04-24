@@ -1,7 +1,10 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="/dashboard" Match="NavLinkMatch.All">Dashboard</MudNavLink>
 
-    <MudNavLink Href="/" Disabled="true">WMS</MudNavLink>
+    <div class="d-flex justify-center mt-5">
+        <MudText Class="border-2 px-4 py-1">WMS</MudText>
+    </div>
+
     <MudNavGroup Title="Inbound Management" Expanded="false">
         <MudNavLink Href="/po-management" Match="NavLinkMatch.Prefix">PO Management</MudNavLink>
         <MudNavLink Href="/stock-relocation" Match="NavLinkMatch.Prefix">Stock Relocation</MudNavLink>
@@ -29,13 +32,32 @@
     <MudNavGroup Title="Vendor Management" Expanded="false">
         <MudNavLink Href="/vendor" Match="NavLinkMatch.Prefix">Vendor</MudNavLink>
     </MudNavGroup>
+   
+    <div class="d-flex justify-center mt-5">
+        <MudText Class="border-2 px-4 py-1">CMS</MudText>
+    </div>
+    <MudNavGroup Title="Products" Expanded="false">
+        <MudNavLink Href="/product" Match="NavLinkMatch.Prefix">Product</MudNavLink>
+    </MudNavGroup>
+
+    <div class="d-flex justify-center mt-5">
+        <MudText Class="border-2 px-4 py-1">OMS</MudText>
+    </div>
+    <MudNavGroup Title="Order Management" Expanded="false">
+        <MudNavLink Href="/order-details" Match="NavLinkMatch.Prefix">Order Details</MudNavLink>
+        <MudNavLink Href="/closed-orders" Match="NavLinkMatch.Prefix">Closed Orders</MudNavLink>
+        <MudNavLink Href="/place-order" Match="NavLinkMatch.Prefix">Place Order</MudNavLink>
+    </MudNavGroup>
+
+    <MudNavGroup Title="Order Processing" Expanded="false">
+        <MudNavLink Href="/picklist" Match="NavLinkMatch.Prefix">Picklist</MudNavLink>
+    </MudNavGroup>
+
+    <div class="d-flex justify-center mt-5">
+        <MudText Class="border-2 px-4 py-1">HRM</MudText>
+    </div>
 
     <MudNavGroup Title="Adminastration" Expanded="false">
         <MudNavLink Href="/user-account" Match="NavLinkMatch.Prefix">User Account</MudNavLink>
-    </MudNavGroup>
-
-    <MudNavLink Href="/" Disabled="true">CMS</MudNavLink>
-    <MudNavGroup Title="Products" Expanded="false">
-        <MudNavLink Href="/product" Match="NavLinkMatch.Prefix">Product</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>

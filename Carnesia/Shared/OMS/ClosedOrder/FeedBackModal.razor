@@ -1,0 +1,54 @@
+﻿<MudDialog>
+	<DialogContent>
+		<div Style="max-height: 90vh; overflow-y: scroll">
+			<MudGrid Class="border mb-5">
+				<MudItem xs="12" Class="border-b-2">
+					<MudGrid>
+						<MudItem xs="8">Delivery:</MudItem>
+						<MudItem xs="8">2</MudItem>
+					</MudGrid>
+				</MudItem>
+				<MudItem xs="12" Class="border-b-2">
+					<MudGrid>
+						<MudItem xs="8">Packaging:</MudItem>
+						<MudItem xs="8">3</MudItem>
+					</MudGrid>
+				</MudItem>
+				<MudItem xs="12" Class="border-b-2">
+					<MudGrid>
+						<MudItem xs="8">Product Quality:</MudItem>
+						<MudItem xs="8">3</MudItem>
+					</MudGrid>
+				</MudItem>
+				<MudItem xs="12" Class="border-b-2">
+					<MudGrid>
+						<MudItem xs="8">Customer Support:</MudItem>
+						<MudItem xs="8">2</MudItem>
+					</MudGrid>
+				</MudItem>
+
+				<MudItem xs="12">
+					<MudGrid Style="font-weight: 600;">
+						<MudItem xs="8">Average:</MudItem>
+						<MudItem xs="8" Style="color: red;">2.5</MudItem>
+					</MudGrid>
+				</MudItem>
+			</MudGrid>
+
+			<MudGrid Class="border mb-5">
+				<MudItem xs="5">Customer Feedback:  </MudItem>
+				<MudItem xs="7">
+					Overall service and quality is good, customer is very much satisfied.
+				</MudItem>
+			</MudGrid>
+
+			<div class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+			</div>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+}

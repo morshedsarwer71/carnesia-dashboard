@@ -1,0 +1,31 @@
+﻿@page "/picklist"
+@using Carnesia.Shared.OMS.CreatePicklist
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CreatePicklist ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreatePicklist)">
+                @CreatePicklist
+            </MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if (CurrentPage == CreatePicklist)
+{
+    <CreatePicklist />
+}
+@code {
+    // Pages 
+    private string CreatePicklist = "Create Picklist";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Create Picklist";
+
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}
