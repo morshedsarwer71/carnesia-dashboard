@@ -24,5 +24,7 @@ namespace Carnesia.Domain.OMS.OrderDetails
         public string? LastUpdateDate { get; set; }
         public decimal Amount { get; set; }
         public decimal ToBeCollected { get; set; }
+        public bool ShowDetails { get; set; }
+        public IList<OrderDetailsProductsDTO> Details { get; set; }
     }
 }

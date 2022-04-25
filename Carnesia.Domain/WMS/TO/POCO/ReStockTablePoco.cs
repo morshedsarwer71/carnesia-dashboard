@@ -14,5 +14,7 @@ namespace Carnesia.Domain.WMS.TO.POCO
         public int AvgSale { get; set; }
         public int Quantity { get; set; }
         public string Outlate { get; set; }
+        public bool ShowDetails { get; set; }
+        public IList<ReStockDetailsTablePoco> Details { get; set; }
     }
 }

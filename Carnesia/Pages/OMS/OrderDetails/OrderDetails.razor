@@ -115,6 +115,7 @@
 				<col />
 				<col />
 				<col />
+				<col />
 				<col style="width:150px;" />
 				<col />
 				<col />
@@ -150,7 +151,16 @@
 				<MudTh>Last Updated On</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel=""><MudIcon Icon="@Icons.Filled.Add" Title="Favorite" /></MudTd>
+				<MudTd DataLabel="">
+					@if (!context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.OrderID)" />
+					}
+					else if (context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.OrderID)" />
+					}
+				</MudTd>
 				<MudTd DataLabel="Tracking">@context.Tracking</MudTd>
 				<MudTd DataLabel="Order ID">@context.OrderID</MudTd>
 				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
@@ -168,6 +178,35 @@
 				<MudTd DataLabel="Run Number">@context.RunNumber</MudTd>
 				<MudTd DataLabel="Last Updated On">@context.LastUpdateDate</MudTd>
 			</RowTemplate>
+			<ChildRowContent>
+				@if (context.ShowDetails)
+				{
+					<td colspan="17">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.Details" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+										<MudTh>SKU</MudTh>
+										<MudTh>Product Name</MudTh>
+										<MudTh>Quantity</MudTh>
+										<MudTh>Price</MudTh>
+										<MudTh>Amount</MudTh>
+										<MudTh>Status</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
+										<MudTd DataLabel="Quantity">@DetailsContext.QTY</MudTd>
+										<MudTd DataLabel="Price">@DetailsContext.Price</MudTd>
+										<MudTd DataLabel="Amount">@DetailsContext.Amount</MudTd>
+										<MudTd DataLabel="Status">@DetailsContext.Status</MudTd>
+								   </RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
 			<PagerContent>
 				<MudTablePager />
 			</PagerContent>
@@ -180,13 +219,14 @@
 	private IEnumerable<OrderDetailsDTO> Elements = new List<OrderDetailsDTO>();
 	private HashSet<OrderDetailsDTO> SelectedItems = new HashSet<OrderDetailsDTO>();
 
+	// Show Details
+	private void ShowBtnPress(string orderId)
+	{
+		OrderDetailsDTO tmpElements = Elements.First(f => f.OrderID == orderId);
+		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+
 	// Modal
-	private void OpenProductsDialog()
-    {
-		var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Large, FullWidth=true, CloseButton=true  };
-        DialogService.Show<ProductsModal>("", options);
-    }
-	
 	private void OpenTrackingDialog()
     {
 		var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Large, FullWidth=true, CloseButton=true  };

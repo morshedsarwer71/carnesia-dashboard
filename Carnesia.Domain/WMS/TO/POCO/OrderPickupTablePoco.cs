@@ -13,5 +13,7 @@ namespace Carnesia.Domain.WMS.TO.POCO
         public string Outlets { get; set; }
         public int Quantity { get; set; }
         public string[] OrderIds { get; set; }
+        public bool ShowDetails { get; set; }
+        public IList<OrderPickupDetailsTablePoco> Details { get; set; }
     }
 }

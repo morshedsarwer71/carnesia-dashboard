@@ -23,5 +23,7 @@ namespace Carnesia.Domain.OMS.ClosedOrder
         public decimal Rating { get; set; }
         public decimal Amount { get; set; }
         public decimal ToBeCollected { get; set; }
+        public bool ShowDetails { get; set; }
+        public IList<ClosedOrderProductsDTO> Details { get; set; }
     }
 }

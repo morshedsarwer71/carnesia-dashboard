@@ -118,7 +118,7 @@
 									<MudTd DataLabel="Selling Price">@DetailsContext.SellingPrice</MudTd>
 									<MudTd DataLabel="Subtotal">@DetailsContext.SubTotal</MudTd>
 								   </RowTemplate>
-								  </MudTable>
+								 </MudTable>
 							</MudCardContent>
 						</MudCard>
 					</td>
@@ -156,10 +156,56 @@
 			SubTotal = 2*50
 		});
 
+		details.Add(new CreatePicklistDetailsDTO
+		{
+			SKU = "123asdf",
+			ProductName = "Ponds Face Powder",
+			QTY = 2,
+			SellingPrice = 50,
+			SubTotal = 2*50
+		});
+
 		order.Add(new CreatePicklistDTO
 		{
 			ShowDetails = false,
 			OrderId = "1234567",
+			Source = "Website",
+			OrderDate = "01-07-2020",
+			ConsumerName = "Nafis",
+			Phone = "01990025740",
+			Area = "Outside Dhaka",
+			Zone = "Chittagong",
+			VarificationDate = "03-07-2020",
+			OrderType = "Regular",
+			Instruction = "Deliver Before 1pm!",
+			Comment = "Customer want it on urgent basis",
+			Details = details
+		});
+
+		details.Clear();
+
+		details.Add(new CreatePicklistDetailsDTO
+		{
+			SKU = "123asdfsdsfg",
+			ProductName = "Ponds Face Powder",
+			QTY = 2,
+			SellingPrice = 50,
+			SubTotal = 2*50
+		});
+
+		details.Add(new CreatePicklistDetailsDTO
+		{
+			SKU = "123asdfrfrgf",
+			ProductName = "Ponds Face Powder",
+			QTY = 2,
+			SellingPrice = 50,
+			SubTotal = 2*50
+		});
+
+		order.Add(new CreatePicklistDTO
+		{
+			ShowDetails = false,
+			OrderId = "123456723",
 			Source = "Website",
 			OrderDate = "01-07-2020",
 			ConsumerName = "Nafis",
