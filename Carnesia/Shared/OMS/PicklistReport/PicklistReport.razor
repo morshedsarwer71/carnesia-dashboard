@@ -1,0 +1,58 @@
+﻿@using Carnesia.Domain.OMS.Picklist.Picklistreport
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center mb-5">
+			<MudItem md="3">
+				<MudSelect T="string" Label="Picklist Type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("All")" />
+					<MudSelectItem Value="@("Open Picklist")" />
+					<MudSelectItem Value="@("Closed Picklist")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="3">
+				<MudTextField T="string" Label="Picklist Id" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="3">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Hover="true">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField T="string" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Picklist Id</MudTh>
+                <MudTh>Picklist Type</MudTh>
+                <MudTh>Created On</MudTh>
+                <MudTh>Total Quantity</MudTh>
+                <MudTh>Picked</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Picklist Id">@context.PicklistId</MudTd>
+                <MudTd DataLabel="Picklist Type">@context.PicklistType</MudTd>
+                <MudTd DataLabel="Created On">@context.CreationDate</MudTd>
+                <MudTd DataLabel="Total Quantity">@context.TotalQuantity</MudTd>
+                <MudTd DataLabel="Picked">@context.Picked</MudTd>
+                <MudTd DataLabel="Status">@context.Status</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary">Re-Print</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Success">View</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Table Content
+    private IEnumerable<PicklistReportDTO> Elements = new List<PicklistReportDTO>();
+}

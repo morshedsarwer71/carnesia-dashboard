@@ -1,35 +1,19 @@
-﻿@page "/place-order"
-@using Carnesia.Domain.OMS.PlaceOrder
+﻿@using Carnesia.Domain.OMS.PlaceOrder
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2">
-	<MudContainer Fixed="true">
-		<MudGrid Class="justify-center mb-5"> 
-			<MudItem md="3">
-				<MudSelect T="string" Label="Source" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("FB")" />
-					<MudSelectItem Value="@("Phone")" />
-					<MudSelectItem Value="@("WhatsApp")" />
-				</MudSelect>
-			</MudItem>
-		</MudGrid>
+<MudDialog>
+    <DialogContent>
+        <MudGrid Class="mb-5">
+            <MudItem>
+                <MudAutocomplete T="string" Label="Search Product" ResetValueOnEmptyText="true" />
+            </MudItem>
+            <MudItem>
+                <div class="d-flex justify-end">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary">Add Product</MudButton>
+                </div>
+            </MudItem>
+        </MudGrid>
 
-		<MudText Typo="Typo.h4">Details</MudText>
-		<MudDivider />
-
-		<MudGrid Class="justify-center my-5">
-			<MudItem md="3">
-				<MudGrid>
-					<MudItem xs="12">
-						<MudAutocomplete T="string" Label="Product" ResetValueOnEmptyText="true" />
-					</MudItem>
-					<MudItem xs="12" Class="d-flex justify-end">
-						<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary">Add</MudButton>
-					</MudItem>
-				</MudGrid>
-			</MudItem>
-		</MudGrid>
-
-		<MudTable Items="@Elements" Dense="true" Hover="true" CanCancelEdit="true" CommitEditTooltip="Commit Edit" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"           IsEditRowSwitchingBlocked="true">
+        <MudTable Items="@Elements" Dense="true" Hover="true" CanCancelEdit="true" CommitEditTooltip="Commit Edit" RowEditPreview="BackupItem"                                                     RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="true">
             <ToolBarContent>
                 <MudText Typo="Typo.h6">Item List</MudText>
             </ToolBarContent>
@@ -69,56 +53,55 @@
             </GroupFooterTemplate>
         </MudTable>
 
-        <MudGrid Class="justify-center my-5">
-			<MudItem md="3">
-				<MudGrid>
-					<MudItem xs="12">
-						<MudTextField T="string" Label="Coupon" Variant="Variant.Text"/>
-					</MudItem>
-					<MudItem xs="12" Class="d-flex justify-end">
-						<MudButton Variant="Variant.Filled" Color="Color.Primary">Apply</MudButton>
-					</MudItem>
-				</MudGrid>
-			</MudItem>
-		</MudGrid>
-
-        <MudText Typo="Typo.h4">Customer Details</MudText>
-		<MudDivider />
-
-        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+        <MudForm Class="mt-5" @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
             <MudGrid>
-                <MudItem md="6">
+                <MudItem>
                     <MudTextField T="string" Label="Customer Name" Required="true" RequiredError="Customer Name is required!"/>
                 </MudItem>
-                <MudItem md="6">
+                <MudItem>
                     <MudTextField T="string" Label="Phone Number" Required="true" RequiredError="Phone Number is required!"/>
                 </MudItem>
-                <MudItem md="6">
+                <MudItem>
+                    <div class="d-flex justify-end">
+                        <MudButton Variant="Variant.Filled" Color="Color.Info">Send OTP</MudButton>
+                    </div>
+                </MudItem>
+                <MudItem>
+                    <MudTextField T="int" Label="OTP"/>
+                </MudItem>
+                <MudItem>
+                    <div class="d-flex justify-end">
+                        <MudButton Variant="Variant.Filled" Color="Color.Success">Submit OTP</MudButton>
+                    </div>
+                </MudItem>
+                <MudItem>
                     <MudTextField T="string" Label="Address" Required="true" RequiredError="Address is required!"/>
                 </MudItem>
-                <MudItem md="6">
+                <MudItem>
                     <MudTextField T="string" Label="Area/Thana" Required="true" RequiredError="Area/Thana is required!"/>
                 </MudItem>
-                <MudItem md="6">
+                <MudItem>
                     <MudTextField T="string" Label="District" Required="true" RequiredError="District is required!"/>
                 </MudItem>
-                <MudItem md="6">
+                <MudItem>
                     <MudTextField T="string" Label="Division" Required="true" RequiredError="Division is required!"/>
                 </MudItem>
-                <MudItem md="6">
+                <MudItem>
                     <MudTextField T="string" Label="Comment" Required="true" RequiredError="Comment is required!"/>
                 </MudItem>
+                <MudItem></MudItem>
             </MudGrid>
 
             <div class="d-flex justify-end mt-5">
-                <MudButton Variant="Variant.Filled" Color="Color.Info" Class="me-3">Send OTP</MudButton>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)">Submit</MudButton>
             </div>
         </MudForm>
-	</MudContainer>
-</MudPaper>
+    </DialogContent>
+</MudDialog>
 
 @code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
     // Form Ref
     bool success;
     string[] errors = { };

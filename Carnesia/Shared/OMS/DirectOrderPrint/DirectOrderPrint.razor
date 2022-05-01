@@ -1,0 +1,138 @@
+﻿@using Carnesia.Domain.OMS.Picklist.DirectOrderPrint
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Order Id" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDateRangePicker Label="Order Date" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Multiple SKU" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="SKU Per Order" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Order Source" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("FB Order")" />
+					<MudSelectItem Value="@("Website Order")" />
+					<MudSelectItem Value="@("Admin Order")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Shipping Area" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Inside Dhaka")" />
+					<MudSelectItem Value="@("Dhaka Suburb")" />
+					<MudSelectItem Value="@("Outside Dhaka")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudAutocomplete T="string" Label="Zone" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Offer Type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Regular")" />
+					<MudSelectItem Value="@("Achomka")" />
+					<MudSelectItem Value="@("Big Sale")" />
+				</MudSelect>
+			</MudItem>
+		</MudGrid>
+		<div class="d-flex justify-end my-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Hover="true" MultiSelection="true" @bind-SelectedItems="SelectedItems">
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Order Id</MudTh>
+				<MudTh>Source</MudTh>
+				<MudTh>Order Date</MudTh>
+				<MudTh>Customer Name</MudTh>
+				<MudTh>Phone Number</MudTh>
+				<MudTh>Area</MudTh>
+				<MudTh>Zone</MudTh>
+				<MudTh>Varified On</MudTh>
+				<MudTh>Order Type</MudTh>
+				<MudTh>Instructions</MudTh>
+				<MudTh>CS/Ops Comment</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.OrderID)" />
+					}
+					else if (context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.OrderID)" />
+					}
+				</MudTd>
+				<MudTd DataLabel="Order Id">@context.OrderID</MudTd>
+				<MudTd DataLabel="Source">@context.Source</MudTd>
+				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
+				<MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
+				<MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
+				<MudTd DataLabel="Area">@context.Area</MudTd>
+				<MudTd DataLabel="Zone">@context.Zone</MudTd>
+				<MudTd DataLabel="Varified On">@context.VarifiedOn</MudTd>
+				<MudTd DataLabel="Order Type">@context.OrderType</MudTd>
+				<MudTd DataLabel="Instructions">@context.Instructions</MudTd>
+				<MudTd DataLabel="CS/Ops Comment">@context.Comment</MudTd>
+			</RowTemplate>
+			<ChildRowContent>
+				@if (context.ShowDetails)
+				{
+					<td colspan="13">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.Details" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+										<MudTh>SKU</MudTh>
+										<MudTh>Product Name</MudTh>
+										<MudTh>Quantity</MudTh>
+										<MudTh>Selling Price</MudTh>
+										<MudTh>Subtotal</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
+										<MudTd DataLabel="Quantity">@DetailsContext.QTY</MudTd>
+										<MudTd DataLabel="Selling Price">@DetailsContext.SellingPrice</MudTd>
+										<MudTd DataLabel="Subtotal" Style="text-align: right">@DetailsContext.SubTotal</MudTd>
+								   </RowTemplate>
+								   <GroupFooterTemplate>
+										<MudTh Style="text-align: right; font-weight: 600" Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">
+											Grand Total: 1050
+										</MudTh>
+									</GroupFooterTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Print Order</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<DirectOrderPrintDTO> Elements = new List<DirectOrderPrintDTO>();
+	private HashSet<DirectOrderPrintDTO> SelectedItems = new HashSet<DirectOrderPrintDTO>();
+
+	// Show Details
+	private void ShowBtnPress(string orderId)
+	{
+		DirectOrderPrintDTO tmpElements = Elements.First(f => f.OrderID == orderId);
+		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+}

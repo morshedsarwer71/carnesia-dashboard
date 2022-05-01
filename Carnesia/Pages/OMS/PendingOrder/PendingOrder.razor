@@ -1,0 +1,181 @@
+﻿@page "/pending-order"
+@using Carnesia.Domain.OMS.PendingOrder
+@using Carnesia.Shared.OMS.PendingOrder
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-16 pb-16 pt-10 ma-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="align-baseline mb-5">
+			<MudItem md="4">
+				<MudTextField T="string" Label="Order Id" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudTextField T="string" Label="Customer Name" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudTextField T="string" Label="Customer Phone Number" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="4">
+				<MudSelect T="string" Label="Shipphing Area" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Inside Dhaka")" />
+					<MudSelectItem Value="@("Dhaka Suburb")" />
+					<MudSelectItem Value="@("Outside Dhaka")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="4">
+				<MudAutocomplete T="string" Label="Agent" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem md="4">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem md="3">
+				<MudAutocomplete T="string" Label="Select Agent" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem md="3">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Assign</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true">
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Order Id</MudTh>
+				<MudTh>Order Date</MudTh>
+				<MudTh>Order Value</MudTh>
+				<MudTh>Payment Method</MudTh>
+				<MudTh>To Be Collected</MudTh>
+				<MudTh>Customer Name</MudTh>
+				<MudTh>Phone Number</MudTh>
+				<MudTh>Address</MudTh>
+				<MudTh>Status</MudTh>
+				<MudTh>Source</MudTh>
+				<MudTh>Assign To</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.OrderId)" />
+					}
+					else if (context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.OrderId)" />
+					}
+				</MudTd>
+				<MudTd DataLabel="Order Id">@context.OrderId</MudTd>
+				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
+				<MudTd DataLabel="Order Value">@context.OrderValue</MudTd>
+				<MudTd DataLabel="Payment Method">@context.PaymentMethode</MudTd>
+				<MudTd DataLabel="To Be Collected">@context.ToBeCollected</MudTd>
+				<MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
+				<MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
+				<MudTd DataLabel="Address">@context.Address</MudTd>
+				<MudTd DataLabel="Status">@context.Status</MudTd>
+				<MudTd DataLabel="Source">@context.Source</MudTd>
+				<MudTd DataLabel="Assign To">@context.AssignTo</MudTd>
+				<MudTd DataLabel="Action" Class="d-flex flex-column align-center">
+					<MudButton Variant="Variant.Text" Color="Color.Primary">Edit</MudButton>
+					<MudButton Variant="Variant.Text" Color="Color.Success">Verify</MudButton>
+					<MudButton Variant="Variant.Text" Color="Color.Secondary">Cancel</MudButton>
+				</MudTd>
+			</RowTemplate>
+						<ChildRowContent>
+				@if (context.ShowDetails)
+				{
+					<td colspan="14">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.Details" Context="DetailsContext" Hover="true" Elevation="0" CanCancelEdit="true" IsEditRowSwitchingBlocked="true"											 RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues">
+								   <HeaderContent>
+										<MudTh>SKU</MudTh>
+										<MudTh>Product Name</MudTh>
+										<MudTh>Quantity</MudTh>
+										<MudTh>Price</MudTh>
+										<MudTh>Amount</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
+										<MudTd DataLabel="Quantity">@DetailsContext.QTY</MudTd>
+										<MudTd DataLabel="Price">@DetailsContext.Price</MudTd>
+										<MudTd DataLabel="Amount">@DetailsContext.Amount</MudTd>
+								   </RowTemplate>
+								   <RowEditingTemplate>
+										<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
+										<MudTd DataLabel="Quantity">
+											<MudNumericField @bind-Value="@DetailsContext.QTY" Required />
+										</MudTd>
+										<MudTd DataLabel="Price">@DetailsContext.Price</MudTd>
+										<MudTd DataLabel="Amount">@DetailsContext.Amount</MudTd>
+									</RowEditingTemplate>
+									<GroupFooterTemplate>
+										<MudTh colspan="5" Style="text-align: right; font-weight: 600;">Total: 1350</MudTh>
+										<MudTh colspan="5" Style="text-align: right;">Shipping: 60</MudTh>
+										<MudTh colspan="5" Style="text-align: right;">Discount: 100</MudTh>
+										<MudTh colspan="5" Style="text-align: right; font-weight: 600;">Grand Total: 1310</MudTh>
+									</GroupFooterTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+			<PagerContent>
+				<MudTablePager PageSizeOptions="new int[]{50, 100}" />
+			</PagerContent>
+			<FooterContent>
+				<MudTd colspan="5">Select All</MudTd>
+			</FooterContent>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<PendingOrderDTO> Elements = new List<PendingOrderDTO>();
+	private HashSet<PendingOrderDTO> SelectedItems = new HashSet<PendingOrderDTO>();
+
+	// Details Table Edit States
+	private PendingOrderDetailsDTO BeforeEdit;
+
+	// Show Details
+	private void ShowBtnPress(string orderId)
+	{
+		PendingOrderDTO tmpElements = Elements.First(f => f.OrderId == orderId);
+		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+
+	// Details Table Edit Backup
+	private void BackupItem(object element)
+    {
+        BeforeEdit = new()
+        {
+            QTY = ((PendingOrderDetailsDTO)element).QTY
+        };
+    }
+
+	// Details Table Edit Cancel
+	private void ResetItemToOriginalValues(object element)
+    {
+        ((PendingOrderDetailsDTO)element).QTY = BeforeEdit.QTY;
+    }
+
+	// Cancel Modal
+    private void OpenCancelDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
+        DialogService.Show<CancelModal>("Cancel Item?", options);
+    }
+
+	// Edit Order Modal
+    private void OpenEditOrderDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = false, MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
+        DialogService.Show<CancelModal>("Edit Order", options);
+    }
+}

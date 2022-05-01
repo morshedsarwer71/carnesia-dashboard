@@ -1,11 +1,19 @@
 ﻿@page "/picklist"
 @using Carnesia.Shared.OMS.CreatePicklist
+@using Carnesia.Shared.OMS.DirectOrderPrint
+@using Carnesia.Shared.OMS.PicklistReport
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
             <MudButton Color="Color.Primary" Variant="CurrentPage == CreatePicklist ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreatePicklist)">
                 @CreatePicklist
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == DirectOrderPrint ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DirectOrderPrint)">
+                @DirectOrderPrint
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == PicklistReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PicklistReport)">
+                @PicklistReport
             </MudButton>
         </MudButtonGroup>
     </MudContainer>
@@ -15,9 +23,19 @@
 {
     <CreatePicklist />
 }
+else if(CurrentPage == DirectOrderPrint)
+{
+    <DirectOrderPrint />
+}
+else if(CurrentPage == PicklistReport)
+{
+    <PicklistReport />
+}
 @code {
     // Pages 
     private string CreatePicklist = "Create Picklist";
+    private string DirectOrderPrint = "Direct Order Print";
+    private string PicklistReport = "Picklist Report";
 
     // Current Page
     private string CurrentPage { get; set; } = "Create Picklist";
