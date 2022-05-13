@@ -1,0 +1,30 @@
+﻿@page "/assign-delivery"
+
+@using Carnesia.Shared.OMS.AssignDelivery.AllOrders
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == AllOrders ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AllOrders)">@AllOrders</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == AllOrders)
+{
+    <AllOrders />
+}
+
+@code {
+    // Pages 
+    private string AllOrders = "All Orders";
+
+    // Current Page 
+    private string CurrentPage { get; set; } = "All Orders";
+
+    // Change Current Page
+    void ChangePage(string pageName)
+    {
+        CurrentPage = pageName;
+    }
+}
