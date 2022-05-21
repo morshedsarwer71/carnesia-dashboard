@@ -1,0 +1,60 @@
+﻿@using Carnesia.Domain.OMS.ManageRun.OpenRun
+@using Carnesia.Domain.Common.POCO
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<div class=" mb-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Info">Print</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" MultiSelection="true" 
+         @bind-SelectedItems="SelectedItems">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Run Type</MudTh>
+                <MudTh>Run Number</MudTh>
+                <MudTh>Quantity</MudTh>
+                <MudTh>Amount</MudTh>
+                <MudTh>Courier/Carrier</MudTh>
+                <MudTh>Receiver Name</MudTh>
+                <MudTh>Receiver Phone Number</MudTh>
+                <MudTh>Created by</MudTh>
+                <MudTh>Status</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Run Type">@context.RunType</MudTd>
+                <MudTd DataLabel="Run Number">@context.RunType</MudTd>
+                <MudTd DataLabel="Quantity">@context.QTY</MudTd>
+                <MudTd DataLabel="Amount">@context.Amount</MudTd>
+                <MudTd DataLabel="Courier/Carrier">@context.Courier</MudTd>
+                <MudTd DataLabel="Receiver Name">@context.ReceiverName</MudTd>
+                <MudTd DataLabel="Receiver Phone Number">@context.ReceiverPhone</MudTd>
+                <MudTd DataLabel="Created by">@context.CreatedBy</MudTd>
+                <MudTd DataLabel="Status">@context.Status</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<OpenRunDTO> Elements = new List<OpenRunDTO>();
+    private HashSet<OpenRunDTO> SelectedItems = new HashSet<OpenRunDTO>();
+}

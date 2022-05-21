@@ -11,16 +11,20 @@
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>Name</MudTh>
+                <MudTh>User Name</MudTh>
                 <MudTh>Phone Number</MudTh>
                 <MudTh>Email</MudTh>
-                <MudTh>User Type</MudTh>
+                <MudTh>Department</MudTh>
+                <MudTh>Designation</MudTh>
                 <MudTh>Active</MudTh>
             </HeaderContent>
             <RowTemplate> 
                 <MudTd DataLabel="Name">@context.name</MudTd>
+                <MudTd DataLabel="User Name">@context.userName</MudTd>
                 <MudTd DataLabel="Phone Number">@context.phone</MudTd>
                 <MudTd DataLabel="Email">@context.email</MudTd>
-                <MudTd DataLabel="User Type">@context.userType</MudTd>
+                <MudTd DataLabel="Department">@context.deparment</MudTd>
+                <MudTd DataLabel="Designation">@context.designation</MudTd>
                 <MudTd DataLabel="Action">@context.isActive</MudTd>
             </RowTemplate>
             <PagerContent>

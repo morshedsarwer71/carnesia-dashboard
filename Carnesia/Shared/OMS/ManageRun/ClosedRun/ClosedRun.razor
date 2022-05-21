@@ -1,0 +1,70 @@
+﻿@using Carnesia.Domain.OMS.ManageRun.ClosedRun
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center mb-5">
+			<MudItem md="2">
+				<MudTextField T="string" Label="Run Number" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="2">
+				<MudSelect T="string" Label="Courier/Carrier" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Own Fleet")" />
+					<MudSelectItem Value="@("REDX")" />
+					<MudSelectItem Value="@("E-Courier")" />
+					<MudSelectItem Value="@("Shatota")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="2">
+				<MudTextField T="string" Label="Courier/Carrier Phone Number" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="2">
+				<MudDateRangePicker Label="Creation Date" />
+			</MudItem>
+			<MudItem md="2">
+				<MudAutocomplete T="string" Label="Own Rider" ResetValueOnEmptyText="true" />
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center mb-5">
+			<MudItem md="10">
+				<div class="d-flex justify-end">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				</div>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems">
+            <HeaderContent>
+                <MudTh>Run Type</MudTh>
+                <MudTh>Run Number</MudTh>
+                <MudTh>Quantity</MudTh>
+                <MudTh>Amount</MudTh>
+                <MudTh>Courier/Carrier</MudTh>
+                <MudTh>Receiver Name</MudTh>
+                <MudTh>Receiver Phone Number</MudTh>
+                <MudTh>Created by</MudTh>
+                <MudTh>Status</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Run Type">@context.RunType</MudTd>
+                <MudTd DataLabel="Run Number">@context.RunType</MudTd>
+                <MudTd DataLabel="Quantity">@context.QTY</MudTd>
+                <MudTd DataLabel="Amount">@context.Amount</MudTd>
+                <MudTd DataLabel="Courier/Carrier">@context.Courier</MudTd>
+                <MudTd DataLabel="Receiver Name">@context.ReceiverName</MudTd>
+                <MudTd DataLabel="Receiver Phone Number">@context.ReceiverPhone</MudTd>
+                <MudTd DataLabel="Created by">@context.CreatedBy</MudTd>
+                <MudTd DataLabel="Status">@context.Status</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<ClosedRunDTO> Elements = new List<ClosedRunDTO>();
+	private HashSet<ClosedRunDTO> SelectedItems = new HashSet<ClosedRunDTO>();
+}

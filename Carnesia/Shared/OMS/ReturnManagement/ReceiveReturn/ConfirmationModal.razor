@@ -1,0 +1,18 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudText>Received: 4</MudText>
+        <MudText>Damaged: 2</MudText>
+        <MudText Class="mb-5">Missing: 1</MudText>
+
+        <MudText Typo="Typo.subtitle1" Style="color: red;">Are you sure to Submit? Action can't be undone.</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+}

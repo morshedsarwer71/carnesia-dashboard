@@ -1,0 +1,156 @@
+﻿@using Carnesia.Domain.OMS.AssignDelivery.Dispatch
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<div>
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Create Run</MudButton>
+		</div>
+
+		<MudGrid>
+			<MudItem md="4" xs="6">
+				<MudTextField T="string" Label="Order ID" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem md="4" xs="6">
+				<MudDateRangePicker Label="Order Date" />
+			</MudItem>
+			<MudItem md="4" xs="6">
+				<MudSelect T="string" Label="Shipping Area" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Inside Dhaka")" />
+					<MudSelectItem Value="@("Dhaka Suburb")" />
+					<MudSelectItem Value="@("Outside Dhaka")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="4" xs="6">
+				<MudAutocomplete T="string" Label="Shipping Zone" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem md="4" xs="6">
+				<MudSelect T="string" Label="Order Type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Regular")" />
+					<MudSelectItem Value="@("Achomka")" />
+					<MudSelectItem Value="@("Big Sale")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="4" xs="6">
+				<MudSelect T="string" Label="Order Source" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("FB")" />
+					<MudSelectItem Value="@("WEB")" />
+					<MudSelectItem Value="@("App")" />
+					<MudSelectItem Value="@("Admin")" />
+				</MudSelect>
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+		</div>
+
+		<MudGrid Class="justify-center align-baseline mt-5">
+			<MudItem md="3" xs="6">
+				<MudSelect T="string" Label="Download Type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("With SKU")" />
+					<MudSelectItem Value="@("Only Order")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="3" xs="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Info">Re-Print Invoice</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Hover="true" MultiSelection="true" @bind-SelectedItems="SelectedItems">
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Tracking</MudTh>
+				<MudTh>Order Id</MudTh>
+				<MudTh>Order Date</MudTh>
+				<MudTh>Amount</MudTh>
+				<MudTh>Payment Methode</MudTh>
+				<MudTh>To Be Collected</MudTh>
+				<MudTh>Customer Name</MudTh>
+				<MudTh>Phone Number</MudTh>
+				<MudTh>Address</MudTh>
+				<MudTh>Verified On</MudTh>
+				<MudTh>Dispatched On</MudTh>
+				<MudTh>Status</MudTh>
+				<MudTh>Hub</MudTh>
+				<MudTh>Location</MudTh>
+				<MudTh>Run Number</MudTh>
+				<MudTh>Last Update On</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.OrderID)" />
+					}
+					else if (context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.OrderID)" />
+					}
+				</MudTd>
+				<MudTd DataLabel="Tracking">
+					<MudButton Variant="Variant.Text">@context.Tracking</MudButton>
+				</MudTd>
+				<MudTd DataLabel="Order Id">@context.OrderID</MudTd>
+				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
+				<MudTd DataLabel="Amount">@context.Amount</MudTd>
+				<MudTd DataLabel="Payment Methode">@context.PaymentMethode</MudTd>
+				<MudTd DataLabel="To Be Collected">@context.ToBeCollected</MudTd>
+				<MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
+				<MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
+				<MudTd DataLabel="Address">@context.Address</MudTd>
+				<MudTd DataLabel="Verified On">@context.VerifiedOn</MudTd>
+				<MudTd DataLabel="Dispatched On">@context.DispatchedOn</MudTd>
+				<MudTd DataLabel="Status">@context.Status</MudTd>
+				<MudTd DataLabel="Hub">@context.Hub</MudTd>
+				<MudTd DataLabel="Location">@context.Location</MudTd>
+				<MudTd DataLabel="Run Number">@context.RunNumber</MudTd>
+				<MudTd DataLabel="Last Update On">@context.UpdateDate</MudTd>
+			</RowTemplate>
+			<ChildRowContent>
+				@if (context.ShowDetails)
+				{
+					<td colspan="18">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.Details" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+										<MudTh>SKU</MudTh>
+										<MudTh>Product Name</MudTh>
+										<MudTh>Quantity</MudTh>
+										<MudTh>Price</MudTh>
+										<MudTh>Amount</MudTh>
+										<MudTh>Status</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
+										<MudTd DataLabel="Quantity">@DetailsContext.QTY</MudTd>
+										<MudTd DataLabel="Selling Price">@DetailsContext.Price</MudTd>
+										<MudTd DataLabel="Subtotal">@DetailsContext.Amount</MudTd>
+								   </RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<DispatchDTO> Elements = new List<DispatchDTO>();
+	private HashSet<DispatchDTO> SelectedItems = new HashSet<DispatchDTO>();
+
+	// Show Details
+	private void ShowBtnPress(string orderId)
+	{
+		DispatchDTO tmpElements = Elements.First(f => f.OrderID == orderId);
+		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+}

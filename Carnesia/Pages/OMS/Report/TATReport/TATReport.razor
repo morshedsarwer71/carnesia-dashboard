@@ -1,0 +1,137 @@
+﻿@page "/tat-report"
+
+@using Carnesia.Domain.OMS.Report.TATReport
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid Class="align-baseline mb-5">
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Order Id" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDatePicker Label="Order Date"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDatePicker Label="Packing Date"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDatePicker Label="Dispatch Date"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Sort by Date" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Newest to Oldes")" />
+					<MudSelectItem Value="@("Oldest to Newest")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="SKU" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Product Name" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Shipping Area" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Inside Dhaka")" />
+					<MudSelectItem Value="@("Dhaka Suburb")" />
+					<MudSelectItem Value="@("Outside Dhaka")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudAutocomplete T="string" Label="Zone" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Order type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Regular")" />
+					<MudSelectItem Value="@("Achomka")" />
+					<MudSelectItem Value="@("Big Sale")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Order Source" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("FB")" />
+					<MudSelectItem Value="@("Web")" />
+					<MudSelectItem Value="@("App")" />
+					<MudSelectItem Value="@("Admin")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Customer Name" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Phone Number" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Courier" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("REDX")" />
+					<MudSelectItem Value="@("E-Courier")" />
+					<MudSelectItem Value="@("Shatota")" />
+					<MudSelectItem Value="@("Own Fleet")" />
+					<MudSelectItem Value="@("Panna Bahok")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Pending")" />
+					<MudSelectItem Value="@("CA Assigned")" />
+					<MudSelectItem Value="@("Cancelled")" />
+					<MudSelectItem Value="@("Verified")" />
+					<MudSelectItem Value="@("Awaiting Pickup")" />
+					<MudSelectItem Value="@("Packed")" />
+					<MudSelectItem Value="@("Awaiting Dispatch")" />
+					<MudSelectItem Value="@("Dispatched")" />
+					<MudSelectItem Value="@("Delivered")" />
+					<MudSelectItem Value="@("Returned")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Info">All</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Hover="true">
+			<HeaderContent>
+				<MudTh>Tracking</MudTh>
+				<MudTh>Order ID</MudTh>
+				<MudTh>Order Placed on</MudTh>
+				<MudTh>Order Amount</MudTh>
+				<MudTh>Awating Pickup Date</MudTh>
+				<MudTh>Picked Up On</MudTh>
+				<MudTh>Awating Dispatch on</MudTh>
+				<MudTh>Dispatched on</MudTh>
+				<MudTh>Delivered on</MudTh>
+				<MudTh>Courier</MudTh>
+				<MudTh>Return Created on</MudTh>
+				<MudTh>Cancelled on</MudTh>
+				<MudTh>Current Status</MudTh>
+				<MudTh>Hub</MudTh>
+				<MudTh>Delivery TAT</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Tracking">@context.Tracking</MudTd>
+				<MudTd DataLabel="Order ID">@context.OrderId</MudTd>
+				<MudTd DataLabel="Order Placed on">@context.OrderDate</MudTd>
+				<MudTd DataLabel="Order Amount">@context.Amount</MudTd>
+				<MudTd DataLabel="Awating Pickup Date">@context.AwatingPickupDate</MudTd>
+				<MudTd DataLabel="Picked Up On">@context.PickedUpOn</MudTd>
+				<MudTd DataLabel="Awating Dispatch on">@context.AwaitingDispatchDate</MudTd>
+				<MudTd DataLabel="Dispatched on">@context.DispatchedOn</MudTd>
+				<MudTd DataLabel="Delivered on">@context.DeliveredOn</MudTd>
+				<MudTd DataLabel="Courier">@context.Courier</MudTd>
+				<MudTd DataLabel="Return Created on">@context.ReturnCreatedOn</MudTd>
+				<MudTd DataLabel="Cancelled on">@context.CancelledOn</MudTd>
+				<MudTd DataLabel="Current Status">@context.CurrentStatus</MudTd>
+				<MudTd DataLabel="Hub">@context.HUB</MudTd>
+				<MudTd DataLabel="Delivery TAT">@context.DeliveryTAT</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<TATReportDTO> Elements = new List<TATReportDTO>();
+}

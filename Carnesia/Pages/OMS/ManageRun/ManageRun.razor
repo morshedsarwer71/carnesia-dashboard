@@ -1,0 +1,44 @@
+﻿@page "/manage-run"
+@using Carnesia.Shared.OMS.ManageRun.OpenRun
+@using Carnesia.Shared.OMS.ManageRun.ClosedRun
+@using Carnesia.Shared.OMS.ManageRun.All
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == OpenRun ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(OpenRun)">@OpenRun</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ClosedRun ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ClosedRun)">@ClosedRun</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == All ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(All)">@All</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == OpenRun)
+{
+    <OpenRun />
+}
+else if(CurrentPage == ClosedRun)
+{
+    <ClosedRun />
+}
+else if(CurrentPage == All)
+{
+    <All />
+}
+
+@code {
+    // Pages
+    private string OpenRun = "Open Run";
+    private string ClosedRun = "Closed Run";
+    private string All = "All";
+
+    // Curent Page
+    private string CurrentPage { get; set; } = "Open Run";
+
+    // Change Page
+
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

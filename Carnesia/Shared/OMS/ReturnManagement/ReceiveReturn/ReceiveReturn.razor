@@ -1,0 +1,81 @@
+﻿@using Carnesia.Domain.OMS.ReturnManagement.ReceiveReturn
+
+@inject IDialogService DialogService
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid>
+			<MudItem md="6">
+				<MudGrid>
+					<MudItem md="6">
+						<MudTextField T="string" Label="Scan Order ID" Variant="Variant.Text"/>
+					</MudItem>
+					<MudItem md="6">
+						<MudTextField T="string" Label="Scan UID" Variant="Variant.Text"/>
+					</MudItem>
+				</MudGrid>
+
+				<MudRadioGroup @bind-SelectedOption="ReturnType" Class="mt-3">
+					<MudRadio Option="true" Color="Color.Primary" Dense="true">Received</MudRadio>
+					<MudRadio Option="false" Color="Color.Primary" Dense="true">Damaged</MudRadio>
+				</MudRadioGroup>
+
+				<div class="d-flex justify-end mt-5">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+				</div>
+			</MudItem>
+			<MudItem md="6">
+				<MudImage Style="width: 100%;" Src="https://wallpaperaccess.com/full/1423563.jpg" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+			</MudItem>
+		</MudGrid>
+
+		<MudText Typo="Typo.h6" Class="mt-5">Order Info.</MudText>
+		<MudText>Order ID: 123456</MudText>
+		<MudText>Order Date: 12-Feb-2022 2:00:00 PM</MudText>
+		<MudText>Packing Date: 13-Feb-2022 12:00:00 PM</MudText>
+		<MudText>Dispatched Date: 13-Feb-2022 6:00:00 PM</MudText>
+		<MudText>SLA: Breached</MudText>
+
+		<MudTable Class="mt-5" Items="@Elements" Hover="true">
+			<HeaderContent>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Quantity</MudTh>
+				<MudTh>Image</MudTh>
+				<MudTh>Received</MudTh>
+				<MudTh>Damaged</MudTh>
+				<MudTh>Missing</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="SKU">@context.SKU</MudTd>
+				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+				<MudTd DataLabel="Quantity">@context.QTY</MudTd>
+				<MudTd DataLabel="Image">
+					<MudImage Style="width: 150px;" Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+				</MudTd>
+				<MudTd DataLabel="Received">@context.Received</MudTd>
+				<MudTd DataLabel="Damaged">@context.Damaged</MudTd>
+				<MudTd DataLabel="Missing">@context.Missing</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Return Type
+	private bool ReturnType { get; set; } = true;
+
+	// Table Content
+	private IEnumerable<ReceiveReturnDTO> Elements = new List<ReceiveReturnDTO>();
+
+	// Confirmation Modal
+	private void OpenDialog()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, };
+        DialogService.Show<ConfirmationModal>("Confirmation", options);
+    }
+}

@@ -1,0 +1,80 @@
+﻿@using Carnesia.Domain.OMS.ReturnManagement.Aknowledgement
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline">
+			<MudItem md="2" xs="6">
+				<MudTextField T="string" Label="Order ID" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="2" xs="6">
+				<MudSelect T="string" Label="Courier" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Own Fleet")" />
+					<MudSelectItem Value="@("REDX")" />
+					<MudSelectItem Value="@("E-Courier")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="2" xs="6">
+				<MudAutocomplete T="string" Label="Delivery Receiver" ResetValueOnEmptyText="true"/>
+			</MudItem>
+			<MudItem md="2" xs="6">
+				<MudDateRangePicker Label="Return Date" />
+			</MudItem>
+			<MudItem md="2" xs="6">
+				<MudAutocomplete T="string" Label="Return Receiver" ResetValueOnEmptyText="true"/>
+			</MudItem>
+			<MudItem md="2" xs="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end my-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Error" Class="me-1">Remove</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Info">Print</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Hover="true" MultiSelection="true" @bind-SelectedItems="SelectedItems">
+			<HeaderContent>
+				<MudTh>Receiving Date</MudTh>
+				<MudTh>Courier</MudTh>
+				<MudTh>Return Received by</MudTh>
+				<MudTh>Order ID</MudTh>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Selling Price</MudTh>
+				<MudTh>Order Quantity</MudTh>
+				<MudTh>Received</MudTh>
+				<MudTh>Damaged</MudTh>
+				<MudTh>Missing</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Receiving Date">@context.ReceivingDate</MudTd>
+				<MudTd DataLabel="Courier">@context.Courier</MudTd>
+				<MudTd DataLabel="Return Received by">@context.ReturnReceivedBy</MudTd>
+				<MudTd DataLabel="Order ID">@context.OrderID</MudTd>
+				<MudTd DataLabel="SKU">@context.SKU</MudTd>
+				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+				<MudTd DataLabel="Selling Price">@context.Price</MudTd>
+				<MudTd DataLabel="Order Quantity">@context.QTY</MudTd>
+				<MudTd DataLabel="Received">@context.Received</MudTd>
+				<MudTd DataLabel="Damaged">@context.Damaged</MudTd>
+				<MudTd DataLabel="Missing">@context.Missing</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+		<div class="d-flex flex-column align-end mt-5">
+			<MudText>Total Order Quantity: 44</MudText>
+			<MudText>Total Order Value: 26653</MudText>
+			<MudText>Total Damaged QTY: 5</MudText>
+			<MudText>Total Damaged Value: 3028.75</MudText>
+			<MudText>Total Missing QTY: 1817.25</MudText>
+			<MudText>Total Missing Value: 3</MudText>
+			<MudText>Total Received Value: 21807</MudText>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<AknowledgementDTO> Elements = new List<AknowledgementDTO>();
+	private HashSet<AknowledgementDTO> SelectedItems = new HashSet<AknowledgementDTO>();
+}

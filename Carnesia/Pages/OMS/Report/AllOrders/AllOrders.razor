@@ -1,9 +1,10 @@
-﻿@page "/order-details"
-@using Carnesia.Domain.OMS.OrderDetails
-@using Carnesia.Shared.OMS.OrderDetails
+﻿@page "/all-orders"
+
+@using Carnesia.Domain.OMS.Report.AllOrders
+@using Carnesia.Shared.OMS.Report.AllOrders
 @inject IDialogService DialogService
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-10">
+<MudPaper Class="px-16 pb-16 pt-10 ma-2">
 	<MudContainer Fixed="true">
 		<MudGrid Class="align-baseline mb-5">
 			<MudItem lg="3" md="6">
@@ -86,7 +87,7 @@
 			</MudItem>
 			<MudItem lg="3" md="6">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
-				<MudButton Variant="Variant.Filled" Color="Color.Warning">Clear Filter</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Info">All</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -122,7 +123,6 @@
 				<col />
 				<col />
 				<col />
-				<col />
 				<col style="width:250px;" />
 				<col style="width:150px;" />
 				<col style="width:150px;" />
@@ -138,7 +138,6 @@
 				<MudTh>Order Date</MudTh>
 				<MudTh>Amount</MudTh>
 				<MudTh>Payment Method</MudTh>
-				<MudTh>Payment Status</MudTh>
 				<MudTh>To Be Collected</MudTh>
 				<MudTh>Customer Name</MudTh>
 				<MudTh>Phone Number</MudTh>
@@ -166,7 +165,6 @@
 				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
 				<MudTd DataLabel="Amount">@context.Amount</MudTd>
 				<MudTd DataLabel="Payment Method">@context.PaymentMethod</MudTd>
-				<MudTd DataLabel="Payment Status">@context.PaymentStatus</MudTd>
 				<MudTd DataLabel="To Be Collected">@context.ToBeCollected</MudTd>
 				<MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
 				<MudTd DataLabel="Phone Number">@context.Phone</MudTd>
@@ -216,20 +214,20 @@
 
 @code {
 	// Table Content
-	private IEnumerable<OrderDetailsDTO> Elements = new List<OrderDetailsDTO>();
-	private HashSet<OrderDetailsDTO> SelectedItems = new HashSet<OrderDetailsDTO>();
+	private IEnumerable<AllOrdersDTO> Elements = new List<AllOrdersDTO>();
+	private HashSet<AllOrdersDTO> SelectedItems = new HashSet<AllOrdersDTO>();
 
 	// Show Details
 	private void ShowBtnPress(string orderId)
 	{
-		OrderDetailsDTO tmpElements = Elements.First(f => f.OrderID == orderId);
+		AllOrdersDTO tmpElements = Elements.First(f => f.OrderID == orderId);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
 	}
 
 	// Modal
-	private void OpenTrackingDialog()
+	private void OpenHistoryDialog()
     {
 		var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Large, FullWidth=true, CloseButton=true  };
-        DialogService.Show<TrackingModal>("", options);
+        DialogService.Show<HistoryModal>("More History View", options);
     }
 }

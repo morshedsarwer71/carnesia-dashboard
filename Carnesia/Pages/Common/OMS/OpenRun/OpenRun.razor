@@ -1,0 +1,195 @@
+﻿@page "/open-run"
+@using Carnesia.Domain.Common.OMS.OpenRun
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid>
+			<MudItem md="3" xs="6">
+				<MudText Style="font-weight: 600;">Run# 123456</MudText>
+			</MudItem>
+			<MudItem md="3" xs="6">
+				Total Order ID: 3
+			</MudItem>
+			<MudItem md="3" xs="6">
+				Oreder Amount: 3250
+			</MudItem>
+			<MudItem md="3" xs="6">
+				To Be Collected: 3250
+			</MudItem>
+		</MudGrid>
+
+		<div class="mt-5">
+			<MudText>Courier:</MudText>
+			<MudText>Receiver Name: Shahin</MudText>
+			<MudText>Receiver Phone Number: 019xxxxxxxx</MudText>
+			<MudText>Receiver Phone Number: 019xxxxxxxx</MudText>
+			<MudText>Created on: 12-Feb-2022 2:00:00 PM</MudText>
+			<MudText>Created by: Rakib</MudText>
+		</div>
+
+		<MudGrid Class="justify-center align-baseline mt-5">
+			<MudItem md="3" xs="6">
+				<MudTextField T="string" Label="Scan To Add Order" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="3" xs="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center align-baseline mt-5">
+			<MudItem md="3">
+				<MudSelect T="string" Label="Courier" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("E-Courier")" />
+					<MudSelectItem Value="@("REDX")" />
+					<MudSelectItem Value="@("Shatota")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="3">
+				<MudTextField T="string" Label="Receiver Name" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="3">
+				<MudTextField T="string" Label="Receiver Phone" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="3">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Assign Courier</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center align-baseline mt-5">
+			<MudItem md="3" xs="6">
+				<MudAutocomplete T="string" Label="Select Runner" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem md="3" xs="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Assign</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center align-baseline mt-5">
+			<MudItem md="3">
+				<MudTextField T="string" Label="Scan Order ID" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="3">
+				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Delivered")" />
+					<MudSelectItem Value="@("Returned")" />
+					<MudSelectItem Value="@("Faild")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="3">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Update</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Info">Print</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center align-baseline mt-5">
+			<MudItem md="3" xs="6">
+				<MudSelect T="string" Label="Input Reason for Failure/Cancel" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Customer Unreachable")" />
+					<MudSelectItem Value="@("Customer Wants to Cancelled")" />
+					<MudSelectItem Value="@("Purchased from Other Shop")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="3" xs="6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Update</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end my-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Info" Class="me-1">Cancel Run</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Error">Remove</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems">
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Order ID</MudTh>
+				<MudTh>Customer Name</MudTh>
+				<MudTh>Phone Number</MudTh>
+				<MudTh>Amount</MudTh>
+				<MudTh>Payment Method</MudTh>
+				<MudTh>To Be Collected</MudTh>
+				<MudTh>Address</MudTh>
+				<MudTh>Zone</MudTh>
+				<MudTh>Status</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.OrderID)" />
+					}
+					else if (context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.OrderID)" />
+					}
+				</MudTd>
+				<MudTd DataLabel="Order ID">@context.OrderID</MudTd>
+				<MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
+				<MudTd DataLabel="Phone Number">@context.Phone</MudTd>
+				<MudTd DataLabel="Amount">@context.Amount</MudTd>
+				<MudTd DataLabel="Payment Method">@context.PaymentMethode</MudTd>
+				<MudTd DataLabel="To Be Collected">@context.ToBeCollected</MudTd>
+				<MudTd DataLabel="Address">@context.Address</MudTd>
+				<MudTd DataLabel="Zone">@context.Zone</MudTd>
+				<MudTd DataLabel="Status">@context.Status</MudTd>
+			</RowTemplate>
+			<ChildRowContent>
+				@if (context.ShowDetails)
+				{
+					<td colspan="10">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.Details" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+									<MudTh>SKU</MudTh>
+									<MudTh>Product Name</MudTh>
+									<MudTh>Quantity</MudTh>
+									<MudTh>Price</MudTh>
+									<MudTh>Amount</MudTh>
+									<MudTh>Delivery Quantity</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+									<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
+									<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
+									<MudTd DataLabel="Quantity">@DetailsContext.QTY</MudTd>
+									<MudTd DataLabel="Price">@DetailsContext.Price</MudTd>
+									<MudTd DataLabel="Amount">@DetailsContext.Amount</MudTd>
+									<MudTd DataLabel="Delivery Quantity">
+										<MudNumericField T="int" Label="Delivery Quatity" Variant="Variant.Text" />
+									</MudTd>
+								   </RowTemplate>
+								   <GroupFooterTemplate>
+										<MudTh Class="d-flex justify-end" colspan="6">
+											<MudButton Variant="Variant.Filled" Color="Color.Info">Update</MudButton>
+										</MudTh>
+									</GroupFooterTemplate>
+								 </MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<OpenRunDTO> Elements = new List<OpenRunDTO>();
+	private HashSet<OpenRunDTO> SelectedItems = new HashSet<OpenRunDTO>();
+
+	// Show Details
+	private void ShowBtnPress(string orderId)
+	{
+		OpenRunDTO tmpElements = Elements.First(f => f.OrderID == orderId);
+		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+
+}

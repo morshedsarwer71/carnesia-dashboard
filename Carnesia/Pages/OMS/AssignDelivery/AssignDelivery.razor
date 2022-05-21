@@ -1,11 +1,13 @@
 ﻿@page "/assign-delivery"
 
 @using Carnesia.Shared.OMS.AssignDelivery.AllOrders
+@using Carnesia.Shared.OMS.AssignDelivery.Dispatch
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
             <MudButton Color="Color.Primary" Variant="CurrentPage == AllOrders ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AllOrders)">@AllOrders</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == Dispatch ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Dispatch)">@Dispatch</MudButton>
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
@@ -14,10 +16,15 @@
 {
     <AllOrders />
 }
+else if(CurrentPage == Dispatch)
+{
+    <Dispatch />
+}
 
 @code {
     // Pages 
     private string AllOrders = "All Orders";
+    private string Dispatch = "Dispatch";
 
     // Current Page 
     private string CurrentPage { get; set; } = "All Orders";

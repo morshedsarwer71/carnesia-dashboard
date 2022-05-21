@@ -1,0 +1,94 @@
+﻿@using Carnesia.Domain.OMS.ReturnManagement.PendingReturn
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid>
+			<MudItem md="3" sm="6">
+				<MudTextField T="string" Label="Order ID" Variant="Variant.Text"/>
+			</MudItem>
+			<MudItem md="3" sm="6">
+				<MudSelect T="string" Label="Courier" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Own Fleet")" />
+					<MudSelectItem Value="@("REDX")" />
+					<MudSelectItem Value="@("E-Courier")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="3" sm="6">
+				<MudAutocomplete T="string" Label="Delivery Receiver" ResetValueOnEmptyText="true" />
+			</MudItem>
+			<MudItem md="3" sm="6">
+				<MudDateRangePicker Label="Return Date" />
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+		</div>
+
+		<MudTable Items="@Elements">
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Order ID</MudTh>
+				<MudTh>Order Date</MudTh>
+				<MudTh>Return Date</MudTh>
+				<MudTh>Selling Price</MudTh>
+				<MudTh>Receivable Qty.</MudTh>
+				<MudTh>Amount</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.OrderID)" />
+					}
+					else if (context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.OrderID)" />
+					}
+				</MudTd>
+				<MudTd DataLabel="Order ID">@context.OrderID</MudTd>
+				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
+				<MudTd DataLabel="Return Date">@context.ReturnDate</MudTd>
+				<MudTd DataLabel="Selling Price">@context.Price</MudTd>
+				<MudTd DataLabel="Receivable Qty.">@context.QTY</MudTd>
+				<MudTd DataLabel="Amount">@context.Amount</MudTd>
+			</RowTemplate>
+			<ChildRowContent>
+				@if (context.ShowDetails)
+				{
+					<td colspan="7">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.Details" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+										<MudTh>SKU</MudTh>
+										<MudTh>Product Name</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
+								   </RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<PendingReturnDTO> Elements = new List<PendingReturnDTO>();
+
+	// Show Details
+	private void ShowBtnPress(string orderId)
+	{
+		PendingReturnDTO tmpElements = Elements.First(f => f.OrderID == orderId);
+		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+}

@@ -1,38 +1,33 @@
-﻿@using Carnesia.Domain.OMS.AssignDelivery.AllOrders
+﻿@using Carnesia.Domain.OMS.Report.AllOrders
 
-<MudDialog DisableSidePadding="true">
-	<DialogContent >
-		<div style="max-height: 90vh; overflow-y: scroll">
+<MudDialog>
+	<DialogContent>
+		<div Style="max-height: 90vh; overflow-y: scroll">
 			<MudTable Items="@Elements" Hover="true">
                 <HeaderContent>
                     <MudTh>Status</MudTh>
                     <MudTh>Updated On</MudTh>
                     <MudTh>Comments</MudTh>
                     <MudTh>Attemted by (Delivery)</MudTh>
-                    <MudTh>Updated by</MudTh>
-                    <MudTh>Hub</MudTh>
+                    <MudTh>Updated By</MudTh>
                     <MudTh>Customer Instructions</MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Status">@context.Status</MudTd>
-                    <MudTd DataLabel="Updated On">@context.UpdatedOn</MudTd>
+                    <MudTd DataLabel="Updated On">@context.UpdateDate</MudTd>
                     <MudTd DataLabel="Comments">@context.Comments</MudTd>
                     <MudTd DataLabel="Attemted by (Delivery)">@context.AttendedBy</MudTd>
-                    <MudTd DataLabel="Updated by">@context.UpdatedBy</MudTd>
-                    <MudTd DataLabel="Hub">@context.Hub</MudTd>
+                    <MudTd DataLabel="Updated By">@context.UpdateBy</MudTd>
                     <MudTd DataLabel="Customer Instructions">@context.Instruction</MudTd>
                 </RowTemplate>
-                <PagerContent>
-                    <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-                </PagerContent>
             </MudTable>
 		</div>
 	</DialogContent>
 </MudDialog>
 
 @code {
-	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-	// Table Content
-	private IEnumerable<HistoryDTO> Elements = new List<HistoryDTO>();
+    // Table Content
+    private IEnumerable<AllOrdersHistoryDTO> Elements = new List<AllOrdersHistoryDTO>();
 }

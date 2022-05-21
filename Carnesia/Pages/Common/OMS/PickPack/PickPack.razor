@@ -1,0 +1,61 @@
+﻿@page "/pick-pack"
+
+@using Carnesia.Domain.Common.OMS.PickPack
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid>
+			<MudItem md="6">
+				<MudGrid>
+					<MudItem md="6">
+						<MudTextField T="string" Label="Scan Order ID" Variant="Variant.Text"/>
+					</MudItem>
+					<MudItem md="6">
+						<MudTextField T="string" Label="Scan UID" Variant="Variant.Text"/>
+					</MudItem>
+				</MudGrid>
+
+				<div class="d-flex justify-end mt-5">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+				</div>
+
+				<MudText Class="mt-5">Customer Instruction: Gift purpose, pack well</MudText>
+			</MudItem>
+			<MudItem md="6">
+				<MudImage Style="width: 100%;" Src="https://wallpaperaccess.com/full/1423563.jpg" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Class="mt-5" Items="@Elements" Hover="true">
+			<HeaderContent>
+				<MudTh>Picklist ID</MudTh>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>QTY.</MudTh>
+				<MudTh>Image</MudTh>
+				<MudTh>Qty Packed</MudTh>
+				<MudTh>To be Scanned</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Picklist ID">@context.PicklistID</MudTd>
+				<MudTd DataLabel="SKU">@context.SKU</MudTd>
+				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+				<MudTd DataLabel="QTY.">@context.QTY</MudTd>
+				<MudTd DataLabel="Image">
+					<MudImage Style="width: 150px;" Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+				</MudTd>
+				<MudTd DataLabel="Qty Packed">@context.QTYPacked</MudTd>
+				<MudTd DataLabel="To be Scanned">@context.ToBeScanned</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<PickPackDTO> Elements = new List<PickPackDTO>();
+}

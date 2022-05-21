@@ -1,0 +1,50 @@
+﻿@page "/return-management"
+
+@using Carnesia.Shared.OMS.ReturnManagement.PendingReturn
+@using Carnesia.Shared.OMS.ReturnManagement.ReceiveReturn
+@using Carnesia.Shared.OMS.ReturnManagement.Aknowledgement
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == PendingReturn ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PendingReturn)">
+                @PendingReturn
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ReceiveReturn ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReceiveReturn)">
+                @ReceiveReturn
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == Aknowledgement ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Aknowledgement)">
+                @Aknowledgement
+            </MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == PendingReturn)
+{
+    <PendingReturn />
+}
+else if(CurrentPage == ReceiveReturn)
+{
+    <ReceiveReturn />
+}
+else if(CurrentPage == Aknowledgement)
+{
+    <Aknowledgement />
+}
+
+@code {
+    //Pages
+    private string PendingReturn = "Pending Return";
+    private string ReceiveReturn = "Receive Return";
+    private string Aknowledgement = "Aknowledgement";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Pending Return";
+
+    // Change Current Page
+    void ChangePage(string pageName)
+    {
+        CurrentPage = pageName;
+    }
+}
