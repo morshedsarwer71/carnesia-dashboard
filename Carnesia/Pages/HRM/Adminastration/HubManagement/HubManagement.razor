@@ -1,0 +1,39 @@
+﻿@page "/hub-management"
+
+@using Carnesia.Shared.HRM.Adminastration.HubManagement.DeliveryOfficer
+@using Carnesia.Shared.HRM.Adminastration.HubManagement.HubList
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == HubList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(HubList)">@HubList</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == DeliveryOfficer ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DeliveryOfficer)">
+                @DeliveryOfficer
+            </MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == HubList)
+{
+    <HubList />
+}
+else if(CurrentPage == DeliveryOfficer)
+{
+    <DeliveryOfficer />
+}
+
+@code {
+    // Pages
+    private string HubList = "Hub List";
+    private string DeliveryOfficer = "Delivery Officer";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Hub List";
+
+    // Chnage Page
+    void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

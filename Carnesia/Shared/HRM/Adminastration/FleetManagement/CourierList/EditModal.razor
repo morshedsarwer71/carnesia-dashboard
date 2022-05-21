@@ -1,0 +1,27 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudText Typo="Typo.h4">E-Courier Limited</MudText>
+                    <MudTextField T="string" Label="Business KAM" Required="true" RequiredError="Business KAM is required!"/>
+                    <MudTextField T="string" Label="Business KAM Contact" Required="true" RequiredError="Business KAM Contact is required!"/>
+                    <MudTextField T="string" Label="Operation KAM" Required="true" RequiredError="Operation KAM is required!"/>
+                    <MudTextField T="string" Label="Operation KAM Contact" Required="true" RequiredError="Operation KAM Contact is required!"/>
+
+                    <div class="d-flex justify-end my-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}

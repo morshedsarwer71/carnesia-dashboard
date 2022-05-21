@@ -1,0 +1,45 @@
+﻿@page "/fleet-management"
+
+@using Carnesia.Shared.HRM.Adminastration.FleetManagement.DeliveryArea
+@using Carnesia.Shared.HRM.Adminastration.FleetManagement.DeliveryCharges
+@using Carnesia.Shared.HRM.Adminastration.FleetManagement.CourierList
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == DeliveryArea ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DeliveryArea)">@DeliveryArea</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == DeliveryCharges ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DeliveryCharges)">
+                @DeliveryCharges
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CourierList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CourierList)">@CourierList</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == DeliveryArea)
+{
+    <DeliveryArea />
+}
+else if(CurrentPage == DeliveryCharges)
+{
+    <DeliveryCharges />
+}
+else if(CurrentPage == CourierList)
+{
+    <CourierList />
+}
+@code {
+    // Pages
+    private string DeliveryArea = "Delivery Area";
+    private string DeliveryCharges = "Delivery Charges";
+    private string CourierList = "Courier List";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Delivery Area";
+
+    // Chnage Page
+    void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

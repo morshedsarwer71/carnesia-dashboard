@@ -1,0 +1,26 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudText Typo="Typo.h4">Malibagh</MudText>
+                    <MudTextField T="string" Label="Manager" Required="true" RequiredError="Manager is required!"/>
+                    <MudTextField T="string" Label="Manager Contact" Required="true" RequiredError="Manager Contact is required!"/>
+                    <MudTextField T="string" Label="Address" Required="true" RequiredError="Address is required!"/>
+
+                    <div class="d-flex justify-end my-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}

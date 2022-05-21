@@ -1,0 +1,39 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+
+                    <MudSelect T="string" Label="Division" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Division is required!">
+                        <MudSelectItem Value="@("Barishal")" />
+                        <MudSelectItem Value="@("Chattogram")" />
+                        <MudSelectItem Value="@("Dhaka")" />
+                        <MudSelectItem Value="@("Khulna")" />
+                        <MudSelectItem Value="@("Rajshahi")" />
+                        <MudSelectItem Value="@("Rangpur")" />
+                        <MudSelectItem Value="@("Mymensingh")" />
+                        <MudSelectItem Value="@("Sylhet")" />
+                    </MudSelect>
+
+                    <MudTextField T="string" Label="District" Required="true" RequiredError="District is required!"/>
+                    <MudTextField T="string" Label="Area/Thana" Required="true" RequiredError="Area/Thana is required!"/>
+                    <MudTextField T="string" Label="Zone" Required="true" RequiredError="Zone is required!"/>
+                    <MudTextField T="int" Label="Zone Number" Required="true" RequiredError="Zone Number is required!"/>
+                    <MudTextField T="string" Label="Section" Required="true" RequiredError="Section is required!"/>
+
+                    <div class="d-flex justify-end my-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}

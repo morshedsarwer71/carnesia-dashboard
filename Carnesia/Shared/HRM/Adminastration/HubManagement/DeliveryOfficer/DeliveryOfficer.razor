@@ -1,0 +1,73 @@
+﻿@using Carnesia.Domain.HRM.HubManagement.DeliveryOfficer
+@using Carnesia.Domain.Common.POCO
+@inject IDialogService DialogService
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<div class="mb-5">
+			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Info" OnClick="OpenAddModal">Add New Officer</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>Contact</MudTh>
+                <MudTh>Hub</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="Contact">@context.ContactNumber</MudTd>
+                <MudTd DataLabel="Hub">@context.HubName</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning">Edit</MudButton>
+                    @if(context.Active)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Error">Deactive</MudButton>
+                    }
+                    else if (!context.Active)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Success">Reactive</MudButton>
+                    }
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<DeliveryOfficerDTO> Elements = new List<DeliveryOfficerDTO>();
+
+    // Add Modal
+    private void OpenAddModal()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<AddModal>("Add New Officer", options);
+    }
+
+    // Edit Modal
+    private void OpenEditModal()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<EditModal>("Edit Officer", options);
+    }
+}

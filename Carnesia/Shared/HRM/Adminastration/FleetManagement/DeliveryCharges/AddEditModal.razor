@@ -1,0 +1,31 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+
+                    <MudSelect T="string" Label="Shipping Area" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Shipping Area is required!">
+                        <MudSelectItem Value="@("Inside Dhaka")" />
+                        <MudSelectItem Value="@("Dhaka Suburb")" />
+                        <MudSelectItem Value="@("Outside Dhaka")" />
+                    </MudSelect>
+
+                    <MudTextField T="decimal" Label="Weight >=" Required="true" RequiredError="Weight >= is required!"/>
+                    <MudTextField T="decimal" Label="Shipping Charge" Required="true" RequiredError="Shipping Charge is required!"/>
+
+                    <div class="d-flex justify-end my-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}
