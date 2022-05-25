@@ -1,0 +1,69 @@
+﻿@page "/gif-banner"
+
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.CMS.GifBanner
+@using Carnesia.Shared.CMS.GifBanner
+@inject IGifBanner _gifBanner
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-16 pt-10 ma-2">
+	<MudContainer Fixed="true">
+		<div class="d-flex justify-end mb-5">
+			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="OpenAddGifBannerModal">Add New Gif Banner</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>URL</MudTh>
+                <MudTh>Description</MudTh>
+                <MudTh>Image</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Name">@context.name</MudTd>
+                <MudTd DataLabel="URL">@context.url</MudTd>
+                <MudTd DataLabel="URL">@context.description</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imagePath}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+	protected override async Task OnInitializedAsync()
+    {
+        Elements = await _gifBanner.GetGifBanners();
+    }
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<GifBannerDTO> Elements = new List<GifBannerDTO>();
+
+    // Add Gif Banner Modal
+    private void OpenAddGifBannerModal()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<AddGifBannerModal>("Add New Gif Banner", options);
+    }
+}

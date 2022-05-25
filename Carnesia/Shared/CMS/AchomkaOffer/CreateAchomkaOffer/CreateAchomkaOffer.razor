@@ -1,0 +1,27 @@
+﻿<MudPaper Class="pa-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    <MudTextField T="string" Label="Offer Name" Required="true" RequiredError="Offer Name is required!"/>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudDateRangePicker Required="true" Label="Start & End Date" />
+                </MudItem>
+                <MudItem sm="6"> 
+                    <MudTextField Lines="5" T="string" Label="Description" Variant="Variant.Text" Required="true" RequiredError="Description is required!"/>
+                </MudItem>
+            </MudGrid>
+                    
+            <div class="d-flex align-center justify-space-between mt-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Register</MudButton>
+            </div>
+            </MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}

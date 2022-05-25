@@ -1,0 +1,41 @@
+﻿@page "/campaign"
+
+@using Carnesia.Shared.CMS.Campaign.CampaignList
+@using Carnesia.Shared.CMS.Campaign.CreateCampaign
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CampaignList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CampaignList)">
+                @CampaignList
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CreateCampaign ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateCampaign)">
+                @CreateCampaign
+            </MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == CampaignList)
+{
+    <CampaignList />
+}
+else if(CurrentPage == CreateCampaign)
+{
+    <CreateCampaign />
+}
+
+@code {
+    // Pages
+    private string CreateCampaign = "Create Campaign";
+    private string CampaignList = "Campaign List";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Campaign List";
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

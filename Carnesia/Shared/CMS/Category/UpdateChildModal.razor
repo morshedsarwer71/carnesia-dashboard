@@ -1,0 +1,52 @@
+﻿@using Carnesia.Domain.CMS.Category
+
+@inject ICategory _category 
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField @bind-Value="@childCat" Immediate="true" Label="Child Category Name" Required="true" RequiredError="Child Category Name is required!"/>
+
+                    <div class="d-flex justify-end my-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="UpdateChild">Submit</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public int catId { get; set; }
+    [Parameter] public string childCat { get; set; }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    // Update Child
+    private async Task UpdateChild()
+    {
+        var FormData = new ChildUpdateDTO()
+        {
+            childCat = childCat
+        };
+
+        try
+        {
+            await _category.UpdateChildCat(FormData, catId);
+
+            Snackbar.Add("Child Category Updated Successfully!", Severity.Success);
+            Submit();
+        }
+        catch(Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }
+    }
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}

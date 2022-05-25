@@ -1,0 +1,80 @@
+﻿@using Carnesia.Domain.CMS.Campaign
+
+<MudPaper Class="pa-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    <MudTextField T="string" Label="Campaign Name" Required="true" RequiredError="Campaign Name is required!"/>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudDateRangePicker Required="true" Label="Start & End Date" />
+                </MudItem>
+                <MudItem sm="6"> 
+                    <MudTextField Lines="5" T="string" Label="Description" Variant="Variant.Text" Required="true" RequiredError="Description is required!"/>
+                </MudItem>
+            </MudGrid>
+                    
+            <div class="d-flex align-center justify-space-between mt-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Register</MudButton>
+            </div>
+            </MudForm>
+	</MudContainer>
+</MudPaper>
+
+<MudPaper Class="pa-16 pt-10 ma-2 mt-10">
+    <MudContainer Fixed="true">
+        <MudForm @ref="formP" @bind-IsValid="@successP" @bind-Errors="@errorsP">
+            <MudGrid Class="justify-center">
+                <MudItem md="4" sm="6">
+                    <MudAutocomplete T="string" Label="Product" ResetValueOnEmptyText="true" Required="true" RequiredError="Product is required" />
+                </MudItem>
+                <MudItem md="4" sm="6">
+                    <MudSelect T="string" Label="Discount Type" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Discount Type is required!">
+                        <MudSelectItem Value="@("Cash")" />
+                        <MudSelectItem Value="@("Percentage")" />
+                    </MudSelect>
+                </MudItem>
+                <MudItem md="4" sm="6">
+                    <MudNumericField T="decimal" Label="Discount Amount" Variant="Variant.Text" Min="1" Required="true" RequiredError="Discount Amount is required!" />
+                </MudItem>
+            </MudGrid>
+
+            <div class="d-flex align-center justify-space-between my-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="@(!success)" Class="ml-auto">Add</MudButton>
+            </div>
+
+            <MudTable Items="@Elements" Hover="true">
+                <HeaderContent>
+                    <MudTh>Product Name</MudTh>
+                    <MudTh>Regular Price</MudTh>
+                    <MudTh>Discount Type</MudTh>
+                    <MudTh>Discount Amount</MudTh>
+                    <MudTh>After Discount</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                    <MudTd DataLabel="Regular Price">@context.RegularPrice</MudTd>
+                    <MudTd DataLabel="Discount Type">@context.DiscountType</MudTd>
+                    <MudTd DataLabel="Discount Amount">@context.DiscountAmount</MudTd>
+                    <MudTd DataLabel="After Discount">@context.AfterDiscount</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudForm>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Table Content
+    private IEnumerable<AddCampaignProductDTO> Elements = new List<AddCampaignProductDTO>();
+
+    // Main Form
+	bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Product Form
+	bool successP;
+    string[] errorsP = { };
+    MudForm formP;
+}

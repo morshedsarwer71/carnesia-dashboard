@@ -19,8 +19,4 @@
     <ProjectReference Include="..\Carnesia.Domain\Carnesia.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\" />
-  </ItemGroup>
-
 </Project>

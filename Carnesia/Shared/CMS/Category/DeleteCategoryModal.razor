@@ -1,0 +1,40 @@
+﻿@using Carnesia.Domain.CMS.Category
+
+@inject ICategory _category 
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudText>Do you really want to delete @catName? This process cannot be undone.</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteCategory">Delete</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public int catId { get; set; }
+    [Parameter] public string catName { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+
+    // Delete Category
+    private async Task DeleteCategory()
+    {
+        try
+        {
+            await _category.DeleteCategory(catId);
+            Snackbar.Add("Category Deleted Successfully!", Severity.Success);
+            Submit();
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }
+
+    }
+}

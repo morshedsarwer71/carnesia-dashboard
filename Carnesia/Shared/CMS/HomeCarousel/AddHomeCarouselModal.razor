@@ -1,0 +1,65 @@
+﻿@inject IBase64 _base64
+@inject ISnackbar Snackbar
+
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField T="string" Label="Name" Required="true" RequiredError="Name is required!"/>
+                    <MudTextField T="string" Label="URL" Required="true" RequiredError="URL is required!"/>
+
+                @if (!ShowInputFile)
+                {
+                    <InputFile id="carousel-image" OnChange="@ValidateImage" hidden accept=".webp" />
+                }
+                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="carousel-image" Class="mt-5" Required="true">
+                        Upload Carousel Images
+                    </MudButton>
+
+                    <br/>
+
+                    <MudImage Src="@ImageSRC" Alt="" Elevation="25" Class="mx-auto mt-5" Style="width:50%; display:block;" />
+
+                    <div class="d-flex justify-end my-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Clear Input File
+    private bool ShowInputFile { get; set; } = false;
+
+    private void ClearInputFile()
+    {
+        ShowInputFile = true;
+        StateHasChanged();
+        ShowInputFile = false;
+        StateHasChanged();
+    }
+
+    // Image SRC
+    private string ImageSRC { get; set; }
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Image Validation
+    private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
+    {
+        try
+        {
+            ImageSRC = await _base64.ConvertToBase64(153600, 1280, 450, ImageFile);
+        }
+        catch(Exception e)
+        {
+            ClearInputFile();
+            Snackbar.Add(e.Message, Severity.Error);
+        }
+    }
+}

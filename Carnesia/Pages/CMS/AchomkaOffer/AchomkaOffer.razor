@@ -1,0 +1,41 @@
+﻿@page "/achomka-offer"
+
+@using Carnesia.Shared.CMS.AchomkaOffer.AchomkaOfferList
+@using Carnesia.Shared.CMS.AchomkaOffer.CreateAchomkaOffer
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == AchomkaOfferList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AchomkaOfferList)">
+                @AchomkaOfferList
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CreateAchomkaOffer ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateAchomkaOffer)">
+                @CreateAchomkaOffer
+            </MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == AchomkaOfferList)
+{
+    <AchomkaOfferList />
+}
+else if(CurrentPage == CreateAchomkaOffer)
+{
+    <CreateAchomkaOffer />
+}
+
+@code {
+    // Pages
+    private string CreateAchomkaOffer = "Create Achomka Offer";
+    private string AchomkaOfferList = "Achomka Offer List";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Achomka Offer List";
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

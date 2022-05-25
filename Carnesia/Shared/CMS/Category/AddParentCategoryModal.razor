@@ -1,0 +1,80 @@
+﻿@using Carnesia.Domain.CMS.Category
+@inject IBase64 _base64
+@inject ICategory _category
+@inject ISnackbar Snackbar
+
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField @bind-Value="FormData.parentCat" Label="Category Name" Required="true" RequiredError="Category Name is required!"/>
+
+                @if (!ShowInputFile)
+                {
+                    <InputFile id="category-image" OnChange="@ValidateImage" hidden accept=".webp" />
+                }
+                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="category-image" Class="mt-5" Required="true">
+                        Upload Category Images
+                    </MudButton>
+
+                    <br/>
+
+                    <MudImage Src="@ImageSRC" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+
+                    <div class="d-flex justify-end my-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Clear Input File
+    private bool ShowInputFile { get; set; } = false;
+
+    private void ClearInputFile()
+    {
+        ShowInputFile = true;
+        StateHasChanged();
+        ShowInputFile = false;
+        StateHasChanged();
+    }
+
+    // Category Name
+    private CreateParentCatDTO FormData = new CreateParentCatDTO();
+
+    // Category Image
+    private AddParentCatImageDTO CategoryImage = new AddParentCatImageDTO();
+
+    // Image SRC
+    private string ImageSRC { get; set; }
+
+    // Image Data
+    //private InputFileChangeEventArgs ImageData = new InputFileChangeEventArgs();
+    private List<IBrowserFile> ImageData = new();
+
+    // Image Validation
+    private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
+    {
+        try
+        {
+            ImageSRC = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
+            ImageData.Add(ImageFile.File);
+        }
+        catch(Exception e)
+        {
+            ClearInputFile();
+            Snackbar.Add(e.Message, Severity.Error);
+        }
+    }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}

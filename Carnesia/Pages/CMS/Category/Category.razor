@@ -1,0 +1,154 @@
+﻿@page "/category"
+
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.CMS.Category
+@using Carnesia.Shared.CMS.Category
+@inject IDialogService DialogService
+@inject ICategory _category
+
+<MudPaper Class="pa-16 pt-10 ma-2">
+	<MudContainer Fixed="true">
+		<div class="d-flex justify-end mb-5">
+			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="OpenAddParentCategoryModal">Add New Category</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh></MudTh>
+                <MudTh>Category Name</MudTh>
+                <MudTh>Image</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="">
+                    @if (!context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.id)" />
+					}
+					else if (context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.id)" />
+					}
+                </MudTd>
+                <MudTd DataLabel="Category Name">@context.parentCat</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="@context.parentCat" Elevation="25" Class="rounded-lg" Style="width:50px" />
+                </MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateParentCategoryModal(context.parentCat, context.id)">Edit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => OpenAddChildCategoryModal(context.id)">Add New Child</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => OpenDeleteCategoryModal(context.parentCat, context.id)">Delete</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <ChildRowContent>
+				@if (context.showDetails)
+				{
+					<td colspan="4">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.child" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+										<MudTh>Parent Name</MudTh>
+										<MudTh>Child Name</MudTh>
+										<MudTh>Action</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="Parent Name">@context.parentCat</MudTd>
+										<MudTd DataLabel="Child Name">@DetailsContext.childCat</MudTd>
+										<MudTd DataLabel="Action">
+											<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateChildCategoryModal(DetailsContext.childCat,															 DetailsContext.id)">
+												Edit
+											</MudButton>
+											<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => OpenDeleteCategoryModal(DetailsContext.childCat, DetailsContext.id)">
+												Delete
+											</MudButton>
+										</MudTd>
+								   </RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+    {
+        Elements = await _category.GetCategories();
+    }
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<ParentCategoryDTO> Elements = new List<ParentCategoryDTO>();
+
+    // Show Details
+	private void ShowBtnPress(int id)
+	{
+		ParentCategoryDTO tmpElements = Elements.First(f => f.id == id);
+		tmpElements.showDetails = !tmpElements.showDetails;
+	}
+
+	// Add Parent Category Modal
+    private void OpenAddParentCategoryModal()
+    {
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<AddParentCategoryModal>("Add New Category", options);
+    }
+
+	// Update Parent Category Modal
+    private void OpenUpdateParentCategoryModal(string parentCat, int parentId)
+    {
+		var parameters = new DialogParameters { ["parentCat"]=parentCat, ["parentId"]=parentId };
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<UpdateParentModal>("Update Parent Category", parameters, options);
+    }
+
+	// Add Child Category Modal
+    private void OpenAddChildCategoryModal(int parentId)
+    {
+		var parameters = new DialogParameters { ["parentId"]=parentId };
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<AddChildCategoryModal>("Add New Child Category", parameters, options);
+    }
+
+	// Update Child Category Modal
+    private void OpenUpdateChildCategoryModal(string childCat, int catId)
+    {
+		var parameters = new DialogParameters { ["childCat"]=childCat, ["catId"]=catId };
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<UpdateChildModal>("Update Child Category", parameters, options);
+    }
+
+	// Delete Category Modal
+    private void OpenDeleteCategoryModal(string catName, int catId)
+    {
+		var parameters = new DialogParameters { ["catName"]=catName, ["catId"]=catId };
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<DeleteCategoryModal>("Delete Category?", parameters, options);
+    }
+}
