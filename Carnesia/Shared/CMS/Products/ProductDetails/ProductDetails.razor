@@ -1,0 +1,45 @@
+﻿<MudPaper Class="pa-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudGrid>
+				<MudItem sm="6">
+					<MudAutocomplete T="string" Label="Product" ResetValueOnEmptyText="true" Required="true" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField T="string" Label="Product SKU" Required="true" RequiredError="Product SKU is required!"/>
+				</MudItem>
+				<MudItem sm="6">
+					<MudAutocomplete T="string" Label="Shade" ResetValueOnEmptyText="true" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField T="string" Label="Product Weight" Required="true" RequiredError="Product Weight is required!"/>
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField T="string" Label="Product Dimension" Required="true" RequiredError="Product Dimension is required!"/>
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField T="decimal?" Label="MRP" Required="true" RequiredError="MRP is required!"/>
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField T="int?" Label="Delivary Day Preorder" Required="true" RequiredError="Delivary Day Preorder is required!"/>
+				</MudItem>
+			</MudGrid>
+
+			<div class="d-flex flex-column">
+                <MudCheckBox T="bool" Class="ml-n2" Label="Is Pre-Order!"/>
+                <MudCheckBox T="bool" Class="ml-n2" Label="Is Publish!"/>
+                <MudCheckBox T="bool" Class="ml-n2" Label="Is Has Free Product!"/>
+            </div>
+
+			<div class="d-flex justify-end mt-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+            </div>
+		</MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    private MudForm form;
+    private bool success;
+    private string[] errors = { };
+}

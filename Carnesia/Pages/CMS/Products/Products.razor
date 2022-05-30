@@ -1,6 +1,7 @@
-﻿@page "/old-product"
-@using Carnesia.Shared.CMS.Product.CreateProduct
-@using Carnesia.Shared.CMS.Product.ProductList
+﻿@page "/product"
+
+@using Carnesia.Shared.CMS.Products.CreateProduct
+@using Carnesia.Shared.CMS.Products.ProductDetails
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
@@ -8,8 +9,8 @@
             <MudButton Color="Color.Primary" Variant="CurrentPage == CreateProduct ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateProduct)">
                 @CreateProduct
             </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == ProductList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ProductList)">
-                @ProductList
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ProductDetails ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ProductDetails)">
+                @ProductDetails
             </MudButton>
         </MudButtonGroup>
     </MudContainer>
@@ -19,15 +20,15 @@
 {
     <CreateProduct />
 }
-else if(CurrentPage == ProductList)
+else if(CurrentPage == ProductDetails)
 {
-    <ProductList />
+    <ProductDetails />
 }
 
 @code {
-    // Pages
+        // Pages
     private string CreateProduct = "Create Product";
-    private string ProductList = "Product List";
+    private string ProductDetails = "Product Details";
 
     // Current Page
     private string CurrentPage = "Create Product";

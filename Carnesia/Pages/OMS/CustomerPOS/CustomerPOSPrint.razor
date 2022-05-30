@@ -1,0 +1,57 @@
+﻿@page "/customer-pos-print"
+
+@using Carnesia.Domain.OMS.CustomerPOS
+
+<MudPaper Class="pa-16 pt-10 ma-2">
+	<MudContainer Fixed="true">
+		<MudText Typo="Typo.h3">Carnesia</MudText>
+		<hr/>
+		<div class="mt-5">
+			<MudText>Name: Md.Tanvir Rahman</MudText>
+			<MudText>Phone Number: 01521534289</MudText>
+			<MudText>Address: CDA 23/1 Chittagong</MudText>
+		</div>
+
+		<MudText Typo="Typo.h6" Class="my-5">Payment Method: Cash</MudText>
+
+		<MudTable Items="@Elements" Hover="true" Dense="true">
+            <HeaderContent>
+                <MudTh>SKU</MudTh>
+                <MudTh>Item Name</MudTh>
+                <MudTh>MRP</MudTh>
+                <MudTh>Selling Price</MudTh>
+                <MudTh>QTY</MudTh>
+                <MudTh>Sub Total</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="SKU">@context.SKU</MudTd>
+                <MudTd DataLabel="Item Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="MRP">@context.MRP</MudTd>
+                <MudTd DataLabel="Selling Price">@context.SellingPrice</MudTd>
+                <MudTd DataLabel="QTY">@context.QTY</MudTd>
+                <MudTd DataLabel="Sub Total">@context.SubTotal</MudTd>
+            </RowTemplate>
+            <GroupFooterTemplate>
+                <MudTd  colspan="6" Style="text-align:end;">
+                    Total MRP: 450
+                </MudTd>
+                <MudTd  colspan="6" Style="text-align:end;">
+                    Total Items: 1
+                </MudTd>
+                <MudTd  colspan="6" Style="text-align:end;">
+                    Grand Total: 450
+                </MudTd>
+            </GroupFooterTemplate>
+        </MudTable>
+
+        <div class="d-flex justify-end mt-5">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Save" Color="Color.Success" Class="me-1" >Print</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Send</MudButton>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private IEnumerable<CustomerPOSPrintDTO> Elements = new List<CustomerPOSPrintDTO>();
+}

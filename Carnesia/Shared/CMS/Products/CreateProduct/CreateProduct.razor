@@ -1,56 +1,75 @@
-﻿@using Carnesia.Domain.CMS.Models
-@inject IProduct _product
-@inject ISnackbar _snackbar
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+﻿@using Blazored.TextEditor
+
+<MudPaper Class="pa-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
-		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudGrid>
-                    <MudItem md="6">
-                        <MudTextField T="string" @bind-Value="productDto.productName" Label="Product Name" Required="true" RequiredError="Product name is required!"/>
-                        <MudTextField T="string" @bind-Value="productDto.productsku" Label="Product SKU" Required="true" RequiredError="Product SKU is required!"/>
-                        <MudAutocomplete T="string" @bind-Value="productDto.brandName" Label="Brand" ResetValueOnEmptyText="@true" Required="true" RequiredError="Product SKU is required!" />
-                        <MudTextField T="int?" @bind-Value="productDto.delivaryDayPreorder" Label="Delivary Day Preorder" Required="true" RequiredError="Delivary Day Preorder is required!"/>
-                    </MudItem>
-                    <MudItem md="6">
-                        <MudTextField T="string" @bind-Value="productDto.weight" Label="Product Weight" Required="true" RequiredError="Product weight is required!"/>
-                        <MudTextField T="string" @bind-Value="productDto.productDimension" Label="Product Dimension" Required="true" RequiredError="Product dimension is required!"/>
-                        <MudTextField T="decimal?" @bind-Value="productDto.mrp" Label="MRP" Required="true" RequiredError="MRP is required!"/>
-                        <MudTextField T="string" @bind-Value="productDto.description" Label="Description" Required="true" RequiredError="Description is required!"/>
-                    </MudItem>
-                </MudGrid>
+		<MudForm Class="mb-10" @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudGrid>
+						<MudItem sm="6">
+							<MudTextField T="string" Label="Product Name" Required="true" RequiredError="Product Name is required!"/>
+						</MudItem>
+						<MudItem sm="6">
+							<MudAutocomplete T="string" Label="Brand" ResetValueOnEmptyText="true" Required="true"/>
+						</MudItem>
+						<MudItem sm="6">
+							<MudAutocomplete T="string" Label="Origin" ResetValueOnEmptyText="true" Required="true" />
+						</MudItem>
+					</MudGrid>
+            </MudForm>
 
-                <div class="d-flex flex-column">
-                    <MudCheckBox T="bool" Class="ml-n2" Label="Is Pre-Order!"/>
-                    <MudCheckBox T="bool" Class="ml-n2" Label="Is Publish!"/>
-                    <MudCheckBox T="bool" Class="ml-n2" Label="Is Has Free Product!"/>
-                </div>
+			<BlazoredTextEditor @ref="@QuillNative" Placeholder="Enter non HTML format like centering...">
+            <ToolbarContent>
+                <span class="ql-formats">
+                    <select class="ql-font">
+                        <option selected=""></option>
+                        <option value="serif"></option>
+                        <option value="monospace"></option>
+                    </select>
+                    <select class="ql-size">
+                        <option value="small"></option>
+                        <option selected=""></option>
+                        <option value="large"></option>
+                        <option value="huge"></option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                </span>
+                <span class="ql-formats">
+                    <select class="ql-color"></select>
+                    <select class="ql-background"></select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                    <button class="ql-indent" value="-1"></button>
+                    <button class="ql-indent" value="+1"></button>
+                    <select class="ql-align">
+                        <option selected=""></option>
+                        <option value="center"></option>
+                        <option value="right"></option>
+                        <option value="justify"></option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                </span>
+            </ToolbarContent>
+        </BlazoredTextEditor>
 
-                <div class="d-flex align-center justify-end mt-6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="AddProduct">Submit</MudButton>
-                </div>
-        </MudForm>
+        <div class="d-flex justify-end mt-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)">Submit</MudButton>
+        </div>
 	</MudContainer>
 </MudPaper>
 
 @code {
-    public ProductDTO productDto = new ProductDTO();
-    // Form Ref
-    private MudForm form;
-    private bool success;
-    private string[] errors = { };
+	bool success;
+    string[] errors = { };
+    MudForm form;
 
-    private async Task AddProduct()
-    {
-        var product = new CreateProductDTO()
-        {
-           productDTO = productDto
-        };
-        var result = await _product.CreateProduct(product);
-        _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-        _snackbar.Add(result, Severity.Success);
-        
-    }
-    
-    
-
+    // Rich Text Editor
+    BlazoredTextEditor QuillNative;
 }

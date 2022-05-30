@@ -4,6 +4,7 @@ using Carnesia.Application.CMS.Services;
 using Carnesia.Application.CMS.Services.Category;
 using Carnesia.Application.CMS.Services.GifBanner;
 using Carnesia.Application.CMS.Services.HomeCarousel;
+using Carnesia.Application.CMS.Services.GeneralVoucher;
 using Carnesia.Application.Vendor.Services;
 using Carnesia.Application.WMS.PO.Services;
 using Carnesia.Application.WMS.Store.Services;
@@ -25,6 +26,7 @@ builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<ICategory, CategoryService>();
 builder.Services.AddScoped<IGifBanner, GifBannerService>();
 builder.Services.AddScoped<IHomeCarousel, HomeCarouselService>();
+builder.Services.AddScoped<IGeneralVoucher, GeneralVoucherService>();
 builder.Services.AddScoped<IBase64, Base64Service>();
 
 await builder.Build().RunAsync();
