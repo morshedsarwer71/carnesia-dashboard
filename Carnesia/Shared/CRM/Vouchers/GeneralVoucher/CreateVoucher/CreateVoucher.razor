@@ -1,4 +1,4 @@
-﻿@using Carnesia.Domain.CMS.GeneralVoucher
+﻿@using Carnesia.Domain.CRM.Vouchers.GeneralVoucher.CreateVoucher
 @inject ISnackbar Snackbar
 @inject IGeneralVoucher _generalVoucher
 
@@ -88,9 +88,11 @@
         try
         {
             await _generalVoucher.CreateNewVoucher(FormData);
+            Snackbar.Add("New Voucher Created Successfully!", Severity.Success);
         }
         catch (Exception)
         {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
             throw;
         }
     }

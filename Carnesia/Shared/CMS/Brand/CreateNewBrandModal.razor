@@ -1,0 +1,28 @@
+﻿@using Carnesia.Domain.CMS.Brand
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudTextField @bind-Value="FormData.name" Label="Brand Name" Required="true" RequiredError="Brand Name is required!"/>
+                <MudTextField @bind-Value="FormData.description" Lines="5" Label="Description" Required="true" RequiredError="Description is required!"/>
+                <div class="d-flex justify-end my-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+                </div>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public CreateBrandDTO FormData{get;set;} = new CreateBrandDTO();
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<CreateBrandDTO>(FormData));
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}

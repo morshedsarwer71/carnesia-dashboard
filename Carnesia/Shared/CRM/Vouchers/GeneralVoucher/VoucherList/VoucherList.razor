@@ -1,0 +1,62 @@
+﻿@using Carnesia.Domain.CRM.Vouchers.GeneralVoucher.VoucherList
+@using Carnesia.Domain.Common.POCO
+@inject IGeneralVoucher _generalVoucher
+
+<MudPaper Class="pa-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Code</MudTh>
+                <MudTh>Start Date</MudTh>
+                <MudTh>End Date</MudTh>
+                <MudTh>Number of Vouchers</MudTh>
+                <MudTh>Platform</MudTh>
+                <MudTh>Minimum Cart Amount</MudTh>
+                <MudTh>Discount Type</MudTh>
+                <MudTh>Discount Amount</MudTh>
+                <MudTh>Up To</MudTh>
+                <MudTh>Description</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Code">@context.gvCode</MudTd>
+                <MudTd DataLabel="Start Date">@context.startDate</MudTd>
+                <MudTd DataLabel="End Date">@context.endDate</MudTd>
+                <MudTd DataLabel="Number of Vouchers">@context.numOfVoucher</MudTd>
+                <MudTd DataLabel="Platform">@context.platformType</MudTd>
+                <MudTd DataLabel="Minimum Cart Amount">@context.minCartAmount</MudTd>
+                <MudTd DataLabel="Discount Type">@context.voucherDiscType</MudTd>
+                <MudTd DataLabel="Discount Amount">@context.discAmntOrPercent</MudTd>
+                <MudTd DataLabel="Up To">@context.upToDiscAmnt</MudTd>
+                <MudTd DataLabel="Description">@context.description</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+    {
+        Elements = await _generalVoucher.GetVouchers();
+    }
+	// Table Content
+	private IEnumerable<VoucherListDTO> Elements = new List<VoucherListDTO>();
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+}

@@ -1,0 +1,119 @@
+﻿@page "/brand"
+
+@using Carnesia.Domain.CMS.Brand
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.CMS.Brand
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IBrand _brand
+
+<MudPaper Class="pa-16 pt-10 ma-2">
+	<MudContainer Fixed="true">
+		<div class="d-flex justify-end mb-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenBrandModal" >Add New Brand</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Brand Name</MudTh>
+                <MudTh>Description</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Brand Name">@context.name</MudTd>
+                <MudTd DataLabel="Description">@context.description</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateModal(context.name, context.description, context.brandId)">Update</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await _brand.GetBrands();
+    }
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<BrandDTO> Elements = new List<BrandDTO>();
+
+
+    // Add Brand Modal
+    private async Task OpenBrandModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new CreateBrandDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<CreateNewBrandModal>("Add New Brand", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            CreateBrandDTO newBrand = dialog.Data as CreateBrandDTO;
+
+            try
+            {
+                await _brand.CreateBrand(newBrand);
+                Snackbar.Add("New Brand Created Successfully!", Severity.Success);
+                await OnInitializedAsync();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
+
+    // Update Brand
+    private async Task OpenUpdateModal(string name, string description, int BrandId)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new CreateBrandDTO()
+            {
+                name = name,
+                description = description
+            });
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<CreateNewBrandModal>("Update Brand", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            CreateBrandDTO newBrand = dialog.Data as CreateBrandDTO;
+
+            try
+            {
+                await _brand.UpdateBrand(newBrand, BrandId);
+                Snackbar.Add("Brand Updated Successfully!", Severity.Success);
+                await OnInitializedAsync();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
+}
