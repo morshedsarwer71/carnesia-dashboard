@@ -10,8 +10,8 @@ namespace Carnesia.Domain.CMS.Category
     {
         public int id { get; set; }
         public string parentCat { get; set; }
-        public string imageUrl { get; set; }
+        public string? imageUrl { get; set; }
         public bool showDetails { get; set; } = false;
-        public IList<ChildCategoryDTO> child { get; set; }
+        public IList<ChildCategoryDTO>? child { get; set; }
     }
 }

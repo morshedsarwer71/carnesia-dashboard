@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Carnesia.Domain.CMS.Category
 {
-    public class ChildCategoryDTO
+    public class GreatGrandChildDTO
     {
         public int id { get; set; }
-        public int parentId { get; set; }
-        public string childCat { get; set; }
-        public IList<GrandChildCategoryDTO>? grandChild { get; set; }
+        public int gChildId { get; set; }
+        public string ggChildCat { get; set; }
     }
 }

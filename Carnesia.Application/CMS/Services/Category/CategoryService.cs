@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components.Forms;
+using Carnesia.Domain.CMS.CreateProduct;
 
 namespace Carnesia.Application.CMS.Services.Category
 {
@@ -65,9 +66,56 @@ namespace Carnesia.Application.CMS.Services.Category
         {
             try
             {
-                var categories = await _httpClient.GetFromJsonAsync<List<ParentCategoryDTO>>("Category");
+                var categories = await _httpClient.GetFromJsonAsync<List<ParentCategoryDTO>>("Category/categories");
 
                 return categories;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string[]> GetChildCatAsString(IList<ChildCategoryDTO> ChildCategories)
+        {
+            var list = new List<string>();
+            list.AddRange(ChildCategories.Select(x => x.childCat));
+            
+            return list.ToArray();
+    
+        }
+
+        public async Task<string[]> GetGrandChildCatAsString(IList<GrandChildCategoryDTO> GrandChildCategories)
+        {
+            var list = new List<string>();
+            list.AddRange(GrandChildCategories.Select(x => x.gChildCat));
+
+            return list.ToArray();
+        }
+
+        public async Task<ParentCategoryDTO> GetParentCat(string ParentCat)
+        {
+            try
+            {
+                var categories = await GetCategories();
+                return categories.FirstOrDefault(x => x.parentCat == ParentCat);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string[]> GetParentCatAsString()
+        {
+            try
+            {
+                var list = new List<string>();
+                var categories = await GetCategories();
+                list.AddRange(categories.Select(x => x.parentCat));
+                return list.ToArray();
             }
             catch (Exception)
             {
