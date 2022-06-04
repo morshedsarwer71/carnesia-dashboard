@@ -1,0 +1,67 @@
+﻿@page "/parent-product"
+
+@using Carnesia.Domain.CMS.ParentProduct
+@using Carnesia.Domain.Common.POCO
+@inject IParentProduct _parentProduct
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+        <div class="mb-5 d-flex justify-end">
+            <MudButton StartIcon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary">Add Parent Product</MudButton>
+        </div>
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Product Type</MudTh>
+                <MudTh>Brand Name</MudTh>
+                <MudTh>Origin</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Product Name">@context.name</MudTd>
+                <MudTd DataLabel="Product Type">@context.productType</MudTd>
+                <MudTd DataLabel="Brand Name">@context.brand</MudTd>
+                <MudTd DataLabel="Origin">@context.originId</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning">Edit</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetParentProducts();
+    }
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<ParentProductDTO> Elements = new List<ParentProductDTO>();
+
+    // Get Parent Products
+    private async Task GetParentProducts()
+    {
+        Elements = await _parentProduct.GetParentProducts();
+    }
+}

@@ -16,6 +16,7 @@ namespace Carnesia.Application.Common.Service.Base64
         {
             try
             {
+                var ImageBase = "";
                 var file = ImageFile.File;
 
                 var buffer = new byte[file.Size];
@@ -25,20 +26,24 @@ namespace Carnesia.Application.Common.Service.Base64
                     throw new Exception($"Maximum image size is {ImageSize/1024}KB!");
                 }
 
-                //using (Stream memStream = new MemoryStream(buffer))
+                await file.OpenReadStream().ReadAsync(buffer);
+                ImageBase = Convert.ToBase64String(buffer);
+
+                //byte[] image = Convert.FromBase64String(ImageBase);
+
+                //using (var ms = new MemoryStream(image))
                 //{
-                //    using (Image img = Image.FromStream(memStream))
+                //    Image img = Image.FromStream(ms);
+
+                //    Console.WriteLine(img.Width);
+
+                //    if (img.Width != ImageWidth || img.Height != ImageHeight)
                 //    {
-                //        if (img.Width != ImageWidth || img.Height != ImageHeight)
-                //        {
-                //            throw new Exception($"Image height & width must be {ImageHeight} & {ImageWidth}!");
-                //        }
+                //        throw new Exception($"Image height & width must be {ImageHeight} & {ImageWidth}!");
                 //    }
                 //}
 
-                await file.OpenReadStream().ReadAsync(buffer);
-
-                return $"data:image/webp;base64,{Convert.ToBase64String(buffer)}";
+                return ImageBase;
             }
             catch (Exception)
             {

@@ -16,17 +16,31 @@ namespace Carnesia.Application.CMS.Services.CreateProduct
         {
             _httpClient = httpClient;
         }
+
+        public async Task CreateChildProduct(ProductDTO ProductData)
+        {
+            try
+            {
+                await _httpClient.PostAsJsonAsync("Products", ProductData);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<string> CreateParentProduct(ParentProductDTO ParentProduct)
         {
             try
             {
-                var result = await _httpClient.PostAsJsonAsync("ProductParent/createproductparent", ParentProduct);
+                var result = await _httpClient.PostAsJsonAsync("ProductParent", ParentProduct);
                 if (result.IsSuccessStatusCode)
                 {
                     var parentID = await result.Content.ReadAsStringAsync();
                     return parentID;
                 }
-                return null;
+                return String.Empty;
             }
             catch (Exception)
             {

@@ -1,11 +1,13 @@
 using Carnesia;
 using Carnesia.Application.Common.Service.Base64;
+using Carnesia.Application.Common.Service.EncodeDecode;
 using Carnesia.Application.CMS.Services;
 using Carnesia.Application.CMS.Services.Brand;
 using Carnesia.Application.CMS.Services.Category;
 using Carnesia.Application.CMS.Services.CreateProduct;
 using Carnesia.Application.CMS.Services.GifBanner;
 using Carnesia.Application.CMS.Services.HomeCarousel;
+using Carnesia.Application.CMS.Services.ParentProduct;
 using Carnesia.Application.CRM.Services.Vouchers.GeneralVoucher;
 using Carnesia.Application.Vendor.Services;
 using Carnesia.Application.WMS.PO.Services;
@@ -30,7 +32,9 @@ builder.Services.AddScoped<ICategory, CategoryService>();
 builder.Services.AddScoped<ICreateProduct, CreateProductService>();
 builder.Services.AddScoped<IGifBanner, GifBannerService>();
 builder.Services.AddScoped<IHomeCarousel, HomeCarouselService>();
+builder.Services.AddScoped<IParentProduct, ParentProductService>();
 builder.Services.AddScoped<IGeneralVoucher, GeneralVoucherService>();
 builder.Services.AddScoped<IBase64, Base64Service>();
+builder.Services.AddScoped<IEncodeDecode, EncodeDecodeService>();
 
 await builder.Build().RunAsync();

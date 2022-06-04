@@ -10,5 +10,6 @@ namespace Carnesia.Application.CMS.Services.CreateProduct
     public interface ICreateProduct
     {
         Task<string> CreateParentProduct(ParentProductDTO ParentProduct);
+        Task CreateChildProduct(ProductDTO ProductData);
     }
 }
