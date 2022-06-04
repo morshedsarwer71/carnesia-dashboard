@@ -38,7 +38,8 @@
                         <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.productName)">Product Name</MudTableSortLabel></MudTh>
                         <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.quantity)">PO Quantity</MudTableSortLabel></MudTh>
                         <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.liftingPrice)">Lifting Price</MudTableSortLabel></MudTh>
-                        <MudTh>Value</MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.total)">Value</MudTableSortLabel></MudTh>
+                        @*<MudTh>Value</MudTh>*@
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd DataLabel="SKU Code">@context.sku</MudTd>
