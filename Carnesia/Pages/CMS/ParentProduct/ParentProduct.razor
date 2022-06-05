@@ -2,6 +2,7 @@
 
 @using Carnesia.Domain.CMS.ParentProduct
 @using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.CMS.ParentProduct
 @inject IParentProduct _parentProduct
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
@@ -9,7 +10,7 @@
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
         <div class="mb-5 d-flex justify-end">
-            <MudButton StartIcon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary">Add Parent Product</MudButton>
+            <MudButton StartIcon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenBrandModal" >Add Parent Product</MudButton>
         </div>
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
             <ToolBarContent>
@@ -63,5 +64,32 @@
     private async Task GetParentProducts()
     {
         Elements = await _parentProduct.GetParentProducts();
+    }
+
+    // Add Parent Product Modal
+    private async Task OpenBrandModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new CreateParentProductDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddParentProductModal>("Add New Parent Product", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            CreateParentProductDTO newParentProduct = dialog.Data as CreateParentProductDTO;
+
+            try
+            {
+                await _parentProduct.CreateParentProduct(newParentProduct);
+                Snackbar.Add("New Parent Product Created Successfully!", Severity.Success);
+                await GetParentProducts();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
     }
 }
