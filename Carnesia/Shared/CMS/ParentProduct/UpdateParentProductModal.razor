@@ -1,14 +1,14 @@
 ﻿@using Carnesia.Domain.CMS.ParentProduct
-@using Blazored.TextEditor
 @inject IBrand _brand
-@inject IEncodeDecode _encode
+@inject IEncodeDecode _encodeDecode
+
 
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" Style="max-height:90vh; overflow-y: scroll">
                 <MudTextField @bind-Value="FormData.name" Label="Product Name" Required="true" RequiredError="Product Name is required!"/>
 
-                <MudAutocomplete @bind-Value="FormData.brandName" Label="Brand" ResetValueOnEmptyText="true" Required="true" SearchFunc="@BrandSearch" />
+                <MudAutocomplete @bind-Value="FormData.brand" Label="Brand" ResetValueOnEmptyText="true" Required="true" SearchFunc="@BrandSearch" />
                 <MudAutocomplete @bind-Value="FormData.originId" Label="Origin" SearchFunc="@CountrySearch" ResetValueOnEmptyText="true" Required="true" Class="mb-3" />
 
                 <BlazoredTextEditor @ref="@QuillNative" Placeholder="Product Description...">
@@ -55,26 +55,34 @@
                 </BlazoredTextEditor>
 
                 <div class="d-flex justify-end my-5">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="SubmitParent">Submit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="SubmitParent">Submit</MudButton>
                 </div>
         </MudForm>
     </DialogContent>
 </MudDialog>
 
 @code {
-    // Page On Load
-    protected override async Task OnInitializedAsync()
-    {
-        await GetBrands();
-    }
-
     // Rich Text
-    BlazoredTextEditor QuillNative;
+    BlazoredTextEditor QuillNative; 
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public CreateParentProductDTO FormData{get;set;} = new CreateParentProductDTO();
+    public ParentProductDTO FormData{get;set;} = new ParentProductDTO();
+
+    private string DecodedDescription { get; set; }
+
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBrands();
+
+        DecodedDescription = await _encodeDecode.DecodeBase64ToString(FormData.description); 
+        await this.QuillNative.LoadHTMLContent(DecodedDescription);
+        
+    }
+
+
 
     // Brands Array
     private string[] Brands;
@@ -99,25 +107,25 @@
         return string.IsNullOrEmpty(value) ? countries : countries.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    // Create Parent Product
+    // Update Parent Product
     private async Task SubmitParent()
     {
         // Temp
         var Temp_Des = await this.QuillNative.GetHTML();
 
         // Brand ID
-        var brand = await _brand.GetBrand(FormData.brandName);
-        FormData.brandId = brand.brandId;
+        var brand = await _brand.GetBrand(FormData.brand);
+        FormData.brandID = brand.brandId;
 
         // Description
-        FormData.description = await _encode.EncodeStringToBase64(Temp_Des);
+        FormData.description = await _encodeDecode.EncodeStringToBase64(Temp_Des);
 
         Submit();
 
     }
 
     // Submit Close
-    void Submit() => MudDialog.Close(DialogResult.Ok<CreateParentProductDTO>(FormData));
+    void Submit() => MudDialog.Close(DialogResult.Ok<ParentProductDTO>(FormData));
 
     // Form Ref
     bool success;

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carnesia.Domain.CMS.ChildProduct
+namespace Carnesia.Domain.CMS.SimpleProduct
 {
-    public class ChildProductDetailsDTO
+    public class SimpleProductDetailsDTO
     {
         public string productName { get; set; }
         public string productsku { get; set; }

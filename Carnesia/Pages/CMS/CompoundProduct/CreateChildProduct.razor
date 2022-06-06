@@ -1,4 +1,4 @@
-﻿@page "/create-child-product"
+﻿@page "/create-compound-product"
 
 @using Carnesia.Domain.CMS.ChildProduct
 @using Carnesia.Shared.CMS.ChildProduct
@@ -14,7 +14,7 @@
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudGrid>
                     <MudItem sm="6"> 
-                        <MudAutocomplete Value="ChildProductInfoData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product" SearchFunc="@ParentProductSearch" ResetValueOnEmptyText="true" Required="true" />
+                        <MudAutocomplete Value="ChildProductInfoData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product" SearchFunc="@ParentProductSearch"                          ResetValueOnEmptyText="true" Required="true" />
                     </MudItem>
                     <MudItem sm="6">
                         <MudTextField @bind-Value="ChildProductInfoData.productName" Label="Product Name" Required="true" RequiredError="Product Name is required!"/>
@@ -37,10 +37,10 @@
                     <MudItem sm="6">
                         <MudGrid Class="align-baseline">
                             <MudItem xs="6">
-                                <MudNumericField @bind-Value="ChildProductInfoData.salesPrice" Label="Selling Price" Required="true" RequiredError="Selling Price is required!"/>
+                                <MudNumericField @bind-Value="ChildProductInfoData.discount" Label="@(ChildProductInfoData.isPercent ? "Discount Percent" : "Cash Discount")"/>
                             </MudItem>
                             <MudItem xs="6">
-                                <MudCheckBox T="bool" Color="Color.Primary" Class="ml-n2" Label="Cash or Parcent!"/>
+                                <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isPercent" Label="Is Percent" Color="Color.Primary" />
                             </MudItem>
                         </MudGrid>
                     </MudItem>
@@ -62,7 +62,7 @@
                     <MudItem sm="6">
 					    <MudTextField @bind-Value="ChildProductInfoData.metaTitle" Label="Meta Title" Required="true" RequiredError="Meta Title are required!" />
 				    </MudItem>
-                    @if (ChildProductInfoData.isColourCodeOrSize)
+                    @if (ChildProductInfoData.isSize)
                     {
                         <MudItem sm="6">
                             <MudGrid>
@@ -70,7 +70,7 @@
                                     <MudTextField @bind-Value="ChildProductInfoData.sizeOrQty" Label="Size" Required="true" RequiredError="Size is required!"/>
                                 </MudItem>
                                 <MudItem xs="6">
-                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isColourCodeOrSize" Label="Color Code or Size" Color="Color.Primary" />
+                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Size" Color="Color.Primary" />
                                 </MudItem>
                             </MudGrid>
                         </MudItem>
@@ -83,7 +83,7 @@
                                     <MudColorPicker Label="Color Code" @bind-Text="ChildProductInfoData.colorCode" Style="@($"color: {ChildProductInfoData.colorCode};")"                                                         ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
                                 </MudItem>
                                 <MudItem xs="6">
-                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isColourCodeOrSize" Label="Color Code or Size" Color="Color.Primary" />
+                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Size" Color="Color.Primary" />
                                 </MudItem>
                             </MudGrid>
                         </MudItem>                        
@@ -430,7 +430,7 @@
             return;
         }
 
-        if (ChildProductInfoData.isColourCodeOrSize == false && String.IsNullOrEmpty(ChildProductInfoData.colorCode))
+        if (ChildProductInfoData.isSize == false && String.IsNullOrEmpty(ChildProductInfoData.colorCode))
         {
             Snackbar.Add("Please Add Color Code!", Severity.Error);
             return;
