@@ -16,6 +16,7 @@ using Carnesia.Application.WMS.Store.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using Carnesia.Application.WMS.Bin.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddMudServices();
@@ -38,5 +39,6 @@ builder.Services.AddScoped<IParentProduct, ParentProductService>();
 builder.Services.AddScoped<IGeneralVoucher, GeneralVoucherService>();
 builder.Services.AddScoped<IBase64, Base64Service>();
 builder.Services.AddScoped<IEncodeDecode, EncodeDecodeService>();
+builder.Services.AddScoped<IBin, BinService>();
 
 await builder.Build().RunAsync();

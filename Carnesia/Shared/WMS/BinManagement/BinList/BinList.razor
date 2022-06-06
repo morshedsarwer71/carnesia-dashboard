@@ -1,5 +1,7 @@
-﻿@using Carnesia.Domain.WMS.BinList
+﻿@using Carnesia.Domain.WMS.Bin.Models
+@using Carnesia.Domain.WMS.BinList
 @using Carnesia.Domain.Common.POCO
+@inject IBin _bin
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -11,13 +13,13 @@
 				<MudTextField T="string" Label="Bin" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="2">
-				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
+				<MudSelect T="bool" Label="Status" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="@("Active")" />
 					<MudSelectItem Value="@("Deactivated")" />
 				</MudSelect>
 			</MudItem>
 			<MudItem md="2">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="Filter">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -33,15 +35,16 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="BIN">@context.BIN</MudTd>
-                <MudTd DataLabel="Status">@context.Status</MudTd>
-                <MudTd DataLabel="Warehouse">@context.Warehouse</MudTd>
-                <MudTd DataLabel="Created on">@context.CreationDate</MudTd>
-                <MudTd DataLabel="Created by">@context.CreatedBy</MudTd>
-                <MudTd DataLabel="Current Capacity">@context.CurrentCap</MudTd>
+                <MudTd DataLabel="BIN">@context.binName</MudTd>
+                <MudTd DataLabel="Status">@context.status</MudTd>
+                <MudTd DataLabel="Warehouse">@context.store</MudTd>
+                <MudTd DataLabel="Created on">@context.createdAt</MudTd>
+                <MudTd DataLabel="Created by">@context.createdBy</MudTd>
+	            <MudTd DataLabel="Current Capacity">@context.capacity</MudTd>
+	             <MudTd DataLabel="Current Capacity">@context.currentStock</MudTd>
 				<MudTd DataLabel="Current Stock">
-					@if (context.Status == "Active") { <MudButton Variant="Variant.Filled" Color=Color.Secondary>Deactivate</MudButton>}
-					else if (context.Status == "Deactivated") { <MudButton Variant="Variant.Filled" Color=Color.Success>Active</MudButton>}
+					@if (context.status == "Active") { <MudButton Variant="Variant.Filled" Color=Color.Secondary>Deactivate</MudButton>}
+					else if (context.status == "Deactivated") { <MudButton Variant="Variant.Filled" Color=Color.Success>Active</MudButton>}
 				</MudTd>
 				</RowTemplate>
             <PagerContent>
@@ -63,5 +66,30 @@
 	private TableCommon tableCommon = new TableCommon();
 
 	// Table Content
-	private IEnumerable<BinListDTO> Elements = new List<BinListDTO>();
+	//private IEnumerable<BinListDTO> Elements = new List<BinListDTO>();
+	private List<GetBinDTO> Elements = new List<GetBinDTO>();
+	public string? binName { get; set; } = "null";
+	public bool status { get; set; } = true;
+	public int storeId { get; set; } = 0;
+
+	protected override async Task OnInitializedAsync()
+	{
+		Filter();
+	}
+
+	private async Task<List<GetBinDTO>> Filter()
+	{
+		try
+		{
+			Elements = await _bin.GetBins(binName, storeId, status);
+			return Elements;
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+
+
  }
