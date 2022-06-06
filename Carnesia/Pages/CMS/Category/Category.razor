@@ -5,6 +5,7 @@
 @using Carnesia.Shared.CMS.Category
 @inject IDialogService DialogService
 @inject ICategory _category
+@inject ISnackbar Snackbar
 
 <MudPaper Class="pa-16 pt-10 ma-2">
 	<MudContainer Fixed="true">
@@ -28,11 +29,11 @@
                 <MudTd DataLabel="">
                     @if (!context.showDetails)
 					{
-						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.id)" />
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowChild(context.id)" />
 					}
 					else if (context.showDetails)
 					{
-						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.id)" />
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowChild(context.id)" />
 					}
                 </MudTd>
                 <MudTd DataLabel="Category Name">@context.parentCat</MudTd>
@@ -53,22 +54,61 @@
 							<MudCardContent Class="pa-0">
 								<MudTable Items="@context.child" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
 								   <HeaderContent>
+										<MudTh></MudTh>
 										<MudTh>Parent Name</MudTh>
 										<MudTh>Child Name</MudTh>
 										<MudTh>Action</MudTh>
 								   </HeaderContent>
 								   <RowTemplate>
+										<MudTd DataLabel="Parent Name">
+                                            @if (!DetailsContext.showDetails)
+											{
+												<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowGrand(DetailsContext.id, context.child)" />
+											}
+											else if (DetailsContext.showDetails)
+											{
+												<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowGrand(DetailsContext.id, context.child)" />
+											}
+                                        </MudTd>
 										<MudTd DataLabel="Parent Name">@context.parentCat</MudTd>
 										<MudTd DataLabel="Child Name">@DetailsContext.childCat</MudTd>
 										<MudTd DataLabel="Action">
 											<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateChildCategoryModal(DetailsContext.childCat,															 DetailsContext.id)">
 												Edit
 											</MudButton>
+											<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => OpenAddGrandChildModal(DetailsContext.id)">
+												Add Grand Child
+											</MudButton>
 											<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => OpenDeleteCategoryModal(DetailsContext.childCat, DetailsContext.id)">
 												Delete
 											</MudButton>
 										</MudTd>
 								   </RowTemplate>
+								   <ChildRowContent>
+										@if (DetailsContext.showDetails)
+										{
+											<td colspan="4">
+												<MudCard Elevation="0">
+													<MudCardContent Class="pa-0">
+														<MudTable Items="@DetailsContext.grandChild" Bordered="true" Dense="true" Context="GDetailsContext" Hover="true" Elevation="0">
+															<HeaderContent>
+																<MudTh>Child Name</MudTh>
+																<MudTh>Grand Child Name</MudTh>
+																<MudTh>Action</MudTh>
+															</HeaderContent>
+															<RowTemplate>
+																<MudTd DataLabel="Child Name">@DetailsContext.childCat</MudTd>
+																<MudTd DataLabel="Grand Child Name">@GDetailsContext.gChildCat</MudTd>
+																<MudTd DataLabel="Action">
+
+																</MudTd>
+															</RowTemplate>
+														</MudTable>
+													</MudCardContent>
+												</MudCard>
+											</td>
+										}
+									</ChildRowContent>
 								</MudTable>
 							</MudCardContent>
 						</MudCard>
@@ -92,9 +132,9 @@
 @code {
 	// Page On Load
 	protected override async Task OnInitializedAsync()
-    {
-        Elements = await _category.GetCategories();
-    }
+	{
+		Elements = await _category.GetCategories();
+	}
 
 	// Table Customaization
 	private TableCommon tableCommon = new TableCommon();
@@ -102,53 +142,110 @@
 	// Table Content
 	private IEnumerable<ParentCategoryDTO> Elements = new List<ParentCategoryDTO>();
 
-    // Show Details
-	private void ShowBtnPress(int id)
+	// Show Details
+	private void ShowChild(int id)
 	{
 		ParentCategoryDTO tmpElements = Elements.First(f => f.id == id);
 		tmpElements.showDetails = !tmpElements.showDetails;
 	}
 
+	// Show Details
+	private void ShowGrand(int id, IList<ChildCategoryDTO> Child)
+	{
+		ChildCategoryDTO tmpElements = Child.First(f => f.id == id);
+		tmpElements.showDetails = !tmpElements.showDetails;
+	}
+
 	// Add Parent Category Modal
-    private void OpenAddParentCategoryModal()
-    {
+	private async Task OpenAddParentCategoryModal()
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new CreateParentCatDTO());
+
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        DialogService.Show<AddParentCategoryModal>("Add New Category", options);
-    }
+		var dialog = await DialogService.Show<AddParentCategoryModal>("Add New Category", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			CreateParentCatDTO newCategory = dialog.Data as CreateParentCatDTO;
+
+			try
+			{
+				await _category.CreateParentCat(newCategory);
+				Snackbar.Add("New Category Created Successfully!", Severity.Success);
+				await OnInitializedAsync();
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
+	}
 
 	// Update Parent Category Modal
-    private void OpenUpdateParentCategoryModal(string parentCat, int parentId)
-    {
+	private void OpenUpdateParentCategoryModal(string parentCat, int parentId)
+	{
 		var parameters = new DialogParameters { ["parentCat"]=parentCat, ["parentId"]=parentId };
 
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        DialogService.Show<UpdateParentModal>("Update Parent Category", parameters, options);
-    }
+		DialogService.Show<UpdateParentModal>("Update Parent Category", parameters, options);
+	}
 
 	// Add Child Category Modal
-    private void OpenAddChildCategoryModal(int parentId)
-    {
+	private void OpenAddChildCategoryModal(int parentId)
+	{
 		var parameters = new DialogParameters { ["parentId"]=parentId };
 
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        DialogService.Show<AddChildCategoryModal>("Add New Child Category", parameters, options);
-    }
+		DialogService.Show<AddChildCategoryModal>("Add New Child Category", parameters, options);
+	}
 
 	// Update Child Category Modal
-    private void OpenUpdateChildCategoryModal(string childCat, int catId)
-    {
+	private void OpenUpdateChildCategoryModal(string childCat, int catId)
+	{
 		var parameters = new DialogParameters { ["childCat"]=childCat, ["catId"]=catId };
 
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        DialogService.Show<UpdateChildModal>("Update Child Category", parameters, options);
-    }
+		DialogService.Show<UpdateChildModal>("Update Child Category", parameters, options);
+	}
 
 	// Delete Category Modal
-    private void OpenDeleteCategoryModal(string catName, int catId)
-    {
+	private void OpenDeleteCategoryModal(string catName, int catId)
+	{
 		var parameters = new DialogParameters { ["catName"]=catName, ["catId"]=catId };
 
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        DialogService.Show<DeleteCategoryModal>("Delete Category?", parameters, options);
+		DialogService.Show<DeleteCategoryModal>("Delete Category?", parameters, options);
+	}
+
+	// Create Grand Child
+	private async Task OpenAddGrandChildModal(int childId)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new CreateGrandChildCatDTO()
+			{
+				childCatId = childId
+			});
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddGrandChildModal>("Add New Category", parameters, options).Result;
+
+		if (dialog.Data != null)
+        {
+            CreateGrandChildCatDTO newCategory = dialog.Data as CreateGrandChildCatDTO;
+
+            try
+            {
+                await _category.CreateGrandChildCat(newCategory);
+                Snackbar.Add("New Category Created Successfully!", Severity.Success);
+                await OnInitializedAsync();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
     }
 }

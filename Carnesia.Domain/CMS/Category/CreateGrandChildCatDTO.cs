@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Carnesia.Domain.CMS.Category
 {
-    public class CreateParentCatDTO
+    public class CreateGrandChildCatDTO
     {
-        public string parentCat { get; set; }
-        public string base64Attach { get; set; }
+        public int childCatId { get; set; }
+        public string gChildCat { get; set; }
     }
 }

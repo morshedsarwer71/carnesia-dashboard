@@ -32,16 +32,24 @@ namespace Carnesia.Application.CMS.Services.Category
             }
         }
 
+        public async Task CreateGrandChildCat(CreateGrandChildCatDTO GrandChildCat)
+        {
+            try
+            {
+                await _httpClient.PostAsJsonAsync("Category/grandChild", GrandChildCat);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task CreateParentCat(CreateParentCatDTO parentCat)
         {
             try
             {
-                var result = await _httpClient.PostAsJsonAsync("Category/parent", parentCat);
-
-                if (result.IsSuccessStatusCode)
-                {
-                    var parentId = await result.Content.ReadAsStringAsync();
-                }
+                await _httpClient.PostAsJsonAsync("Category/parent", parentCat);
             }
             catch (Exception)
             {
@@ -148,11 +156,6 @@ namespace Carnesia.Application.CMS.Services.Category
 
                 throw;
             }
-        }
-
-        Task<string> ICategory.CreateParentCat(CreateParentCatDTO parentCat)
-        {
-            throw new NotImplementedException();
         }
     }
 }
