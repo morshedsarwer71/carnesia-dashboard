@@ -1,4 +1,5 @@
 ﻿using Carnesia.Domain.CMS.ParentProduct;
+using Carnesia.Domain.CMS.SimpleProduct;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,25 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
             try
             {
                 await _httpClient.PostAsJsonAsync("ProductParent", ParentProduct);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> CreateParentProductReturnID(SimpleProductParentDTO ParentProduct)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("ProductParent", ParentProduct);
+                if (result.IsSuccessStatusCode)
+                {
+                    var parentId = await result.Content.ReadAsStringAsync();
+                    return parentId;
+                }
+                return null;
             }
             catch (Exception)
             {
@@ -58,6 +78,19 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
             {
                 var result = await _httpClient.GetFromJsonAsync<List<ParentProductDTO>>("ProductParent");
                 return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task UpdateParentProduct(ParentProductDTO ParentProduct)
+        {
+            try
+            {
+                await _httpClient.PutAsJsonAsync($"ProductParent/{ParentProduct.id}", ParentProduct);
             }
             catch (Exception)
             {
