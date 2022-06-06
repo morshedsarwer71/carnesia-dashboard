@@ -11,6 +11,7 @@ namespace Carnesia.Domain.CMS.Category
         public int id { get; set; }
         public int parentId { get; set; }
         public string childCat { get; set; }
+        public bool showDetails { get; set; } = false;
         public IList<GrandChildCategoryDTO>? grandChild { get; set; }
     }
 }
