@@ -43,7 +43,7 @@
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateParentCategoryModal(context.parentCat, context.id)">Edit</MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => OpenAddChildCategoryModal(context.id)">Add New Child</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => OpenDeleteCategoryModal(context.parentCat, context.id)">Delete</MudButton>
+                    @*<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => OpenDeleteCategoryModal(context.parentCat, context.id)">Delete</MudButton>*@
                 </MudTd>
             </RowTemplate>
             <ChildRowContent>
@@ -79,9 +79,9 @@
 											<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => OpenAddGrandChildModal(DetailsContext.id)">
 												Add Grand Child
 											</MudButton>
-											<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => OpenDeleteCategoryModal(DetailsContext.childCat, DetailsContext.id)">
+											@*<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => OpenDeleteCategoryModal(DetailsContext.childCat, DetailsContext.id)">
 												Delete
-											</MudButton>
+											</MudButton>*@
 										</MudTd>
 								   </RowTemplate>
 								   <ChildRowContent>
@@ -193,31 +193,73 @@
 	}
 
 	// Add Child Category Modal
-	private void OpenAddChildCategoryModal(int parentId)
+	private async Task OpenAddChildCategoryModal(int parentId)
 	{
-		var parameters = new DialogParameters { ["parentId"]=parentId };
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new CreateChildCategoryDTO()
+		{
+			parentId = parentId
+		});
 
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		DialogService.Show<AddChildCategoryModal>("Add New Child Category", parameters, options);
+		var dialog = await DialogService.Show<AddChildCategoryModal>("Add New Category", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			CreateChildCategoryDTO newCategory = dialog.Data as CreateChildCategoryDTO;
+
+			try
+			{
+				await _category.CreateChildCat(newCategory);
+				Snackbar.Add("New Category Created Successfully!", Severity.Success);
+				await OnInitializedAsync();
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
 	}
 
 	// Update Child Category Modal
-	private void OpenUpdateChildCategoryModal(string childCat, int catId)
+	private async Task OpenUpdateChildCategoryModal(string childCat, int catId)
 	{
-		var parameters = new DialogParameters { ["childCat"]=childCat, ["catId"]=catId };
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new ChildUpdateDTO()
+		{
+			childCat = childCat
+		});
 
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		DialogService.Show<UpdateChildModal>("Update Child Category", parameters, options);
+		var dialog = await DialogService.Show<UpdateChildModal>("Update Category", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			ChildUpdateDTO Category = dialog.Data as ChildUpdateDTO;
+
+			try
+			{
+				await _category.UpdateChildCat(Category, catId);
+				Snackbar.Add("Category Updated Successfully!", Severity.Success);
+				await OnInitializedAsync();
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
 	}
 
 	// Delete Category Modal
-	private void OpenDeleteCategoryModal(string catName, int catId)
-	{
-		var parameters = new DialogParameters { ["catName"]=catName, ["catId"]=catId };
+	//private void OpenDeleteCategoryModal(string catName, int catId)
+	//{
+	//	var parameters = new DialogParameters { ["catName"]=catName, ["catId"]=catId };
 
-		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		DialogService.Show<DeleteCategoryModal>("Delete Category?", parameters, options);
-	}
+	//	var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+	//	DialogService.Show<DeleteCategoryModal>("Delete Category?", parameters, options);
+	//}
 
 	// Create Grand Child
 	private async Task OpenAddGrandChildModal(int childId)

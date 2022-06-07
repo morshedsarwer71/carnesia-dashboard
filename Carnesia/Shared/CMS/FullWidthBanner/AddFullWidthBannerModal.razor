@@ -1,0 +1,72 @@
+﻿@using Carnesia.Domain.CMS.FullWidthBanner
+@inject IBase64 _base64
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField @bind-Value="FormData.bannerName" Label="Banner Name" Required="true" RequiredError="Banner Name is required!"/>
+                    <MudTextField @bind-Value="FormData.url" Label="URL" Required="true" RequiredError="URL is required!"/>
+
+                    <InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
+                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5" Required="true">
+                        Upload Banner Images
+                    </MudButton>
+
+                    <br/>
+                    <MudText Color="Color.Error">@ImageError</MudText>
+                    <MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+
+                    <div class="d-flex justify-end my-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="CreateBanner" Class="ml-auto">Submit</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public CreateFullWidthBannerDTO FormData{get;set;} = new CreateFullWidthBannerDTO();
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Image SRC
+    private string ImageSRC { get; set; }
+
+    // Image Error
+    private string ImageError { get; set; }
+
+    // Image Validation
+    private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
+    {
+        ImageError = String.Empty;
+        try
+        {
+            ImageSRC = await _base64.ConvertToBase64(153600, 100, 100, ImageFile);
+            FormData.base64Attch = await _base64.ConvertToBase64(153600, 100, 100, ImageFile);
+        }
+        catch(Exception e)
+        {
+            ImageError = e.Message;
+        }
+    }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<CreateFullWidthBannerDTO>(FormData));
+
+    // Create Banner
+    private void CreateBanner()
+    {
+        if (String.IsNullOrEmpty(FormData.base64Attch))
+        {
+            ImageError = "Please upload a image!";
+            return;
+        }
+
+        Submit(); 
+    }
+}
