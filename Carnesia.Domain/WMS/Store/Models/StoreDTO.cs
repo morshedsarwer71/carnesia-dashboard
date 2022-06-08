@@ -11,7 +11,7 @@ namespace Carnesia.Domain.WMS.Store.Models
         public int storeId { get; set; }
         public string storeName { get; set; }
         public string address { get; set; }
-        public int storeSize { get; set; }
-        public int numberOfRack { get; set; }
+        public string storeSize { get; set; }
+        //public int numberOfRack { get; set; }
     }
 }

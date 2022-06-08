@@ -13,6 +13,7 @@ using Carnesia.Application.CMS.Services.ParentProduct;
 using Carnesia.Application.CRM.Services.Vouchers.GeneralVoucher;
 using Carnesia.Application.Vendor.Services;
 using Carnesia.Application.WMS.PO.Services;
+using Carnesia.Application.WMS.PO.Services.ReceivePO;
 using Carnesia.Application.WMS.Store.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -28,6 +29,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 builder.Services.AddScoped<IPurchaseOrder, PurchaseOrderService>();
 builder.Services.AddScoped<IVendor, VendorServices>();
 builder.Services.AddScoped<IStore, StoreService>();
+builder.Services.AddScoped<IReceivePO, ReceivePOService>();
 builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<IBrand, BrandService>();
 builder.Services.AddScoped<IChildProduct, ChildProductService>();

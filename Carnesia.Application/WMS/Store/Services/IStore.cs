@@ -9,7 +9,7 @@ namespace Carnesia.Application.WMS.Store.Services
 {
     public interface IStore
     {
-        Task<IEnumerable<StoreDTO>> GetStoresAsync();
+        Task<List<StoreDTO>> GetStoresAsync();
         Task<string[]> GetStoreNameAsString();
         Task<StoreDTO> GetStore(string storeName);
     }
