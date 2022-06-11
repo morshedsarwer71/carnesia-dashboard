@@ -12,5 +12,8 @@ namespace Carnesia.Application.CMS.Services.HomeCarousel
         Task<List<HomeCarouselDTO>> GetHomeCarousels();
 
         Task ToggleCarousel(int carouselID);
+        Task AddCarousel(AddHomeCarouselDTO Carousel);
+
+        Task RemoveCarousel(int carouselID);
     }
 }

@@ -16,6 +16,20 @@ namespace Carnesia.Application.CMS.Services.HomeCarousel
         {
             _httpClient = httpClient;
         }
+
+        public async Task AddCarousel(AddHomeCarouselDTO Carousel)
+        {
+            try
+            {
+                await _httpClient.PostAsJsonAsync("HomePage/homecarousalimages", Carousel);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<HomeCarouselDTO>> GetHomeCarousels()
         {
             try
@@ -26,6 +40,19 @@ namespace Carnesia.Application.CMS.Services.HomeCarousel
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+
+        public async Task RemoveCarousel(int carouselID)
+        {
+            try
+            {
+                await _httpClient.DeleteAsync($"HomePage/deletecarousalimage/{carouselID}");
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }
