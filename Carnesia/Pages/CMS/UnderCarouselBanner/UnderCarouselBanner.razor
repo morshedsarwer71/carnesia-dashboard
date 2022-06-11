@@ -1,13 +1,13 @@
-﻿@page "/full-width-banner"
+﻿@page "/under-carousel-banner"
 
-@using Carnesia.Domain.CMS.FullWidthBanner
+@using Carnesia.Domain.CMS.UnderCarouselBanner
 @using Carnesia.Domain.Common.POCO
-@using Carnesia.Shared.CMS.FullWidthBanner
-@inject IFullWidthBanner _fullWidthBanner
+@using Carnesia.Shared.CMS.UnderCarouselBanner
+@inject IUnderCarouselBanner _underBanner
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-<MudPaper Class="ma-2 pa-16">
+<MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
 		<div class="d-flex justify-end mb-5">
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenAddBannerModal" >Add New Banner</MudButton>
@@ -21,6 +21,7 @@
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>Name</MudTh>
+                <MudTh>Placement</MudTh>
                 <MudTh>Image</MudTh>
                 <MudTh>URL</MudTh>
                 <MudTh>Publish</MudTh>
@@ -28,8 +29,9 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Name">@context.bannerName</MudTd>
+                <MudTd DataLabel="Placement">@context.bannerPlacement</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageWebUrl}")" Alt="@context.bannerName" Elevation="25" Class="rounded-lg" Style="width:50px" />
+                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imagePath}")" Alt="@context.bannerName" Elevation="25" Class="rounded-lg" Style="width:50px" />
                 </MudTd>
                 <MudTd DataLabel="URL">@context.url</MudTd>
                 <MudTd DataLabel="Publish">
@@ -54,23 +56,22 @@
 </MudPaper>
 
 @code {
+    // Page On Load
     protected override async Task OnInitializedAsync()
     {
-        await GetBanners();
+        await GettAllBanners();
     }
-
-
 
     // Table Customaization
     private TableCommon tableCommon = new TableCommon();
 
     // Table Content
-    private IEnumerable<FullWidthBannerDTO> Elements = new List<FullWidthBannerDTO>();
+    private IEnumerable<UnderCarouselBannerDTO> Elements = new List<UnderCarouselBannerDTO>();
 
-    // Get Banners
-    private async Task GetBanners()
+    // Gett All Banner
+    private async Task GettAllBanners()
     {
-        Elements = await _fullWidthBanner.GetBanners();
+        Elements = await _underBanner.GetAllBanners();
     }
 
     // Toggle Publish
@@ -79,7 +80,7 @@
         try
         {
 
-            await _fullWidthBanner.PublishToggle(id);
+            await _underBanner.PublishToggle(id);
             Snackbar.Add("Published Changed!", Severity.Success);
         }
         catch (Exception)
@@ -93,20 +94,20 @@
     private async Task OpenAddBannerModal()
     {
         var parameters = new DialogParameters();
-        parameters.Add("FormData", new CreateFullWidthBannerDTO());
+        parameters.Add("FormData", new AddUnderCarouselBannerDTO());
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<AddFullWidthBannerModal>("Add New Full Width Banner", parameters, options).Result;
+        var dialog = await DialogService.Show<AddUnderCarouselBannerModal>("Add New Banner", parameters, options).Result;
 
         if (dialog.Data != null)
         {
-            CreateFullWidthBannerDTO newBanner = dialog.Data as CreateFullWidthBannerDTO;
+            AddUnderCarouselBannerDTO newBanner = dialog.Data as AddUnderCarouselBannerDTO;
 
             try
             {
-                await _fullWidthBanner.CreateBanner(newBanner);
+                await _underBanner.AddBanner(newBanner);
                 Snackbar.Add("New Banner Created Successfully!", Severity.Success);
-                await GetBanners();
+                await GettAllBanners();
             }
             catch (Exception)
             {
@@ -117,7 +118,7 @@
     }
 
     // Delete Banner
-    private async Task DeleteBanner(int id)
+    private async Task DeleteBanner(int BannerId)
     {
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
         var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
@@ -126,9 +127,9 @@
         {
             try
             {
-                await _fullWidthBanner.DeleteBanner(id);
+                await _underBanner.DeleteBanner(BannerId);
                 Snackbar.Add("Banner Deleted Successfully!", Severity.Success);
-                await GetBanners();
+                await GettAllBanners();
             }
             catch (Exception)
             {

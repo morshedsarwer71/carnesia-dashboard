@@ -30,6 +30,19 @@ namespace Carnesia.Application.CMS.Services.FullWidthBanner
             }
         }
 
+        public async Task DeleteBanner(int id)
+        {
+            try
+            {
+                await _httpClient.DeleteAsync($"FullWidthBanner/deletefullwidthbanner/{id}");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<FullWidthBannerDTO>> GetBanners()
         {
             try
