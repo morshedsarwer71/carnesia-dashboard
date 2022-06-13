@@ -10,5 +10,7 @@ namespace Carnesia.Application.CMS.Services.GifBanner
     public interface IGifBanner
     {
         Task<List<GifBannerDTO>> GetGifBanners();
+        Task AddGifBanner(AddGifBannerDTO Banner);
+        Task RemoveBanner(int BannerId);
     }
 }

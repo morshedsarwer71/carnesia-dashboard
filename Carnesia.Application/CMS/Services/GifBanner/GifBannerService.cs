@@ -16,6 +16,20 @@ namespace Carnesia.Application.CMS.Services.GifBanner
         {
             _httpClient = httpClient;
         }
+
+        public async Task AddGifBanner(AddGifBannerDTO Banner)
+        {
+            try
+            {
+                await _httpClient.PostAsJsonAsync("HomePage/gifbanner", Banner);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<GifBannerDTO>> GetGifBanners()
         {
             try
@@ -26,6 +40,19 @@ namespace Carnesia.Application.CMS.Services.GifBanner
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+
+        public async Task RemoveBanner(int BannerId)
+        {
+            try
+            {
+                await _httpClient.DeleteAsync($"HomePage/deletegifbanner/{BannerId}");
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }

@@ -1,78 +1,86 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
+@using Carnesia.Domain.WMS.PO.ReceivePO
 @inject ISnackbar Snackbar
+@inject IReceivePO _receivePO
+@inject IDialogService DialogService
 
-<MudPaper Class="pa-16 ma-2" Elevation="0">
-    <MudContainer Fixed="true">
-        <MudPaper Width="400px" Square="true">
-            <MudList Clickable="true">
-                <MudListItem><MudText Typo="Typo.h4">PO ID: 123456</MudText></MudListItem>
-                <MudDivider />
-                <MudListItem>Supplier: Arham Trade International</MudListItem>
-                <MudDivider />
-                <MudListItem>Date: 24-Jan-2022 12:00:00 PM</MudListItem>
-            </MudList>
-        </MudPaper>
-    </MudContainer>
-</MudPaper>
+@if (PO != null)
+{
+    <MudPaper Class="pa-16 ma-2" Elevation="0">
+        <MudContainer Fixed="true">
+            <MudPaper Style="width:fit-content" Class="pa-2" Square="true">
+                <MudList Clickable="true">
+                    <MudListItem><MudText Typo="Typo.h4">PO ID: @PO.poCode</MudText></MudListItem>
+                    <MudDivider />
+                    <MudListItem>Supplier: @PO.vendorName</MudListItem>
+                    <MudDivider />
+                    <MudListItem>Date: @PO.orderDate</MudListItem>
+                </MudList>
+            </MudPaper>
+        </MudContainer>
+    </MudPaper>
+}
 
 <MudPaper Class="pa-16 ma-2">
     <MudContainer Fixed="true">
-        <MudGrid Class="justify-center align-baseline">
+        <MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="3">
 				<MudTextField @bind-Value="POID" Label="PO ID" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="3">
 				<div>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReceivePO" >Filter</MudButton>
 				</div>
 			</MudItem>
 		</MudGrid>
 
-        <MudTable Items="@Elements" Dense="@dense" Hover="@hover" CanCancelEdit="@true" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item               Updated"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true" Filter="new Func<ReceivePoPoco,bool>(FilterCycleCheck)"                Class="mt-5">
+        <MudTable Items="@Elements" Dense="@dense" Hover="@hover" CanCancelEdit="@true" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item               Updated", Severity.Info))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
                 <MudTextField @bind-Value="SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.SKU)">SKU Code</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.Name)">Product Name</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.PoQTY)">PO Quantity</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.LiftingPrice)">Lifting Price</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.QCPassed)">QC Passed</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.QCFailed)">QC Failed</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePoPoco, object>(x=>x.NotArrived)">Not Arrived</MudTableSortLabel></MudTh>
+                <MudTh>SKU Code</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>PO Quantity</MudTh>
+                <MudTh>Lifting Price</MudTh>
+                <MudTh>QC Passed</MudTh>
+                <MudTh>QC Failed</MudTh>
+                <MudTh>Not Arrived</MudTh>
                 <MudTh>Value</MudTh>
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="SKU Code">@context.SKU</MudTd>
-                <MudTd DataLabel="Name">@context.Name</MudTd>
-                <MudTd DataLabel="PO Quantity">@context.PoQTY</MudTd>
-                <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
-                <MudTd DataLabel="QC Passed">@context.QCPassed</MudTd>
-                <MudTd DataLabel="QC Failed">@context.QCFailed</MudTd>
-                <MudTd DataLabel="Not Arrived">@context.NotArrived</MudTd>
-                <MudTd DataLabel="Value">@(@context.QCPassed * @context.LiftingPrice)</MudTd>
-                <MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton></MudTd>
+                <MudTd DataLabel="SKU Code">@context.sku</MudTd>
+                <MudTd DataLabel="Name">@context.productName</MudTd>
+                <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
+                <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
+                <MudTd DataLabel="QC Passed">
+                    @(context.qcPassed - (context.qcFailed + context.notArrivedQty))
+                </MudTd>
+                <MudTd DataLabel="QC Failed">@context.qcFailed</MudTd>
+                <MudTd DataLabel="Not Arrived">@context.notArrivedQty</MudTd>
+                <MudTd DataLabel="Value">@((context.qcPassed - (context.qcFailed + context.notArrivedQty)) * context.liftingPrice)</MudTd>
+                <MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => SubmitPO(context)">Submit</MudButton></MudTd>
             </RowTemplate>
             <RowEditingTemplate>
-                <MudTd DataLabel="SKU Code">@context.SKU</MudTd>
-                <MudTd DataLabel="Name">@context.Name</MudTd>
-                <MudTd DataLabel="PO Quantity">@context.PoQTY</MudTd>
+                <MudTd DataLabel="SKU Code">@context.sku</MudTd>
+                <MudTd DataLabel="Name">@context.productName</MudTd>
+                <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
                 <MudTd DataLabel="Lifting Price">
-                    <MudNumericField @bind-Value="@context.LiftingPrice" Required Min="1" />
+                    <MudNumericField @bind-Value="@context.liftingPrice" Required Min="1" />
                 </MudTd>
                 <MudTd DataLabel="QC Passed">
-                    <MudNumericField @bind-Value="@context.QCPassed" Required />
+                    @(context.qcPassed - (context.qcFailed + context.notArrivedQty))
                 </MudTd>
                 <MudTd DataLabel="QC Failed">
-                    <MudNumericField @bind-Value="@context.QCFailed" Required />
+                    <MudNumericField @bind-Value="@context.qcFailed" Required />
                 </MudTd>
                 <MudTd DataLabel="Not Arrived">
-                    <MudNumericField @bind-Value="@context.NotArrived" />
+                    <MudNumericField @bind-Value="@context.notArrivedQty" />
                 </MudTd>
-                <MudTd DataLabel="Value">@(@context.QCPassed * @context.LiftingPrice)</MudTd>
+                <MudTd DataLabel="Value">@((context.qcPassed - (context.qcFailed + context.notArrivedQty)) * context.liftingPrice)</MudTd>
                 <MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton></MudTd>
             </RowEditingTemplate>
             <PagerContent>
@@ -109,39 +117,75 @@
     private bool hover { get; set; }
 
     // Table Content
-    private List<ReceivePoPoco> Elements = new List<ReceivePoPoco>();
+    private IEnumerable<ReceivePOProductDTO> Elements = new List<ReceivePOProductDTO>();
+    private ReceivePODTO PO = new ReceivePODTO();
+
+    // Get PO
+    private async Task GetReceivePO()
+    {
+        if (String.IsNullOrEmpty(POID))
+        {
+            Snackbar.Add("Please enter a POID!", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            PO = await _receivePO.GetPO(POID);
+
+            Elements = PO.products;
+        }
+        catch(Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
+        }
+    }
 
     // Before Edit
-    private ReceivePoPoco beforeEdit;
+    private ReceivePOProductDTO beforeEdit;
 
     // Backup Item 
     private void BackupItem(object element)
     {
         beforeEdit = new()
         {
-            LiftingPrice = ((ReceivePoPoco)element).LiftingPrice,
-            QCPassed = ((ReceivePoPoco)element).QCPassed,
-            QCFailed = ((ReceivePoPoco)element).QCFailed,
-            NotArrived = ((ReceivePoPoco)element).NotArrived,
+            liftingPrice = ((ReceivePOProductDTO)element).liftingPrice,
+            //qcPassed = ((ReceivePOProductDTO)element).qcPassed,
+            qcFailed = ((ReceivePOProductDTO)element).qcFailed,
+            notArrivedQty = ((ReceivePOProductDTO)element).notArrivedQty,
         };
     }
 
     // Reset Items If Edit Cancel
     private void ResetItemToOriginalValues(object element)
     {
-        ((ReceivePoPoco)element).LiftingPrice = beforeEdit.LiftingPrice;
-        ((ReceivePoPoco)element).QCPassed = beforeEdit.QCPassed;
-        ((ReceivePoPoco)element).QCFailed = beforeEdit.QCFailed;
-        ((ReceivePoPoco)element).NotArrived = beforeEdit.NotArrived;
+        ((ReceivePOProductDTO)element).liftingPrice = beforeEdit.liftingPrice;
+        //((ReceivePOProductDTO)element).qcPassed = beforeEdit.qcPassed;
+        ((ReceivePOProductDTO)element).qcFailed = beforeEdit.qcFailed;
+        ((ReceivePOProductDTO)element).notArrivedQty = beforeEdit.notArrivedQty;
     }
 
-    // Search Function
-    private bool FilterCycleCheck(ReceivePoPoco item)
-	{
-        if (item.SKU.ToLower().Contains(SearchTerm.ToLower()))
+    // PO Receive Confirmation Modal
+    private async Task SubmitPO(ReceivePOProductDTO PO)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<ReceivePOConfirmationModal>("Confirm", options).Result;
+
+        if (!dialog.Cancelled)
         {
-            return true;
+            PO.poCode = POID;
+            try
+            {
+                await _receivePO.SubmitReceive(PO);
+                await GetReceivePO();
+                Snackbar.Add("PO Received Successfully!", Severity.Success);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
         }
-        return false;
     }
 }

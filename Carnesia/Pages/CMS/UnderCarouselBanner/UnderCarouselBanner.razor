@@ -1,50 +1,52 @@
-﻿@page "/home-carousel"
+﻿@page "/under-carousel-banner"
 
+@using Carnesia.Domain.CMS.UnderCarouselBanner
 @using Carnesia.Domain.Common.POCO
-@using Carnesia.Domain.CMS.HomeCarousel
-@using Carnesia.Shared.CMS.HomeCarousel
-@inject IHomeCarousel _homeCarousel
-@inject IDialogService DialogService
+@using Carnesia.Shared.CMS.UnderCarouselBanner
+@inject IUnderCarouselBanner _underBanner
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
-<MudPaper Class="pa-16 pt-10 ma-2">
+<MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
 		<div class="d-flex justify-end mb-5">
-			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="OpenCarouselModal">Add New Carousel</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenAddBannerModal" >Add New Banner</MudButton>
 		</div>
 
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
-            <ToolBarContent>
+			<ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
                 <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>Name</MudTh>
-                <MudTh>URL</MudTh>
+                <MudTh>Placement</MudTh>
                 <MudTh>Image</MudTh>
+                <MudTh>URL</MudTh>
                 <MudTh>Publish</MudTh>
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Name">@context.name</MudTd>
-                <MudTd DataLabel="URL">@context.url</MudTd>
+                <MudTd DataLabel="Name">@context.bannerName</MudTd>
+                <MudTd DataLabel="Placement">@context.bannerPlacement</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imagePath}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imagePath}")" Alt="@context.bannerName" Elevation="25" Class="rounded-lg" Style="width:50px" />
                 </MudTd>
+                <MudTd DataLabel="URL">@context.url</MudTd>
                 <MudTd DataLabel="Publish">
-                    <MudSwitch @bind-Checked="context.isPublish" Color="Color.Primary" @onclick="(() => PublishUnpublish(context.id)) " />
+                    <MudSwitch @bind-Checked="@context.isPublished" Color="Color.Primary" @onclick="(() => TogglePublish(context.id))"/>
                 </MudTd>
                 <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteCarousel(context.id)">Delete</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteBanner(context.id)">Delete</MudButton>
                 </MudTd>
             </RowTemplate>
-            <PagerContent>
+			<PagerContent>
                 <MudTablePager />
             </PagerContent>
-        </MudTable>
+		</MudTable>
 
-        <div class="d-flex flex-wrap mt-4">
+		<div class="d-flex flex-wrap mt-4">
             <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
             <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
             <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
@@ -57,53 +59,55 @@
     // Page On Load
     protected override async Task OnInitializedAsync()
     {
-        await GetCarousel();
+        await GettAllBanners();
     }
 
     // Table Customaization
     private TableCommon tableCommon = new TableCommon();
 
     // Table Content
-    private IEnumerable<HomeCarouselDTO> Elements = new List<HomeCarouselDTO>();
+    private IEnumerable<UnderCarouselBannerDTO> Elements = new List<UnderCarouselBannerDTO>();
 
-    // Get Carousel
-    private async Task GetCarousel()
+    // Gett All Banner
+    private async Task GettAllBanners()
     {
-        Elements = await _homeCarousel.GetHomeCarousels();
+        Elements = await _underBanner.GetAllBanners();
     }
 
-    // Publish Unpublish
-    private async Task PublishUnpublish(int carouselId)
+    // Toggle Publish
+    private async Task TogglePublish(int id)
     {
         try
         {
-            await _homeCarousel.ToggleCarousel(carouselId);
-            Snackbar.Add("Carousel Successfully Toggled!", Severity.Success);
+
+            await _underBanner.PublishToggle(id);
+            Snackbar.Add("Published Changed!", Severity.Success);
         }
         catch (Exception)
         {
             Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
         }
     }
 
-	// Add Home Carousel Modal
-    private async Task OpenCarouselModal()
+    // Add New Banner
+    private async Task OpenAddBannerModal()
     {
-		var parameters = new DialogParameters();
-        parameters.Add("FormData", new AddHomeCarouselDTO());
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddUnderCarouselBannerDTO());
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<AddHomeCarouselModal>("Add New Carousel", parameters, options).Result;
+        var dialog = await DialogService.Show<AddUnderCarouselBannerModal>("Add New Banner", parameters, options).Result;
 
         if (dialog.Data != null)
         {
-            AddHomeCarouselDTO newCarousel = dialog.Data as AddHomeCarouselDTO;
+            AddUnderCarouselBannerDTO newBanner = dialog.Data as AddUnderCarouselBannerDTO;
 
             try
             {
-                await _homeCarousel.AddCarousel(newCarousel);
-                Snackbar.Add("New Carousel Created Successfully!", Severity.Success);
-                await GetCarousel();
+                await _underBanner.AddBanner(newBanner);
+                Snackbar.Add("New Banner Created Successfully!", Severity.Success);
+                await GettAllBanners();
             }
             catch (Exception)
             {
@@ -114,7 +118,7 @@
     }
 
     // Delete Banner
-    private async Task DeleteCarousel(int CarouselId)
+    private async Task DeleteBanner(int BannerId)
     {
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
         var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
@@ -123,9 +127,9 @@
         {
             try
             {
-                await _homeCarousel.RemoveCarousel(CarouselId);
-                Snackbar.Add("Carousel Deleted Successfully!", Severity.Success);
-                await GetCarousel();
+                await _underBanner.DeleteBanner(BannerId);
+                Snackbar.Add("Banner Deleted Successfully!", Severity.Success);
+                await GettAllBanners();
             }
             catch (Exception)
             {

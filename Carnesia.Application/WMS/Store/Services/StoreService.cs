@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Carnesia.Application.WMS.Store.Services
 {
@@ -46,11 +47,11 @@ namespace Carnesia.Application.WMS.Store.Services
             }
         }
 
-        public async Task<IEnumerable<StoreDTO>> GetStoresAsync()
+        public async Task<List<StoreDTO>> GetStoresAsync()
         {
             try
             {
-                var response = await _httpClient.GetFromJsonAsync<IEnumerable<StoreDTO>>("Stores");
+                var response = await _httpClient.GetFromJsonAsync<List<StoreDTO>>("Stores");
                 return response;
             }
             catch (Exception)

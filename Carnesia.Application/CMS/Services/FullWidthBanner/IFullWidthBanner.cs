@@ -12,5 +12,6 @@ namespace Carnesia.Application.CMS.Services.FullWidthBanner
         Task<List<FullWidthBannerDTO>> GetBanners();
         Task CreateBanner(CreateFullWidthBannerDTO Banner);
         Task PublishToggle(int id);
+        Task DeleteBanner(int id);
     }
 }

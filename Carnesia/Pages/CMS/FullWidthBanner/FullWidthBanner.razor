@@ -23,16 +23,20 @@
                 <MudTh>Name</MudTh>
                 <MudTh>Image</MudTh>
                 <MudTh>URL</MudTh>
+                <MudTh>Publish</MudTh>
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Category Name">@context.bannerName</MudTd>
+                <MudTd DataLabel="Name">@context.bannerName</MudTd>
                 <MudTd DataLabel="Image">
                     <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageWebUrl}")" Alt="@context.bannerName" Elevation="25" Class="rounded-lg" Style="width:50px" />
                 </MudTd>
                 <MudTd DataLabel="URL">@context.url</MudTd>
+                <MudTd DataLabel="Publish">
+                    <MudSwitch @bind-Checked="@context.isPublished" Color="Color.Primary" @onclick="(() => TogglePublish(context.id))"/>
+                </MudTd>
                 <MudTd DataLabel="Action">
-                    <MudSwitch @bind-Checked="@context.isPublished" Color="Color.Primary"   @onclick="(() => TogglePublish(context.id))"/>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteBanner(context.id)">Delete</MudButton>
                 </MudTd>
             </RowTemplate>
 			<PagerContent>
@@ -89,26 +93,48 @@
     private async Task OpenAddBannerModal()
     {
         var parameters = new DialogParameters();
-		parameters.Add("FormData", new CreateFullWidthBannerDTO());
+        parameters.Add("FormData", new CreateFullWidthBannerDTO());
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<AddFullWidthBannerModal>("Add New Full Width Banner", parameters, options).Result;
+        var dialog = await DialogService.Show<AddFullWidthBannerModal>("Add New Full Width Banner", parameters, options).Result;
 
         if (dialog.Data != null)
-		{
-			CreateFullWidthBannerDTO newBanner = dialog.Data as CreateFullWidthBannerDTO;
+        {
+            CreateFullWidthBannerDTO newBanner = dialog.Data as CreateFullWidthBannerDTO;
 
-			try
-			{
-				await _fullWidthBanner.CreateBanner(newBanner);
-				Snackbar.Add("New Banner Created Successfully!", Severity.Success);
-				await GetBanners();
-			}
-			catch (Exception)
-			{
-				Snackbar.Add("Something Went Wrong!", Severity.Error);
-				throw;
-			}
-		}
+            try
+            {
+                await _fullWidthBanner.CreateBanner(newBanner);
+                Snackbar.Add("New Banner Created Successfully!", Severity.Success);
+                await GetBanners();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
+
+    // Delete Banner
+    private async Task DeleteBanner(int id)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
+
+        if (!dialog.Cancelled)
+        {
+            try
+            {
+                await _fullWidthBanner.DeleteBanner(id);
+                Snackbar.Add("Banner Deleted Successfully!", Severity.Success);
+                await GetBanners();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
     }
 }

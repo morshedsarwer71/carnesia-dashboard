@@ -1,25 +1,29 @@
-﻿@using Carnesia.Domain.CMS.HomeCarousel
+﻿@using Carnesia.Domain.CMS.UnderCarouselBanner
 @inject IBase64 _base64
-
 
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                    <MudTextField @bind-Value="FormData.name" Label="Name" Required="true" RequiredError="Name is required!"/>
+                    <MudTextField @bind-Value="FormData.bannerName" Label="Banner Name" Required="true" RequiredError="Banner Name is required!"/>
                     <MudTextField @bind-Value="FormData.url" Label="URL" Required="true" RequiredError="URL is required!"/>
+
+                    <MudSelect @bind-Value="FormData.bannerPlacement" Label="Placement" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Placement is required!">
+                        <MudSelectItem Value="@("Top")" />
+                        <MudSelectItem Value="@("Bottom")" />
+                    </MudSelect>
 
                     <InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
                     <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5" Required="true">
-                        Upload Carousel Image
+                        Upload Banner Images
                     </MudButton>
-                    <MudText Class="mt-1">1280 * 450(Max 150Kb)</MudText>
+                    <MudText Class="mt-1">950 * 200(Max 150Kb)</MudText>
 
                     <br/>
                     <MudText Color="Color.Error">@ImageError</MudText>
                     <MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
 
                     <div class="d-flex justify-end my-5">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateCarousel">Submit</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="CreateBanner" Class="ml-auto">Submit</MudButton>
                     </div>
             </MudForm>
     </DialogContent>
@@ -28,9 +32,8 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-
     [Parameter]
-    public AddHomeCarouselDTO FormData{get;set;} = new AddHomeCarouselDTO();
+    public AddUnderCarouselBannerDTO FormData{get;set;} = new AddUnderCarouselBannerDTO();
 
     // Form Ref
     bool success;
@@ -49,8 +52,8 @@
         ImageError = String.Empty;
         try
         {
-            ImageSRC = await _base64.ConvertToBase64(153600, 1280, 450, ImageFile);
-            FormData.base64Attch = await _base64.ConvertToBase64(153600, 1280, 450, ImageFile);
+            ImageSRC = await _base64.ConvertToBase64(153600, 950, 200, ImageFile);
+            FormData.base64Attch = await _base64.ConvertToBase64(153600, 950, 200, ImageFile);
         }
         catch(Exception e)
         {
@@ -59,14 +62,14 @@
     }
 
     // Submit Close
-    void Submit() => MudDialog.Close(DialogResult.Ok<AddHomeCarouselDTO>(FormData));
+    void Submit() => MudDialog.Close(DialogResult.Ok<AddUnderCarouselBannerDTO>(FormData));
 
     // Create Banner
-    private void CreateCarousel()
+    private void CreateBanner()
     {
         if (String.IsNullOrEmpty(FormData.base64Attch))
         {
-            ImageError = "Please upload a image!";
+            ImageError = "Please upload an image!";
             return;
         }
 

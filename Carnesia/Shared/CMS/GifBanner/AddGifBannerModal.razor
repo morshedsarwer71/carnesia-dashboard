@@ -1,28 +1,25 @@
-﻿@inject IBase64 _base64
-@inject ISnackbar Snackbar
-
+﻿@using Carnesia.Domain.CMS.GifBanner
+@inject IBase64 _base64
 
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                    <MudTextField T="string" Label="Name" Required="true" RequiredError="Name is required!"/>
-                    <MudTextField T="string" Label="URL" Required="true" RequiredError="URL is required!"/>
-                    <MudTextField T="string" Label="Description" Required="true" RequiredError="URL is required!"/>
+                    <MudTextField @bind-Value="FormData.name" Label="Banner Name" Required="true" RequiredError="Banner Name is required!"/>
+                    <MudTextField @bind-Value="FormData.url" Label="URL" Required="true" RequiredError="URL is required!"/>
+                    <MudTextField @bind-Value="FormData.description" Lines="5" Label="Description" Required="true" RequiredError="Description is required!"/>
 
-                @if (!ShowInputFile)
-                {
-                    <InputFile id="gif-banner-image" OnChange="@ValidateImage" hidden accept=".webp, .gif" />
-                }
-                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="gif-banner-image" Class="mt-5" Required="true">
-                        Upload Gif Banner Images
+                    <InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp, .gif" />
+                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5" Required="true">
+                        Upload Banner Image
                     </MudButton>
+                    <MudText Class="mt-1">1200 * 80(Max 500Kb)</MudText>
 
                     <br/>
-
-                    <MudImage Src="@ImageSRC" Alt="" Elevation="25" Class="mx-auto mt-5" Style="width:80%; display:block;" />
+                    <MudText Color="Color.Error">@ImageError</MudText>
+                    <MudImage Src="@($"data:{FormData.extension};base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
 
                     <div class="d-flex justify-end my-5">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="CreateBanner" Class="ml-auto">Submit</MudButton>
                     </div>
             </MudForm>
     </DialogContent>
@@ -31,36 +28,52 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    // Clear Input File
-    private bool ShowInputFile { get; set; } = false;
-
-    private void ClearInputFile()
-    {
-        ShowInputFile = true;
-        StateHasChanged();
-        ShowInputFile = false;
-        StateHasChanged();
-    }
-
-    // Image SRC
-    private string ImageSRC { get; set; }
+    [Parameter]
+    public AddGifBannerDTO FormData{get;set;} = new AddGifBannerDTO();
 
     // Form Ref
     bool success;
     string[] errors = { };
     MudForm form;
 
+    // Image SRC
+    private string ImageSRC { get; set; }
+
+    // Image Error
+    private string ImageError { get; set; }
+
     // Image Validation
     private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
     {
+        ImageError = String.Empty;
         try
         {
+            var file = ImageFile.File;
+            FormData.extension = file.ContentType;
+
             ImageSRC = await _base64.ConvertToBase64(512000, 1200, 80, ImageFile);
+            FormData.base64Attch = await _base64.ConvertToBase64(512000, 1200, 80, ImageFile);
+
         }
         catch(Exception e)
         {
-            ClearInputFile();
-            Snackbar.Add(e.Message, Severity.Error);
+            ImageError = e.Message;
         }
     }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<AddGifBannerDTO>(FormData));
+
+    // Create Banner
+    private void CreateBanner()
+    {
+        if (String.IsNullOrEmpty(FormData.base64Attch))
+        {
+            ImageError = "Please upload an image!";
+            return;
+        }
+
+        Submit(); 
+    }
+
 }
