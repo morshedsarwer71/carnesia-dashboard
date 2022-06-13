@@ -9,6 +9,7 @@ namespace Carnesia.Domain.CMS.Campaign
     public class AddCampaignProductDTO
     {
         public int productId { get; set; }
+        public string sku { get; set; }
         public string discType { get; set; }
         public decimal discAmount { get; set; }
         public decimal regularPrice { get; set; }

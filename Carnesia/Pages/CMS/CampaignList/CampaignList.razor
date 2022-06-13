@@ -1,0 +1,105 @@
+﻿@page "/campaign-list"
+
+@using Carnesia.Domain.CMS.Campaign
+@using Carnesia.Domain.Common.POCO
+@inject ICampaignList _campaign
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<div class="d-flex justify-end mb-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="NavigateToCreateCampaign" >Add New Campaign</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Campaign Name</MudTh>
+                <MudTh>Platform</MudTh>
+                <MudTh>Start Date</MudTh>
+                <MudTh>End Date</MudTh>
+                <MudTh>Image</MudTh>
+                <MudTh>Publish</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Campaign Name">@context.campaignName</MudTd>
+                <MudTd DataLabel="Platform">@context.platformType</MudTd>
+                <MudTd DataLabel="Start Date">@context.startDate</MudTd>
+                <MudTd DataLabel="End Date">@context.endDate</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageWebUrl}")" Alt="@context.campaignName" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                </MudTd>
+                <MudTd DataLabel="Publish">
+                    <MudSwitch @bind-Checked="@context.isPublish" Color="Color.Primary" @onclick="(() => TogglePublish(context.id))"/>
+                </MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => NavigateToUpdate(context.id)">Edit</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetCampaigns();
+	}
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<CampaignDTO> Elements = new List<CampaignDTO>();
+
+	// Get Campaigns
+	private async Task GetCampaigns()
+	{
+		Elements = await _campaign.GetCampaigns();
+	}
+
+    // Toggle Publish
+    private async Task TogglePublish(int id)
+    {
+        try
+        {
+
+            await _campaign.Publishtoggle(id);
+            Snackbar.Add("Published Changed!", Severity.Success);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
+        }
+    }
+
+    // Navigate To Create Campaign
+    private void NavigateToCreateCampaign()
+    {
+        NavigationManager.NavigateTo("create-campaign");
+    }
+
+    // Navigate To Campaign Update 
+    private void NavigateToUpdate(int id)
+    {
+        NavigationManager.NavigateTo($"update-campaign/{id}");
+    }
+}

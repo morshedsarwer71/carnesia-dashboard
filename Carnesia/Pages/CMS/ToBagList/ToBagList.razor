@@ -1,0 +1,144 @@
+﻿@page "/tobag-list"
+
+@using Carnesia.Domain.CMS.ToBagList
+@using Carnesia.Domain.Common.POCO
+@inject IToBag _toBag
+@inject ISnackbar Snackbar
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh></MudTh>
+                <MudTh>Section Name</MudTh>
+                <MudTh>publish</MudTh>
+                @*<MudTh>Action</MudTh>*@
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="">
+                    @if (!context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowToBag(context.id)" />
+					}
+					else if (context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowToBag(context.id)" />
+					}
+                </MudTd>
+                <MudTd DataLabel="Category Name">@context.sectionName</MudTd>
+                <MudTd DataLabel="Publish">
+                     <MudSwitch @bind-Checked="@context.isPublished" Color="Color.Primary" @onclick="(() => TogglePublishSection(context.id))"/>
+                </MudTd>
+                @*<MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
+                </MudTd>*@
+            </RowTemplate>
+            <ChildRowContent>
+				@if (context.ShowDetails)
+				{
+					<td colspan="4">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.tobags" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+										<MudTh>Name</MudTh>
+										<MudTh>Image</MudTh>
+										<MudTh>Link</MudTh>
+										<MudTh>Publish</MudTh>
+										@*<MudTh>Action</MudTh>*@
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
+										<MudTd DataLabel="Image">
+											<MudImage Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg"												 Style="width:50px" />
+										</MudTd>
+										<MudTd DataLabel="Link">@DetailsContext.link</MudTd>
+										<MudTd DataLabel="Link">
+											 <MudSwitch @bind-Checked="@DetailsContext.isPublished" Color="Color.Primary" @onclick="() => TogglePublishToBag(DetailsContext.id)"/>
+										</MudTd>
+										@*<MudTd DataLabel="Action">
+											<MudButton Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
+										</MudTd>*@
+								   </RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetAllToBags();
+	}
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<ToBagListSectionDTO> Elements = new List<ToBagListSectionDTO>();
+
+	// Get All To Bags
+	private async Task GetAllToBags()
+	{
+		Elements = await _toBag.GetAllToBags();
+	}
+
+	// Show Details
+	private void ShowToBag(int id)
+	{
+		ToBagListSectionDTO tmpElements = Elements.First(f => f.id == id);
+		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+
+	// Toggle Publish
+	private async Task TogglePublishSection(int id)
+	{
+		try
+		{
+			await _toBag.PublishToggleSection(id);
+			Snackbar.Add("Publish Toggled Successfully!", Severity.Success);
+			await GetAllToBags();
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Success);
+			throw;
+		}
+	}
+	
+	private async Task TogglePublishToBag(int id)
+	{
+		try
+		{
+			await _toBag.PublishToggleToBag(id);
+			Snackbar.Add("Publish Toggled Successfully!", Severity.Success);
+			await GetAllToBags();
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Success);
+			throw;
+		}
+	}
+}
