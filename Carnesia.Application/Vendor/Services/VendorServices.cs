@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
+using Carnesia.Domain.Vendor.POCO;
 
 namespace Carnesia.Application.Vendor.Services
 {
@@ -54,6 +55,24 @@ namespace Carnesia.Application.Vendor.Services
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+
+        public async Task<bool> AddVendor(PostVendorPoco vendorPoco)
+        {
+            try
+            {
+                var res = await _httpClient.PostAsJsonAsync("Vendors", vendorPoco);
+                if (res.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
                 throw;
             }
         }

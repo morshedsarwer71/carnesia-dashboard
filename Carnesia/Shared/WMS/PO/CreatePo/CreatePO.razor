@@ -16,17 +16,16 @@
 @using System.Data
 
 
-
 <MudPaper Class="pa-16 ma-2" Elevation="1">
     <MudContainer Fixed="true">
         <MudGrid>
             <MudItem xs="12" sm="6" md="3">
                 <MudAutocomplete T="string" Label="Supplier Name" @bind-Value="createPO.vendorName" SearchFunc="@SupplierSearch"
-                                 ResetValueOnEmptyText="@true" />
+                                 ResetValueOnEmptyText="@true"/>
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
                 <MudAutocomplete T="string" Label="Receiving Warehouse" @bind-Value="createPO.storeName" SearchFunc="@StoresSearch"
-                                 ResetValueOnEmptyText="@true" />
+                                 ResetValueOnEmptyText="@true"/>
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
                 <MudSelect Label="PO Type" @bind-Value="createPO.poType" AnchorOrigin="Origin.BottomCenter">
@@ -36,7 +35,7 @@
                 </MudSelect>
             </MudItem>
             <MudItem xs="12" sm="6" md="3">
-                <MudDatePicker Label="Receiving Date" @bind-Date="createPO.receiveDate" />
+                <MudDatePicker Label="Receiving Date" @bind-Date="createPO.receiveDate"/>
             </MudItem>
         </MudGrid>
     </MudContainer>
@@ -50,43 +49,45 @@
         <MudForm @ref="form" @bind-IsValid="@Success">
             <MudGrid>
                 <MudItem sm="12" md="4">
-                    <MudTextField Immediate="true" @bind-Value="PoProduct.sku" Label="SKU" Variant="Variant.Text" Required="true" RequiredError="SKU is required!" />
+                    <MudTextField Immediate="true" @bind-Value="PoProduct.sku" Label="SKU" Variant="Variant.Text" Required="true" RequiredError="SKU is required!"/>
                 </MudItem>
 
                 <MudItem sm="6" md="4">
-                    <MudNumericField Immediate="true" @bind-Value="PoProduct.quantity" Label="Quantity" Variant="Variant.Text" Min="1" Required="true" RequiredError="Quantity is required!" />
+                    <MudNumericField Immediate="true" @bind-Value="PoProduct.quantity" Label="Quantity" Variant="Variant.Text" Min="1" Required="true" RequiredError="Quantity is required!"/>
                 </MudItem>
 
                 <MudItem sm="6" md="4">
-                    <MudNumericField Immediate="true" @bind-Value="PoProduct.liftingPrice" Label="Lifting Price" Variant="Variant.Text" Min="0.01m" Required="true" RequiredError="Listing price is required!" />
+                    <MudNumericField Immediate="true" @bind-Value="PoProduct.liftingPrice" Label="Lifting Price" Variant="Variant.Text" Min="0.01m" Required="true" RequiredError="Listing price is required!"/>
                 </MudItem>
             </MudGrid>
             <div class="mt-5 d-flex justify-end">
-                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Disabled="@(!Success)" OnClick="()=>AddProduct(PoProduct)">Add</MudButton>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Disabled="@(!Success)" OnClick="() => AddProduct(PoProduct)">Add</MudButton>
             </div>
         </MudForm>
-            <MudTable Class="mt-5" Items="@products" Hover="false" Dense="true">
-                <HeaderContent>
-                    <MudTh>SKU</MudTh>
-                    <MudTh>Product Name</MudTh>
-                    <MudTh>QTY</MudTh>
-                    <MudTh>Lifting Price</MudTh>
-                    <MudTh>Total Price</MudTh>
-                    <MudTh>Action</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="SKU" onclick="@(() => OpenSKUHistoryDialog())">@context.sku</MudTd>
-                    <MudTd DataLabel="Product Name">@context.productName</MudTd>
-                    <MudTd DataLabel="QTY">@context.quantity</MudTd>
-                    <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
-                    <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
-                    <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() =>OpenDeleteDialog()" /></MudTd>
-                </RowTemplate>
-            </MudTable>
-            <div class="mt-5 d-flex justify-end">
-                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="SubmitPO">Submit</MudButton>
-            </div>
-        
+        <MudTable Class="mt-5" Items="@products" Hover="false" Dense="true">
+            <HeaderContent>
+                <MudTh>SKU</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>QTY</MudTh>
+                <MudTh>Lifting Price</MudTh>
+                <MudTh>Total Price</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="SKU" onclick="@(() => OpenSKUHistoryDialog())">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="QTY">@context.quantity</MudTd>
+                <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
+                <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() => OpenDeleteDialog()"/>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+        <div class="mt-5 d-flex justify-end">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="SubmitPO">Submit</MudButton>
+        </div>
+
     </MudContainer>
 </MudPaper>
 
@@ -101,7 +102,7 @@
                 Download CSV Template
             </MudButton>
 
-            <InputFile id="fileInput" hidden OnChange="UploadFiles" />
+            <InputFile id="fileInput" hidden OnChange="UploadFiles"/>
             <MudButton HtmlTag="label"
                        Variant="Variant.Filled"
                        Color="Color.Primary"
@@ -121,12 +122,16 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="SKU"><a href="">@context.sku</a></MudTd>
+                <MudTd DataLabel="SKU">
+                    <a href="">@context.sku</a>
+                </MudTd>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
                 <MudTd DataLabel="QTY">@context.quantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
                 <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
-                <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() => OpenDeleteDialog()" /></MudTd>
+                <MudTd DataLabel="Action">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() => OpenDeleteDialog()"/>
+                </MudTd>
             </RowTemplate>
         </MudTable>
 
@@ -144,7 +149,7 @@
     public IEnumerable<VendorDTO> Vendors;
     public CreatePODTO createPO = new CreatePODTO();
     public PoProductDTO PoProduct = new PoProductDTO();
-    public List<PoProductDTO> products=new List<PoProductDTO>();
+    public List<PoProductDTO> products = new List<PoProductDTO>();
     public List<PoProductDTO> poExcelProducts = new List<PoProductDTO>();
 
     // Form Reference
@@ -172,8 +177,8 @@
             Console.WriteLine("error");
             throw;
         }
-        
     }
+
     private async Task Download()
     {
         await _order.DownLoadExcel(iJSRuntime);
@@ -194,14 +199,15 @@
         createPO.poRcvStoreId = storeId.storeId;
         createPO.description = "Creating po with out description";
         var purchaseOrder = new PurchaseOrder
-            {
-                createPODTO = createPO,
-                poProductDTOs = products
-            };
+        {
+            createPODTO = createPO,
+            poProductDTOs = products
+        };
         var result = await _order.AddPurchaseOrder(purchaseOrder);
         snackbar.Add(result);
         products.Clear();
     }
+
     private async Task SubmitBulkPo()
     {
         var vendorId = await _vendor.GetVendor(createPO.vendorName);
@@ -223,8 +229,8 @@
     {
         if (poco != null)
         {
-            var product =await _order.AddProduct(poco);
-            if (product!=null)
+            var product = await _order.AddProduct(poco);
+            if (product != null)
             {
                 products.Add(product);
             }
@@ -255,14 +261,15 @@
     // Delete Item Modal
     private void OpenDeleteDialog()
     {
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
+        var options = new DialogOptions {CloseOnEscapeKey = false, FullWidth = true, CloseButton = true};
         DialogService.Show<CreatePODeleteModal>("Delete Item?", options);
     }
 
     // Modal Sku History
     private void OpenSKUHistoryDialog()
     {
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
+        var options = new DialogOptions {CloseOnEscapeKey = false, FullWidth = true, CloseButton = true};
         DialogService.Show<CreatePOSKUHistory>("SKU History", options);
     }
+
 }

@@ -34,7 +34,8 @@
 			if(result !=null)
 			{
 				_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-                _snackbar.Add(result.binName, Severity.Success);
+				_snackbar.Add(result.binName, Severity.Success);
+				form.Reset();
 			}
 			else{
 				_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;

@@ -1,4 +1,5 @@
 ﻿using Carnesia.Domain.Vendor.Models;
+using Carnesia.Domain.Vendor.POCO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace Carnesia.Application.Vendor.Services
         Task<IEnumerable<VendorDTO>> GetVendorsAsync();
         Task<string[]> GetVendorsNameAsString();
         Task<VendorDTO> GetVendor(string vendorName);
+        Task<bool> AddVendor(PostVendorPoco vendorPoco);
     }
 }
