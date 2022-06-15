@@ -1,0 +1,148 @@
+﻿@using Carnesia.Domain.CRM.Vouchers.StoreVoucher.CreateStoreVoucher
+@inject ISnackbar Snackbar
+@inject IStore _store
+@inject IStoreVoucher _storeVoucher
+
+<MudPaper Class="pa-16 pt-16 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid>
+                <MudItem sm="6">
+                    <MudTextField @bind-Value="FormData.voucherCode" Label="Code" Required="true" RequiredError="Code is required!"/>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudNumericField @bind-Value="FormData.numOfVoucher" Label="Number of Voucher" Required="true" RequiredError="Number of Voucher is required!"/>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTimePicker Label="End Time" @bind-Time="EndTime" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudNumericField @bind-Value="FormData.minCartAmount" Label="Minimum Cart Amount" Required="true" RequiredError="Minimum Cart Amount is required!"/>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudSelect @bind-Value="FormData.voucherDiscType" Label="Discount Type" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Discount Type is required!">
+                        <MudSelectItem Value="@("Cash")" />
+                        <MudSelectItem Value="@("Percent")" />
+                    </MudSelect>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudNumericField @bind-Value="FormData.discAmntOrPercent" Label="Discount Amount" Required="true" RequiredError="Discount Amount is required!"/>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudNumericField @bind-Value="FormData.upToDiscAmnt" Label="Up to Discount Amount" Required="true" RequiredError="Up to Discount Amount is required!"/>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!"/>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudSelect T="string" Label="Stores" MultiSelection="true" @bind-Value="value" Required="true" >
+                        @foreach (var store in stores)
+                        {
+                            <MudSelectItem T="string" Value="@store">@store</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+                    
+            <div class="d-flex align-center justify-space-between mt-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="!success"  OnClick="CreateNewVoucher" Class="ml-auto">Submit</MudButton>
+            </div>
+        </MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStoresName();
+    }
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Form Data
+    private CreateStoreVoucherDetailsDTO FormData = new CreateStoreVoucherDetailsDTO();
+
+    // Start End Date
+    private string StartDate { get; set; }
+    private string EndDate { get; set; }
+    private TimeSpan? StartTime = new TimeSpan();
+    private TimeSpan? EndTime = new TimeSpan();
+
+    private string value { get; set; }
+
+    private string[] stores = new string[]{};
+
+    // Store List
+    private List<CreateStoreVoucherStoreDTO> Stores = new List<CreateStoreVoucherStoreDTO>(); 
+
+    // Get All Stores
+    private async Task GetStoresName()
+    {
+        stores = await _store.GetStoreNameAsString();
+    }
+
+    // Get Store Id
+    private async Task GetStoreIds()
+    {
+        string[] storeList = value.Split(", ");
+        foreach(var store in storeList)
+        {
+            var temp_Store = await _store.GetStore(store);
+
+            var Store = new CreateStoreVoucherStoreDTO()
+                {
+                    storeId = temp_Store.storeId
+                };
+
+            Stores.Add(Store);
+        }
+    }
+
+    // Create New Voucher
+    private CreateStoreVoucherDTO NewVoucher = new CreateStoreVoucherDTO();
+
+    private async Task CreateNewVoucher()
+    {
+        if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
+        {
+            Snackbar.Add("Start & End Date is required!", Severity.Error);
+            return;
+        }
+
+        FormData.startDate = $"{StartDate}T{StartTime}.000Z";
+        FormData.endDate = $"{EndDate}T{EndTime}.000Z";
+
+        await GetStoreIds();
+
+        NewVoucher.createStoreVoucherDTO = FormData;
+        NewVoucher.voucherStoreDTOs = Stores;
+
+        try
+        {
+            await _storeVoucher.CreateStoreVoucher(NewVoucher);
+            Snackbar.Add("New Voucher Created Successfully!", Severity.Success);
+            form.Reset();
+            StartDate = String.Empty;
+            EndDate = String.Empty;
+            value = String.Empty;
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
+        }
+    }
+}

@@ -1,6 +1,6 @@
-﻿@using Carnesia.Domain.CRM.Vouchers.GeneralVoucher.VoucherList
+﻿@using Carnesia.Domain.CRM.Vouchers.InstantVoucher.VoucherList
 @using Carnesia.Domain.Common.POCO
-@inject IGeneralVoucher _generalVoucher
+@inject IInstantVoucher _instantVoucher
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
@@ -16,8 +16,6 @@
                 <MudTh>Code</MudTh>
                 <MudTh>Start Date</MudTh>
                 <MudTh>End Date</MudTh>
-                <MudTh>Number of Vouchers</MudTh>
-                <MudTh>Platform</MudTh>
                 <MudTh>Minimum Cart Amount</MudTh>
                 <MudTh>Discount Type</MudTh>
                 <MudTh>Discount Amount</MudTh>
@@ -26,18 +24,16 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Code">@context.gvCode</MudTd>
+                <MudTd DataLabel="Code">@context.ivCode</MudTd>
                 <MudTd DataLabel="Start Date">@context.startDate</MudTd>
                 <MudTd DataLabel="End Date">@context.endDate</MudTd>
-                <MudTd DataLabel="Number of Vouchers">@context.numOfVoucher</MudTd>
-                <MudTd DataLabel="Platform">@context.platformType</MudTd>
                 <MudTd DataLabel="Minimum Cart Amount">@context.minCartAmount</MudTd>
                 <MudTd DataLabel="Discount Type">@context.voucherDiscType</MudTd>
                 <MudTd DataLabel="Discount Amount">@context.discAmntOrPercent</MudTd>
                 <MudTd DataLabel="Up To">@context.upToDiscAmnt</MudTd>
                 <MudTd DataLabel="Description">@context.description</MudTd>
                 <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.generalVId)" >Delete</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.instantVId)" >Delete</MudButton>
                 </MudTd>
             </RowTemplate>
             <PagerContent>
@@ -61,7 +57,7 @@
         await GetVouchers();
     }
 	// Table Content
-	private IEnumerable<VoucherListDTO> Elements = new List<VoucherListDTO>();
+	private IEnumerable<InstantVoucherListDTO> Elements = new List<InstantVoucherListDTO>();
 
 	// Table Customaization
 	private TableCommon tableCommon = new TableCommon();
@@ -69,7 +65,7 @@
     // Get Vouchers
     private async Task GetVouchers()
     {
-        Elements = await _generalVoucher.GetVouchers();
+        Elements = await _instantVoucher.GetAllVouchers();
     }
 
     // Delete Voucher
@@ -82,7 +78,7 @@
         {
             try
             {
-                await _generalVoucher.DeleteVoucher(id);
+                await _instantVoucher.RemoveVoucher(id);
                 Snackbar.Add("Voucher Deleted Successfully!", Severity.Success);
                 await GetVouchers();
             }
