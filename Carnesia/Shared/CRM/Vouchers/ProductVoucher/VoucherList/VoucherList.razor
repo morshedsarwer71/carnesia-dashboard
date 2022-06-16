@@ -1,10 +1,10 @@
-﻿@using Carnesia.Domain.CRM.Vouchers.GeneralVoucher.VoucherList
+﻿@using Carnesia.Domain.CRM.Vouchers.ProductVoucher.VoucherList
 @using Carnesia.Domain.Common.POCO
-@inject IGeneralVoucher _generalVoucher
+@inject IProductVoucher _productVoucher
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-<MudPaper Class="pa-16 pt-10 ma-2 mt-10">
+<MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
             <ToolBarContent>
@@ -17,7 +17,7 @@
                 <MudTh>Start Date</MudTh>
                 <MudTh>End Date</MudTh>
                 <MudTh>Number of Vouchers</MudTh>
-                <MudTh>Platform</MudTh>
+                <MudTh>Number of Used Vouchers</MudTh>
                 <MudTh>Minimum Cart Amount</MudTh>
                 <MudTh>Discount Type</MudTh>
                 <MudTh>Discount Amount</MudTh>
@@ -26,18 +26,18 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Code">@context.gvCode</MudTd>
+                <MudTd DataLabel="Code">@context.pvCode</MudTd>
                 <MudTd DataLabel="Start Date">@context.startDate</MudTd>
                 <MudTd DataLabel="End Date">@context.endDate</MudTd>
                 <MudTd DataLabel="Number of Vouchers">@context.numOfVoucher</MudTd>
-                <MudTd DataLabel="Platform">@context.platformType</MudTd>
+                <MudTd DataLabel="Number of Used Vouchers">@context.numberOfUsedVoucher</MudTd>
                 <MudTd DataLabel="Minimum Cart Amount">@context.minCartAmount</MudTd>
                 <MudTd DataLabel="Discount Type">@context.voucherDiscType</MudTd>
                 <MudTd DataLabel="Discount Amount">@context.discAmntOrPercent</MudTd>
                 <MudTd DataLabel="Up To">@context.upToDiscAmnt</MudTd>
                 <MudTd DataLabel="Description">@context.description</MudTd>
                 <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.generalVId)" >Delete</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.productVId)" >Delete</MudButton>
                 </MudTd>
             </RowTemplate>
             <PagerContent>
@@ -61,7 +61,7 @@
         await GetVouchers();
     }
 	// Table Content
-	private IEnumerable<VoucherListDTO> Elements = new List<VoucherListDTO>();
+	private IEnumerable<ProductVoucherListDTO> Elements = new List<ProductVoucherListDTO>();
 
 	// Table Customaization
 	private TableCommon tableCommon = new TableCommon();
@@ -69,7 +69,7 @@
     // Get Vouchers
     private async Task GetVouchers()
     {
-        Elements = await _generalVoucher.GetVouchers();
+        Elements = await _productVoucher.GetAllVouchers();
     }
 
     // Delete Voucher
@@ -82,7 +82,7 @@
         {
             try
             {
-                await _generalVoucher.DeleteVoucher(id);
+                await _productVoucher.RemoveVoucher(id);
                 Snackbar.Add("Voucher Deleted Successfully!", Severity.Success);
                 await GetVouchers();
             }

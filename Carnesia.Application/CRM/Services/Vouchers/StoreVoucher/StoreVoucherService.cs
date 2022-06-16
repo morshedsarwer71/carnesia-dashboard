@@ -1,4 +1,4 @@
-﻿using Carnesia.Domain.CRM.Vouchers.GeneralVoucher.CreateVoucher;
+﻿using Carnesia.Domain.CRM.Vouchers.StoreVoucher.CreateStoreVoucher;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,22 +6,22 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
-using Carnesia.Domain.CRM.Vouchers.GeneralVoucher.VoucherList;
+using Carnesia.Domain.CRM.Vouchers.StoreVoucher.VoucherList;
 
-namespace Carnesia.Application.CRM.Services.Vouchers.GeneralVoucher
+namespace Carnesia.Application.CRM.Services.Vouchers.StoreVoucher
 {
-    public class GeneralVoucherService : IGeneralVoucher
+    public class StoreVoucherService : IStoreVoucher
     {
         private readonly HttpClient _httpClient;
-        public GeneralVoucherService(HttpClient httpClient)
+        public StoreVoucherService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
-        public async Task CreateNewVoucher(AddGeneralVoucherDTO VoucherData)
+        public async Task CreateStoreVoucher(CreateStoreVoucherDTO Voucher)
         {
             try
             {
-                await _httpClient.PostAsJsonAsync("Voucher/general", VoucherData);
+                await _httpClient.PostAsJsonAsync("Voucher/store", Voucher);
             }
             catch (Exception)
             {
@@ -34,19 +34,20 @@ namespace Carnesia.Application.CRM.Services.Vouchers.GeneralVoucher
         {
             try
             {
-                await _httpClient.DeleteAsync($"Voucher/general/{id}");
+                await _httpClient.DeleteAsync($"Voucher/store/{id}");
             }
             catch (Exception)
             {
+
                 throw;
             }
         }
 
-        public async Task<List<VoucherListDTO>> GetVouchers()
+        public async Task<List<VoucherListDTO>> GetAllVouchers()
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<List<VoucherListDTO>>("Voucher/general");
+                var result = await _httpClient.GetFromJsonAsync<List<VoucherListDTO>>("Voucher/store");
                 return result;
             }
             catch (Exception)
