@@ -2,7 +2,7 @@
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.WMS.PO.Models
 @using Carnesia.Domain.WMS.PO.ViewModels.Awaiting
-@inject ISnackbar Snackbar
+@inject ISnackbar snackbar
 @inject IPurchaseOrder _order
 
 <MudDialog DisableSidePadding="true">
@@ -28,7 +28,7 @@
 
         <MudPaper Class="pa-16 ma-2">
 	        <MudContainer Fixed="true">
-	            <MudTable Items="@awaitingPoVm.products" MultiSelection="true" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" CanCancelEdit="@true" @bind-SelectedItems="@selectedItems" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated"))" RowEditPreview="BackupItem"                                                  RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
+	            <MudTable Items="@awaitingPoVm.products" MultiSelection="true" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" CanCancelEdit="@true" @bind-SelectedItems="@selectedItems" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => snackbar.Add("Item Updated"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
                     <ToolBarContent>
                         <MudText Typo="Typo.h6">PO List Details</MudText>
                         <MudSpacer />
@@ -71,19 +71,19 @@
                     <MudItem md="6">
                         <MudPaper Width="400px" Square="true" Class="mt-10">
                             <MudList Clickable="true">
-                                <MudListItem>Total Quantity: 100</MudListItem>
+                                <MudListItem>Total Quantity: @awaitingPoVm.totalQty</MudListItem>
                                 <MudDivider />
-                                <MudListItem>Total Lifting Price: 100</MudListItem>
+                                @*<MudListItem>Total Lifting Price: @awaitingPoVm.totalliftingPrice</MudListItem>*@
                                 <MudDivider />
-                                <MudListItem>Total Value: 10000</MudListItem>
+                                <MudListItem>Total Value: @awaitingPoVm.totalValue</MudListItem>
                             </MudList>
                         </MudPaper>
                     </MudItem>
                     <MudItem md="6">
                         <div class="d-flex justify-end">
                             <MudButtonGroup Class="mt-10" Color="Color.Primary" Variant="Variant.Filled" OverrideStyles="false">
-                                <MudButton Color="Color.Secondary" Variant="Variant.Filled">Remove Selected</MudButton>
-                                <MudButton Color="Color.Success" Variant="Variant.Filled">Approve Selected</MudButton>
+                                <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="RemoveSelected">Remove Selected</MudButton>
+                                <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="ApproveSelected">Approve Selected</MudButton>
                                 <MudButton Color="Color.Primary" Variant="Variant.Filled">Print</MudButton>
                             </MudButtonGroup>
                         </div>
@@ -109,7 +109,7 @@
     // Before Edit
     private PoProductDTO beforeEdit;
 
-    public AwaitingPoVM awaitingPoVm = new AwaitingPoVM();
+    public AwaitingPoDetails awaitingPoVm = new AwaitingPoDetails();
 
     protected override async Task OnInitializedAsync()
     {
@@ -129,5 +129,37 @@
     {
         ((PoProductDTO)element).quantity = beforeEdit.quantity;
         ((POListViewDetailsPoco)element).LiftingPrice = beforeEdit.liftingPrice;
+    }
+
+    private async void ApproveSelected()
+    {
+        var result =await _order.ApproveSelectedItems(poCode, selectedItems.ToList());
+        if (result == "success")
+        {
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            snackbar.Add("Approved Successfully", Severity.Success);
+            //awaitingPoVm.products.Clear();
+            awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+        }
+        else
+        {
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            snackbar.Add("Error", Severity.Error);
+        }
+    }
+    private async void RemoveSelected()
+    {
+        var result =await _order.RemoveSelectedItems(poCode, selectedItems.ToList());
+        if (result == "success")
+        {
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            snackbar.Add("Removed Successfully", Severity.Success);
+            awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+        }
+        else
+        {
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            snackbar.Add("Error", Severity.Success);
+        }
     }
 }

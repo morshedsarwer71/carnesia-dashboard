@@ -43,11 +43,11 @@ namespace Carnesia.Application.WMS.PO.Services
                     var deserialized = JsonConvert.DeserializeObject<Response>(json);
                     return deserialized.Message;
                 }
-                return "Failed";
+                return "Po creation failed";
             }
             catch (Exception)
             {
-                return "Failed";
+                return "Po creation failed";
                 throw;
             }
         }
@@ -178,7 +178,8 @@ namespace Carnesia.Application.WMS.PO.Services
                         productName = skuProduct.productName,
                         quantity = poProductDto.quantity,
                         sku = skuProduct.productsku,
-                        TotalPrice = total
+                        TotalPrice = total,
+                        productCode = skuProduct.productCode
                     };
                     return poProd;
 
@@ -229,11 +230,11 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
-        public async Task<AwaitingPoVM> AwaitingPoDetails(string poCode)
+        public async Task<AwaitingPoDetails> AwaitingPoDetails(string poCode)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<AwaitingPoVM>($"PurchaseOrders/receivepobycode/{poCode}");
+                return await _httpClient.GetFromJsonAsync<AwaitingPoDetails>($"PurchaseOrders/podetails/{poCode}");
                 
             }
             catch (Exception)
@@ -252,6 +253,48 @@ namespace Carnesia.Application.WMS.PO.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<string> RemoveSelectedItems(string poCode, List<PoProductDTO> poProducts)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"PurchaseOrders/removeseleteditems/{poCode}", poProducts);
+                if (result.IsSuccessStatusCode)
+                {
+                    return "success";
+                }
+                else
+                {
+                    return "failed";
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> ApproveSelectedItems(string poCode, List<PoProductDTO> poProducts)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"PurchaseOrders/approveselecteditems/{poCode}", poProducts);
+                if (result.IsSuccessStatusCode)
+                {
+                    return "success";
+                }
+                else
+                {
+                    return "failed";
+                }
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }

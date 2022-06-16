@@ -1,0 +1,277 @@
+﻿@page "/zones"
+
+@using Carnesia.Domain.OMS.Zones
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.OMS.Zones
+@inject IZones _zones
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh></MudTh>
+                <MudTh>Division</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="">
+                    @if (!context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowChild(context.id)" />
+					}
+					else if (context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowChild(context.id)" />
+					}
+                </MudTd>
+                <MudTd DataLabel="Division">@context.name</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => OpenDistrictModal(context.id)">Add New District</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <ChildRowContent>
+				@if (context.showDetails)
+				{
+					<td colspan="4">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.districts" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+										<MudTh></MudTh>
+										<MudTh>District</MudTh>
+										<MudTh>Action</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="Parent Name">
+                                            @if (!DetailsContext.showDetails)
+											{
+												<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowGrand(DetailsContext.id, context.districts)" />
+											}
+											else if (DetailsContext.showDetails)
+											{
+												<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowGrand(DetailsContext.id, context.districts)" />
+											}
+                                        </MudTd>
+										<MudTd DataLabel="District">@DetailsContext.name</MudTd>
+										<MudTd DataLabel="Action">
+											<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => UpdateDistrictModal(DetailsContext.id, DetailsContext)">
+												Edit District
+											</MudButton>
+											<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => OpenZoneModal(DetailsContext.id)">Add New Zone</MudButton>
+										</MudTd>
+								   </RowTemplate>
+								   <ChildRowContent>
+										@if (DetailsContext.showDetails)
+										{
+											<td colspan="4">
+												<MudCard Elevation="0">
+													<MudCardContent Class="pa-0">
+														<MudTable Items="@DetailsContext.zones" Bordered="true" Dense="true" Context="GDetailsContext" Hover="true" Elevation="0">
+															<HeaderContent>
+																<MudTh>Zone</MudTh>
+																<MudTh>Regular Delivery Day</MudTh>
+																<MudTh>Regular Delivery Price</MudTh>
+																<MudTh>Express Delivery Day</MudTh>
+																<MudTh>Express Delivery Price</MudTh>
+																<MudTh>Action</MudTh>
+															</HeaderContent>
+															<RowTemplate>
+																<MudTd DataLabel="Zone">@GDetailsContext.zoneName</MudTd>
+																<MudTd DataLabel="Regular Delivery Day">@GDetailsContext.regularDeliveryDay</MudTd>
+																<MudTd DataLabel="Regular Delivery Price">@GDetailsContext.regulaPrice</MudTd>
+																<MudTd DataLabel="Express Delivery Day">@GDetailsContext.expressDeliDay</MudTd>
+																<MudTd DataLabel="Express Delivery Price">@GDetailsContext.expressPrice</MudTd>
+																<MudTd DataLabel="Action">
+                                                                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => UpdateZoneModal(GDetailsContext.id,                                                                                  GDetailsContext)">
+												                        Edit Zone
+											                        </MudButton>
+																</MudTd>
+															</RowTemplate>
+														</MudTable>
+													</MudCardContent>
+												</MudCard>
+											</td>
+										}
+									</ChildRowContent>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetAllDivisions();
+	}
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<DivisionDTO> Elements = new List<DivisionDTO>();
+
+	// Get All Divisions
+	private async Task GetAllDivisions()
+	{
+		Elements = await _zones.GetDivisions();
+	}
+
+	// Show Details
+	private void ShowChild(int id)
+	{
+		DivisionDTO tmpElements = Elements.First(f => f.id == id);
+		tmpElements.showDetails = !tmpElements.showDetails;
+	}
+
+	// Show Details
+	private void ShowGrand(int id, IList<DistrictDTO> Child)
+	{
+		DistrictDTO tmpElements = Child.First(f => f.id == id);
+		tmpElements.showDetails = !tmpElements.showDetails;
+	}
+
+	// Add District Modal
+    private async Task OpenDistrictModal(int divisionId)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddDistrictDTO(){
+			divisionId = divisionId
+		});
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddDistrictModal>("Add New District", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddDistrictDTO newDistrict = dialog.Data as AddDistrictDTO;
+
+            try
+            {
+                await _zones.CreateDistrict(newDistrict);
+                Snackbar.Add("New District Created Successfully!", Severity.Success);
+                await GetAllDivisions();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
+
+	// Update District Modal
+    private async Task UpdateDistrictModal(int id, DistrictDTO district)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddDistrictDTO(){
+			divisionId = district.divisionId,
+			districtName = district.name
+		});
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddDistrictModal>("Update District", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddDistrictDTO newDistrict = dialog.Data as AddDistrictDTO;
+
+            try
+            {
+                await _zones.UpdateDistrict(newDistrict, id);
+                Snackbar.Add("District Updated Successfully!", Severity.Success);
+                await GetAllDivisions();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
+
+	// Add Zone Modal
+    private async Task OpenZoneModal(int districtId)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddZoneDTO(){
+			districtId = districtId
+		});
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddDistrictModal>("Add New Zone", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddZoneDTO newZone = dialog.Data as AddZoneDTO;
+
+            try
+            {
+                await _zones.CreateZone(newZone);
+                Snackbar.Add("New Zone Created Successfully!", Severity.Success);
+                await GetAllDivisions();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
+
+	// Update Zone Modal
+    private async Task UpdateZoneModal(int id, ZoneDTO zone)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddZoneDTO(){
+			districtId = zone.districId,
+			zoneName = zone.zoneName,
+            regularDeliveryDay = zone.regularDeliveryDay,
+            regularPrice = zone.regulaPrice,
+            expressDeliveryDay = zone.expressDeliDay,
+            expressPrice = zone.expressPrice
+		});
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddDistrictModal>("Update Zone", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddZoneDTO newZone = dialog.Data as AddZoneDTO;
+
+            try
+            {
+                await _zones.UpdateZone(newZone, id);
+                Snackbar.Add("Zone Updated Successfully!", Severity.Success);
+                await GetAllDivisions();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
+}

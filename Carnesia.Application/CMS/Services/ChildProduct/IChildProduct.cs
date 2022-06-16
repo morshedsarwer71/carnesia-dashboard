@@ -10,5 +10,6 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
     public interface IChildProduct
     {
         Task CreateChildProduct(ChildProductDTO ProductData);
+
     }
 }

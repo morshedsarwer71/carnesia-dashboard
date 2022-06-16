@@ -1,7 +1,11 @@
 ﻿@page "/create-campaign"
 @using Carnesia.Domain.CMS.Campaign
+@using Carnesia.Shared.CMS.CreateCampaign
+@inject IProducts _products
+@inject ICreateCampaign _campaign
 @inject IBase64 _base64
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 
 <MudPaper Class="pa-16 ma-2">
@@ -35,8 +39,48 @@
                     </MudItem>
                 </MudGrid>
 
+                <div class="d-flex justify-end my-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenProductModal" >Add Product</MudButton>
+                </div>
+
+                <MudTable Items="@Products" Hover="true" Dense="true">
+                    <HeaderContent>
+                        <MudTh>SKU</MudTh>
+                        <MudTh>Regular Price</MudTh>
+                        <MudTh>Discount Type</MudTh>
+                        <MudTh>Discount Amount</MudTh>
+                        <MudTh>After Discount</MudTh>
+                        <MudTh>Action</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="SKU">@context.sku</MudTd>
+                        <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
+                        <MudTd DataLabel="Discount Type">@context.discType</MudTd>
+                        <MudTd DataLabel="Discount Amount">@context.discAmount</MudTd>
+                        <MudTd DataLabel="After Discount">@context.discPrice</MudTd>
+                        <MudTd DataLabel="Action">
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveProduct(context)" >Delete</MudButton>
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+
+                <div class="mt-5">
+                    <InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
+
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Filled.CloudUpload"
+                               for="fileInput">
+                        Upload Images
+                    </MudButton>
+                    <MudText Class="mt-1">1080 * 420(Max 150Kb)</MudText>
+                </div>
+
+                <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
+
                 <div class="d-flex align-center justify-space-between mt-6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="CreateNewCampaign" Class="ml-auto">Submit</MudButton>
                 </div>
         </MudForm>
 	</MudContainer>
@@ -51,9 +95,95 @@
     // Form Data
     private AddCampaignDetailsDTO FormData = new AddCampaignDetailsDTO();
 
+    // Products List
+    private List<AddCampaignProductDTO> Products = new List<AddCampaignProductDTO>();
+
     // Start End Date
     private string StartDate { get; set; }
     private string EndDate { get; set; }
     private TimeSpan? StartTime = new TimeSpan();
     private TimeSpan? EndTime = new TimeSpan();
+
+    // Remove Products
+    private void RemoveProduct(AddCampaignProductDTO product)
+    {
+        Products.Remove(product);
+    }
+
+    // Add Product Modal
+    private async Task OpenProductModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddCampaignProductDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddProductModal>("Add New Product", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddCampaignProductDTO newProduct = dialog.Data as AddCampaignProductDTO;
+
+            if (newProduct.discType == "Cash")
+            {
+                newProduct.discPrice = newProduct.regularPrice - newProduct.discAmount;
+            }
+            else
+            {
+                newProduct.discPrice = newProduct.regularPrice - ((newProduct.regularPrice * newProduct.discAmount) / 100);
+            }
+
+            newProduct.productId = await _products.GetProductIdBySku(newProduct.sku);
+
+            Products.Add(newProduct);
+        }
+    }
+
+    // Upload Image
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            FormData.base64Attch = await _base64.ConvertToBase64(153600, 1080, 420, e);
+        }
+        catch(Exception error)
+        {
+            Snackbar.Add(error.Message, Severity.Error);
+        }
+    }
+
+    // Campaign Data
+    private AddCampaignDTO NewCampaign = new AddCampaignDTO();
+
+    // Create New Campaign
+    private async Task CreateNewCampaign()
+    {
+        if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
+        {
+            Snackbar.Add("Start & End Date is required!", Severity.Error);
+            return;
+        }
+
+        if (String.IsNullOrEmpty(FormData.base64Attch))
+        {
+            Snackbar.Add("Campaign image is required!", Severity.Error);
+            return;
+        }
+
+        FormData.startDate = $"{StartDate}T{StartTime}.000Z";
+        FormData.endDate = $"{EndDate}T{EndTime}.000Z";
+
+        NewCampaign.campaignProductsDTOs = Products;
+        NewCampaign.createCampaignDTO = FormData;
+
+        try
+        {
+            await _campaign.CreateCampaign(NewCampaign);
+            Snackbar.Add("New Campaign Created Successfully!", Severity.Success);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
+        }
+    }
 }

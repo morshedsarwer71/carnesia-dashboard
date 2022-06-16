@@ -1,0 +1,110 @@
+﻿@page "/create-to-bag"
+
+@using Carnesia.Domain.CMS.CreateToBag
+@using Carnesia.Shared.CMS.CreateToBag
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IToBag _toBag
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudGrid Class="justify-center">
+                    <MudItem sm="6">
+                        <MudTextField @bind-Value="ToBagSection.sectionName" Label="Section Name" Required="true" RequiredError="Section name is required!"/>
+                    </MudItem>
+                </MudGrid>
+
+                <div class="d-flex justify-end my-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenAddToBagModal">Add To Bag</MudButton>
+                </div>
+
+                <MudTable Items="@ToBags" Hover="true" Dense="true">
+                    <HeaderContent>
+                        <MudTh>Name</MudTh>
+                        <MudTh>Link</MudTh>
+                        <MudTh>Image</MudTh>
+                        <MudTh>Action</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Name">@context.name</MudTd>
+                        <MudTd DataLabel="Link">@context.link</MudTd>
+                        <MudTd DataLabel="Image">
+                            <MudImage Src="@($"data:image/webp;base64,{context.base64Attach}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:100px;"/>
+                        </MudTd>
+                        <MudTd DataLabel="Action">
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveToBag(context)">Delete</MudButton>
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+
+                <div class="d-flex align-center justify-space-between mt-6">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="CreateNewToBag" Class="ml-auto">Submit</MudButton>
+                </div>
+        </MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Form ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Section
+    private AddToBagSectionDTO ToBagSection = new AddToBagSectionDTO();
+
+    // To Bags
+    private List<AddToBagDTO> ToBags = new List<AddToBagDTO>();
+
+    // Add To Bag
+    private async Task OpenAddToBagModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddToBagDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddToBagModal>("Add New To Bag", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddToBagDTO newToBag = dialog.Data as AddToBagDTO;
+
+            ToBags.Add(newToBag);
+        }
+    }
+
+    // Remove To Bag
+    private void RemoveToBag(AddToBagDTO ToBag)
+    {
+        ToBags.Remove(ToBag);
+    }
+
+    // New ToBag
+    private NewToBagDTO NewToBag = new NewToBagDTO();
+
+    // Create To Bag
+    private async Task CreateNewToBag()
+    {
+        if (ToBags.Count == 0)
+        {
+            Snackbar.Add("Please Add To Bag!", Severity.Error);
+            return;
+        }
+
+        NewToBag.createToBagSectionDTO = ToBagSection;
+        NewToBag.toBagDTOs = ToBags;
+
+        try
+        {
+            await _toBag.CreateToBag(NewToBag);
+            Snackbar.Add("To Bag Created Successfully!", Severity.Success);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
+        }
+    }
+
+}

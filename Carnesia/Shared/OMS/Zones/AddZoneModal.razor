@@ -1,0 +1,32 @@
+﻿@using Carnesia.Domain.OMS.Zones
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField @bind-Value="@FormData.zoneName" Immediate="true" Label="District Name" Required="true" RequiredError="District Name is required!"/>
+                    <MudNumericField @bind-Value="@FormData.regularDeliveryDay" Immediate="true" Label="Regular Delivery Day" Required="true" RequiredError="Regular Delivery Day is                              required!"/>
+                    <MudNumericField @bind-Value="@FormData.regularPrice" Immediate="true" Label="Regular Delivery Price" Required="true" RequiredError="Regular Delivery Price is                                required!"/>
+                    <MudNumericField @bind-Value="@FormData.expressDeliveryDay" Immediate="true" Label="Express Delivery Day" Required="true" RequiredError="Express Delivery Day is                              required!"/>
+                    <MudNumericField @bind-Value="@FormData.expressPrice" Immediate="true" Label="Express Delivery Price" Required="true" RequiredError="Express Delivery Price is                                required!"/>
+
+                    <div class="d-flex justify-end my-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public AddZoneDTO FormData{get;set;} = new AddZoneDTO();
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<AddZoneDTO>(FormData));
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}

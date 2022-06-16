@@ -67,6 +67,7 @@
         <MudTable Class="mt-5" Items="@products" Hover="false" Dense="true">
             <HeaderContent>
                 <MudTh>SKU</MudTh>
+                <MudTh>Product Code</MudTh>
                 <MudTh>Product Name</MudTh>
                 <MudTh>QTY</MudTh>
                 <MudTh>Lifting Price</MudTh>
@@ -75,6 +76,7 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="SKU" onclick="@(() => OpenSKUHistoryDialog())">@context.sku</MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
                 <MudTd DataLabel="QTY">@context.quantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
@@ -115,6 +117,7 @@
         <MudTable Class="mt-5" Items="@poExcelProducts" Hover="false" Dense="true">
             <HeaderContent>
                 <MudTh>SKU</MudTh>
+                <MudTh>Code</MudTh>
                 <MudTh>Product Name</MudTh>
                 <MudTh>QTY</MudTh>
                 <MudTh>Lifting Price</MudTh>
@@ -125,6 +128,7 @@
                 <MudTd DataLabel="SKU">
                     <a href="">@context.sku</a>
                 </MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
                 <MudTd DataLabel="QTY">@context.quantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
@@ -198,19 +202,32 @@
     // Form Submit
     private async Task SubmitPO()
     {
-        var vendorId = await _vendor.GetVendor(createPO.vendorName);
-        var storeId = await _store.GetStore(createPO.storeName);
-        createPO.vendorId = vendorId.vendorId;
-        createPO.poRcvStoreId = storeId.storeId;
-        createPO.description = "Creating po with out description";
-        var purchaseOrder = new PurchaseOrder
+        try
         {
-            createPODTO = createPO,
-            poProductDTOs = products
-        };
-        var result = await _order.AddPurchaseOrder(purchaseOrder);
-        snackbar.Add(result);
-        products.Clear();
+            var vendorId = await _vendor.GetVendor(createPO.vendorName);
+            var storeId = await _store.GetStore(createPO.storeName);
+            createPO.vendorId = vendorId.vendorId;
+            createPO.poRcvStoreId = storeId.storeId;
+            createPO.description = "Creating po with out description";
+            var purchaseOrder = new PurchaseOrder
+            {
+                createPODTO = createPO,
+                poProductDTOs = products
+            };
+            var result = await _order.AddPurchaseOrder(purchaseOrder);
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            snackbar.Add(result, Severity.Success);
+            form.Reset();
+            products.Clear();
+
+        }
+        catch (Exception e)
+        {
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            snackbar.Add("PO creation failed", Severity.Error);
+            //Console.WriteLine(e);
+            //throw;
+        }
     }
 
     private async Task SubmitBulkPo()
@@ -228,6 +245,8 @@
         var result = await _order.AddPurchaseOrder(purchaseOrder);
         snackbar.Add(result);
         products.Clear();
+        poExcelProducts.Clear();
+        form.Reset();
     }
 
     private async Task AddProduct(PoProductDTO poco)
@@ -237,6 +256,7 @@
             var product = await _order.AddProduct(poco);
             if (product != null)
             {
+                form.Reset();
                 products.Add(product);
             }
             else

@@ -1,0 +1,145 @@
+﻿@page "/update-blog/{id:int}"
+
+@using Carnesia.Domain.CMS.BlogPost
+@using Blazored.TextEditor
+@inject IBlogPost _blogPost
+@inject IBase64 _base64
+@inject IEncodeDecode _encodeDecode
+@inject ISnackbar Snackbar
+
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudTextField @bind-Value="BlogPost.title" class="mb-5" Label="Title" Required="true" RequiredError="Title is required!"/>
+
+                <BlazoredTextEditor @ref="@QuillNative" Placeholder="Blog...">
+                    <ToolbarContent>
+                        <span class="ql-formats">
+                            <select class="ql-font">
+                                <option selected=""></option>
+                                <option value="serif"></option>
+                                <option value="monospace"></option>
+                            </select>
+                            <select class="ql-size">
+                                <option value="small"></option>
+                                <option selected=""></option>
+                                <option value="large"></option>
+                                <option value="huge"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-color"></select>
+                            <select class="ql-background"></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-indent" value="-1"></button>
+                            <button class="ql-indent" value="+1"></button>
+                            <select class="ql-align">
+                                <option selected=""></option>
+                                <option value="center"></option>
+                                <option value="right"></option>
+                                <option value="justify"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                        </span>
+                    </ToolbarContent>
+                </BlazoredTextEditor>
+
+                <div class="mt-5">
+                    <InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
+
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Filled.CloudUpload"
+                               for="fileInput">
+                        Upload Image
+                    </MudButton>
+                    <MudText Class="mt-1">475 * 268(Max 50Kb)</MudText>
+                </div>
+
+            @if (String.IsNullOrEmpty(ImageSRC))
+            {
+                
+                <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{BlogPost.imageWebUrl}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:100px;"/>
+            }
+            else
+            {
+                <MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:100px;"/>
+            }
+
+                <div class="d-flex align-center justify-space-between mt-6">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                </div>
+        </MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBlog();
+    }
+
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Rich Text
+    BlazoredTextEditor QuillNative;
+
+    // Blog Data
+    private BlogPostDTO BlogPost = new BlogPostDTO();
+
+    // Get Blog Post
+    private async Task GetBlog()
+    {
+        BlogPost = await _blogPost.GetBlogPostsById(id);
+
+        await LoadRichText();
+    }
+
+    // Load Rich Text
+    private async Task LoadRichText()
+    {
+        string QuillContent = await _encodeDecode.DecodeBase64ToString(BlogPost.description);
+
+        await this.QuillNative.LoadHTMLContent(QuillContent);
+    }
+
+    // Image SRC
+    private string ImageSRC { get; set; }
+
+    // Upload Image
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            ImageSRC = await _base64.ConvertToBase64(51200, 475, 268, e);
+
+        }
+        catch(Exception error)
+        {
+            Snackbar.Add(error.Message, Severity.Error);
+        }
+    }
+
+
+}

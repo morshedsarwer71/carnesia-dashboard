@@ -24,7 +24,10 @@ namespace Carnesia.Application.WMS.PO.Services
         Task<List<AwaitingPo>> AwaitingPo();
         Task<List<AwaitingPo>> AwaitingPoByPoCode(string poCode);
         Task<Response> PoApprove(string poCode);
-        Task<AwaitingPoVM> AwaitingPoDetails(string poCode);
+        Task<AwaitingPoDetails> AwaitingPoDetails(string poCode);
         Task<List<POListPoco>> GetPoList();
+
+        Task<string> ApproveSelectedItems(string poCode, List<PoProductDTO> poProducts);
+        Task<string> RemoveSelectedItems(string poCode, List<PoProductDTO> poProducts);
     }
 }

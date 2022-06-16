@@ -1,0 +1,12 @@
+﻿@page "/update-campaign/{id:int}"
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		@id
+	</MudContainer>
+</MudPaper>
+
+@code {
+	[Parameter]
+    public int id { get; set; }
+}

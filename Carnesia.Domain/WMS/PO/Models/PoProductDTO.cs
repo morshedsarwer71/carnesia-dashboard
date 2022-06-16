@@ -10,6 +10,7 @@ namespace Carnesia.Domain.WMS.PO.Models
     {
         public string sku { get; set; }
         public string productName { get; set; }
+        public string productCode { get; set; }
         public int quantity { get; set; }
         public decimal liftingPrice { get; set; }
         public decimal TotalPrice { get; set; }
