@@ -1,0 +1,37 @@
+﻿@page "/product-voucher"
+
+@using Carnesia.Shared.CRM.Vouchers.ProductVoucher.CreateVoucher
+@using Carnesia.Shared.CRM.Vouchers.ProductVoucher.VoucherList
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CreateVoucher ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateVoucher)">
+                @CreateVoucher
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == VoucherList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(VoucherList)">@VoucherList</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == CreateVoucher){
+    <CreateVoucher />
+}
+else if(CurrentPage == VoucherList){
+    <VoucherList />
+}
+
+@code {
+    // Pages 
+    private string CreateVoucher = "Create Voucher";
+    private string VoucherList = "Voucher List";
+
+    // Current Page 
+    private string CurrentPage { get; set; } = "Create Voucher";
+
+    // Change Current Page
+    void ChangePage(string pageName)
+    {
+        CurrentPage = pageName;
+    }
+}

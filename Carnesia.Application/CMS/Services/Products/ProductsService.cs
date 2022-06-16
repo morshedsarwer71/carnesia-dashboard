@@ -31,6 +31,20 @@ namespace Carnesia.Application.CMS.Services.Products
             }
         }
 
+        public async Task<ProductsBySKUDTO> GetProductBySku(string sku)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<ProductsBySKUDTO>($"Products/getproductbysku/{sku}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<ProductsDTO>> GetProducts()
         {
             try

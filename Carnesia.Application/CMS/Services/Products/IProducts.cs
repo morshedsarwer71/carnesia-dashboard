@@ -13,6 +13,7 @@ namespace Carnesia.Application.CMS.Services.Products
 
         Task<string[]> GetProductsAsSKU();
 
-        Task<int> GetProductIdBySku(string sku); 
+        Task<int> GetProductIdBySku(string sku);
+        Task<ProductsBySKUDTO> GetProductBySku(string sku);
     }
 }
