@@ -1,27 +1,31 @@
-﻿@using Carnesia.Domain.WMS.BinList
+﻿@using Carnesia.Domain.WMS.Bin.Models
+@using Carnesia.Domain.WMS.BinList
 @using Carnesia.Domain.Common.POCO
+@inject IBin _bin
+@inject ISnackbar _snackbar
+@inject IStore _store
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
-	<MudContainer Fixed="true">
-		<MudGrid Class="justify-center align-baseline mb-5">
-			<MudItem md="2">
-				<MudAutocomplete T="string" Label="Warehouse" ResetValueOnEmptyText="true" />
-			</MudItem>
-			<MudItem md="2">
-				<MudTextField T="string" Label="Bin" Variant="Variant.Text"/>
-			</MudItem>
-			<MudItem md="2">
-				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("Active")" />
-					<MudSelectItem Value="@("Deactivated")" />
-				</MudSelect>
-			</MudItem>
-			<MudItem md="2">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
-			</MudItem>
-		</MudGrid>
+    <MudContainer Fixed="true">
+        <MudGrid Class="justify-center align-baseline mb-5">
+            <MudItem md="2">
+                <MudAutocomplete T="string" Label="Warehouse" @bind-Value="warehouse" ResetValueOnEmptyText="true" SearchFunc="StoreSearch"/>
+            </MudItem>
+            <MudItem md="2">
+                <MudTextField Label="Bin" @bind-Value="binName" Variant="Variant.Text"/>
+            </MudItem>
+            <MudItem md="2">
+                <MudSelect @bind-Value="status" Label="Status" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="true">Active</MudSelectItem>
+                    <MudSelectItem Value="false">Deactive</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            <MudItem md="2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Filter">Filter</MudButton>
+            </MudItem>
+        </MudGrid>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
             <HeaderContent>
                 <MudTh>BIN</MudTh>
                 <MudTh>Status</MudTh>
@@ -33,35 +37,93 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="BIN">@context.BIN</MudTd>
-                <MudTd DataLabel="Status">@context.Status</MudTd>
-                <MudTd DataLabel="Warehouse">@context.Warehouse</MudTd>
-                <MudTd DataLabel="Created on">@context.CreationDate</MudTd>
-                <MudTd DataLabel="Created by">@context.CreatedBy</MudTd>
-                <MudTd DataLabel="Current Capacity">@context.CurrentCap</MudTd>
-				<MudTd DataLabel="Current Stock">
-					@if (context.Status == "Active") { <MudButton Variant="Variant.Filled" Color=Color.Secondary>Deactivate</MudButton>}
-					else if (context.Status == "Deactivated") { <MudButton Variant="Variant.Filled" Color=Color.Success>Active</MudButton>}
-				</MudTd>
-				</RowTemplate>
+                <MudTd DataLabel="BIN">@context.binName</MudTd>
+                <MudTd DataLabel="Status">@context.status</MudTd>
+                <MudTd DataLabel="Warehouse">@context.store</MudTd>
+                <MudTd DataLabel="Created on">@context.createdAt</MudTd>
+                <MudTd DataLabel="Created by">@context.createdBy</MudTd>
+                <MudTd DataLabel="Current Capacity">@context.capacity</MudTd>
+                <MudTd DataLabel="Current Capacity">@context.currentStock</MudTd>
+                <MudTd DataLabel="Current Stock">
+                    @if (context.status == "Active")
+                    {
+                        <MudButton Variant="Variant.Filled" Color=Color.Success @onclick="() => ChangeStatus(context.id)">Deactivate</MudButton>
+                    }
+                    else if (context.status == "Deactive")
+                    {
+                        <MudButton Variant="Variant.Filled" Color=Color.Secondary @onclick="() => ChangeStatus(context.id)">Active</MudButton>
+                    }
+                </MudTd>
+            </RowTemplate>
             <PagerContent>
-                <MudTablePager />
+                <MudTablePager/>
             </PagerContent>
         </MudTable>
-
-		<div class="d-flex flex-wrap mt-4">
+        <div class="d-flex flex-wrap mt-4">
             <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
             <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
             <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
             <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
         </div>
-	</MudContainer>
+    </MudContainer>
 </MudPaper>
 
 @code {
-	// Table Customization
-	private TableCommon tableCommon = new TableCommon();
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
 
-	// Table Content
-	private IEnumerable<BinListDTO> Elements = new List<BinListDTO>();
- }
+    // Table Content
+    //private IEnumerable<BinListDTO> Elements = new List<BinListDTO>();
+    private List<GetBinDTO> Elements = new List<GetBinDTO>();
+    public string? binName { get; set; }
+    public string warehouse { get; set; }
+    public bool status { get; set; } = true;
+    public int storeId { get; set; } = 0;
+    private string[] stores;
+
+    protected override async Task OnInitializedAsync()
+    {
+        stores = await _store.GetStoreNameAsString();
+        Elements = await _bin.GetBins();
+    }
+
+    private async Task<IEnumerable<string>> StoreSearch(string value)
+    {
+        return string.IsNullOrEmpty(value) ? stores : stores.Where(z => z.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<List<GetBinDTO>> Filter()
+    {
+        try
+        {
+            var store = await _store.GetStore(warehouse);
+            storeId = store.storeId;
+            Elements.Clear();
+            //StateHasChanged();
+            Elements = await _bin.GetBinSearch(binName, storeId, status);
+            return Elements;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private async Task ChangeStatus(int binId)
+    {
+        try
+        {
+            var res = await _bin.ChangeStatus(binId);
+            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            _snackbar.Add(res.Message, Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            _snackbar.Add("Error", Severity.Success);
+    //Console.WriteLine(e);
+            throw;
+        }
+    }
+}

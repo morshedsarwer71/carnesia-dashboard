@@ -11,6 +11,8 @@ namespace Carnesia.Domain.WMS.PO.ReceivePO
         public string poCode { get; set; }
         public string vendorName { get; set; }
         public string orderDate { get; set; }
+        public decimal totalValue { get; set; }
+        public int totalQty { get; set; }
         public List<ReceivePOProductDTO> products { get; set; }
     }
 }

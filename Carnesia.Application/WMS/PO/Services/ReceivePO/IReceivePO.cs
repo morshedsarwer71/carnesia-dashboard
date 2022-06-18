@@ -10,6 +10,7 @@ namespace Carnesia.Application.WMS.PO.Services.ReceivePO
     public interface IReceivePO
     {
         Task<ReceivePODTO> GetPO(string poid);
-        Task SubmitReceive(ReceivePOProductDTO PO);
+        Task<ReceivePODTO> ReceivedPoByCode(string poid);
+        Task<ReceivePOProductDTO> SubmitReceive(ReceivePOProductDTO PO);
     }
 }

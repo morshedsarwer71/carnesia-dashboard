@@ -9,6 +9,7 @@ namespace Carnesia.Domain.WMS.PO.ReceivePO
     public class ReceivePOProductDTO
     {
         public string sku { get; set; }
+        public string productCode { get; set; }
         public string productName { get; set; }
         public string poCode { get; set; }
         public decimal liftingPrice { get; set; }

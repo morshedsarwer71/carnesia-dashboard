@@ -1,5 +1,7 @@
-﻿@using Carnesia.Domain.Vendor.POCO
+﻿@using Carnesia.Domain.Vendor.Models
+@using Carnesia.Domain.Vendor.POCO
 @using Carnesia.Domain.Common.POCO
+@inject IVendor _vendor
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -41,8 +43,13 @@
 
 @code {
     // Table Content
-    private IEnumerable<VendorPoco> Vendors = new List<VendorPoco>();
+    private IEnumerable<VendorDTO> Vendors = new List<VendorDTO>();
 
     // Table Customization
     public TableCommon table = new TableCommon();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Vendors = await _vendor.GetVendorsAsync();
+    }
 }

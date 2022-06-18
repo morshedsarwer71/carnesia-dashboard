@@ -1,17 +1,20 @@
-﻿<MudDialog>
+﻿@using Carnesia.Domain.WMS.TrackUID
+@inject IPurchaseOrder _order
+@inject ISnackbar _snackbar
+<MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
             
             <MudGrid>
                 <MudItem xs="12">
-                    <MudDatePicker @bind-Date="uidForm.Date" Label="Expiry Date" Required="true" RequiredError="Expiray Date is required!" />
+                    <MudDatePicker @bind-Date="uidForm.expDate" Label="Expiry Date" Required="true" RequiredError="Expiray Date is required!" />
                 </MudItem>
                 <MudItem xs="12">
-                    <MudTextField T="int" @bind-Value="uidForm.QTY" Label="Input Qty. of Same Expiry" Required="true" RequiredError="Input QTY is required!" />
+                    <MudTextField T="int" @bind-Value="uidForm.generateuidQty" Label="Input Qty. of Same Expiry" Required="true" RequiredError="Input QTY is required!" />
                 </MudItem>
                 <MudItem xs="12">
                     <div class="d-flex justify-end">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Generate UID</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GenerateUID">Generate UID</MudButton>
                     </div>
                 </MudItem>
             </MudGrid>
@@ -22,6 +25,11 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
+    [Parameter]
+    public string PoCode { get; set; }
+    [Parameter]
+    public string ProductCode { get; set; }
+
     void Cancel() => MudDialog.Cancel();
 
     // Form Ref
@@ -30,13 +38,20 @@
     string[] errors = { };
 
     // Input Data Bind
-    public UIDForm uidForm = new UIDForm();
+    public UIDPoco uidForm = new UIDPoco();
 
-
-    // Form Class
-    public class UIDForm
+    private async Task GenerateUID()
     {
-        public DateTime? Date { get; set; }
-        public int QTY { get; set; }
+        //_snackbar.Add(PoCode);
+        //_snackbar.Add(ProductCode);
+        uidForm.poCode = PoCode;
+        uidForm.productCode = ProductCode;       
+        var result = await _order.GenerateUID(uidForm);
+        //await _order.TestPrint();
+
+        _snackbar.Add("OK");
+        
     }
+
+
 }

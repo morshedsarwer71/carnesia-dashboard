@@ -30,6 +30,7 @@ using Carnesia.Application.OMS.Services.Zones;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using Carnesia.Application.WMS.Bin.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddMudServices();
@@ -37,7 +38,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://carnesiaapi.bespokeit.io/api/") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7090/api/") });
 builder.Services.AddScoped<IPurchaseOrder, PurchaseOrderService>();
 builder.Services.AddScoped<IVendor, VendorServices>();
 builder.Services.AddScoped<IStore, StoreService>();
@@ -66,5 +67,6 @@ builder.Services.AddScoped<IProductVoucher, ProductVoucherService>();
 builder.Services.AddScoped<IBase64, Base64Service>();
 builder.Services.AddScoped<IEncodeDecode, EncodeDecodeService>();
 builder.Services.AddScoped<IZones, ZonesService>();
+builder.Services.AddScoped<IBin, BinService>();
 
 await builder.Build().RunAsync();

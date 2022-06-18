@@ -1,17 +1,20 @@
-﻿<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+﻿@using Carnesia.Domain.WMS.Bin.Models
+@inject IBin _bin
+@inject ISnackbar _snackbar
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
 			<MudGrid Class="justify-center">
 				<MudItem md="6">
-					<MudTextField T="string" Label="Bin" Required="true" RequiredError="Bin is required!"/>
+					<MudTextField T="string" Label="Bin" @bind-Value="bin.binName" Required="true" RequiredError="Bin is required!"/>
 				</MudItem>
 				<MudItem md="6">
-					<MudTextField T="int?" Label="Capacity" Required="true" RequiredError="Capacity is required!"/>
+					<MudTextField T="int" Label="Capacity" @bind-Value="bin.capacity" Required="true" RequiredError="Capacity is required!"/>
 				</MudItem>
 			</MudGrid>
 
 			<div class="d-flex justify-end mt-5"> 
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)">Submit</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="SubmitBin">Submit</MudButton>
 			</div>
 		</MudForm>
 	</MudContainer>
@@ -20,6 +23,29 @@
 @code {
 	// Form Ref
 	bool success;
-    string[] errors = { };
-    MudForm form;
+	string[] errors = { };
+	MudForm form;
+	BinDTO bin =new BinDTO();
+	private async Task SubmitBin()
+	{
+		try
+		{
+			var result = await _bin.AddBin(bin);
+			if(result !=null)
+			{
+				_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+				_snackbar.Add(result.binName, Severity.Success);
+				form.Reset();
+			}
+			else{
+				_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+				_snackbar.Add("Error", Severity.Error);
+			}
+		}
+		catch (Exception)
+		{
+			_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            _snackbar.Add("Error", Severity.Error);
+		}
+	}
 }

@@ -24,24 +24,25 @@
 <MudPaper Class="pa-16 ma-2">
     <MudContainer Fixed="true">
         <MudGrid Class="justify-center align-baseline mb-5">
-			<MudItem md="3">
-				<MudTextField @bind-Value="POID" Label="PO ID" Variant="Variant.Text" />
-			</MudItem>
-			<MudItem md="3">
-				<div>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReceivePO" >Filter</MudButton>
-				</div>
-			</MudItem>
-		</MudGrid>
+            <MudItem md="3">
+                <MudTextField @bind-Value="POID" Label="PO ID" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem md="3">
+                <div>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReceivePO">Filter</MudButton>
+                </div>
+            </MudItem>
+        </MudGrid>
 
-        <MudTable Items="@Elements" Dense="@dense" Hover="@hover" CanCancelEdit="@true" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item               Updated", Severity.Info))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
+        <MudTable Items="@Elements" Dense="@dense" Hover="@hover" CanCancelEdit="@true" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("ItemUpdated", Severity.Info))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+                <MudTextField @bind-Value="SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>SKU Code</MudTh>
+                <MudTh>Product Code</MudTh>
                 <MudTh>Name</MudTh>
                 <MudTh>PO Quantity</MudTh>
                 <MudTh>Lifting Price</MudTh>
@@ -53,35 +54,38 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="SKU Code">@context.sku</MudTd>
+                <MudTd DataLabel="SKU Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Name">@context.productName</MudTd>
                 <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
-                <MudTd DataLabel="QC Passed">
-                    @(context.qcPassed - (context.qcFailed + context.notArrivedQty))
-                </MudTd>
+                @*<MudTd DataLabel="QC Passed">@(context.quantity - (context.qcFailed + context.notArrivedQty))</MudTd>*@
+                <MudTd DataLabel="QC Passed">6000</MudTd>
                 <MudTd DataLabel="QC Failed">@context.qcFailed</MudTd>
                 <MudTd DataLabel="Not Arrived">@context.notArrivedQty</MudTd>
-                <MudTd DataLabel="Value">@((context.qcPassed - (context.qcFailed + context.notArrivedQty)) * context.liftingPrice)</MudTd>
+                <MudTd DataLabel="Value">@((context.qcPassed * context.liftingPrice))</MudTd>
                 <MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => SubmitPO(context)">Submit</MudButton></MudTd>
             </RowTemplate>
             <RowEditingTemplate>
                 <MudTd DataLabel="SKU Code">@context.sku</MudTd>
+                <MudTd DataLabel="SKU Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Name">@context.productName</MudTd>
                 <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
                 <MudTd DataLabel="Lifting Price">
-                    <MudNumericField @bind-Value="@context.liftingPrice" Required Min="1" />
+                    <MudNumericField @bind-Value="@context.liftingPrice" Required Min="0" />
                 </MudTd>
-                <MudTd DataLabel="QC Passed">
+                @*<MudTd DataLabel="QC Passed">
                     @(context.qcPassed - (context.qcFailed + context.notArrivedQty))
-                </MudTd>
+                </MudTd>*@
+                 @*<MudTd DataLabel="QC Passed" @bind-Value="@context.qcPassed">@(context.quantity - (context.qcFailed + context.notArrivedQty))</MudTd>*@
+                 <MudTd DataLabel="QC Passed" @bind-Value="@context.qcPassed">50000</MudTd>
                 <MudTd DataLabel="QC Failed">
                     <MudNumericField @bind-Value="@context.qcFailed" Required />
                 </MudTd>
                 <MudTd DataLabel="Not Arrived">
                     <MudNumericField @bind-Value="@context.notArrivedQty" />
                 </MudTd>
-                <MudTd DataLabel="Value">@((context.qcPassed - (context.qcFailed + context.notArrivedQty)) * context.liftingPrice)</MudTd>
-                <MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton></MudTd>
+                <MudTd DataLabel="Value">@((context.qcPassed * context.liftingPrice))</MudTd>
+                @*<MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton></MudTd>*@
             </RowEditingTemplate>
             <PagerContent>
                 <MudTablePager />
@@ -93,13 +97,13 @@
 
         <MudPaper Width="400px" Square="true" Class="mt-10">
             <MudList Clickable="true">
-                <MudListItem>Total PO Quantity: 5000</MudListItem>
+                <MudListItem>Total PO Quantity: @PO.totalQty </MudListItem>
                 <MudDivider />
-                <MudListItem>Total Quantity Received: 500</MudListItem>
+                @*<MudListItem>Total Quantity Received: 500</MudListItem>*@
                 <MudDivider />
-                <MudListItem>Total PO Amount: 5000000</MudListItem>
+                <MudListItem>Total PO Amount: @PO.totalValue</MudListItem>
                 <MudDivider />
-                <MudListItem>Total Received Amount: 5000000</MudListItem>
+                @*<MudListItem>Total Received Amount: 5000000</MudListItem>*@
             </MudList>
         </MudPaper>
     </MudContainer>
@@ -117,7 +121,7 @@
     private bool hover { get; set; }
 
     // Table Content
-    private IEnumerable<ReceivePOProductDTO> Elements = new List<ReceivePOProductDTO>();
+    private List<ReceivePOProductDTO> Elements = new List<ReceivePOProductDTO>();
     private ReceivePODTO PO = new ReceivePODTO();
 
     // Get PO
@@ -125,36 +129,43 @@
     {
         if (String.IsNullOrEmpty(POID))
         {
-            Snackbar.Add("Please enter a POID!", Severity.Error);
+            Snackbar.Add("Please enter a PO ID!", Severity.Error);
             return;
         }
 
         try
         {
             PO = await _receivePO.GetPO(POID);
+            if (PO != null)
+            {
+                Elements = PO.products;
+            }
+            else
+            {
+                Snackbar.Add($"{POID} not found", Severity.Warning);
+            }
 
-            Elements = PO.products;
         }
-        catch(Exception)
+        catch (Exception)
         {
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-            throw;
+            Snackbar.Add($"{POID} not found", Severity.Warning);
+            //throw;
         }
     }
 
     // Before Edit
     private ReceivePOProductDTO beforeEdit;
 
-    // Backup Item 
+    // Backup Item
     private void BackupItem(object element)
     {
         beforeEdit = new()
-        {
-            liftingPrice = ((ReceivePOProductDTO)element).liftingPrice,
-            //qcPassed = ((ReceivePOProductDTO)element).qcPassed,
-            qcFailed = ((ReceivePOProductDTO)element).qcFailed,
-            notArrivedQty = ((ReceivePOProductDTO)element).notArrivedQty,
-        };
+            {
+                liftingPrice = ((ReceivePOProductDTO)element).liftingPrice,
+                //qcPassed = ((ReceivePOProductDTO)element).qcPassed,
+                qcFailed = ((ReceivePOProductDTO)element).qcFailed,
+                notArrivedQty = ((ReceivePOProductDTO)element).notArrivedQty,
+            };
     }
 
     // Reset Items If Edit Cancel
@@ -177,13 +188,20 @@
             PO.poCode = POID;
             try
             {
-                await _receivePO.SubmitReceive(PO);
-                await GetReceivePO();
-                Snackbar.Add("PO Received Successfully!", Severity.Success);
+                var result = await _receivePO.SubmitReceive(PO);
+                if (result != null)
+                {
+                    Snackbar.Add($"{PO.sku} Received Successfully!", Severity.Success);
+                    Elements.Remove(result);
+                }
+                else
+                {
+                    Snackbar.Add($"{PO.sku} Receiving error", Severity.Error);
+                }
             }
             catch (Exception)
             {
-                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                Snackbar.Add("Server error", Severity.Error);
                 throw;
             }
         }

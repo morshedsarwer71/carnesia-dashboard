@@ -8,10 +8,10 @@ namespace Carnesia.Domain.Common.POCO
 {
     public class TableCommon
     {
-        public bool Dense { get; set; }
-        public bool Hover { get; set; }
-        public bool Bordered { get; set; }
-        public bool Striped { get; set; }
+        public bool Dense { get; set; } = true;
+        public bool Hover { get; set; }=true;
+        public bool Bordered { get; set; }=true;
+        public bool Striped { get; set; }=true;
         public string SearchTerm { get; set; }
     }
 }

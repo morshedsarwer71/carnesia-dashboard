@@ -12,6 +12,6 @@ namespace Carnesia.Domain.WMS.TO.POCO
         public string ProductName { get; set; } 
         public int DestinationWhStock { get; set; } 
         public int SourceWhStock { get; set; } 
-        public int TransferQTY { get; set; } 
+        public int TransferQTY { get; set; }
     }
 }

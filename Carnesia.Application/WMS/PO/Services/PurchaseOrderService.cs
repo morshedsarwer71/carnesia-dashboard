@@ -19,6 +19,9 @@ using ClosedXML.Excel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
+using Carnesia.Domain.WMS.TrackUID;
+using System.Drawing;
+using System.Drawing.Printing;
 
 namespace Carnesia.Application.WMS.PO.Services
 {
@@ -43,11 +46,11 @@ namespace Carnesia.Application.WMS.PO.Services
                     var deserialized = JsonConvert.DeserializeObject<Response>(json);
                     return deserialized.Message;
                 }
-                return "Failed";
+                return "Po creation failed";
             }
             catch (Exception)
             {
-                return "Failed";
+                return "Po creation failed";
                 throw;
             }
         }
@@ -178,7 +181,8 @@ namespace Carnesia.Application.WMS.PO.Services
                         productName = skuProduct.productName,
                         quantity = poProductDto.quantity,
                         sku = skuProduct.productsku,
-                        TotalPrice = total
+                        TotalPrice = total,
+                        productCode = skuProduct.productCode
                     };
                     return poProd;
 
@@ -229,12 +233,12 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
-        public async Task<AwaitingPoVM> AwaitingPoDetails(string poCode)
+        public async Task<AwaitingPoDetails> AwaitingPoDetails(string poCode)
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<AwaitingPoVM>($"PurchaseOrders/receivepobycode/{poCode}");
-                return result;
+                return await _httpClient.GetFromJsonAsync<AwaitingPoDetails>($"PurchaseOrders/podetails/{poCode}");
+                
             }
             catch (Exception)
             {
@@ -252,6 +256,88 @@ namespace Carnesia.Application.WMS.PO.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<string> RemoveSelectedItems(string poCode, List<PoProductDTO> poProducts)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"PurchaseOrders/removeseleteditems/{poCode}", poProducts);
+                if (result.IsSuccessStatusCode)
+                {
+                    return "success";
+                }
+                else
+                {
+                    return "failed";
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> ApproveSelectedItems(string poCode, List<PoProductDTO> poProducts)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"PurchaseOrders/approveselecteditems/{poCode}", poProducts);
+                if (result.IsSuccessStatusCode)
+                {
+                    return "success";
+                }
+                else
+                {
+                    return "failed";
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> GenerateUID(UIDPoco form)
+        {
+            try
+            {
+                
+                var res = await _httpClient.PostAsJsonAsync("PurchaseOrders/generateuid", form);
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var deserialized = JsonConvert.DeserializeObject<Response>(json);
+                    return deserialized.Message;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+
+               //return null;
+            }
+        }
+
+        public async Task TestPrint()
+        {
+            try
+            {
+                var printFont = new Font("Arial", 15);
+                var sr = new StreamReader(@"MyFileToPrint.txt");
+                //PrintDialog printDlg = new PrintDialog();
+                PrintDocument printDoc = new PrintDocument();
+                printDoc.Print();
+                
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }
