@@ -1,0 +1,23 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudDatePicker Label="Expiry Date"/>
+        <MudNumericField T="int" Label="Input Qty. of Same Expiry" Variant="Variant.Text" />
+
+        <div class="d-flex flex-row mt-5">
+            <MudCheckBox T="bool" Label="BSTI" Color="Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" Label="MRP" Color="Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" Label="UID(barcode)" Color="Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" Label="SKU" Color="Color.Primary"></MudCheckBox>
+            <MudCheckBox T="bool" Label="Expiry Date" Color="Color.Primary"></MudCheckBox>
+        </div>
+
+        <div class="d-flex justify-space-evenly">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Generate UID</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Info">Print Label</MudButton>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+}

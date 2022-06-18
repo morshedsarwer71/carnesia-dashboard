@@ -14,5 +14,6 @@ namespace Carnesia.Domain.CMS.ChildProduct
         public string? childCatName { get; set; }
         public int gChildCatId { get; set; }
         public string? gChildCatName { get; set; }
+        public string? gChaildCatName { get; set; }
     }
 }

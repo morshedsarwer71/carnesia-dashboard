@@ -1,0 +1,108 @@
+﻿@page "/update-compound-product/{id:int}"
+
+@using Carnesia.Domain.CMS.ChildProduct
+@using Carnesia.Shared.CMS.ChildProduct
+@inject IDialogService DialogService
+@inject ICategory _category
+@inject IParentProduct _parentProduct
+@inject IChildProduct _childProduct
+@inject IBase64 _base64
+@inject ISnackbar Snackbar
+
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudGrid>
+                    <MudItem sm="6"> 
+                        <MudAutocomplete Value="ChildProductInfoData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product" SearchFunc="@ParentProductSearch"                                 ResetValueOnEmptyText="true" Required="true" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudTextField @bind-Value="ChildProductInfoData.productName" Label="Product Name" Required="true" RequiredError="Product Name is required!"/>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudTextField @bind-Value="ChildProductInfoData.productsku" Label="Product SKU" Required="true" RequiredError="Product SKU is required!"/>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudTextField @bind-Value="ChildProductInfoData.weight" Label="Product Weight" Required="true" RequiredError="Product Weight is required!"/>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudTextField @bind-Value="ChildProductInfoData.productDimension" Label="Product Dimension" Required="true" RequiredError="Product Dimension is required!"/>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudNumericField @bind-Value="ChildProductInfoData.productPoints" Label="Product Points"/>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudNumericField @bind-Value="ChildProductInfoData.mrp" Label="MRP" Required="true" RequiredError="MRP is required!"/>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudGrid Class="align-baseline">
+                            <MudItem xs="6">
+                                <MudNumericField @bind-Value="ChildProductInfoData.discount" Label="@(ChildProductInfoData.isPercent ? "Discount Percent" : "Cash Discount")"/>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isPercent" Label="Is Percent" Color="Color.Primary" />
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudNumericField @bind-Value="ChildProductInfoData.vatAmount" Label="Vat Amount"/>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudTextField @bind-Value="ChildProductInfoData.upSells" Label="Up Sell SKU. Separate with comma" Required="true" RequiredError="Up Sell SKU are required!" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudTextField @bind-Value="ChildProductInfoData.crossSells" Label="Cross Sell SKU. Separate with comma" Required="true" RequiredError="Cross Sell SKU required!" />
+                    </MudItem>
+                    <MudItem sm="6">
+					    <MudTextField @bind-Value="ChildProductInfoData.metaTags" Label="Meta Tags. Separate with comma" Required="true" RequiredError="Meta Tags are required!" />
+				    </MudItem>
+                    <MudItem sm="6">
+					    <MudTextField @bind-Value="ChildProductInfoData.seachTags" Label="Search Tags. Separate with comma" Required="true" RequiredError="Search Tags are required!" />
+				    </MudItem>
+                    <MudItem sm="6">
+					    <MudTextField @bind-Value="ChildProductInfoData.metaTitle" Label="Meta Title" Required="true" RequiredError="Meta Title are required!" />
+				    </MudItem>
+                    @if (ChildProductInfoData.isSize)
+                    {
+                        <MudItem sm="6">
+                            <MudGrid>
+                                <MudItem xs="6">
+                                    <MudTextField @bind-Value="ChildProductInfoData.sizeOrQty" Label="Size" Required="true" RequiredError="Size is required!"/>
+                                </MudItem>
+                                <MudItem xs="6">
+                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Size" Color="Color.Primary" />
+                                </MudItem>
+                            </MudGrid>
+                        </MudItem>
+                    }
+                    else
+                    {
+                        <MudItem sm="6">
+                            <MudGrid>
+                                <MudItem xs="6">
+                                    <MudColorPicker Label="Color Code" @bind-Text="ChildProductInfoData.colorCode" Style="@($"color: {ChildProductInfoData.colorCode};")"                                                         ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
+                                </MudItem>
+                                <MudItem xs="6">
+                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Size" Color="Color.Primary" />
+                                </MudItem>
+                            </MudGrid>
+                        </MudItem>                        
+                        <MudItem sm="6">
+                            <MudTextField @bind-Value="ChildProductInfoData.colorName" Label="Color Name" Required="true" RequiredError="Color Name is required!"/>
+                        </MudItem>
+                    }
+                    <MudItem xs="12">
+					    <MudTextField @bind-Value="ChildProductInfoData.metaDescription" Label="Meta Description" Lines="5" Required="true" RequiredError="Meta Description required!" />
+				    </MudItem>
+                </MudGrid>
+		</MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}
