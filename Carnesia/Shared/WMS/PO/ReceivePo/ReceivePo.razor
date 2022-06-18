@@ -56,34 +56,36 @@
                 <MudTd DataLabel="SKU Code">@context.sku</MudTd>
                 <MudTd DataLabel="SKU Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Name">@context.productName</MudTd>
-                <MudTd DataLabel="PO Quantity">@context.quantity</MudTd>
+                <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
-                <MudTd DataLabel="QC Passed">
-                    @(context.qcPassed - (context.qcFailed + context.notArrivedQty))
-                </MudTd>
+                @*<MudTd DataLabel="QC Passed">@(context.quantity - (context.qcFailed + context.notArrivedQty))</MudTd>*@
+                <MudTd DataLabel="QC Passed">6000</MudTd>
                 <MudTd DataLabel="QC Failed">@context.qcFailed</MudTd>
                 <MudTd DataLabel="Not Arrived">@context.notArrivedQty</MudTd>
-                <MudTd DataLabel="Value">@((context.qcPassed - (context.qcFailed + context.notArrivedQty)) * context.liftingPrice)</MudTd>
+                <MudTd DataLabel="Value">@((context.qcPassed * context.liftingPrice))</MudTd>
                 <MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => SubmitPO(context)">Submit</MudButton></MudTd>
             </RowTemplate>
             <RowEditingTemplate>
                 <MudTd DataLabel="SKU Code">@context.sku</MudTd>
+                <MudTd DataLabel="SKU Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Name">@context.productName</MudTd>
-                <MudTd DataLabel="PO Quantity">@context.quantity</MudTd>
+                <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
                 <MudTd DataLabel="Lifting Price">
-                    <MudNumericField @bind-Value="@context.liftingPrice" Required Min="1" />
+                    <MudNumericField @bind-Value="@context.liftingPrice" Required Min="0" />
                 </MudTd>
-                <MudTd DataLabel="QC Passed">
+                @*<MudTd DataLabel="QC Passed">
                     @(context.qcPassed - (context.qcFailed + context.notArrivedQty))
-                </MudTd>
+                </MudTd>*@
+                 @*<MudTd DataLabel="QC Passed" @bind-Value="@context.qcPassed">@(context.quantity - (context.qcFailed + context.notArrivedQty))</MudTd>*@
+                 <MudTd DataLabel="QC Passed" @bind-Value="@context.qcPassed">50000</MudTd>
                 <MudTd DataLabel="QC Failed">
                     <MudNumericField @bind-Value="@context.qcFailed" Required />
                 </MudTd>
                 <MudTd DataLabel="Not Arrived">
                     <MudNumericField @bind-Value="@context.notArrivedQty" />
                 </MudTd>
-                <MudTd DataLabel="Value">@((context.qcPassed - (context.qcFailed + context.notArrivedQty)) * context.liftingPrice)</MudTd>
-                <MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton></MudTd>
+                <MudTd DataLabel="Value">@((context.qcPassed * context.liftingPrice))</MudTd>
+                @*<MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton></MudTd>*@
             </RowEditingTemplate>
             <PagerContent>
                 <MudTablePager />
@@ -140,13 +142,13 @@
             }
             else
             {
-                Snackbar.Add("PO not found", Severity.Warning);
+                Snackbar.Add($"{POID} not found", Severity.Warning);
             }
 
         }
         catch (Exception)
         {
-            Snackbar.Add("PO not found", Severity.Warning);
+            Snackbar.Add($"{POID} not found", Severity.Warning);
             //throw;
         }
     }
@@ -189,12 +191,12 @@
                 var result = await _receivePO.SubmitReceive(PO);
                 if (result != null)
                 {
-                    Snackbar.Add("PO Received Successfully!", Severity.Success);
+                    Snackbar.Add($"{PO.sku} Received Successfully!", Severity.Success);
                     Elements.Remove(result);
                 }
                 else
                 {
-                    Snackbar.Add("PO Receiving error", Severity.Error);
+                    Snackbar.Add($"{PO.sku} Receiving error", Severity.Error);
                 }
             }
             catch (Exception)

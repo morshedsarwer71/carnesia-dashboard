@@ -29,6 +29,19 @@ namespace Carnesia.Application.WMS.PO.Services.ReceivePO
             }
         }
 
+        public async Task<ReceivePODTO> ReceivedPoByCode(string poid)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<ReceivePODTO>($"PurchaseOrders/receivedpobycode/{poid}");
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<ReceivePOProductDTO> SubmitReceive(ReceivePOProductDTO PO)
         {
             try

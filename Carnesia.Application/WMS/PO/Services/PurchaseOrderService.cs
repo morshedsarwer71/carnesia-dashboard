@@ -19,6 +19,9 @@ using ClosedXML.Excel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
+using Carnesia.Domain.WMS.TrackUID;
+using System.Drawing;
+using System.Drawing.Printing;
 
 namespace Carnesia.Application.WMS.PO.Services
 {
@@ -291,6 +294,46 @@ namespace Carnesia.Application.WMS.PO.Services
                 {
                     return "failed";
                 }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> GenerateUID(UIDPoco form)
+        {
+            try
+            {
+                
+                var res = await _httpClient.PostAsJsonAsync("PurchaseOrders/generateuid", form);
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var deserialized = JsonConvert.DeserializeObject<Response>(json);
+                    return deserialized.Message;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+
+               //return null;
+            }
+        }
+
+        public async Task TestPrint()
+        {
+            try
+            {
+                var printFont = new Font("Arial", 15);
+                var sr = new StreamReader(@"MyFileToPrint.txt");
+                //PrintDialog printDlg = new PrintDialog();
+                PrintDocument printDoc = new PrintDocument();
+                printDoc.Print();
+                
             }
             catch (Exception)
             {

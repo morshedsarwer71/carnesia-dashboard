@@ -12,6 +12,8 @@ using Carnesia.Domain.WMS.PO.Models.Awaiting;
 using Carnesia.Domain.WMS.PO.POCO;
 using Carnesia.Domain.WMS.PO.ViewModels.Awaiting;
 using Microsoft.AspNetCore.Components.Forms;
+using Carnesia.Domain.WMS.UIDReport;
+using Carnesia.Domain.WMS.TrackUID;
 
 namespace Carnesia.Application.WMS.PO.Services
 {
@@ -29,5 +31,8 @@ namespace Carnesia.Application.WMS.PO.Services
 
         Task<string> ApproveSelectedItems(string poCode, List<PoProductDTO> poProducts);
         Task<string> RemoveSelectedItems(string poCode, List<PoProductDTO> poProducts);
+
+        Task<string> GenerateUID(UIDPoco form);
+        Task TestPrint();
     }
 }

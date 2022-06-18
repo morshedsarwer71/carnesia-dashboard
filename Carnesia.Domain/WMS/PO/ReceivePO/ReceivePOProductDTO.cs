@@ -13,7 +13,7 @@ namespace Carnesia.Domain.WMS.PO.ReceivePO
         public string productName { get; set; }
         public string poCode { get; set; }
         public decimal liftingPrice { get; set; }
-        public int quantity { get; set; }
+        public int poQuantity { get; set; }
         public int qcPassed { get; set; }
         public int qcFailed { get; set; }
         public int notArrivedQty { get; set; }
