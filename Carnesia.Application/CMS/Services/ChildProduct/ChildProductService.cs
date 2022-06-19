@@ -47,11 +47,16 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
             try
             {
                 var result = await _httpClient.GetFromJsonAsync<SingleChildProductDTO>($"Products/{id}");
+                if (result == null)
+                {
+                    return null;
+                }
+
                 return result;
             }
             catch (Exception)
             {
-
+                return null;
                 throw;
             }
         }
