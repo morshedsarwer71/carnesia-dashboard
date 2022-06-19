@@ -28,5 +28,58 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
                 throw;
             }
         }
+
+        public async Task DeleteImage(int id)
+        {
+            try
+            {
+                await _httpClient.DeleteAsync($"Products/deleteproductimage/{id}");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<SingleChildProductDTO> GetChildById(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<SingleChildProductDTO>($"Products/{id}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task UpdateChildProduct(ChildProductUpdateDTO childProduct)
+        {
+            try
+            {
+                await _httpClient.PutAsJsonAsync($"Products/{childProduct.updateProductDTO.id}", childProduct);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task UpdateImage(UpdateProductImageDTO Images, int id)
+        {
+            try
+            {
+                await _httpClient.PostAsJsonAsync($"Products/addimagetoproducts/{id}", Images);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

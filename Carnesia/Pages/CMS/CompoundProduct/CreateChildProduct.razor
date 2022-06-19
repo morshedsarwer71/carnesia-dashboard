@@ -23,10 +23,19 @@
                         <MudTextField @bind-Value="ChildProductInfoData.productsku" Label="Product SKU" Required="true" RequiredError="Product SKU is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.weight" Label="Product Weight" Required="true" RequiredError="Product Weight is required!"/>
+                        <MudTextField @bind-Value="ChildProductInfoData.productDimension" Label="Product Dimension" Required="true" RequiredError="Product Dimension is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.productDimension" Label="Product Dimension" Required="true" RequiredError="Product Dimension is required!"/>
+                        <MudNumericField @bind-Value="ChildProductInfoData.weight" Label="Product Weight" Required="true" RequiredError="Product Weight is required!"/>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudSelect @bind-Value="ChildProductInfoData.uom" Label="Unit of Measurements" Required="true" RequiredError="Unit of Measurements is required!"                                                     AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="@("mg")" />
+                            <MudSelectItem Value="@("g")" />
+                            <MudSelectItem Value="@("kg")" />
+                            <MudSelectItem Value="@("ml")" />
+                            <MudSelectItem Value="@("l")" />
+                        </MudSelect>
                     </MudItem>
                     <MudItem sm="6">
                         <MudNumericField @bind-Value="ChildProductInfoData.productPoints" Label="Product Points"/>
@@ -135,13 +144,13 @@
                 <MudText Class="mt-5">Category</MudText>
                 <MudGrid>
                     <MudItem md="4" sm="6">
-                        <MudAutocomplete Value="CategoryData.parentCatName" ValueChanged="(string s) => GetParentCatId(s)"  SearchFunc="@ParentCatSearch" Label="Category"                                      ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Value="CategoryData.parentCatName" ValueChanged="(string s) => GetParentCatId(s)"  SearchFunc="@ParentCatSearch" Label="Category"                                                   ResetValueOnEmptyText="true" />
                     </MudItem>
                     <MudItem md="4" sm="6">
                         <MudAutocomplete Value="CategoryData.childCatName" ValueChanged="(string s) => GetChildCatId(s)" Label="Child Category" SearchFunc="@ChildCatSearch"                                          ResetValueOnEmptyText="true" />
                     </MudItem>
                     <MudItem md="4" sm="6">
-                        <MudAutocomplete Value="CategoryData.gChildCatName" ValueChanged="(string s) => GetGrandChildId(s)" Label="Grand Child Category" SearchFunc="@GrandChildCatSearch"                            ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Value="CategoryData.gChildCatName" ValueChanged="(string s) => GetGrandChildId(s)" Label="Grand Child Category"                                                  SearchFunc="@GrandChildCatSearch" ResetValueOnEmptyText="true" />
                     </MudItem>
                 </MudGrid>
 
@@ -163,7 +172,7 @@
                     @foreach(var image in ProductImages)
                     {
                         
-                        <MudBadge OnClick="() => RemoveImage(image)" Icon="@Icons.Filled.DeleteOutline" Color="Color.Error" Overlap="true" Class="mx-6 my-4" Style="cursor:pointer">
+                        <MudBadge OnClick="() => RemoveImage(image)" Icon="@Icons.Filled.DeleteOutline" Color="Color.Error" Overlap="true" Class="mx-6 my-4"                                              Style="cursor:pointer">
                             <MudImage Src="@($"data:image/webp;base64,{image.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
                         </MudBadge>
                     }
