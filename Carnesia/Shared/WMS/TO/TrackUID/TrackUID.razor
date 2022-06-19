@@ -1,28 +1,33 @@
-﻿@using Carnesia.Domain.WMS.TrackUID
+﻿@using Carnesia.Application.WMS.PutAway.Poco
+@using Carnesia.Domain.WMS.TrackUID
+@inject IPutAway _away
+@inject ISnackbar _snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
 		<MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="3">
-				<MudTextField T="string" Label="UID" Variant="Variant.Text"/>
+				<MudTextField T="string" Label="UID" @bind-Value="UID" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="TrackUIDHistory">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
 
 		<MudGrid>
 			<MudItem md="6">
 				<MudList Clickable="false">
-					<MudListItem>UID: 456787</MudListItem>
+					<MudListItem>UID: @Elements.uid</MudListItem>
 					<MudDivider />
-					<MudListItem>SKU: 9087684848484</MudListItem>
+					<MudListItem>SKU: @Elements.sku</MudListItem>
 					<MudDivider />
-					<MudListItem>Product Name: Product Name Shade 1</MudListItem>
+					<MudListItem>ProductCode: @Elements.productCode</MudListItem>
 					<MudDivider />
-					<MudListItem>Expiry: 12-Mar-2023</MudListItem>
+					<MudListItem>Product Name: @Elements.productName</MudListItem>
 					<MudDivider />
-					<MudListItem>Age: 45 Days</MudListItem>
+					<MudListItem>Expiry: @Elements.expDate</MudListItem>
+					<MudDivider />
+					<MudListItem>Age: @Elements.age Days</MudListItem>
 				</MudList>
 			</MudItem>
 			<MudItem md="6">
@@ -30,7 +35,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" Hover="true">
+		<MudTable Items="@Elements.trackUIDs" Hover="true">
 			<HeaderContent>
 				<MudTh>PO ID</MudTh>
 				<MudTh>Order ID</MudTh>
@@ -38,17 +43,19 @@
 				<MudTh>Picklist ID</MudTh>
 				<MudTh>BIN</MudTh>
 				<MudTh>Last Status</MudTh>
-				<MudTh>Status Updated by</MudTh>
+				<MudTh>Status Updated By</MudTh>
+				<MudTh>Status Updated Date</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="PO ID">@context.POID</MudTd>
-				<MudTd DataLabel="Order ID">@context.OrderID</MudTd>
-				<MudTd DataLabel="TO ID">@context.TOID</MudTd>
-				<MudTd DataLabel="Picklist ID">@context.PickListID</MudTd>
-				<MudTd DataLabel="BIN">@context.BIN</MudTd>
-				<MudTd DataLabel="Last Status">@context.LastStatus</MudTd>
-				<MudTd DataLabel="Status Updated on">@context.StatusUpdateDate</MudTd>
-				<MudTd DataLabel="Status Updated by">@context.StatusUpdatedBy</MudTd>
+				<MudTd DataLabel="PO ID">@context.poCode</MudTd>
+				<MudTd DataLabel="Order ID">@context.orderCode</MudTd>
+				<MudTd DataLabel="TO ID">@context.toCode</MudTd>
+				<MudTd DataLabel="Picklist ID">@context.pickListCode</MudTd>
+				<MudTd DataLabel="BIN">@context.binId</MudTd>
+				<MudTd DataLabel="Last Status">@context.status</MudTd>
+				<MudTd DataLabel="Status Updated by">@context.createdBy</MudTd>
+				<MudTd DataLabel="Status Updated on">@context.createdAt</MudTd>
+				
 			</RowTemplate>
 		</MudTable>
 
@@ -60,5 +67,25 @@
 
 @code {
 	// Table Content
-	private IEnumerable<TrackUIDDTO> Elements = new List<TrackUIDDTO>();
+	private UIDHistoryPoco Elements = new UIDHistoryPoco();
+	public string UID { get; set; }
+
+	private async Task TrackUIDHistory()
+	{
+		try
+		{
+			var result =await _away.GetUIDHistory(UID);
+			if(result!=null)
+			{
+				Elements = result;
+			}
+			else
+			{
+				_snackbar.Add("UID not found");
+			}
+		}catch
+		{
+			_snackbar.Add("UID not found");
+		}
+	}
 }
