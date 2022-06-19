@@ -94,12 +94,48 @@ namespace Carnesia.Application.CMS.Services.Category
     
         }
 
+        public async Task<string[]> GetChildCatAsStringByParentId(int id)
+        {
+            try
+            {
+                var list = new List<string>();
+                var child = await _httpClient.GetFromJsonAsync<List<ChildCategoryDTO>>($"Category/childcategories/{id}");
+                list.AddRange(child.Select(x => x.childCat));
+
+                return list.ToArray();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<string[]> GetGrandChildCatAsString(IList<GrandChildCategoryDTO> GrandChildCategories)
         {
             var list = new List<string>();
             list.AddRange(GrandChildCategories.Select(x => x.gChildCat));
 
             return list.ToArray();
+        }
+
+        public async Task<string[]> GetGrandChildCatAsStringByChildId(int id)
+        {
+            try
+            {
+                var list = new List<string>();
+                var gChild = await _httpClient.GetFromJsonAsync<List<GrandChildCategoryDTO>>($"Category/gchildcategories/{id}");
+                list.AddRange(gChild.Select(x => x.gChildCat));
+
+                return list.ToArray();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<ParentCategoryDTO> GetParentCat(string ParentCat)

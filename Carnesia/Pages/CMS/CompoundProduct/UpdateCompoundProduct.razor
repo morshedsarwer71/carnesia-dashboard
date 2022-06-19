@@ -1,4 +1,4 @@
-﻿@page "/create-compound-product"
+﻿@page "/update-compound-product/{id:int}"
 
 @using Carnesia.Domain.CMS.ChildProduct
 @using Carnesia.Shared.CMS.ChildProduct
@@ -9,27 +9,28 @@
 @inject IBase64 _base64
 @inject ISnackbar Snackbar
 
+
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudGrid>
+			<MudGrid>
                     <MudItem sm="6"> 
-                        <MudAutocomplete Value="ChildProductInfoData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product" SearchFunc="@ParentProductSearch"                          ResetValueOnEmptyText="true" Required="true" />
+                        <MudAutocomplete Value="FormData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product" SearchFunc="@ParentProductSearch"                                            ResetValueOnEmptyText="true" Required="true" />
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.productName" Label="Product Name" Required="true" RequiredError="Product Name is required!"/>
+                        <MudTextField @bind-Value="FormData.productName" Label="Product Name" Required="true" RequiredError="Product Name is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.productsku" Label="Product SKU" Required="true" RequiredError="Product SKU is required!"/>
+                        <MudTextField @bind-Value="FormData.productsku" Label="Product SKU" Required="true" RequiredError="Product SKU is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.productDimension" Label="Product Dimension" Required="true" RequiredError="Product Dimension is required!"/>
+                        <MudTextField @bind-Value="FormData.productDimension" Label="Product Dimension" Required="true" RequiredError="Product Dimension is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudNumericField @bind-Value="ChildProductInfoData.weight" Label="Product Weight" Required="true" RequiredError="Product Weight is required!"/>
+                        <MudNumericField @bind-Value="FormData.weight" Label="Product Weight" Required="true" RequiredError="Product Weight is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudSelect @bind-Value="ChildProductInfoData.uom" Label="Unit of Measurements" Required="true" RequiredError="Unit of Measurements is required!"                                                     AnchorOrigin="Origin.BottomCenter">
+                        <MudSelect @bind-Value="FormData.uom" Label="Unit of Measurements" Required="true" RequiredError="Unit of Measurements is required!" AnchorOrigin="Origin.BottomCenter">
                             <MudSelectItem Value="@("mg")" />
                             <MudSelectItem Value="@("g")" />
                             <MudSelectItem Value="@("kg")" />
@@ -38,48 +39,48 @@
                         </MudSelect>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudNumericField @bind-Value="ChildProductInfoData.productPoints" Label="Product Points"/>
+                        <MudNumericField @bind-Value="FormData.productPoints" Label="Product Points"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudNumericField @bind-Value="ChildProductInfoData.mrp" Label="MRP" Required="true" RequiredError="MRP is required!"/>
+                        <MudNumericField @bind-Value="FormData.mrp" Label="MRP" Required="true" RequiredError="MRP is required!"/>
                     </MudItem>
                     <MudItem sm="6">
                         <MudGrid Class="align-baseline">
                             <MudItem xs="6">
-                                <MudNumericField @bind-Value="ChildProductInfoData.discount" Label="@(ChildProductInfoData.isPercent ? "Discount Percent" : "Cash Discount")"/>
+                                <MudNumericField @bind-Value="FormData.discount" Label="@(FormData.isPercent ? "Discount Percent" : "Cash Discount")"/>
                             </MudItem>
                             <MudItem xs="6">
-                                <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isPercent" Label="Is Percent" Color="Color.Primary" />
+                                <MudSwitch Class="mt-5" @bind-Checked="@FormData.isPercent" Label="Is Percent" Color="Color.Primary" />
                             </MudItem>
                         </MudGrid>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudNumericField @bind-Value="ChildProductInfoData.vatAmount" Label="Vat Amount"/>
+                        <MudNumericField @bind-Value="FormData.vatAmount" Label="Vat Amount"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.upSells" Label="Up Sell SKU. Separate with comma" Required="true" RequiredError="Up Sell SKU are required!" />
+                        <MudTextField @bind-Value="FormData.upSells" Label="Up Sell SKU. Separate with comma" Required="true" RequiredError="Up Sell SKU are required!" />
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.crossSells" Label="Cross Sell SKU. Separate with comma" Required="true" RequiredError="Cross Sell SKU required!" />
+                        <MudTextField @bind-Value="FormData.crossSells" Label="Cross Sell SKU. Separate with comma" Required="true" RequiredError="Cross Sell SKU required!" />
                     </MudItem>
                     <MudItem sm="6">
-					    <MudTextField @bind-Value="ChildProductInfoData.metaTags" Label="Meta Tags. Separate with comma" Required="true" RequiredError="Meta Tags are required!" />
+					    <MudTextField @bind-Value="FormData.metaTags" Label="Meta Tags. Separate with comma" Required="true" RequiredError="Meta Tags are required!" />
 				    </MudItem>
                     <MudItem sm="6">
-					    <MudTextField @bind-Value="ChildProductInfoData.seachTags" Label="Search Tags. Separate with comma" Required="true" RequiredError="Search Tags are required!" />
+					    <MudTextField @bind-Value="FormData.seachTags" Label="Search Tags. Separate with comma" Required="true" RequiredError="Search Tags are required!" />
 				    </MudItem>
                     <MudItem sm="6">
-					    <MudTextField @bind-Value="ChildProductInfoData.metaTitle" Label="Meta Title" Required="true" RequiredError="Meta Title are required!" />
+					    <MudTextField @bind-Value="FormData.metaTitle" Label="Meta Title" Required="true" RequiredError="Meta Title are required!" />
 				    </MudItem>
-                    @if (ChildProductInfoData.isSize)
+                    @if (FormData.isSize)
                     {
                         <MudItem sm="6">
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudTextField @bind-Value="ChildProductInfoData.sizeOrQty" Label="Size" Required="true" RequiredError="Size is required!"/>
+                                    <MudTextField @bind-Value="FormData.sizeOrQty" Label="Size" Required="true" RequiredError="Size is required!"/>
                                 </MudItem>
                                 <MudItem xs="6">
-                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Size" Color="Color.Primary" />
+                                    <MudSwitch Class="mt-5" @bind-Checked="@FormData.isSize" Label="Is Size" Color="Color.Primary" />
                                 </MudItem>
                             </MudGrid>
                         </MudItem>
@@ -89,35 +90,35 @@
                         <MudItem sm="6">
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudColorPicker Label="Color Code" @bind-Text="ChildProductInfoData.colorCode" Style="@($"color: {ChildProductInfoData.colorCode};")"                                                         ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
+                                    <MudColorPicker Label="Color Code" @bind-Text="FormData.colorCode" Style="@($"color: {FormData.colorCode};")"                                                                     ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
                                 </MudItem>
                                 <MudItem xs="6">
-                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Size" Color="Color.Primary" />
+                                    <MudSwitch Class="mt-5" @bind-Checked="@FormData.isSize" Label="Is Size" Color="Color.Primary" />
                                 </MudItem>
                             </MudGrid>
                         </MudItem>                        
                         <MudItem sm="6">
-                            <MudTextField @bind-Value="ChildProductInfoData.colorName" Label="Color Name" Required="true" RequiredError="Color Name is required!"/>
+                            <MudTextField @bind-Value="FormData.colorName" Label="Color Name" Required="true" RequiredError="Color Name is required!"/>
                         </MudItem>
                     }
                     <MudItem xs="12">
-					    <MudTextField @bind-Value="ChildProductInfoData.metaDescription" Label="Meta Description" Lines="5" Required="true" RequiredError="Meta Description required!" />
+					    <MudTextField @bind-Value="FormData.metaDescription" Label="Meta Description" Lines="5" Required="true" RequiredError="Meta Description required!" />
 				    </MudItem>
                 </MudGrid>
 
-			    <div class="d-flex flex-column">
-                    <MudCheckBox Color="Color.Primary" @bind-Checked="@ChildProductInfoData.isPublish" Class="ml-n2" Label="Is Publish!"/>
-                    <MudCheckBox Color="Color.Primary" @bind-Checked="@ChildProductInfoData.isHasFreeProd" Class="ml-n2" Label="Is Has Free Product!"/>
+                <div class="d-flex flex-column">
+                    <MudCheckBox Color="Color.Primary" @bind-Checked="@FormData.isPublish" Class="ml-n2" Label="Is Publish!"/>
+                    <MudCheckBox Color="Color.Primary" @bind-Checked="@FormData.isHasFreeProd" Class="ml-n2" Label="Is Has Free Product!"/>
                 </div>
 
-                @if (ChildProductInfoData.isHasFreeProd)
+                @if (FormData.isHasFreeProd)
                 {
                     <MudText Class="mt-16">Free Products</MudText>
                     <div class="my-5 d-flex justify-end">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenFreeProductModal">Add Free Product</MudButton>
                     </div>
 
-                    <MudTable Items="@FreeProducts" Hover="true" Dense="true">
+                    <MudTable Items="@FormData.freeProducts" Hover="true" Dense="true">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
                             <MudTh>SKU</MudTh>
@@ -135,7 +136,7 @@
                                 <MudImage Src="@($"data:image/webp;base64,{context.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
                             </MudTd>
                             <MudTd DataLabel="Action">
-                                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveFreeProductFromList(context)">Remove</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveFreeProductFromList(context.sku)">Remove</MudButton>
                             </MudTd>
                         </RowTemplate>
                     </MudTable>
@@ -144,15 +145,19 @@
                 <MudText Class="mt-5">Category</MudText>
                 <MudGrid>
                     <MudItem md="4" sm="6">
-                        <MudAutocomplete Value="CategoryData.parentCatName" ValueChanged="(string s) => GetParentCatId(s)"  SearchFunc="@ParentCatSearch" Label="Category"                                                   ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Value="CategoryData.parentCatName" ValueChanged="(string s) => GetParentCatId(s)"  SearchFunc="@ParentCatSearch" Label="Category"                                     ResetValueOnEmptyText="true" />
                     </MudItem>
                     <MudItem md="4" sm="6">
-                        <MudAutocomplete Value="CategoryData.childCatName" ValueChanged="(string s) => GetChildCatId(s)" Label="Child Category" SearchFunc="@ChildCatSearch"                                          ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Value="CategoryData.childCatName" ValueChanged="(string s) => GetChildCatId(s)" Label="Child Category" SearchFunc="@ChildCatSearch"                              ResetValueOnEmptyText="true" />
                     </MudItem>
                     <MudItem md="4" sm="6">
                         <MudAutocomplete Value="CategoryData.gChildCatName" ValueChanged="(string s) => GetGrandChildId(s)" Label="Grand Child Category"                                                  SearchFunc="@GrandChildCatSearch" ResetValueOnEmptyText="true" />
                     </MudItem>
                 </MudGrid>
+
+                <div class="d-flex justify-end mt-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateProduct" >Update Product</MudButton>
+                </div>
 
                 <div class="mt-5">
                     <InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
@@ -167,21 +172,27 @@
                     <MudText Class="mt-1">600 * 600(Max 50Kb)</MudText>
                 </div>
 
-
-                <div class="d-flex jsutify-center mt-5">
+                <div class="d-flex mt-5">
+                    @foreach(var image in FormData.images)
+                    {
+                        
+                        <MudBadge Icon="@Icons.Filled.DeleteOutline" OnClick="() =>RemoveImage(image.id)" Color="Color.Error" Overlap="true" Class="mx-6 my-4"                                            Style="cursor:pointer">
+                            <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{image.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
+                        </MudBadge>
+                    }
                     @foreach(var image in ProductImages)
                     {
                         
-                        <MudBadge OnClick="() => RemoveImage(image)" Icon="@Icons.Filled.DeleteOutline" Color="Color.Error" Overlap="true" Class="mx-6 my-4"                                              Style="cursor:pointer">
+                        <MudBadge OnClick="() => DeleteImage(image)" Icon="@Icons.Filled.DeleteOutline" Color="Color.Error" Overlap="true" Class="mx-6 my-4"                                              Style="cursor:pointer">
                             <MudImage Src="@($"data:image/webp;base64,{image.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
                         </MudBadge>
                     }
                 </div>
 
-                <div class="d-flex align-center justify-end mt-6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="NewChildProduct" Class="ml-auto">Submit</MudButton>
+                <div class="d-flex justify-end mt-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateImage" >Update Image</MudButton>
                 </div>
-        </MudForm>
+		</MudForm>
 	</MudContainer>
 </MudPaper>
 
@@ -190,53 +201,26 @@
     protected override async Task OnInitializedAsync()
     {
         await GetParentCatsString();
+        await GetChild();
         await GetParentProductAsString();
+        await GetChildAndGrandCatsString();
     }
+    [Parameter]
+    public int id { get; set; }
 
     // Form Ref
     bool success;
     string[] errors = { };
     MudForm form;
 
+    // FormData
+    private SingleChildProductDTO FormData = new SingleChildProductDTO();
 
-
-
-    // Child Product Details
-    private ChildProductDetailsDTO ChildProductInfoData = new ChildProductDetailsDTO();
-
-
-
-
-
-    // Free Product List
-    private List<FreeProductDTO> FreeProducts = new List<FreeProductDTO>();
-
-    // Free Product Modal
-    private async Task OpenFreeProductModal()
+    // Get Product
+    private async Task GetChild()
     {
-        var parameters = new DialogParameters();
-        parameters.Add("FormData", new FreeProductDTO());
-
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<AddFreeProductModal>("Add Free Product", parameters, options).Result;
-
-        if (dialog.Data != null)
-        {
-            FreeProductDTO newFreeProduct = dialog.Data as FreeProductDTO;
-            FreeProducts.Add(newFreeProduct);
-        }
+        FormData = await _childProduct.GetChildById(id);
     }
-
-    // Remove Free Product From List
-    private void RemoveFreeProductFromList(FreeProductDTO product)
-    {
-        FreeProducts.Remove(product);
-    }
-
-
-
-
-
 
     // Category
     // Category List
@@ -246,12 +230,31 @@
 
     // Category Class
     private ProductCategoryDTO CategoryData = new ProductCategoryDTO();
-    private List<ProductCategoryDTO> ProductCategories = new List<ProductCategoryDTO>();
+    private List<ProductCategoryDTO> CategoryList = new List<ProductCategoryDTO>();
 
     // Get Parent As String
     private async Task GetParentCatsString()
     {
         ParentCats = await _category.GetParentCatAsString();
+    }
+
+    // Get Child And Grand As String
+    private async Task GetChildAndGrandCatsString()
+    {
+        CategoryData.parentCatId = FormData.prodCategories[0].parentCatId;
+        CategoryData.parentCatName = FormData.prodCategories[0].parentCatName;
+        CategoryData.childCatId = FormData.prodCategories[0].childCatId;
+        CategoryData.childCatName = FormData.prodCategories[0].childCatName;
+        CategoryData.gChildCatId = FormData.prodCategories[0].gChildCatId;
+        CategoryData.gChildCatName = FormData.prodCategories[0].gChildCatName;
+
+
+        ChildCats = await _category.GetChildCatAsStringByParentId(FormData.prodCategories[0].parentCatId);
+
+        if (!String.IsNullOrEmpty(FormData.prodCategories[0].childCatId.ToString()) && FormData.prodCategories[0].childCatId != 0) 
+        {
+            GrandChildCats = await _category.GetGrandChildCatAsStringByChildId(FormData.prodCategories[0].childCatId);
+        }
     }
 
     // Get Parent ID and Child As String
@@ -322,13 +325,16 @@
     {
         CategoryData.gChildCatName = s;
 
-        var result = await _category.GetParentCat(CategoryData.parentCatName);
+        if (!String.IsNullOrEmpty(s))
+        {
+            var result = await _category.GetParentCat(CategoryData.parentCatName);
 
-        var Child = result.child.FirstOrDefault(x => x.childCat == CategoryData.childCatName);
+            var Child = result.child.FirstOrDefault(x => x.childCat == CategoryData.childCatName);
 
-        var GrandChild = Child.grandChild.FirstOrDefault(x => x.gChildCat == s);
+            var GrandChild = Child.grandChild.FirstOrDefault(x => x.gChildCat == s);
 
-        CategoryData.gChildCatId = GrandChild.id;
+            CategoryData.gChildCatId = GrandChild.id;
+        }
     }
 
     // Autocomplite Search Func for ParentCat
@@ -350,10 +356,113 @@
     }
 
 
+    // Parent Product As String
+    private string[] ParentProducts = new string[]{};
+
+    // Get Parent Product As String
+    private async Task GetParentProductAsString()
+    {
+        ParentProducts = await _parentProduct.GetParentProductAsString();
+    }
+
+    // Get Parent Product Id
+    private async Task GetParentId(string s)
+    {
+        if (!String.IsNullOrEmpty(s))
+        {
+            FormData.productParentName = s;
+            FormData.productParentID = await _parentProduct.GetParentProductID(s);
+            return;
+        }
+        FormData.productParentName = s;
+    }
+
+    // Autocomplite Search Func for Parent Product
+    private async Task<IEnumerable<string>> ParentProductSearch(string value)
+    {
+        return string.IsNullOrEmpty(value) ? ParentProducts : ParentProducts.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    // Free Product Modal
+    private async Task OpenFreeProductModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new FreeProductDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddFreeProductModal>("Add Free Product", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            FreeProductDTO newFreeProduct = dialog.Data as FreeProductDTO;
+            FormData.freeProducts.Add(newFreeProduct);
+        }
+    }
+
+    // Remove Free Product From List
+    private void RemoveFreeProductFromList(string sku)
+    {
+        int index = FormData.freeProducts.FindIndex(e => e.sku == sku);
+
+        FormData.freeProducts.RemoveAt(index);
+    }
+
+    // Update Product
+    private ChildProductUpdateDTO UpdatedProduct = new ChildProductUpdateDTO();
+
+    private async Task UpdateProduct()
+    {
+        if (String.IsNullOrEmpty(CategoryData.parentCatName))
+        {
+            Snackbar.Add("Please Add Parent Category!", Severity.Error);
+            return;
+        }
+
+        if (FormData.isHasFreeProd == true && FormData.freeProducts.Count == 0)
+        {
+            Snackbar.Add("Please Add Free Product Or Uncheck Is Has Free Product!", Severity.Error);
+            return;
+        }
+
+        if (FormData.isSize == false && String.IsNullOrEmpty(FormData.colorCode))
+        {
+            Snackbar.Add("Please Add Color Code!", Severity.Error);
+            return;
+        }
 
 
+        CategoryList.Add(CategoryData);
 
+        UpdatedProduct.updateFreeProducts = FormData.freeProducts;
+        UpdatedProduct.updateProductDTO = FormData;
+        UpdatedProduct.updateProdCategories = CategoryList;
 
+        try
+        {
+            await _childProduct.UpdateChildProduct(UpdatedProduct);
+            Snackbar.Add("Product Updated Successfully!", Severity.Success);
+        }
+        catch(Exception)
+        {
+            Snackbar.Add("Something went Wrong!", Severity.Error);
+            throw;
+        }
+    }
+
+    // Remove Image
+    private async Task RemoveImage(int id)
+    {
+        try
+        {
+            await _childProduct.DeleteImage(id);
+            Snackbar.Add("Image Deleted Successfully!", Severity.Success);
+            await GetChild();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
 
     // Product Images
     private List<ProductImageDTO> ProductImages = new List<ProductImageDTO>();
@@ -380,90 +489,27 @@
     }
 
     // Remove Image 
-    private void RemoveImage(ProductImageDTO Image)
+    private void DeleteImage(ProductImageDTO Image)
     {
         ProductImages.Remove(Image);
     }
 
+    // Update Image
+    private UpdateProductImageDTO ImageUpdateList = new UpdateProductImageDTO();
 
-    // Parent Product As String
-    private string[] ParentProducts = new string[]{};
-
-    // Get Parent Product As String
-    private async Task GetParentProductAsString()
+    private async Task UpdateImage()
     {
-        ParentProducts = await _parentProduct.GetParentProductAsString();
-    }
-
-    // Get Parent Product Id
-    private async Task GetParentId(string s)
-    {
-        if (!String.IsNullOrEmpty(s))
-        {
-            ChildProductInfoData.productParentName = s;
-            ChildProductInfoData.productParentId = await _parentProduct.GetParentProductID(s);
-            return;
-        }
-        ChildProductInfoData.productParentName = s;
-    }
-
-    // Autocomplite Search Func for Parent Product
-    private async Task<IEnumerable<string>> ParentProductSearch(string value)
-    {
-        return string.IsNullOrEmpty(value) ? ParentProducts : ParentProducts.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-
-
-
-
-    // Create Child Product
-    private ChildProductDTO NewProduct = new ChildProductDTO();
-
-    private async Task NewChildProduct()
-    {
-        if (ProductImages.Count == 0)
-        {
-            Snackbar.Add("Please Add Product Image!", Severity.Error);
-            return;
-        }
-
-        if (String.IsNullOrEmpty(CategoryData.parentCatName))
-        {
-            Snackbar.Add("Please Add Parent Category!", Severity.Error);
-            return;
-        }
-
-        if (ChildProductInfoData.isHasFreeProd == true && FreeProducts.Count == 0)
-        {
-            Snackbar.Add("Please Add Free Product Or Uncheck Is Has Free Product!", Severity.Error);
-            return;
-        }
-
-        if (ChildProductInfoData.isSize == false && String.IsNullOrEmpty(ChildProductInfoData.colorCode))
-        {
-            Snackbar.Add("Please Add Color Code!", Severity.Error);
-            return;
-        }
-
-        ProductCategories.Add(CategoryData);
-
-        NewProduct.productDTO = ChildProductInfoData;
-        NewProduct.freeProducts = FreeProducts;
-        NewProduct.images = ProductImages;
-        NewProduct.prodCategories = ProductCategories;
-
+        ImageUpdateList.images = ProductImages;
         try
         {
-            await _childProduct.CreateChildProduct(NewProduct);
-            Snackbar.Add("Success!", Severity.Success);
+            await _childProduct.UpdateImage(ImageUpdateList, FormData.id);
+            Snackbar.Add("Image Updated Successfully!", Severity.Success);
+            ProductImages.Clear();
+            await GetChild();
         }
-        catch(Exception)
+        catch (Exception)
         {
-            Snackbar.Add("Something went Wrong!", Severity.Error);
             throw;
         }
-
-
     }
 }

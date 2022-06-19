@@ -3,6 +3,7 @@
 @using Carnesia.Domain.CMS.ProductList
 @using Carnesia.Domain.Common.POCO
 @inject IProductList _products
+@inject NavigationManager NavigationManager
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
@@ -18,6 +19,7 @@
                 <MudTh>Product Type</MudTh>
                 <MudTh>Brand Name</MudTh>
                 <MudTh>Origin</MudTh>
+                <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Product Name">@context.childName</MudTd>
@@ -25,6 +27,9 @@
                 <MudTd DataLabel="Product Type">@context.pproductType</MudTd>
                 <MudTd DataLabel="Brand Name">@context.brandName</MudTd>
                 <MudTd DataLabel="Origin">@context.origin</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.childId)" >Edit</MudButton>
+                </MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />
@@ -57,5 +62,11 @@
     private async Task GetProducts()
     {
         Elements = await _products.GetProducts();
+    }
+
+    // Go To Update
+    private void GoToUpdate(int id)
+    {
+        NavigationManager.NavigateTo($"update-compound-product/{id}");
     }
 }

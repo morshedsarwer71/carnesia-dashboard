@@ -23,7 +23,9 @@ namespace Carnesia.Application.CMS.Services.Category
         Task<string[]> GetParentCatAsString();
         Task<ParentCategoryDTO> GetParentCat(string ParentCat);
         Task<string[]> GetChildCatAsString(IList<ChildCategoryDTO> ChildCategories);
+        Task<string[]> GetChildCatAsStringByParentId(int id);
         Task<string[]> GetGrandChildCatAsString(IList<GrandChildCategoryDTO> GrandChildCategories);
+        Task<string[]> GetGrandChildCatAsStringByChildId(int id);
 
         Task CreateGrandChildCat(CreateGrandChildCatDTO GrandChildCat);
     }

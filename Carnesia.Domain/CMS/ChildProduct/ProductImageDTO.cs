@@ -8,6 +8,8 @@ namespace Carnesia.Domain.CMS.ChildProduct
 {
     public class ProductImageDTO
     {
+        public int id { get; set; }
+        public string imageUrl { get; set; }
         public string base64Attch { get; set; }
         public string altImageName { get; set; }
     }
