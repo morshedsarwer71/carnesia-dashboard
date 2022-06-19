@@ -47,8 +47,6 @@
         uidForm.poCode = PoCode;
         uidForm.productCode = ProductCode;       
         var result = await _order.GenerateUID(uidForm);
-        //await _order.TestPrint();
-
         _snackbar.Add("OK");
         
     }

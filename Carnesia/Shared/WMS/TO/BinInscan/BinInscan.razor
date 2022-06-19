@@ -1,4 +1,6 @@
 ﻿@using Carnesia.Domain.WMS.BinInscan
+@inject IPutAway _away
+@inject ISnackbar _snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -7,13 +9,13 @@
         </div>
 		<MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="3">
-				<MudTextField T="string" Label="Bin Number" Variant="Variant.Text"/>
+				<MudTextField T="string" Label="Bin Number" @bind-Value="BinNumber" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="3">
-				<MudTextField T="string" Label="UID" Variant="Variant.Text"/>
+				<MudTextField T="string" Label="UID" @bind-Value="UID" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary">Add</MudButton>
+				<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="AddSingleBinScan">Add</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -26,12 +28,12 @@
 				<MudTh>Image</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
-				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-				<MudTd DataLabel="Input QTY">@context.InputQTY</MudTd>
-				<MudTd DataLabel="BIN">@context.BIN</MudTd>
+				<MudTd DataLabel="Item Code">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
+				<MudTd DataLabel="BIN">@context.bin</MudTd>
 				<MudTd DataLabel="Image">
-					<MudImage Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+					<MudImage Src="@context.url" Width="50" Height="50" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg"/>
 				</MudTd>
 			</RowTemplate>
 		</MudTable>
@@ -56,7 +58,7 @@
 				<MudTextField T="string" Label="PO ID" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="4">
-				<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary">Add</MudButton>
+				<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" >Add</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -69,12 +71,12 @@
 				<MudTh>Image</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
-				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-				<MudTd DataLabel="Input QTY">@context.InputQTY</MudTd>
-				<MudTd DataLabel="BIN">@context.BIN</MudTd>
+				<MudTd DataLabel="Item Code">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
+				<MudTd DataLabel="BIN">@context.bin</MudTd>
 				<MudTd DataLabel="Image">
-					<MudImage Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+					<MudImage Src="@context.url"  Width="50" Height="50" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
 				</MudTd>
 			</RowTemplate>
 		</MudTable>
@@ -86,7 +88,24 @@
 </MudPaper>
 
 @code {
+	public string BinNumber { get; set; }
+	public string UID { get; set; }
 	// Table Content
 	private IEnumerable<BinInscanDTO> SingleBin = new List<BinInscanDTO>();
 	private IEnumerable<BinInscanDTO> BulkBin = new List<BinInscanDTO>();
+
+	private async Task AddSingleBinScan()
+	{
+		try
+		{
+			_snackbar.Add("clicked");
+		    var result = _away.SingleBinInscan(UID,BinNumber);
+		}
+		catch(Exception e)
+		{
+			throw;
+		}
+
+	}
+
 }

@@ -8,10 +8,10 @@ namespace Carnesia.Domain.WMS.BinInscan
 {
     public class BinInscanDTO
     {
-        public string ItemCode { get; set; }
-        public string ProductName { get; set; }
-        public string BIN { get; set; }
-        public string Image { get; set; }
-        public int InputQTY { get; set; }
+        public string sku { get; set; }
+        public string productName { get; set; }
+        public string? url { get; set; }
+        public int inputQty { get; set; }
+        public int bin { get; set; }
     }
 }
