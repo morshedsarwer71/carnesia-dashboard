@@ -14,7 +14,7 @@
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudGrid>
                     <MudItem sm="6"> 
-                        <MudAutocomplete Value="ChildProductInfoData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product" SearchFunc="@ParentProductSearch"                          ResetValueOnEmptyText="true" Required="true" />
+                        <MudAutocomplete Value="ChildProductInfoData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product"                                                SearchFunc="@ParentProductSearch" ResetValueOnEmptyText="true" Required="true" />
                     </MudItem>
                     <MudItem sm="6">
                         <MudTextField @bind-Value="ChildProductInfoData.productName" Label="Product Name" Required="true" RequiredError="Product Name is required!"/>
@@ -23,7 +23,7 @@
                         <MudTextField @bind-Value="ChildProductInfoData.productsku" Label="Product SKU" Required="true" RequiredError="Product SKU is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.productDimension" Label="Product Dimension" Required="true" RequiredError="Product Dimension is required!"/>
+                        <MudTextField @bind-Value="ChildProductInfoData.productDimension" Label="Product Dimension" Required="true" RequiredError="Product Dimension is                                   required!"/>
                     </MudItem>
                     <MudItem sm="6">
                         <MudNumericField @bind-Value="ChildProductInfoData.weight" Label="Product Weight" Required="true" RequiredError="Product Weight is required!"/>
@@ -57,16 +57,16 @@
                         <MudNumericField @bind-Value="ChildProductInfoData.vatAmount" Label="Vat Amount"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.upSells" Label="Up Sell SKU. Separate with comma" Required="true" RequiredError="Up Sell SKU are required!" />
+                        <MudTextField @bind-Value="ChildProductInfoData.upSells" Label="Up Sell SKU. Separate with comma" Required="true" RequiredError="Up Sell SKU are                                  required!" />
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.crossSells" Label="Cross Sell SKU. Separate with comma" Required="true" RequiredError="Cross Sell SKU required!" />
+                        <MudTextField @bind-Value="ChildProductInfoData.crossSells" Label="Cross Sell SKU. Separate with comma" Required="true" RequiredError="Cross Sell SKU                             required!" />
                     </MudItem>
                     <MudItem sm="6">
-					    <MudTextField @bind-Value="ChildProductInfoData.metaTags" Label="Meta Tags. Separate with comma" Required="true" RequiredError="Meta Tags are required!" />
+					    <MudTextField @bind-Value="ChildProductInfoData.metaTags" Label="Meta Tags. Separate with comma" Required="true" RequiredError="Meta Tags are                                     required!" />
 				    </MudItem>
                     <MudItem sm="6">
-					    <MudTextField @bind-Value="ChildProductInfoData.seachTags" Label="Search Tags. Separate with comma" Required="true" RequiredError="Search Tags are required!" />
+					    <MudTextField @bind-Value="ChildProductInfoData.seachTags" Label="Search Tags. Separate with comma" Required="true" RequiredError="Search Tags are                                required!" />
 				    </MudItem>
                     <MudItem sm="6">
 					    <MudTextField @bind-Value="ChildProductInfoData.metaTitle" Label="Meta Title" Required="true" RequiredError="Meta Title are required!" />
@@ -101,7 +101,7 @@
                         </MudItem>
                     }
                     <MudItem xs="12">
-					    <MudTextField @bind-Value="ChildProductInfoData.metaDescription" Label="Meta Description" Lines="5" Required="true" RequiredError="Meta Description required!" />
+					    <MudTextField @bind-Value="ChildProductInfoData.metaDescription" Label="Meta Description" Lines="5" Required="true" RequiredError="Meta Description                               required!" />
 				    </MudItem>
                 </MudGrid>
 
@@ -457,6 +457,14 @@
         {
             await _childProduct.CreateChildProduct(NewProduct);
             Snackbar.Add("Success!", Severity.Success);
+
+            form.Reset();
+            ChildProductInfoData = new ChildProductDetailsDTO();
+            FreeProducts.Clear();
+            CategoryData = new ProductCategoryDTO();
+            ProductCategories.Clear();
+            ProductImages.Clear();
+            NewProduct = new ChildProductDTO();
         }
         catch(Exception)
         {

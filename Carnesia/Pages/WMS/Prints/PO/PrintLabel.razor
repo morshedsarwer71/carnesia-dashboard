@@ -1,45 +1,53 @@
-﻿@layout PrintLayout
-@page "/print-label"
+﻿@page "/print-label"
+@layout PrintLayout
 
 @*@inject IJSRuntime IJS*@
 
-<body onload="window.print()">
 	<MudGrid>
-		<MudItem xs='6'>
+		
+	@for(var i = 0; i < 100; i++)
+	{
+		<MudItem xs='12' Style="break-inside:avoid">
 			<MudGrid>
-				<MudItem xs="4">
-					<MudImage Src="/bsti-ai.png" Style="width: 100%" ></MudImage>
+				<MudItem xs="6">
+					<MudGrid>
+						<MudItem xs="4">
+							<MudImage Src="/bsti-ai.png" Style="width: 100%" ></MudImage>
+						</MudItem>
+						<MudItem xs="8">
+							<MudText Typo="Typo.h6">Importer</MudText>
+							<MudText Typo="Typo.h6">Arham Trade International</MudText>
+							<MudText Typo="Typo.h6">House - 55/1.Road - 07</MudText>
+							<MudText Typo="Typo.h6">Blook - B. Lalmatia, Dhaka</MudText>
+							<MudText Typo="Typo.h6">MRP - Taka 1150.00</MudText>
+							<MudText Typo="Typo.h6">Exp - 05/23</MudText>
+						</MudItem>
+					</MudGrid>
+					<MudText Typo="Typo.h5" Style="text-align:center">1234567890123456</MudText>
 				</MudItem>
-				<MudItem xs="8">
-					<MudText Typo="Typo.h6">Importer</MudText>
-					<MudText Typo="Typo.h6">Arham Trade International</MudText>
-					<MudText Typo="Typo.h6">House - 55/1.Road - 07</MudText>
-					<MudText Typo="Typo.h6">Blook - B. Lalmatia, Dhaka</MudText>
-					<MudText Typo="Typo.h6">MRP - Taka 1150.00</MudText>
-					<MudText Typo="Typo.h6">Exp - 05/23</MudText>
+				<MudItem xs="6">
+					<MudGrid>
+						<MudItem xs="4">
+							<MudImage Src="/bsti-ai.png" Style="width: 100%" ></MudImage>
+						</MudItem>
+						<MudItem xs="8">
+							<MudText Typo="Typo.h6">Importer</MudText>
+							<MudText Typo="Typo.h6">Arham Trade International</MudText>
+							<MudText Typo="Typo.h6">House - 55/1.Road - 07</MudText>
+							<MudText Typo="Typo.h6">Blook - B. Lalmatia, Dhaka</MudText>
+							<MudText Typo="Typo.h6">MRP - Taka 1150.00</MudText>
+							<MudText Typo="Typo.h6">Exp - 05/23</MudText>
+						</MudItem>
+					</MudGrid>
+					<MudText Typo="Typo.h5" Style="text-align:center">1234567890123456</MudText>
 				</MudItem>
 			</MudGrid>
-			<MudText Typo="Typo.h5" Style="text-align:center">1234567890123456</MudText>
 		</MudItem>
-		<MudItem xs='6'>
-			<MudGrid>
-				<MudItem xs="4">
-					<MudImage Src="/bsti-ai.png" Style="width: 100%" ></MudImage>
-				</MudItem>
-				<MudItem xs="8">
-					<MudText Typo="Typo.h6">Importer</MudText>
-					<MudText Typo="Typo.h6">Arham Trade International</MudText>
-					<MudText Typo="Typo.h6">House - 55/1.Road - 07</MudText>
-					<MudText Typo="Typo.h6">Blook - B. Lalmatia, Dhaka</MudText>
-					<MudText Typo="Typo.h6">MRP - Taka 1150.00</MudText>
-					<MudText Typo="Typo.h6">Exp - 05/23</MudText>
-				</MudItem>
-			</MudGrid>
-			<MudText Typo="Typo.h5" Style="text-align:center">1234567890123456</MudText>
-		</MudItem>
+	}
 	</MudGrid>
-</body>
-<button onclick="window.print()">Helloooo</button>
+	<button class="no-print" onclick="window.print()">Helloooo</button>
+
+
 
 
 @code {

@@ -122,6 +122,10 @@
         {
             await _blogPost.CreateBlogPost(FormData);
             Snackbar.Add("New Blog Post Created Successfully!", Severity.Success);
+
+            FormData = new CreateBlogPostDTO();
+            await this.QuillNative.LoadHTMLContent("<p><br></p>");
+            StateHasChanged();
         }
         catch (Exception)
         {

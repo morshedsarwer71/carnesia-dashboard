@@ -8,8 +8,8 @@
                     <MudTextField @bind-Value="FormData.url" Label="URL" Required="true" RequiredError="URL is required!"/>
 
                     <InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
-                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5" Required="true">
-                        Upload Banner Images
+                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5">
+                        Upload Banner Image
                     </MudButton>
                     <MudText>1280 * 320(Max 150Kb)</MudText>
 
@@ -64,7 +64,7 @@
     {
         if (String.IsNullOrEmpty(FormData.base64Attch))
         {
-            ImageError = "Please upload a image!";
+            ImageError = "Please upload an image!";
             return;
         }
 

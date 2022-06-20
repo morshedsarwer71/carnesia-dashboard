@@ -11,8 +11,10 @@ namespace Carnesia.Domain.CMS.Campaign
         public int id { get; set; }
         public string campaignName { get; set; }
         public string campaignCode { get; set; }
-        public DateTime startDate { get; set; }
-        public DateTime endDate { get; set; }
+        public string startDate { get; set; }
+        public string startTime { get; set; }
+        public string endDate { get; set; }
+        public string endTime { get; set; }
         public string description { get; set; }
         public string platformType { get; set; }
         public object imagePath { get; set; }
