@@ -1,12 +1,24 @@
 ﻿@using Carnesia.Domain.CMS.Brand
+@inject IBase64 _base64
 
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudTextField @bind-Value="FormData.name" Label="Brand Name" Required="true" RequiredError="Brand Name is required!"/>
-                <MudTextField @bind-Value="FormData.description" Lines="5" Label="Description" Required="true" RequiredError="Description is required!"/>
+                <MudTextField @bind-Value="FormData.name" Label="Brand Name" Immediate="true" Required="true" RequiredError="Brand Name is required!"/>
+                <MudTextField @bind-Value="FormData.description" Lines="5" Label="Description" Immediate="true" Required="true" RequiredError="Description is required!"/>
+
+                <InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
+                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5">
+                    Upload Brand Image
+                </MudButton>
+                <MudText>475 * 280(Max 50Kb)</MudText>
+
+                <br/>
+                <MudText Color="Color.Error">@ImageError</MudText>
+                <MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+
                 <div class="d-flex justify-end my-5">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateBrand">Submit</MudButton>
                 </div>
         </MudForm>
     </DialogContent>
@@ -25,4 +37,37 @@
     bool success;
     string[] errors = { };
     MudForm form;
+
+    // Image SRC
+    private string ImageSRC { get; set; }
+
+    // Image Error
+    private string ImageError { get; set; }
+
+    // Image Validation
+    private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
+    {
+        ImageError = String.Empty;
+        try
+        {
+            ImageSRC = await _base64.ConvertToBase64(51200, 475, 280, ImageFile);
+            FormData.base64Attch = await _base64.ConvertToBase64(153600, 100, 100, ImageFile);
+        }
+        catch(Exception e)
+        {
+            ImageError = e.Message;
+        }
+    }
+
+    // Create Banner
+    private void CreateBrand()
+    {
+        if (String.IsNullOrEmpty(FormData.base64Attch))
+        {
+            ImageError = "Please upload an image!";
+            return;
+        }
+
+        Submit(); 
+    }
 }

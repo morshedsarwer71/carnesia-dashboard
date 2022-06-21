@@ -1,4 +1,6 @@
-﻿<MudDialog>
+﻿@inject IJSRuntime IJS
+
+<MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
             
@@ -23,7 +25,7 @@
                 </MudItem>
                 <MudItem xs="12">
                     <div class="d-flex justify-end">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Print Label</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GoToPrint">Print Label</MudButton>
                     </div>
                 </MudItem>
             </MudGrid>
@@ -54,5 +56,11 @@
         public bool MRP { get; set; }
         public bool UID { get; set; }
         public bool SKU { get; set; }
+    }
+
+    // Go To Print Label
+    private async Task GoToPrint()
+    {
+        await IJS.InvokeAsync<object>("open", new object[] { "/print-label", "_blank" });
     }
 }

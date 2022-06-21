@@ -43,7 +43,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7090/api/") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://carnesiaapi.bespokeit.io/api/") });
 builder.Services.AddScoped<IPurchaseOrder, PurchaseOrderService>();
 builder.Services.AddScoped<IVendor, VendorServices>();
 builder.Services.AddScoped<IStore, StoreService>();
@@ -74,5 +74,5 @@ builder.Services.AddScoped<IEncodeDecode, EncodeDecodeService>();
 builder.Services.AddScoped<IZones, ZonesService>();
 builder.Services.AddScoped<IBin, BinService>();
 builder.Services.AddScoped<IPutAway, PutAwayService>();
-
+builder.Services.AddSyncfusionBlazor(option => { option.IgnoreScriptIsolation = true; });
 await builder.Build().RunAsync();

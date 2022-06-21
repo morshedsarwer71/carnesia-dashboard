@@ -74,6 +74,19 @@ namespace Carnesia.Application.CMS.Services.Brand
             }
         }
 
+        public async Task ToggleBrand(int id)
+        {
+            try
+            {
+                await _httpClient.PostAsync($"Brands/Toggle/{id}", null);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task UpdateBrand(CreateBrandDTO NewBrand, int BrandId)
         {
             try

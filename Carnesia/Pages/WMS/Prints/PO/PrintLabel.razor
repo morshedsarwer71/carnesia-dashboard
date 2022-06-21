@@ -1,46 +1,32 @@
-﻿@page "/print-label"
+﻿@layout PrintLayout
+@page "/print-label"
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.BarcodeGenerator
 
-@inject IJSRuntime IJS
 
-<MudPaper Class="pa-16 ma-2">
-	<MudContainer Fixed="true">
-		<MudGrid>
-			<MudItem xs='6'>
-				<MudGrid>
-					<MudItem xs="4">
-						<MudImage Src="/bsti-ai.png" Style="width: 100%" ></MudImage>
-					</MudItem>
-					<MudItem xs="8">
-						<MudText Typo="Typo.h6">Importer</MudText>
-						<MudText Typo="Typo.h6">Arham Trade International</MudText>
-						<MudText Typo="Typo.h6">House - 55/1.Road - 07</MudText>
-						<MudText Typo="Typo.h6">Blook - B. Lalmatia, Dhaka</MudText>
-						<MudText Typo="Typo.h6">MRP - Taka 1150.00</MudText>
-						<MudText Typo="Typo.h6">Exp - 05/23</MudText>
-					</MudItem>
-				</MudGrid>
-				<MudText Typo="Typo.h5" Style="text-align:center">1234567890123456</MudText>
-			</MudItem>
-			<MudItem xs='6'>
-				<MudGrid>
-					<MudItem xs="4">
-						<MudImage Src="/bsti-ai.png" Style="width: 100%" ></MudImage>
-					</MudItem>
-					<MudItem xs="8">
-						<MudText Typo="Typo.h6">Importer</MudText>
-						<MudText Typo="Typo.h6">Arham Trade International</MudText>
-						<MudText Typo="Typo.h6">House - 55/1.Road - 07</MudText>
-						<MudText Typo="Typo.h6">Blook - B. Lalmatia, Dhaka</MudText>
-						<MudText Typo="Typo.h6">MRP - Taka 1150.00</MudText>
-						<MudText Typo="Typo.h6">Exp - 05/23</MudText>
-					</MudItem>
-				</MudGrid>
-				<MudText Typo="Typo.h5" Style="text-align:center">1234567890123456</MudText>
-			</MudItem>
-		</MudGrid>
-	</MudContainer>
-</MudPaper>
+<div class="d-flex flex-wrap" style="width: 100%;">
+	<div class="d-flex justify-cenetr align-center  ms-auto" style="width:fit-content;">
+		<img class="d-block" style="width: 80%" src="./bsti-ai.png" alt="" />
+	</div>
+	<div class="me-auto"  style="width:fit-content;">
+		<h1>Importer</h1>
+		<h1>Arham Trade International</h1>
+		<h1>House- 55/1, Road-7</h1>
+		<h1>Block- B, Lalmatia, Dhaka.</h1>
+		<h1>MRP- Taka 250.00</h1>
+		<h1>EXP- 10/24</h1>
+	</div>
+	<div style="width:100%">
+		<div style="width:fit-content; margin: 0 auto;">
+			<SfBarcodeGenerator Value="123456789012345"  Width="400px" Height="100px" ></SfBarcodeGenerator>
+		</div>
+	</div>
+</div>
+<button class="no-print" onclick="window.print()">Print</button>
+
+
+
 
 @code {
-
+	
 }

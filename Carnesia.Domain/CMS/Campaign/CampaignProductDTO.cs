@@ -12,11 +12,12 @@ namespace Carnesia.Domain.CMS.Campaign
         public string code { get; set; }
         public string productName { get; set; }
         public int productId { get; set; }
+        public string productSku { get; set; }
         public decimal regularPrice { get; set; }
         public decimal discAmount { get; set; }
         public decimal atrDiscAmount { get; set; }
         public string discType { get; set; }
-        public string weight { get; set; }
+        public decimal weight { get; set; }
         public List<CampaignProductImageDTO> images { get; set; }
     }
 }

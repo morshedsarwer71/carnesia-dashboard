@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.JSInterop" Version="6.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NPOI" Version="2.5.5" />
-    <PackageReference Include="Syncfusion.Blazor" Version="20.1.0.60" />
+    <PackageReference Include="Syncfusion.Blazor.BarcodeGenerator" Version="20.1.0.61" />
   </ItemGroup>
 
   <ItemGroup>

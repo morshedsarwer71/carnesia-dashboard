@@ -1,0 +1,37 @@
+﻿@page "/tobag"
+
+@using Carnesia.Shared.CMS.ToBag.CreateTobag
+@using Carnesia.Shared.CMS.ToBag.ToBagList
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ToBagList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ToBagList)">@ToBagList</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CreateTobag ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateTobag)">
+                @CreateTobag
+            </MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == CreateTobag){
+    <CreateTobag />
+}
+else if(CurrentPage == ToBagList){
+    <ToBagList />
+}
+
+@code {
+    // Pages 
+    private string CreateTobag = "Create To Bag";
+    private string ToBagList = "To Bag";
+
+    // Current Page 
+    private string CurrentPage { get; set; } = "To Bag";
+
+    // Change Current Page
+    void ChangePage(string pageName)
+    {
+        CurrentPage = pageName;
+    }
+}

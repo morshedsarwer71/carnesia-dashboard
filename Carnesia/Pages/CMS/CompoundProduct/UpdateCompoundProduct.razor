@@ -173,12 +173,15 @@
                 </div>
 
                 <div class="d-flex mt-5">
-                    @foreach(var image in FormData.images)
+                    @if (FormData.images != null)
                     {
+                        @foreach(var image in FormData.images)
+                        {
                         
-                        <MudBadge Icon="@Icons.Filled.DeleteOutline" OnClick="() =>RemoveImage(image.id)" Color="Color.Error" Overlap="true" Class="mx-6 my-4"                                            Style="cursor:pointer">
-                            <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{image.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
-                        </MudBadge>
+                            <MudBadge Icon="@Icons.Filled.DeleteOutline" OnClick="() =>RemoveImage(image.id)" Color="Color.Error" Overlap="true" Class="mx-6 my-4"                                            Style="cursor:pointer">
+                                <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{image.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
+                            </MudBadge>
+                        }
                     }
                     @foreach(var image in ProductImages)
                     {
@@ -219,7 +222,12 @@
     // Get Product
     private async Task GetChild()
     {
-        FormData = await _childProduct.GetChildById(id);
+        var result = await _childProduct.GetChildById(id);
+
+        if (result != null)
+        {
+            FormData = result;
+        }
     }
 
     // Category

@@ -34,7 +34,7 @@
             </MudItem>
         </MudGrid>
 
-        <MudTable Items="@Elements" Dense="@dense" Hover="@hover" CanCancelEdit="@true" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("ItemUpdated", Severity.Info))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
+        <MudTable Items="@Elements" Dense="@dense" Hover="@hover" CanCancelEdit="@true" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated", Severity.Info))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
@@ -58,11 +58,11 @@
                 <MudTd DataLabel="Name">@context.productName</MudTd>
                 <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
-                @*<MudTd DataLabel="QC Passed">@(context.quantity - (context.qcFailed + context.notArrivedQty))</MudTd>*@
-                <MudTd DataLabel="QC Passed">6000</MudTd>
+                <MudTd DataLabel="QC Passed">@(context.poQuantity - (context.qcFailed + context.notArrivedQty))</MudTd>
+                @*<MudTd DataLabel="QC Passed">6000</MudTd>*@
                 <MudTd DataLabel="QC Failed">@context.qcFailed</MudTd>
                 <MudTd DataLabel="Not Arrived">@context.notArrivedQty</MudTd>
-                <MudTd DataLabel="Value">@((context.qcPassed * context.liftingPrice))</MudTd>
+                <MudTd DataLabel="Value">@(((context.poQuantity - (context.qcFailed + context.notArrivedQty)) * context.liftingPrice))</MudTd>
                 <MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => SubmitPO(context)">Submit</MudButton></MudTd>
             </RowTemplate>
             <RowEditingTemplate>
@@ -73,18 +73,16 @@
                 <MudTd DataLabel="Lifting Price">
                     <MudNumericField @bind-Value="@context.liftingPrice" Required Min="0" />
                 </MudTd>
-                @*<MudTd DataLabel="QC Passed">
-                    @(context.qcPassed - (context.qcFailed + context.notArrivedQty))
-                </MudTd>*@
-                 @*<MudTd DataLabel="QC Passed" @bind-Value="@context.qcPassed">@(context.quantity - (context.qcFailed + context.notArrivedQty))</MudTd>*@
-                 <MudTd DataLabel="QC Passed" @bind-Value="@context.qcPassed">50000</MudTd>
+                <MudTd DataLabel="QC Passed">
+                    @(context.poQuantity - (context.qcFailed + context.notArrivedQty))
+                </MudTd>
                 <MudTd DataLabel="QC Failed">
                     <MudNumericField @bind-Value="@context.qcFailed" Required />
                 </MudTd>
                 <MudTd DataLabel="Not Arrived">
                     <MudNumericField @bind-Value="@context.notArrivedQty" />
                 </MudTd>
-                <MudTd DataLabel="Value">@((context.qcPassed * context.liftingPrice))</MudTd>
+                <MudTd DataLabel="Value">@(((context.poQuantity - (context.qcFailed + context.notArrivedQty)) * context.liftingPrice))</MudTd>
                 @*<MudTd DataLabel="Action"><MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton></MudTd>*@
             </RowEditingTemplate>
             <PagerContent>
@@ -100,9 +98,9 @@
                 <MudListItem>Total PO Quantity: @PO.totalQty </MudListItem>
                 <MudDivider />
                 @*<MudListItem>Total Quantity Received: 500</MudListItem>*@
-                <MudDivider />
+                @*<MudDivider />*@
                 <MudListItem>Total PO Amount: @PO.totalValue</MudListItem>
-                <MudDivider />
+                @*<MudDivider />*@
                 @*<MudListItem>Total Received Amount: 5000000</MudListItem>*@
             </MudList>
         </MudPaper>

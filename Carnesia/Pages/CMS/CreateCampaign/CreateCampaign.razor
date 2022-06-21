@@ -16,7 +16,7 @@
                         <MudTextField @bind-Value="FormData.campaignName" Label="Campaign Name" Required="true" RequiredError="Campaign name is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudSelect @bind-Value="FormData.platformType" Label="Platform" Required="true" RequiredError="Platform type is required!" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelect @bind-Value="FormData.platformType" Label="Platform" Required="true" RequiredError="Platform type is required!"                                                        AnchorOrigin="Origin.BottomCenter">
                             <MudSelectItem Value="@("App")" />
                             <MudSelectItem Value="@("Web")" />
                             <MudSelectItem Value="@("General")" />
@@ -179,6 +179,10 @@
         {
             await _campaign.CreateCampaign(NewCampaign);
             Snackbar.Add("New Campaign Created Successfully!", Severity.Success);
+
+            FormData = new AddCampaignDetailsDTO();
+            Products.Clear();
+            NewCampaign = new AddCampaignDTO();
         }
         catch (Exception)
         {
