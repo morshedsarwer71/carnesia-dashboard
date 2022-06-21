@@ -17,6 +17,21 @@ namespace Carnesia.Application.WMS.PutAway.Services
             _httpClient = httpClient;
         }
 
+        public async Task<BinInscansPoco> BulkBinInscan(string poCode, string binNumber)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<BinInscansPoco>($"PutAway/bulkbininscan/{binNumber}/{poCode}");
+                if (result == null)
+                    return null;
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public async Task<UIDHistoryPoco> GetUIDHistory(string uid)
         {
             try
@@ -38,15 +53,14 @@ namespace Carnesia.Application.WMS.PutAway.Services
             try
             {
                 var result =await _httpClient.GetFromJsonAsync<BinInscanDTO>($"PutAway/singlebininscan/{uid}/{binNumber}");
-                if (result == null)
+                if (result== null)
                     return null;
                 return result;
 
             }
             catch (Exception)
             {
-
-                throw;
+                return null;
             }
         }
     }
