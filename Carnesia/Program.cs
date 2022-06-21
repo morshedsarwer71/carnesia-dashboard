@@ -74,5 +74,5 @@ builder.Services.AddScoped<IEncodeDecode, EncodeDecodeService>();
 builder.Services.AddScoped<IZones, ZonesService>();
 builder.Services.AddScoped<IBin, BinService>();
 builder.Services.AddScoped<IPutAway, PutAwayService>();
-
+builder.Services.AddSyncfusionBlazor(option => { option.IgnoreScriptIsolation = true; });
 await builder.Build().RunAsync();
