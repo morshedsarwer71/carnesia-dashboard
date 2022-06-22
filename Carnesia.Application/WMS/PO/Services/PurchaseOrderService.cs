@@ -237,8 +237,8 @@ namespace Carnesia.Application.WMS.PO.Services
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<AwaitingPoDetails>($"PurchaseOrders/podetails/{poCode}");
-                
+                var result =await _httpClient.GetFromJsonAsync<AwaitingPoDetails>($"PurchaseOrders/podetails/{poCode}");
+                return result;
             }
             catch (Exception)
             {
