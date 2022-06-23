@@ -8,9 +8,10 @@
                     <MudTextField @bind-Value="FormData.parentCat" Label="Category Name" Required="true" RequiredError="Category Name is required!"/>
 
                     <InputFile id="category-image" OnChange="@ValidateImage" hidden accept=".webp" />
-                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="category-image" Class="mt-5" Required="true">
+                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="category-image" Class="mt-5">
                         Upload Category Images
                     </MudButton>
+                    <MudText>100 * 100(Max 50Kb)</MudText>
 
                     <br/>
                     <MudText Color="Color.Error">@ImageError</MudText>

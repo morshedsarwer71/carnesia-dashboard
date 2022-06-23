@@ -43,6 +43,26 @@ namespace Carnesia.Application.CMS.Services.Brand
             }
         }
 
+        public async Task<CreateBrandDTO> GetBrandById(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<CreateBrandDTO>($"Brands/{id}");
+
+                if (result == null)
+                {
+                    return null;
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<BrandDTO>> GetBrands()
         {
             try
@@ -87,11 +107,11 @@ namespace Carnesia.Application.CMS.Services.Brand
             }
         }
 
-        public async Task UpdateBrand(CreateBrandDTO NewBrand, int BrandId)
+        public async Task UpdateBrand(CreateBrandDTO Brand)
         {
             try
             {
-                await _httpClient.PutAsJsonAsync($"Brands/{BrandId}", NewBrand);
+                await _httpClient.PutAsJsonAsync($"Brands/{Brand.brandId}", Brand);
             }
             catch (Exception)
             {

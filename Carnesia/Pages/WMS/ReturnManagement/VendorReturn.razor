@@ -5,9 +5,11 @@
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            <MudButton Color="Color.Primary" Variant="CurrentPage == ReturnByUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReturnByUID)">@ReturnByUID</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == ReturnByList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReturnByList)">
-                @ReturnByList
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ReturnByUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReturnByUID)">
+                @ReturnByUID
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ReturnList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReturnList)">
+                @ReturnList
             </MudButton>
         </MudButtonGroup>
     </MudContainer>
@@ -17,7 +19,7 @@
 {
     <ReturnUID />
 }
-else if(CurrentPage == ReturnByList)
+else if(CurrentPage == ReturnList)
 {
     <ReturnList />
 }
@@ -25,7 +27,7 @@ else if(CurrentPage == ReturnByList)
 @code {
     // Pages
     private string ReturnByUID = "Return By UID";
-    private string ReturnByList = "Return By List";
+    private string ReturnList = "Return List";
 
     // Current Page 
     private string CurrentPage { get; set; } = "Return By UID";

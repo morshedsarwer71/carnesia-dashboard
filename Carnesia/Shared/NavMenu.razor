@@ -1,6 +1,7 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="/dashboard" Match="NavLinkMatch.All">Dashboard</MudNavLink>
 
+    @*WMS*@
     <div class="d-flex justify-center mt-5">
         <MudText Class="border-2 px-4 py-1">WMS</MudText>
     </div>
@@ -11,7 +12,7 @@
     </MudNavGroup>
 
     <MudNavGroup Title="Stock Transfer" Expanded="false">
-        <MudNavLink Href="/to-management" Match="NavLinkMatch.Prefix">TO Management</MudNavLink>
+        <MudNavLink Href="/create-to" Match="NavLinkMatch.Prefix">Create TO</MudNavLink>
         <MudNavLink Href="/manage-to" Match="NavLinkMatch.Prefix">Manage TO</MudNavLink>
         <MudNavLink Href="/putaway" Match="NavLinkMatch.Prefix">Putaway</MudNavLink>
     </MudNavGroup>

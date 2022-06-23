@@ -10,8 +10,9 @@ namespace Carnesia.Application.CMS.Services.Brand
     public interface IBrand
     {
         Task<List<BrandDTO>> GetBrands();
+        Task<CreateBrandDTO> GetBrandById(int id);
         Task CreateBrand(CreateBrandDTO NewBrand);
-        Task UpdateBrand(CreateBrandDTO NewBrand, int BrandId);
+        Task UpdateBrand(CreateBrandDTO Brand);
 
         Task<string[]> GetBrandsNameAsString();
         Task<BrandDTO> GetBrand(string BrandName);
