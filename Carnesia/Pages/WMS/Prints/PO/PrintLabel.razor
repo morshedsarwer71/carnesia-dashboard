@@ -4,29 +4,62 @@
 @using Syncfusion.Blazor.BarcodeGenerator
 
 
-<div class="d-flex flex-wrap" style="width: 100%;">
-	<div class="d-flex align-center" style="width:50%;" >
-		<img class="d-block ms-auto" style="width: 10%" src="./bsti-ai.png" alt="" />
+<div class="d-flex flex-wrap" style="width: 3.5in; margin: 0 auto;">
+	
+	@foreach(var item in data)
+	{
+		
+		<div class="d-flex flex-wrap pa-2" style="width: 50%">
+			<div class="ms-2">
+				<img class="d-block ms-auto" style="width: 55px; margin-left: 5px;" src="./bsti-ai.png" alt="" />
+			</div>
+			<div class="me-auto">
+				<p style="font-size: 7px; padding-left: 2px">Importer</p>
+				<p style="font-size: 7px; padding-left: 2px">Arham Trade International</p>
+				<p style="font-size: 7px; padding-left: 2px">House- 55/1, Road-7</p>
+				<p style="font-size: 7px; padding-left: 2px">Block- B, Lalmatia, Dhaka.</p>
+				<p style="font-size: 7px; padding-left: 2px">MRP- Taka 250.00</p>
+				<p style="font-size: 7px; padding-left: 2px">EXP- 10/24</p>
+			</div>
+			<div style="width:100%;">
+				<div style="width:fit-content; margin: 0 auto;">
+					<SfBarcodeGenerator Value="@item"  Width="160px" Height="50px" >
+						<BarcodeGeneratorDisplayText Text="@item"></BarcodeGeneratorDisplayText>
+					</SfBarcodeGenerator>
+				</div>
+			</div>
+		</div>
+	}
+</div>
+
+@*<div class="d-flex flex-wrap ms-15 mt-2" style="width: 100%;">
+	<div class="d-flex align-center" style="width:51%;" >
+		<img class="d-block ms-auto" style="width: 55px; margin-left: 5px;" src="./bsti-ai.png" alt="" />
 	</div>
-	<div class="me-auto" style="width:50%;">
-		<p>Importer</p>
-		<p>Arham Trade International</p>
-		<p>House- 55/1, Road-7</p>
-		<p>Block- B, Lalmatia, Dhaka.</p>
-		<p>MRP- Taka 250.00</p>
-		<p>EXP- 10/24</p>
+	<div class="me-auto" style="width:49%;">
+		<p style="font-size: 7px; padding-left: 2px">Importer</p>
+		<p style="font-size: 7px; padding-left: 2px">Arham Trade International</p>
+		<p style="font-size: 7px; padding-left: 2px">House- 55/1, Road-7</p>
+		<p style="font-size: 7px; padding-left: 2px">Block- B, Lalmatia, Dhaka.</p>
+		<p style="font-size: 7px; padding-left: 2px">MRP- Taka 250.00</p>
+		<p style="font-size: 7px; padding-left: 2px">EXP- 10/24</p>
+		
 	</div>
-	<div style="width:100%">
+	<div style="width:100%; margin-left: 70px;">
 		<div style="width:fit-content; margin: 0 auto;">
-			<SfBarcodeGenerator Value="123456789012345"  Width="250px" Height="100px" ></SfBarcodeGenerator>
+			<SfBarcodeGenerator Value="123456789012345"  Width="160px" Height="70px" ></SfBarcodeGenerator>
 		</div>
 	</div>
-</div>
+</div>*@
 <button class="no-print" onclick="window.print()">Print</button>
 
 
 
 
 @code {
-	
+	private string[] data=new string[]
+{
+	"123456789012345","123456789012346","123456789012347","123456789012348",
+	"123456789012349","123456789012310","123456789012312","123456789012318"
+};
 }

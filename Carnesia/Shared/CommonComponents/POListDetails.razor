@@ -12,91 +12,109 @@
                 <MudContainer Fixed="true">
                     <MudPaper Width="400px" Square="true">
                         <MudList Clickable="true">
-                            <MudListItem><MudText Typo="Typo.h4">PO ID: @poCode</MudText></MudListItem>
-                            <MudDivider />
+                            <MudListItem>
+                                <MudText Typo="Typo.h4">PO ID: @poCode</MudText>
+                            </MudListItem>
+                            <MudDivider/>
                             <MudListItem>Created On: @awaitingPoVm.orderDate</MudListItem>
-                            <MudDivider />
+                            <MudDivider/>
                             <MudListItem>Supplier: @awaitingPoVm.vendorName</MudListItem>
-                            <MudDivider />
+                            <MudDivider/>
                             <MudListItem>Receiving Warehouse: @awaitingPoVm.rcvStoreName</MudListItem>
-                            <MudDivider />
+                            <MudDivider/>
                             <MudListItem>Arriving Time: @awaitingPoVm.rcvDate</MudListItem>
                         </MudList>
                     </MudPaper>
                 </MudContainer>
             </MudPaper>
 
-        <MudPaper Class="pa-16 ma-2">
-	        <MudContainer Fixed="true">
-	            <MudTable Items="@awaitingPoVm.products" MultiSelection="true" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" CanCancelEdit="@true" @bind-SelectedItems="@selectedItems" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => snackbar.Add("Item Updated"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
-                    <ToolBarContent>
-                        <MudText Typo="Typo.h6">PO List Details</MudText>
-                        <MudSpacer />
-                    </ToolBarContent>
-                    <HeaderContent>
-                        <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.sku)">SKU Code</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.productName)">Product Name</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.quantity)">PO Quantity</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.liftingPrice)">Lifting Price</MudTableSortLabel></MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x=>x.total)">Value</MudTableSortLabel></MudTh>
-                        @*<MudTh>Value</MudTh>*@
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="SKU Code">@context.sku</MudTd>
-                        <MudTd DataLabel="Name">@context.productName</MudTd>
-                        <MudTd DataLabel="PO Quantity">@context.quantity</MudTd>
-                        <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
-                        <MudTd DataLabel="Value">@context.TotalPrice</MudTd>
-                    </RowTemplate>
-                    <RowEditingTemplate>
-                        <MudTd DataLabel="SKU Code">SKU</MudTd>
-                        <MudTd DataLabel="Name">SKU</MudTd>
-                        <MudTd DataLabel="PO Quantity">
-                            @* <MudTextField @bind-Value="SKU" Required /> *@
-                        </MudTd>
-                        <MudTd DataLabel="Lifting Price">
-                            @* <MudNumericField @bind-Value="SKU" Required Min="1" /> *@
-                        </MudTd>
-                        <MudTd DataLabel="Value">SKU</MudTd>
-                    </RowEditingTemplate>
-                    <PagerContent>
-                        <MudTablePager />
-                    </PagerContent>
-                </MudTable>
+            <MudPaper Class="pa-16 ma-2">
+                <MudContainer Fixed="true">
+                    <MudTable Items="@awaitingPoVm.products" MultiSelection="true" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" CanCancelEdit="@true" @bind-SelectedItems="@selectedItems" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => snackbar.Add("Item Updated", Severity.Success))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6">PO List Details</MudText>
+                            <MudSpacer/>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>
+                                <MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x => x.sku)">SKU Code</MudTableSortLabel>
+                            </MudTh>
+                            <MudTh>
+                                <MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x => x.productName)">Product Name</MudTableSortLabel>
+                            </MudTh>
+                            <MudTh>
+                                <MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x => x.poQuantity)">PO Quantity</MudTableSortLabel>
+                            </MudTh>
+                            <MudTh>
+                                <MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x => x.liftingPrice)">Lifting Price</MudTableSortLabel>
+                            </MudTh>
+                            <MudTh>
+                                <MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x => x.total)">Value</MudTableSortLabel>
+                            </MudTh>
+                            @*<MudTh>Value</MudTh>*@
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="SKU Code">@context.sku</MudTd>
+                            <MudTd DataLabel="Name">@context.productName</MudTd>
+                            <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
+                            <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
+                            <MudTd DataLabel="Value">@(context.liftingPrice * context.poQuantity)</MudTd>
+                        </RowTemplate>
+                        <RowEditingTemplate>
+                            <MudTd DataLabel="SKU">@context.sku</MudTd>
+                            <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                            <MudTd DataLabel="PO Quantity">
+                                @context.poQuantity
+                                @*<MudTextField @bind-Value="" Required /> *@
+                                <MudNumericField @bind-Value="@context.poQuantity" Required/>
+                            </MudTd>
+                            <MudTd DataLabel="Lifting Price">
+                                @context.liftingPrice
+                                @* <MudNumericField @bind-Value="SKU" Required Min="1" /> *@
+                                <MudNumericField @bind-Value="@context.liftingPrice" Required/>
+                            </MudTd>
+                            <MudTd DataLabel="Value">@(context.poQuantity * context.liftingPrice)</MudTd>
+                        </RowEditingTemplate>
+                        <PagerContent>
+                            <MudTablePager/>
+                        </PagerContent>
+                    </MudTable>
 
-                <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-                <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+                    <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+                    <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
 
-                <MudGrid>
-                    <MudItem md="6">
-                        <MudPaper Width="400px" Square="true" Class="mt-10">
-                            <MudList Clickable="true">
-                                <MudListItem>Total Quantity: @awaitingPoVm.totalQty</MudListItem>
-                                <MudDivider />
-                                @*<MudListItem>Total Lifting Price: @awaitingPoVm.totalliftingPrice</MudListItem>*@
-                                <MudDivider />
-                                <MudListItem>Total Value: @awaitingPoVm.totalValue</MudListItem>
-                            </MudList>
-                        </MudPaper>
-                    </MudItem>
-                    <MudItem md="6">
-                        <div class="d-flex justify-end">
-                            <MudButtonGroup Class="mt-10" Color="Color.Primary" Variant="Variant.Filled" OverrideStyles="false">
-                                <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="RemoveSelected">Remove Selected</MudButton>
-                                <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="ApproveSelected">Approve Selected</MudButton>
-                                <MudButton Color="Color.Primary" Variant="Variant.Filled">Print</MudButton>
-                            </MudButtonGroup>
-                        </div>
-                    </MudItem>
-                </MudGrid>
-	        </MudContainer>
-        </MudPaper>
+                    <MudGrid>
+                        <MudItem md="6">
+                            <MudPaper Width="400px" Square="true" Class="mt-10">
+                                <MudList Clickable="true">
+                                    <MudListItem>Total Quantity: @awaitingPoVm.totalQty</MudListItem>
+                                    <MudDivider/>
+                                    @*<MudListItem>Total Lifting Price: @awaitingPoVm.totalliftingPrice</MudListItem>*@
+                                    <MudDivider/>
+                                    <MudListItem>Total Value: @awaitingPoVm.totalValue</MudListItem>
+                                </MudList>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem md="6">
+                            <div class="d-flex justify-end">
+                                <MudButtonGroup Class="mt-10" Color="Color.Primary" Variant="Variant.Filled" OverrideStyles="false">
+                                    <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="RemoveSelected">Remove Selected</MudButton>
+                                    <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="ApproveSelected">Approve Selected</MudButton>
+                                    <MudButton Color="Color.Primary" Variant="Variant.Filled">Print</MudButton>
+                                </MudButtonGroup>
+                            </div>
+                        </MudItem>
+                    </MudGrid>
+                </MudContainer>
+            </MudPaper>
         </div>
     </DialogContent>
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
     public string poCode { get; set; }
@@ -115,51 +133,71 @@
     {
         awaitingPoVm = await _order.AwaitingPoDetails(poCode);
     }
+
     // Backup Item 
     private void BackupItem(object element)
     {
         beforeEdit = new()
         {
-            quantity = ((PoProductDTO)element).quantity,
-            liftingPrice = ((PoProductDTO)element).liftingPrice
+            quantity = ((PoProductDTO) element).poQuantity,
+            liftingPrice = ((PoProductDTO) element).liftingPrice,
+            TotalPrice = ((PoProductDTO) element).TotalPrice
         };
     }
+
     // Reset Items If Edit Cancel
     private void ResetItemToOriginalValues(object element)
     {
-        ((PoProductDTO)element).quantity = beforeEdit.quantity;
-        ((POListViewDetailsPoco)element).LiftingPrice = beforeEdit.liftingPrice;
+        ((PoProductDTO) element).quantity = beforeEdit.poQuantity;
+        ((POListViewDetailsPoco) element).LiftingPrice = beforeEdit.liftingPrice;
+        ((POListViewDetailsPoco) element).LiftingPrice = beforeEdit.TotalPrice;
     }
 
     private async void ApproveSelected()
     {
-        var result =await _order.ApproveSelectedItems(poCode, selectedItems.ToList());
-        if (result == "success")
+        if (selectedItems.Count == 0)
         {
-            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-            snackbar.Add("Approved Successfully", Severity.Success);
-            //awaitingPoVm.products.Clear();
-            awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+            snackbar.Add("Please select items", Severity.Warning);
         }
         else
         {
-            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-            snackbar.Add("Error", Severity.Error);
+            var result = await _order.ApproveSelectedItems(poCode, selectedItems.ToList());
+            if (result == "success")
+            {
+                snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+                snackbar.Add("Approved Successfully", Severity.Success);
+    //awaitingPoVm.products.Clear();
+                awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+            }
+            else
+            {
+                snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+                snackbar.Add("Error", Severity.Error);
+            }
         }
     }
+
     private async void RemoveSelected()
     {
-        var result =await _order.RemoveSelectedItems(poCode, selectedItems.ToList());
-        if (result == "success")
+        if (selectedItems.Count == 0)
         {
-            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-            snackbar.Add("Removed Successfully", Severity.Success);
-            awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+            snackbar.Add("Please select items", Severity.Warning);
         }
         else
         {
-            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-            snackbar.Add("Error", Severity.Success);
+            var result = await _order.RemoveSelectedItems(poCode, selectedItems.ToList());
+            if (result == "success")
+            {
+                snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+                snackbar.Add("Removed Successfully", Severity.Success);
+                awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+            }
+            else
+            {
+                snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+                snackbar.Add("Error", Severity.Error);
+            }
         }
     }
+
 }

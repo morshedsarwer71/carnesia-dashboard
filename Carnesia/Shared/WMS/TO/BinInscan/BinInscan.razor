@@ -31,16 +31,12 @@
 				<MudTd DataLabel="Item Code">@context.sku</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
 				<MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
-				<MudTd DataLabel="BIN">@context.bin</MudTd>
+				<MudTd DataLabel="BIN">@context.binName</MudTd>
 				<MudTd DataLabel="Image">
 					<MudImage Src="@context.url" Width="50" Height="50" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg"/>
 				</MudTd>
 			</RowTemplate>
 		</MudTable>
-
-		<div class="mt-5 d-flex justify-end">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
-        </div>
 	</MudContainer>
 </MudPaper>
 
@@ -52,17 +48,17 @@
 
 		<MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="4">
-				<MudTextField T="string" Label="Bin Number" Variant="Variant.Text"/>
+				<MudTextField T="string" Label="Bin Number" @bind-Value="BinNumber" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="4">
-				<MudTextField T="string" Label="PO ID" Variant="Variant.Text"/>
+				<MudTextField T="string" Label="PO ID" @bind-Value="PoCode" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="4">
-				<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" >Add</MudButton>
+				<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="AddBulKBinScan">Add</MudButton>
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@BulkBin" Hover="true">
+		<MudTable Items="@BulkBinProduct" Hover="true">
 			<HeaderContent>
 				<MudTh>Item Code</MudTh>
 				<MudTh>Product Name</MudTh>
@@ -74,37 +70,58 @@
 				<MudTd DataLabel="Item Code">@context.sku</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
 				<MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
-				<MudTd DataLabel="BIN">@context.bin</MudTd>
+				<MudTd DataLabel="BIN">@context.binName</MudTd>
 				<MudTd DataLabel="Image">
 					<MudImage Src="@context.url"  Width="50" Height="50" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
 				</MudTd>
 			</RowTemplate>
 		</MudTable>
 
-		<div class="mt-5 d-flex justify-end">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Bulk Submit</MudButton>
-        </div>
+		@*<div class="mt-5 d-flex justify-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddBuldBinScan">Bulk Submit</MudButton>
+        </div>*@
 	</MudContainer>
 </MudPaper>
 
 @code {
 	public string BinNumber { get; set; }
+	public string PoCode { get; set; }
 	public string UID { get; set; }
 	// Table Content
-	private IEnumerable<BinInscanDTO> SingleBin = new List<BinInscanDTO>();
-	private IEnumerable<BinInscanDTO> BulkBin = new List<BinInscanDTO>();
+
+	private List<BinInscanProductDTO> SingleBin = new List<BinInscanProductDTO>();
+	private List<BinInscanProductDTO> BulkBinProduct = new List<BinInscanProductDTO>();
 
 	private async Task AddSingleBinScan()
 	{
-		try
+
+		var result =await _away.SingleBinInscan(UID,BinNumber);		
+		_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+		_snackbar.Add(result.message, Severity.Success);
+		if (result.Product != null)
 		{
-			_snackbar.Add("clicked");
-		    var result = _away.SingleBinInscan(UID,BinNumber);
-		}
-		catch(Exception e)
+			//BinNumber = "";
+			UID = "";
+			SingleBin.Add(result.Product);
+
+		}		
+	}
+
+	private async Task AddBulKBinScan()
+	{
+
+		var result =await _away.BulkBinInscan(PoCode,BinNumber);		
+		_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+		_snackbar.Add(result.message, Severity.Success);
+		if (result.Products != null)
 		{
-			throw;
-		}
+			//BinNumber = "";
+			PoCode = "";
+			BinNumber = "";
+			BulkBinProduct = result.Products;
+
+		}		
+	}
 
 	}
 
