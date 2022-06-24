@@ -17,11 +17,11 @@
         <MudListItem>Arriving Time: @awaitingPoVm.rcvDate</MudListItem>
     </MudList>
 
-    <MudTable Elevation="0" Class="mt-5" Items="@awaitingPoVm.products" Dense="@true">
-        <ToolBarContent>
+    <MudTable Striped="true" Bordered="true" Elevation="0" Class="mt-5" Items="@awaitingPoVm.products" Dense="@true">
+@*        <ToolBarContent>
             <MudText Typo="Typo.h6">PO List Details</MudText>
             <MudSpacer />
-        </ToolBarContent>
+        </ToolBarContent>*@
         <HeaderContent>
             <MudTh>SKU Code</MudTh>
             <MudTh>Product Name</MudTh>

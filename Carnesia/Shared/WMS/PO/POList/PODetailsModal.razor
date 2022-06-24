@@ -3,6 +3,7 @@
 @using Carnesia.Domain.WMS.PO.Models
 @using Carnesia.Domain.WMS.PO.ViewModels.Awaiting
 @inject IPurchaseOrder _order
+@inject IJSRuntime IJS
 
 <MudDialog DisableSidePadding="true">
     <DialogContent>
@@ -77,6 +78,10 @@
                             </MudPaper>
                         </MudItem>
                     </MudGrid>
+
+                    <div class="d-flex justify-end mt-5">
+                        <MudButton OnClick="GoToPrint" Variant="Variant.Filled" Color="Color.Info">Print</MudButton>
+                    </div>
                 </MudContainer>
             </MudPaper>
         </div>
@@ -101,7 +106,10 @@
         awaitingPoVm = await _order.AwaitingPoDetails(poCode);
     }
 
-
-
+    // Go To Print
+    private async Task GoToPrint()
+    {
+        await IJS.InvokeAsync<object>("open", new object[] { $"/polist-details-print/{poCode}", "_blank" });
+    }
 
 }
