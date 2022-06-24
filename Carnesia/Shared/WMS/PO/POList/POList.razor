@@ -1,4 +1,5 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
+@using Carnesia.Pages.WMS.PO
 @inject IDialogService DialogService
 @inject IPurchaseOrder _order
 
@@ -15,11 +16,11 @@
 				<MudTextField @bind-Value="filterInput.Status" Label="Status" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="2">
-				<MudDateRangePicker Label="Date range" />
+				<MudDateRangePicker Label="Date range" @bind-DateRange="_dateRange" />
 			</MudItem>
 			<MudItem md="2">
 				<div>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Filter">Filter</MudButton>
 				</div>
 			</MudItem>
 		</MudGrid>
@@ -45,13 +46,13 @@
 				<MudTd DataLabel="Date">@context.orderDate</MudTd>
 				<MudTd DataLabel="PO Id">@context.poCode</MudTd>
 				<MudTd DataLabel="Supplier">@context.vendorName</MudTd>
-				<MudTd DataLabel="Quantity">@context.quatity</MudTd>
+				<MudTd DataLabel="Quantity">@context.poQuantity</MudTd>
 				<MudTd DataLabel="Amount">@context.totalAmount</MudTd>
 				<MudTd DataLabel="Status">@context.poStatus</MudTd>
 				<MudTd DataLabel="Status Updated On">@context.statusUpdateDate</MudTd>
 				<MudTd DataLabel="Action">
 					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" />
-					<MudIconButton Icon="@Icons.Filled.Edit" Color="Color.Success" aria-label="Edit" />
+					<MudIconButton Icon="@Icons.Filled.Edit" Color="Color.Success" aria-label="Edit" OnClick="() => OpenStatusDialog(context.poCode)" />
 				</MudTd>
 			</RowTemplate>
 			<PagerContent>
@@ -72,7 +73,7 @@
 @code {
 	// Filter Class
 	public POFilterPoco filterInput = new POFilterPoco();
-
+	DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.Date);
 	// PO List
 	public List<POListPoco> poList = new List<POListPoco>();
 
@@ -101,11 +102,26 @@
     }
 
 	// Status Modal
-    private void OpenStatusDialog()
+    private void OpenStatusDialog(string poCode)
     {
+	    var parameters = new DialogParameters { ["poCode"]=poCode };
         var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        DialogService.Show<POListUpdateStatusModal>("Change Status", options);
+        DialogService.Show<POListUpdateStatusModal>("Change Status",parameters, options);
     }
+
+	private async Task Filter()
+	{
+		try
+		{
+			string? fromdate = _dateRange.Start.ToString();
+			string? todate = _dateRange.End.ToString();
+			poList =await _order.GetPoListQuery(filterInput.POID,filterInput.Supplier,filterInput.Status,fromdate,todate);
+		}
+		catch (Exception e)
+		{
+			
+		}
+	}
 	
 
 }

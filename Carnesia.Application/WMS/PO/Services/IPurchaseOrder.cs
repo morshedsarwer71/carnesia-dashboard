@@ -20,6 +20,7 @@ namespace Carnesia.Application.WMS.PO.Services
     public interface IPurchaseOrder
     {
         Task<string> AddPurchaseOrder(PurchaseOrder purchaseOrder);
+        Task<string> AddBulkPurchaseOrder(PurchaseOrder purchaseOrder);
         Task DownLoadExcel(IJSRuntime jSRuntime);
         Task<List<PoProductDTO>> UploadExcelFile(InputFileChangeEventArgs e);
         Task<PoProductDTO> AddProduct(PoProductDTO poProductDto);
@@ -28,11 +29,16 @@ namespace Carnesia.Application.WMS.PO.Services
         Task<Response> PoApprove(string poCode);
         Task<AwaitingPoDetails> AwaitingPoDetails(string poCode);
         Task<List<POListPoco>> GetPoList();
+        Task<List<POListPoco>> GetPoListQuery(string poCode,int supplierId, int statusId, string fromDate, string toDate);
 
         Task<string> ApproveSelectedItems(string poCode, List<PoProductDTO> poProducts);
         Task<string> RemoveSelectedItems(string poCode, List<PoProductDTO> poProducts);
 
         Task<string> GenerateUID(UIDPoco form);
-        Task TestPrint();
+
+        Task<Response> ChangeStatus(string poCode, int statusId);
+        
+       
+
     }
 }
