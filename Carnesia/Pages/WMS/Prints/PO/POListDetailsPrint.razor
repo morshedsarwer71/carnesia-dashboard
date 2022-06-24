@@ -1,4 +1,5 @@
-﻿@page "/polist-details-print/{poCode}"
+﻿@layout PrintLayout
+@page "/polist-details-print/{poCode}"
 
 @using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Domain.Common.POCO
@@ -7,67 +8,51 @@
 @inject ISnackbar Snackbar
 @inject IPurchaseOrder _order
 
-<MudPaper Class="pa-16 ma-2">
-	<MudContainer Fixed="true">
-	    <MudPaper Width="400px" Square="true">
-            <MudList Clickable="true">
-                <MudListItem><MudText Typo="Typo.h4">PO ID: @poCode</MudText></MudListItem>
-                <MudDivider />
-                <MudListItem>Created On: @awaitingPoVm.orderDate</MudListItem>
-                <MudDivider />
-                <MudListItem>Supplier: @awaitingPoVm.vendorName</MudListItem>
-                <MudDivider />
-                <MudListItem>Receiving Warehouse: @awaitingPoVm.rcvStoreName</MudListItem>
-                <MudDivider />
-                <MudListItem>Arriving Time: @awaitingPoVm.rcvDate</MudListItem>
-            </MudList>
-        </MudPaper>
+    <MudContainer Fixed="true">
+        <MudList Clickable="true">
+        <MudListItem><MudText Typo="Typo.h4">PO ID: @poCode</MudText></MudListItem>
+        <MudListItem>Created On: @awaitingPoVm.orderDate</MudListItem>
+        <MudListItem>Supplier: @awaitingPoVm.vendorName</MudListItem>
+        <MudListItem>Receiving Warehouse: @awaitingPoVm.rcvStoreName</MudListItem>
+        <MudListItem>Arriving Time: @awaitingPoVm.rcvDate</MudListItem>
+    </MudList>
 
-        <MudTable Items="@awaitingPoVm.products" Dense="@true">
-            <ToolBarContent>
-                <MudText Typo="Typo.h6">PO List Details</MudText>
-                <MudSpacer />
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>SKU Code</MudTh>
-                <MudTh>Product Name</MudTh>
-                <MudTh>PO Quantity</MudTh>
-                <MudTh>Lifting Price</MudTh>
-                <MudTh>Value</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="SKU Code">@context.sku</MudTd>
-                <MudTd DataLabel="Name">@context.productName</MudTd>
-                <MudTd DataLabel="PO Quantity">@context.quantity</MudTd>
-                <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
-                <MudTd DataLabel="Value">@context.TotalPrice</MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
+    <MudTable Striped="true" Bordered="true" Elevation="0" Class="mt-5" Items="@awaitingPoVm.products" Dense="@true">
+@*        <ToolBarContent>
+            <MudText Typo="Typo.h6">PO List Details</MudText>
+            <MudSpacer />
+        </ToolBarContent>*@
+        <HeaderContent>
+            <MudTh>SKU Code</MudTh>
+            <MudTh>Product Name</MudTh>
+            <MudTh>PO Quantity</MudTh>
+            <MudTh>Lifting Price</MudTh>
+            <MudTh>Value</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="SKU Code">@context.sku</MudTd>
+            <MudTd DataLabel="Name">@context.productName</MudTd>
+            <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
+            <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
+            <MudTd DataLabel="Value">@context.TotalPrice</MudTd>
+        </RowTemplate>
+    </MudTable>
 
-        <MudPaper Width="400px" Square="true" Class="mt-10">
-            <MudList Clickable="true">
-                <MudListItem>Total Quantity: 100</MudListItem>
-                <MudDivider />
-                <MudListItem>Total Lifting Price: 100</MudListItem>
-                <MudDivider />
-                <MudListItem>Total Value: 10000</MudListItem>
-            </MudList>
-        </MudPaper>
+    <MudList Clickable="true">
+        <MudListItem>Total Quantity: @awaitingPoVm.totalQty</MudListItem>
+        <MudListItem>Total Value: @awaitingPoVm.totalValue</MudListItem>
+    </MudList>
 
-        <div class="d-flex justify-end mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Info">Print</MudButton>
-        </div>
-	</MudContainer>
-</MudPaper>
+    <div class="d-flex no-print justify-end mt-5">
+        <button onclick="window.print()">Print</button>
+    </div>
+    </MudContainer>
 
 @code {
     [Parameter]
     public string poCode { get; set; }
 
-    public AwaitingPoVM awaitingPoVm = new AwaitingPoVM();
+    public AwaitingPoDetails awaitingPoVm = new AwaitingPoDetails();
 
     protected override async Task OnInitializedAsync()
     {

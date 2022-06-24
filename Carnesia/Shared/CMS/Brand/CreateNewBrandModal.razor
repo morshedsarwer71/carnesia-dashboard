@@ -1,5 +1,6 @@
 ﻿@using Carnesia.Domain.CMS.Brand
 @inject IBase64 _base64
+@inject IBrand _brand
 
 <MudDialog>
     <DialogContent>
@@ -15,7 +16,7 @@
 
                 <br/>
                 <MudText Color="Color.Error">@ImageError</MudText>
-                <MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+                <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
 
                 <div class="d-flex justify-end my-5">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateBrand">Submit</MudButton>
@@ -25,10 +26,27 @@
 </MudDialog>
 
 @code {
+    // On Page Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBrand();
+    }
+
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
     public CreateBrandDTO FormData{get;set;} = new CreateBrandDTO();
+
+    // Get Brand
+    private async Task GetBrand()
+    {
+        var result = await _brand.GetBrandById(FormData.brandId);
+
+        if (result != null)
+        {
+            FormData = result;
+        }
+    }
 
     // Submit Close
     void Submit() => MudDialog.Close(DialogResult.Ok<CreateBrandDTO>(FormData));
@@ -37,9 +55,6 @@
     bool success;
     string[] errors = { };
     MudForm form;
-
-    // Image SRC
-    private string ImageSRC { get; set; }
 
     // Image Error
     private string ImageError { get; set; }
@@ -50,7 +65,6 @@
         ImageError = String.Empty;
         try
         {
-            ImageSRC = await _base64.ConvertToBase64(51200, 475, 280, ImageFile);
             FormData.base64Attch = await _base64.ConvertToBase64(153600, 100, 100, ImageFile);
         }
         catch(Exception e)

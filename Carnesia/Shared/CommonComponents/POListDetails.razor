@@ -4,6 +4,7 @@
 @using Carnesia.Domain.WMS.PO.ViewModels.Awaiting
 @inject ISnackbar snackbar
 @inject IPurchaseOrder _order
+@inject IJSRuntime IJS
 
 <MudDialog DisableSidePadding="true">
     <DialogContent>
@@ -100,7 +101,7 @@
                                 <MudButtonGroup Class="mt-10" Color="Color.Primary" Variant="Variant.Filled" OverrideStyles="false">
                                     <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="RemoveSelected">Remove Selected</MudButton>
                                     <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="ApproveSelected">Approve Selected</MudButton>
-                                    <MudButton Color="Color.Primary" Variant="Variant.Filled">Print</MudButton>
+                                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => GoToPrint(awaitingPoVm.poCode)" >Print</MudButton>
                                 </MudButtonGroup>
                             </div>
                         </MudItem>
@@ -200,6 +201,12 @@
                 snackbar.Add("Error", Severity.Error);
             }
         }
+    }
+
+    // Go To Print
+    private async Task GoToPrint(string poCode)
+    {
+        await IJS.InvokeAsync<object>("open", new object[] { $"/polist-details-print/{poCode}", "_blank" });
     }
 
 }

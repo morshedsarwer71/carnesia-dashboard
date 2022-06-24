@@ -2,6 +2,7 @@
 @using Carnesia.Pages.WMS.PO
 @inject IDialogService DialogService
 @inject IPurchaseOrder _order
+@inject IVendor _vendor
 
 <MudPaper Class="pa-16 ma-2 mt-10" Elevation="1">
 	<MudContainer Fixed="true">
@@ -10,10 +11,14 @@
 				<MudTextField @bind-Value="filterInput.POID" Label="PO ID" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="2">
-				<MudTextField @bind-Value="filterInput.Supplier" Label="Supplier" Variant="Variant.Text" />
+				<MudAutocomplete T="string" Label="Supplier" Value="filterInput.SupplierName" ValueChanged="(string s) => GetSupplierId(s)" SearchFunc="@SupplierSearch" ResetValueOnEmptyText="@true"/>
 			</MudItem>
 			<MudItem md="2">
-				<MudTextField @bind-Value="filterInput.Status" Label="Status" Variant="Variant.Text" />
+				<MudSelect @bind-Value="filterInput.Status" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="5">Approved</MudSelectItem>
+					<MudSelectItem Value="6">Received</MudSelectItem>
+					<MudSelectItem Value="7">Partially Received</MudSelectItem>
+				</MudSelect>
 			</MudItem>
 			<MudItem md="2">
 				<MudDateRangePicker Label="Date range" @bind-DateRange="_dateRange" />
@@ -83,13 +88,40 @@
 	private bool hover { get; set; }
 	private bool striped { get; set; }
 
-	// Serach Term
-	private string searchTerm { get; set; }
-
 	protected override async Task OnInitializedAsync()
 	{
 		poList = await _order.GetPoList();
+		await GetVendors();
 	}
+
+	// Suppliers
+	private string[] Suppliers;
+
+	private async Task GetVendors()
+	{
+		Suppliers = await _vendor.GetVendorsNameAsString();
+	}
+
+	// Autocomplite Search Func
+	private async Task<IEnumerable<string>> SupplierSearch(string value)
+	{
+		return string.IsNullOrEmpty(value) ? Suppliers : Suppliers.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+	}
+
+	// Set Supplier ID
+	private async Task GetSupplierId(string supplierName)
+	{
+		filterInput.SupplierName = supplierName;
+		if (!String.IsNullOrEmpty(supplierName))
+		{
+			var result = await _vendor.GetVendor(supplierName);
+			filterInput.Supplier = result.vendorId;
+		}
+	}
+
+	// Serach Term
+	private string searchTerm { get; set; }
+
 
 	// Search Function
 	private bool FilterCycleCheck(POListPoco item)
@@ -106,16 +138,17 @@
     {
 	    var parameters = new DialogParameters { ["poCode"]=poCode };
         var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        DialogService.Show<POListUpdateStatusModal>("Change Status",parameters, options);
+        DialogService.Show<POListUpdateStatusModal>("Change Status", options);
     }
 
+	// Filter
 	private async Task Filter()
 	{
 		try
 		{
-			string? fromdate = _dateRange.Start.ToString();
-			string? todate = _dateRange.End.ToString();
-			poList =await _order.GetPoListQuery(filterInput.POID,filterInput.Supplier,filterInput.Status,fromdate,todate);
+			filterInput.fromDate = _dateRange.Start.ToString();
+			filterInput.toDate = _dateRange.End.ToString();
+			poList =await _order.GetPoListQuery(filterInput.POID,filterInput.Supplier,filterInput.Status,filterInput.fromDate,filterInput.toDate);
 		}
 		catch (Exception e)
 		{

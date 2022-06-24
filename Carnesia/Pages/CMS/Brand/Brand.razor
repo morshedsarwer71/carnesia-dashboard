@@ -36,7 +36,7 @@
                     <MudSwitch @bind-Checked="context.isPublished" Color="Color.Primary" @onclick="(() => PublishUnpublish(context.brandId)) " />
                 </MudTd>
                 <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateModal(context.name, context.description, context.brandId)">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateModal(context.brandId)">
                         Edit
                     </MudButton>
                 </MudTd>
@@ -97,13 +97,12 @@
     }
 
     // Update Brand
-    private async Task OpenUpdateModal(string name, string description, int BrandId)
+    private async Task OpenUpdateModal(int BrandId)
     {
         var parameters = new DialogParameters();
         parameters.Add("FormData", new CreateBrandDTO()
             {
-                name = name,
-                description = description
+                brandId = BrandId
             });
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
@@ -115,7 +114,7 @@
 
             try
             {
-                await _brand.UpdateBrand(newBrand, BrandId);
+                await _brand.UpdateBrand(newBrand);
                 Snackbar.Add("Brand Updated Successfully!", Severity.Success);
                 await OnInitializedAsync();
             }
