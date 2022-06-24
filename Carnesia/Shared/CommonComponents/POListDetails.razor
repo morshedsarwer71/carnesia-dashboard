@@ -150,8 +150,8 @@
     private void ResetItemToOriginalValues(object element)
     {
         ((PoProductDTO) element).quantity = beforeEdit.poQuantity;
-        ((POListViewDetailsPoco) element).LiftingPrice = beforeEdit.liftingPrice;
-        ((POListViewDetailsPoco) element).LiftingPrice = beforeEdit.TotalPrice;
+        ((PoProductDTO) element).liftingPrice = beforeEdit.liftingPrice;
+        //((POListViewDetailsPoco) element).LiftingPrice = beforeEdit.TotalPrice;
     }
 
     private async void ApproveSelected()
@@ -167,8 +167,9 @@
             {
                 snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
                 snackbar.Add("Approved Successfully", Severity.Success);
+                MudDialog.Cancel();
     //awaitingPoVm.products.Clear();
-                awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+                //awaitingPoVm = await _order.AwaitingPoDetails(poCode);
             }
             else
             {
@@ -191,7 +192,8 @@
             {
                 snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
                 snackbar.Add("Removed Successfully", Severity.Success);
-                awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+                MudDialog.Cancel();
+                //awaitingPoVm = await _order.AwaitingPoDetails(poCode);
             }
             else
             {

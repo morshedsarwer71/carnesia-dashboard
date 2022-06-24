@@ -148,7 +148,7 @@
 </MudPaper>
 
 @code {
-    MemoryStream excelStream;
+    //MemoryStream excelStream;
 
     public IEnumerable<VendorDTO> Vendors;
     public CreatePODTO createPO = new CreatePODTO();
@@ -174,12 +174,12 @@
     }
 
 
-    private async Task UploadFiles(InputFileChangeEventArgs e)
+    private async Task UploadFiles (InputFileChangeEventArgs e)
     {
         try
         {
             poExcelProducts.Clear();
-            poExcelProducts = await _order.UploadExcelFile(e);
+            poExcelProducts =  await _order.UploadExcelFile(e);
         }
         catch (Exception)
         {
@@ -232,21 +232,31 @@
 
     private async Task SubmitBulkPo()
     {
-        var vendorId = await _vendor.GetVendor(createPO.vendorName);
-        var storeId = await _store.GetStore(createPO.storeName);
-        createPO.vendorId = vendorId.vendorId;
-        createPO.poRcvStoreId = storeId.storeId;
-        createPO.description = "Creating po without description";
-        var purchaseOrder = new PurchaseOrder
+        try
         {
-            createPODTO = createPO,
-            poProductDTOs = poExcelProducts
-        };
-        var result = await _order.AddPurchaseOrder(purchaseOrder);
-        snackbar.Add(result);
-        products.Clear();
-        poExcelProducts.Clear();
-        form.Reset();
+            var vendorId = await _vendor.GetVendor(createPO.vendorName);
+            var storeId = await _store.GetStore(createPO.storeName);
+            createPO.vendorId = vendorId.vendorId;
+            createPO.poRcvStoreId = storeId.storeId;
+            createPO.description = "Creating po without description";
+            var purchaseOrder = new PurchaseOrder
+            {
+                createPODTO = createPO,
+                poProductDTOs = poExcelProducts
+            };
+            await _order.AddPurchaseOrder(purchaseOrder);
+            snackbar.Add("testing");
+            products.Clear();
+            poExcelProducts.Clear();
+            form.Reset();
+        }
+        catch (Exception e)
+        {
+            snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            snackbar.Add("PO creation failed", Severity.Error);
+            //Console.WriteLine(e);
+            //throw;
+        }
     }
 
     private async Task AddProduct(PoProductDTO poco)

@@ -1,10 +1,16 @@
-﻿<MudDialog>
+﻿@inject IPurchaseOrder _order
+@inject ISnackbar snackbar
+
+<MudDialog>
     <DialogContent>
         <MudGrid>
             <MudItem xs="12">
-                <MudSelect T="string" Label="Status" @bind-Value="@statusValue" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Cancel")" />
-                    <MudSelectItem Value="@("Close")" />
+                <MudSelect T="int" Label="Status" @bind-Value="@statusValue" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value=5>Approved</MudSelectItem>
+                    <MudSelectItem Value=6>Received</MudSelectItem>
+                    <MudSelectItem Value=7>Partially Received</MudSelectItem>
+                    @*<MudSelectItem Value="@("Cancel")" />
+                    <MudSelectItem Value="@("Close")" />*@
                 </MudSelect>
             </MudItem>
             <MudItem xs="12">
@@ -21,16 +27,28 @@
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public string poCode { get; set; }
 
     void Cancel() => MudDialog.Cancel();
 
     // Status Value
-    private string statusValue { get; set; }
+    private int statusValue { get; set; }
 
 
     // Change Status
-    private void ChangeStatus()
+    private async Task ChangeStatus()
     {
-        Console.WriteLine(statusValue);
+        try
+        {
+            var res =await _order.ChangeStatus(poCode, statusValue);
+            snackbar.Add(res.Message, Severity.Success);
+        }
+        catch (Exception e)
+        {
+            snackbar.Add("Failed", Severity.Error);
+            //Console.WriteLine(e);
+            //throw;
+        }
     }
 }

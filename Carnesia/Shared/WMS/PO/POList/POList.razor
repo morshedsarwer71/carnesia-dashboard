@@ -1,4 +1,5 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
+@using Carnesia.Pages.WMS.PO
 @inject IDialogService DialogService
 @inject IPurchaseOrder _order
 @inject IVendor _vendor
@@ -10,17 +11,21 @@
 				<MudTextField @bind-Value="filterInput.POID" Label="PO ID" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="2">
-				<MudAutocomplete T="string" Label="Supplier" @bind-Value="filterInput.Supplier" SearchFunc="@SupplierSearch" ResetValueOnEmptyText="@true"/>
+				<MudAutocomplete T="string" Label="Supplier" Value="filterInput.SupplierName" ValueChanged="(string s) => GetSupplierId(s)" SearchFunc="@SupplierSearch" ResetValueOnEmptyText="@true"/>
 			</MudItem>
 			<MudItem md="2">
-				<MudTextField @bind-Value="filterInput.Status" Label="Status" Variant="Variant.Text" />
+				<MudSelect @bind-Value="filterInput.Status" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="5">Approved</MudSelectItem>
+					<MudSelectItem Value="6">Received</MudSelectItem>
+					<MudSelectItem Value="7">Partially Received</MudSelectItem>
+				</MudSelect>
 			</MudItem>
 			<MudItem md="2">
-				<MudDateRangePicker Label="Date range" />
+				<MudDateRangePicker Label="Date range" @bind-DateRange="_dateRange" />
 			</MudItem>
 			<MudItem md="2">
 				<div>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Filter">Filter</MudButton>
 				</div>
 			</MudItem>
 		</MudGrid>
@@ -46,13 +51,13 @@
 				<MudTd DataLabel="Date">@context.orderDate</MudTd>
 				<MudTd DataLabel="PO Id">@context.poCode</MudTd>
 				<MudTd DataLabel="Supplier">@context.vendorName</MudTd>
-				<MudTd DataLabel="Quantity">@context.quatity</MudTd>
+				<MudTd DataLabel="Quantity">@context.poQuantity</MudTd>
 				<MudTd DataLabel="Amount">@context.totalAmount</MudTd>
 				<MudTd DataLabel="Status">@context.poStatus</MudTd>
 				<MudTd DataLabel="Status Updated On">@context.statusUpdateDate</MudTd>
 				<MudTd DataLabel="Action">
-					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" OnClick="() => OpenPOListDetailsDialog(context.poCode)" />
-					<MudIconButton Icon="@Icons.Filled.Edit" Color="Color.Success" aria-label="Edit" />
+					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" />
+					<MudIconButton Icon="@Icons.Filled.Edit" Color="Color.Success" aria-label="Edit" OnClick="() => OpenStatusDialog(context.poCode)" />
 				</MudTd>
 			</RowTemplate>
 			<PagerContent>
@@ -73,7 +78,7 @@
 @code {
 	// Filter Class
 	public POFilterPoco filterInput = new POFilterPoco();
-
+	DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.Date);
 	// PO List
 	public List<POListPoco> poList = new List<POListPoco>();
 
@@ -83,14 +88,40 @@
 	private bool hover { get; set; }
 	private bool striped { get; set; }
 
-	// Serach Term
-	private string searchTerm { get; set; }
-
 	protected override async Task OnInitializedAsync()
 	{
 		poList = await _order.GetPoList();
 		await GetVendors();
 	}
+
+	// Suppliers
+	private string[] Suppliers;
+
+	private async Task GetVendors()
+	{
+		Suppliers = await _vendor.GetVendorsNameAsString();
+	}
+
+	// Autocomplite Search Func
+	private async Task<IEnumerable<string>> SupplierSearch(string value)
+	{
+		return string.IsNullOrEmpty(value) ? Suppliers : Suppliers.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+	}
+
+	// Set Supplier ID
+	private async Task GetSupplierId(string supplierName)
+	{
+		filterInput.SupplierName = supplierName;
+		if (!String.IsNullOrEmpty(supplierName))
+		{
+			var result = await _vendor.GetVendor(supplierName);
+			filterInput.Supplier = result.vendorId;
+		}
+	}
+
+	// Serach Term
+	private string searchTerm { get; set; }
+
 
 	// Search Function
 	private bool FilterCycleCheck(POListPoco item)
@@ -103,33 +134,27 @@
     }
 
 	// Status Modal
-    private void OpenStatusDialog()
+    private void OpenStatusDialog(string poCode)
     {
+	    var parameters = new DialogParameters { ["poCode"]=poCode };
         var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
         DialogService.Show<POListUpdateStatusModal>("Change Status", options);
     }
 
-	// Suppliers
-	private string[] Suppliers;
-
-	private async Task GetVendors()
-    {
-        Suppliers = await _vendor.GetVendorsNameAsString();
-    }
-
-	// Autocomplite Search Func
-    private async Task<IEnumerable<string>> SupplierSearch(string value)
-    {
-        return string.IsNullOrEmpty(value) ? Suppliers : Suppliers.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-	// PO List Details Modal
-    private void OpenPOListDetailsDialog(string poCode)
-    {
-	    var parameters = new DialogParameters { ["poCode"]=poCode };
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth=true, CloseButton=true, MaxWidth=MaxWidth.Large };
-        DialogService.Show<PODetailsModal>("", parameters,options);
-    }
+	// Filter
+	private async Task Filter()
+	{
+		try
+		{
+			filterInput.fromDate = _dateRange.Start.ToString();
+			filterInput.toDate = _dateRange.End.ToString();
+			poList =await _order.GetPoListQuery(filterInput.POID,filterInput.Supplier,filterInput.Status,filterInput.fromDate,filterInput.toDate);
+		}
+		catch (Exception e)
+		{
+			
+		}
+	}
 	
 
 }

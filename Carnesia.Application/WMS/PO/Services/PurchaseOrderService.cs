@@ -38,6 +38,7 @@ namespace Carnesia.Application.WMS.PO.Services
         {
             try
             {
+                //var response = await _httpClient.GetFromJsonAsync<string>("PurchaseOrders/approvedpo");
                 var response = await _httpClient.PostAsJsonAsync("PurchaseOrders", purchaseOrder);
                 //var result = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
@@ -48,11 +49,17 @@ namespace Carnesia.Application.WMS.PO.Services
                 }
                 return "Po creation failed";
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return "Po creation failed";
-                throw;
+                //return "Po creation failed";
+                Console.WriteLine(e);
+                return "failed";
             }
+        }
+
+        public Task<string> AddBulkPurchaseOrder(PurchaseOrder purchaseOrder)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task DownLoadExcel(IJSRuntime jSRuntime)
@@ -261,6 +268,20 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
+        public async Task<List<POListPoco>> GetPoListQuery(string poCode, int supplierId, int statusId, string fromDate, string toDate)
+        {
+            try
+            {
+                var res = await _httpClient.GetFromJsonAsync<List<POListPoco>>($"PurchaseOrders/approvedpobyparameter/{poCode}/{supplierId}/{statusId}/{fromDate}/{toDate}");
+                return res;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
+
         public async Task<string> RemoveSelectedItems(string poCode, List<PoProductDTO> poProducts)
         {
             try
@@ -322,6 +343,22 @@ namespace Carnesia.Application.WMS.PO.Services
                 throw;
 
                //return null;
+            }
+        }
+
+        public async Task<Response> ChangeStatus(string poCode, int statusId)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<Response>($"PurchaseOrders/changestatus/{poCode}/{statusId}");
+                return response;
+
+            }
+            catch (Exception e)
+            {
+                return null;
+                Console.WriteLine(e);
+                throw;
             }
         }
 
