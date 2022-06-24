@@ -154,7 +154,8 @@ namespace Carnesia.Application.WMS.PO.Services
                             quantity = qty,
                             liftingPrice = price,
                             TotalPrice = total,
-                            productName = skuProduct.productName
+                            productName = skuProduct.productName,
+                            productCode = skuProduct.productCode
                         };
                         poProducts.Add(pop);
                     }

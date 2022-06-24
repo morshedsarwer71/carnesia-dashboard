@@ -1,4 +1,6 @@
-﻿@page "/polist-details-print/{poCode}"
+﻿@layout PrintLabel
+@page "/polist-details-print/{poCode}"
+
 
 @using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Domain.Common.POCO
@@ -7,7 +9,11 @@
 @inject ISnackbar Snackbar
 @inject IPurchaseOrder _order
 
-<MudPaper Class="pa-16 ma-2">
+
+<body>
+    @*@poCode*@
+</body>
+@*<MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
 	    <MudPaper Width="400px" Square="true">
             <MudList Clickable="true">
@@ -42,35 +48,34 @@
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
                 <MudTd DataLabel="Value">@context.TotalPrice</MudTd>
             </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
         </MudTable>
 
-        <MudPaper Width="400px" Square="true" Class="mt-10">
-            <MudList Clickable="true">
-                <MudListItem>Total Quantity: 100</MudListItem>
-                <MudDivider />
-                <MudListItem>Total Lifting Price: 100</MudListItem>
-                <MudDivider />
-                <MudListItem>Total Value: 10000</MudListItem>
-            </MudList>
-        </MudPaper>
+        <MudGrid>
+            <MudItem md="6">
+                <MudPaper Width="400px" Square="true" Class="mt-10">
+                    <MudList Clickable="true">
+                        <MudListItem>Total Quantity: @awaitingPoVm.totalQty</MudListItem>
+                        <MudDivider/>
+                        <MudListItem>Total Value: @awaitingPoVm.totalValue</MudListItem>
+                    </MudList>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
 
-        <div class="d-flex justify-end mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Info">Print</MudButton>
+        <div class="d-flex no-print justify-end mt-5">
+            <button onclick="window.print()">Print</button>
         </div>
 	</MudContainer>
-</MudPaper>
+</MudPaper>*@
 
 @code {
-    [Parameter]
-    public string poCode { get; set; }
+    //[Parameter]
+    //public string poCode { get; set; }
 
-    public AwaitingPoVM awaitingPoVm = new AwaitingPoVM();
+    public AwaitingPoDetails awaitingPoVm = new AwaitingPoDetails();
 
-    protected override async Task OnInitializedAsync()
-    {
-        awaitingPoVm = await _order.AwaitingPoDetails(poCode);
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+    //}
 }

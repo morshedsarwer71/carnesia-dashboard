@@ -7,7 +7,7 @@
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
                     <MudTextField @bind-Value="parentCat" Immediate="true" Label="Category Name" Required="true" RequiredError="Category Name is required!"/>
 
-                    <InputFile id="category-image" OnChange="@ValidateImage" hidden accept=".webp" />
+                    @*<InputFile id="category-image" OnChange="@ValidateImage" hidden accept=".webp" />
                     <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="category-image" Class="mt-5">
                         Upload Category Images
                     </MudButton>
@@ -15,7 +15,7 @@
 
                     <br/>
                     <MudText Color="Color.Error">@ImageError</MudText>
-                    <MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+                    <MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />*@
 
                     <div class="d-flex justify-end my-5">
                         <MudButton Variant="Variant.Filled" Color="Color.Warning" Disabled="@(!success)" Class="ml-auto" OnClick="UpdateCategory">Update</MudButton>

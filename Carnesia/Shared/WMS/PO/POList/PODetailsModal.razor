@@ -1,0 +1,107 @@
+﻿@using Carnesia.Domain.WMS.PO.POCO
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.WMS.PO.Models
+@using Carnesia.Domain.WMS.PO.ViewModels.Awaiting
+@inject IPurchaseOrder _order
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <div Style="max-height: 90vh; overflow-y: scroll">
+            <MudPaper Class="pa-16 ma-2" Elevation="0">
+                <MudContainer Fixed="true">
+                    <MudPaper Width="400px" Square="true">
+                        <MudList Clickable="true">
+                            <MudListItem>
+                                <MudText Typo="Typo.h4">PO ID: @poCode</MudText>
+                                </MudListItem>
+                                <MudDivider/>
+                                <MudListItem>Created On: @awaitingPoVm.orderDate</MudListItem>
+                                <MudDivider/>
+                                <MudListItem>Supplier: @awaitingPoVm.vendorName</MudListItem>
+                                <MudDivider/>
+                                <MudListItem>Receiving Warehouse: @awaitingPoVm.rcvStoreName</MudListItem>
+                                <MudDivider/>
+                            <MudListItem>Arriving Time: @awaitingPoVm.rcvDate</MudListItem>
+                        </MudList>
+                    </MudPaper>
+                </MudContainer>
+            </MudPaper>
+
+            <MudPaper Class="pa-16 ma-2">
+                <MudContainer Fixed="true">
+                    <MudTable Items="@awaitingPoVm.products" MultiSelection="true" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" SortLabel="Sort By">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6">PO List Details</MudText>
+                            <MudSpacer/>
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>
+                                <MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x => x.sku)">SKU Code</MudTableSortLabel>
+                            </MudTh>
+                            <MudTh>
+                                <MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x => x.productName)">Product Name</MudTableSortLabel>
+                            </MudTh>
+                            <MudTh>
+                                <MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x => x.poQuantity)">PO Quantity</MudTableSortLabel>
+                            </MudTh>
+                            <MudTh>
+                                <MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x => x.liftingPrice)">Lifting Price</MudTableSortLabel>
+                            </MudTh>
+                            <MudTh>
+                                <MudTableSortLabel SortBy="new Func<PoProductDTO, object>(x => x.total)">Value</MudTableSortLabel>
+                            </MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="SKU Code">@context.sku</MudTd>
+                            <MudTd DataLabel="Name">@context.productName</MudTd>
+                            <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
+                            <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
+                            <MudTd DataLabel="Value">@(context.liftingPrice * context.poQuantity)</MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager/>
+                        </PagerContent>
+                    </MudTable>
+
+                    <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+                    <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+
+                    <MudGrid>
+                        <MudItem md="6">
+                            <MudPaper Width="400px" Square="true" Class="mt-10">
+                                <MudList Clickable="true">
+                                    <MudListItem>Total Quantity: @awaitingPoVm.totalQty</MudListItem>
+                                    <MudDivider/>
+                                    <MudListItem>Total Value: @awaitingPoVm.totalValue</MudListItem>
+                                </MudList>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                </MudContainer>
+            </MudPaper>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public string poCode { get; set; }
+
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
+
+    public AwaitingPoDetails awaitingPoVm = new AwaitingPoDetails();
+
+    protected override async Task OnInitializedAsync()
+    {
+        awaitingPoVm = await _order.AwaitingPoDetails(poCode);
+    }
+
+
+
+
+}

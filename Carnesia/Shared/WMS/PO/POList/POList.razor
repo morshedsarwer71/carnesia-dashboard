@@ -1,6 +1,7 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
 @inject IDialogService DialogService
 @inject IPurchaseOrder _order
+@inject IVendor _vendor
 
 <MudPaper Class="pa-16 ma-2 mt-10" Elevation="1">
 	<MudContainer Fixed="true">
@@ -9,7 +10,7 @@
 				<MudTextField @bind-Value="filterInput.POID" Label="PO ID" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="2">
-				<MudTextField @bind-Value="filterInput.Supplier" Label="Supplier" Variant="Variant.Text" />
+				<MudAutocomplete T="string" Label="Supplier" @bind-Value="filterInput.Supplier" SearchFunc="@SupplierSearch" ResetValueOnEmptyText="@true"/>
 			</MudItem>
 			<MudItem md="2">
 				<MudTextField @bind-Value="filterInput.Status" Label="Status" Variant="Variant.Text" />
@@ -50,7 +51,7 @@
 				<MudTd DataLabel="Status">@context.poStatus</MudTd>
 				<MudTd DataLabel="Status Updated On">@context.statusUpdateDate</MudTd>
 				<MudTd DataLabel="Action">
-					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" />
+					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" OnClick="() => OpenPOListDetailsDialog(context.poCode)" />
 					<MudIconButton Icon="@Icons.Filled.Edit" Color="Color.Success" aria-label="Edit" />
 				</MudTd>
 			</RowTemplate>
@@ -88,6 +89,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		poList = await _order.GetPoList();
+		await GetVendors();
 	}
 
 	// Search Function
@@ -105,6 +107,28 @@
     {
         var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
         DialogService.Show<POListUpdateStatusModal>("Change Status", options);
+    }
+
+	// Suppliers
+	private string[] Suppliers;
+
+	private async Task GetVendors()
+    {
+        Suppliers = await _vendor.GetVendorsNameAsString();
+    }
+
+	// Autocomplite Search Func
+    private async Task<IEnumerable<string>> SupplierSearch(string value)
+    {
+        return string.IsNullOrEmpty(value) ? Suppliers : Suppliers.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+	// PO List Details Modal
+    private void OpenPOListDetailsDialog(string poCode)
+    {
+	    var parameters = new DialogParameters { ["poCode"]=poCode };
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth=true, CloseButton=true, MaxWidth=MaxWidth.Large };
+        DialogService.Show<PODetailsModal>("", parameters,options);
     }
 	
 
