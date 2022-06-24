@@ -75,14 +75,14 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="SKU" onclick="@(() => OpenSKUHistoryDialog())">@context.sku</MudTd>
+                <MudTd DataLabel="SKU" href="#" onclick="@(() => OpenSKUHistoryDialog(context.productCode))">@context.sku</MudTd>
                 <MudTd DataLabel="Product Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
                 <MudTd DataLabel="QTY">@context.quantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
                 <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
                 <MudTd DataLabel="Action">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() => OpenDeleteDialog()"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() => OpenDeleteDialog(context)"/>
                 </MudTd>
             </RowTemplate>
         </MudTable>
@@ -125,16 +125,14 @@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="SKU">
-                    <a href="">@context.sku</a>
-                </MudTd>
+                <MudTd DataLabel="SKU" href="#" onclick="@(() => OpenSKUHistoryDialog(context.productCode))">@context.sku</MudTd>
                 <MudTd DataLabel="Product Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
                 <MudTd DataLabel="QTY">@context.quantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
                 <MudTd DataLabel="Total Price">@context.TotalPrice</MudTd>
                 <MudTd DataLabel="Action">
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() => OpenDeleteDialog()"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" OnClick="() => OpenBulkDeleteDialog(context)"/>
                 </MudTd>
             </RowTemplate>
         </MudTable>
@@ -244,8 +242,8 @@
                 createPODTO = createPO,
                 poProductDTOs = poExcelProducts
             };
-            await _order.AddPurchaseOrder(purchaseOrder);
-            snackbar.Add("testing");
+            var result =await _order.AddPurchaseOrder(purchaseOrder);
+            snackbar.Add(result, Severity.Success);
             products.Clear();
             poExcelProducts.Clear();
             form.Reset();
@@ -294,17 +292,33 @@
     }
 
     // Delete Item Modal
-    private void OpenDeleteDialog()
+    private async Task OpenDeleteDialog(PoProductDTO product)
     {
         var options = new DialogOptions {CloseOnEscapeKey = false, FullWidth = true, CloseButton = true};
-        DialogService.Show<CreatePODeleteModal>("Delete Item?", options);
+        var result = await DialogService.Show<CreatePODeleteModal>("Delete Item?", options).Result;
+        if (!result.Cancelled)
+        {
+            products.Remove(product);
+        }
+        
+    }
+    private async Task OpenBulkDeleteDialog(PoProductDTO product)
+    {
+        var options = new DialogOptions {CloseOnEscapeKey = false, FullWidth = true, CloseButton = true};
+        var result = await DialogService.Show<CreatePODeleteModal>("Delete Item?", options).Result;
+        if (!result.Cancelled)
+        {
+            poExcelProducts.Remove(product);
+        }
+        
     }
 
     // Modal Sku History
-    private void OpenSKUHistoryDialog()
+    private void OpenSKUHistoryDialog(string prodcutCode)
     {
+        var parameter = new DialogParameters{["code"]=prodcutCode};
         var options = new DialogOptions {CloseOnEscapeKey = false, FullWidth = true, CloseButton = true};
-        DialogService.Show<CreatePOSKUHistory>("SKU History", options);
+        DialogService.Show<CreatePOSKUHistory>("SKU History",parameter, options);
     }
 
 }

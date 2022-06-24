@@ -1,4 +1,6 @@
-﻿<MudDialog>
+﻿@using Carnesia.Domain.WMS.PO.Models
+@inject IPurchaseOrder _order
+<MudDialog>
     <DialogContent>
         <MudTable Class="mt-5" Items="@history" Hover="true" Bordered="true" Dense="true">
             <HeaderContent>
@@ -7,9 +9,9 @@
                 <MudTh>Lifting Price</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="PO ID">@context.POID</MudTd>
-                <MudTd DataLabel="QTY">@context.QTY</MudTd>
-                <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
+                <MudTd DataLabel="PO ID">@context.poCode</MudTd>
+                <MudTd DataLabel="QTY">@context.receivedQty</MudTd>
+                <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
             </RowTemplate>
         </MudTable>
     </DialogContent>
@@ -20,16 +22,17 @@
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public string code { get; set; }
 
     void Cancel() => MudDialog.Cancel();
 
-    public List<SKUHistory> history = new List<SKUHistory>();
+    public List<SkuHistory> history = new List<SkuHistory>();
 
-
-    public class SKUHistory
+    protected override async Task OnInitializedAsync()
     {
-        public string POID { get; set; }
-        public int QTY { get; set; }
-        public decimal LiftingPrice { get; set; }
+        history = await _order.SKUHistory(code);
     }
+    
+   
 }

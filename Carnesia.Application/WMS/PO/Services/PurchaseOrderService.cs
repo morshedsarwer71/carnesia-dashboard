@@ -362,6 +362,20 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
+        public async Task<List<SkuHistory>> SKUHistory(string productCode)
+        {
+            try
+            {
+                var res = await _httpClient.GetFromJsonAsync<List<SkuHistory>>($"PurchaseOrders/skuhistory/{productCode}");
+                return res;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
         public async Task TestPrint()
         {
             try

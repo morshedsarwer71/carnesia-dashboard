@@ -37,8 +37,10 @@ namespace Carnesia.Application.WMS.PO.Services
         Task<string> GenerateUID(UIDPoco form);
 
         Task<Response> ChangeStatus(string poCode, int statusId);
-        
-       
+
+        Task<List<SkuHistory>> SKUHistory(string productCode);
+
+
 
     }
 }

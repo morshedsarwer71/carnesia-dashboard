@@ -47,6 +47,8 @@
                 <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.qcPassed)">QC Passed</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.qcFailed)">QC Failed</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.notArrivedQty)">Not Arrived</MudTableSortLabel></MudTh>
+                
+                <MudTh>Left generate Qty</MudTh>
                 <MudTh>Value</MudTh>
                 <MudTh>Generate UID</MudTh>
                 <MudTh>Print Label</MudTh>
@@ -61,6 +63,7 @@
                 <MudTd DataLabel="QC Failed">@context.qcFailed</MudTd>
                 <MudTd DataLabel="Not Arrived">@context.notArrivedQty</MudTd>
                 <MudTd DataLabel="Value">@(@context.qcPassed * @context.liftingPrice)</MudTd>
+                <MudTd DataLabel="Left UID">@context.qcPassed</MudTd>
                 <MudTd DataLabel="Generate UID">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="()=>OpenGenerateUIDDialog(PO.poCode,context.productCode)">Generate UID</MudButton>
                     @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenPrintLabelDialog">Print Label</MudButton>*@
