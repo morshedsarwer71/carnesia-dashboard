@@ -2,14 +2,13 @@
 
 <MudDialog>
     <DialogContent>
-        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-            
+        <MudForm Style="max-height: 90vh;" @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
             <MudGrid>
                 <MudItem xs="12">
-                    <MudDatePicker @bind-Date="labelForm.Date" Label="Expiry Date" Required="true" RequiredError="Expiray Date is required!" />
-                </MudItem>
-                <MudItem xs="12">
-                    <MudTextField T="int" @bind-Value="labelForm.QTY" Label="Input Qty. of Same Expiry" Required="true" RequiredError="Input QTY is required!" />
+                    <MudRadioGroup @bind-SelectedOption="selectDate" Class="d-flex flex-column">
+                        <MudRadio Option="@("12-6-2022")" Color="Color.Primary" Dense="true">12.6.2022 - 200</MudRadio>
+                        <MudRadio Option="@("13-6-2022")" Color="Color.Primary" Dense="true">13.6.2022 - 150</MudRadio>
+                    </MudRadioGroup>
                 </MudItem>
                 <MudItem xs="12">
                     <MudCheckBox @bind-Checked="@labelForm.BSTI" Label="BSTI" Color="Color.Primary"></MudCheckBox>
@@ -18,10 +17,13 @@
                     <MudCheckBox @bind-Checked="@labelForm.MRP" Label="MRP" Color="Color.Primary"></MudCheckBox>
                 </MudItem>
                 <MudItem xs="12">
-                    <MudCheckBox @bind-Checked="@labelForm.UID" Label="UID(barcode)" Color="Color.Primary"></MudCheckBox>
+                    <MudCheckBox @bind-Checked="@labelForm.SKU" Label="SKU" Color="Color.Primary"></MudCheckBox>
                 </MudItem>
                 <MudItem xs="12">
-                    <MudCheckBox @bind-Checked="@labelForm.SKU" Label="SKU(barcode)" Color="Color.Primary"></MudCheckBox>
+                    <MudCheckBox @bind-Checked="@labelForm.SKU" Label="Product ID" Color="Color.Primary"></MudCheckBox>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudCheckBox @bind-Checked="@labelForm.SKU" Label="Importer Info" Color="Color.Primary"></MudCheckBox>
                 </MudItem>
                 <MudItem xs="12">
                     <div class="d-flex justify-end">
@@ -45,6 +47,9 @@
 
     // Input Data Bind
     public LabelForm labelForm = new LabelForm();
+
+    // Select Date
+    private string selectDate { get; set; }
 
 
     // Form Class

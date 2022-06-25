@@ -1,4 +1,5 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
+@using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.WMS.PO.ReceivePO
 @inject ISnackbar Snackbar
 @inject IReceivePO _receivePO
@@ -32,7 +33,7 @@
 		</MudGrid>
 
         @*<MudTable Items="@Elements" Dense="@dense" Hover="@hover" SortLabel="Sort By" Filter="new Func<ReceivePOProductDTO,bool>(FilterCycleCheck)" Class="mt-5">*@
-        <MudTable Items="@Elements" Dense="@dense" Hover="@hover" SortLabel="Sort By" Class="mt-5">
+        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" SortLabel="Sort By"             Class="mt-5">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
@@ -75,8 +76,12 @@
             </PagerContent>
         </MudTable>
 
-        <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
-        <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
 
         <MudPaper Width="400px" Square="true" Class="mt-10">
             <MudList Clickable="true">
@@ -99,9 +104,8 @@
     // Search Term
     private string SearchTerm { get; set; }
 
-    // Table Customization
-    private bool dense { get; set; }
-    private bool hover { get; set; }
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
 
     // Table Content
     //private List<GenerateUIDListPoco> Elements = new List<GenerateUIDListPoco>();

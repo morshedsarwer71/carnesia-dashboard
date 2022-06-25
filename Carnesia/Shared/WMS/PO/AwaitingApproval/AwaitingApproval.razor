@@ -1,4 +1,5 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
+@using Carnesia.Domain.Common.POCO
 @using Carnesia.Shared.CommonComponents
 @using Carnesia.Domain.WMS.PO.Models.Awaiting
 @inject IDialogService DialogService
@@ -18,7 +19,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Loading="loadingBar" Class="mt-10" Items="@awaitingPos" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped">
+		<MudTable Loading="loadingBar" Class="mt-10" Items="@awaitingPos" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered"						 Striped="@tableCommon.Striped">
 		@* <MudTable Loading="loadingBar" Class="mt-10" Items="@awaitingPos" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<AwaitingPo,bool>(FilterCycleCheck)"> *@
 			<ToolBarContent>
 				<MudSpacer />
@@ -50,12 +51,11 @@
 		</MudTable>
 
 		<div class="d-flex flex-wrap mt-4">
-			<MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
-			<MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
-			<MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
-			<MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
-			<MudSpacer />
-		</div>
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
 	</MudContainer>
 </MudPaper>
 
@@ -67,11 +67,8 @@
 	// Table Loading BAr
 	private bool loadingBar { get; set; } = true;
 
-	// Table Customization
-	private bool dense { get; set; }
-	private bool hover { get; set; }
-	private bool bordered { get; set; }
-	private bool striped { get; set; }
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
 
 	// Search Term
 	private string SearchTerm { get; set; }
