@@ -34,7 +34,7 @@ namespace Carnesia.Application.WMS.PO.Services
         Task<string> ApproveSelectedItems(string poCode, List<PoProductDTO> poProducts);
         Task<string> RemoveSelectedItems(string poCode, List<PoProductDTO> poProducts);
 
-        Task<string> GenerateUID(UIDPoco form);
+        Task<UIDPoco> GenerateUID(UIDPoco form);
         Task<List<UIDProfileDTO>> GetUIDProfile(string poCode, string productCode);
 
         Task<Response> ChangeStatus(string poCode, int statusId);

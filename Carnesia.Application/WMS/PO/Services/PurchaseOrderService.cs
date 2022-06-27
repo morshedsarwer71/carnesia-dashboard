@@ -324,7 +324,7 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
-        public async Task<string> GenerateUID(UIDPoco form)
+        public async Task<UIDPoco> GenerateUID(UIDPoco form)
         {
             try
             {
@@ -333,8 +333,8 @@ namespace Carnesia.Application.WMS.PO.Services
                 if (res.IsSuccessStatusCode)
                 {
                     var json = await res.Content.ReadAsStringAsync();
-                    var deserialized = JsonConvert.DeserializeObject<Response>(json);
-                    return deserialized.Message;
+                    var deserialized = JsonConvert.DeserializeObject<UIDPoco>(json);
+                    return deserialized;
                 }
                 return null;
             }

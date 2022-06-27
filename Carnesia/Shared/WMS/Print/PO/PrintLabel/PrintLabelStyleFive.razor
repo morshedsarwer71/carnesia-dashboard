@@ -1,0 +1,32 @@
+﻿@using Carnesia.Domain.WMS.PO.POCO
+
+<div class="d-flex flex-wrap pa-2" style="width: 50%;">
+	<div class="ms-2">
+		<img class="d-block ms-auto mt-2" style="width: 55px; margin-left: 5px;" src="./bsti-ai.png" alt="" />
+	</div>
+	<div class="me-auto">
+		<p style="font-size: 7px; padding-left: 2px;">Importer</p>
+		<p style="font-size: 7px; padding-left: 2px;">@vendor</p>
+		<p style="font-size: 7px; padding-left: 2px;">@addOne</p>
+		<p style="font-size: 7px; padding-left: 2px;">@addTwo</p>
+		<p style="font-size: 7px; padding-left: 2px;">MRP- Taka @mrp</p>
+		<p style="font-size: 7px; padding-left: 2px; font-weight: 600">EXP- @expDate</p>
+	</div>
+	<div style="width:100%;">
+		<div style="width:fit-content; margin: 0 auto;">
+			<SfBarcodeGenerator Value="@uidData.uidCode" Width="160px" Height="40px">
+				<BarcodeGeneratorDisplayText Text = "" Size="10" Alignment="Alignment.Center" Position="TextPosition.Bottom">
+				</BarcodeGeneratorDisplayText>
+			</SfBarcodeGenerator>
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter] public UIDDataPoco uidData { get; set; } = new UIDDataPoco();
+	[Parameter] public string expDate { get; set; }
+	[Parameter] public string vendor { get; set; }
+	[Parameter] public string addOne { get; set; }
+	[Parameter] public string addTwo { get; set; }
+	[Parameter] public decimal mrp { get; set; }
+}

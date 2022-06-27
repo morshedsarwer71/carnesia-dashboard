@@ -1,6 +1,7 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.WMS.PO.ReceivePO
+@using Carnesia.Domain.WMS.TrackUID
 @inject ISnackbar Snackbar
 @inject IReceivePO _receivePO
 @inject IDialogService DialogService
@@ -66,7 +67,7 @@
                 <MudTd DataLabel="Left UID">@context.leftUIDGnrtQty</MudTd>
                 <MudTd DataLabel="Value">@(@context.qcPassed * @context.liftingPrice)</MudTd>
                 <MudTd DataLabel="Generate UID">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="()=>OpenGenerateUIDDialog(PO.poCode,context.productCode)">Generate UID</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="()=>OpenGenerateUIDDialog(PO.poCode,context.productCode,context.leftUIDGnrtQty)">Generate UID</MudButton>
                     @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenPrintLabelDialog">Print Label</MudButton>*@
                 </MudTd>
                 <MudTd DataLabel="Print Label">
@@ -163,12 +164,25 @@
     }
 
     // Print Label Modal
-    private void OpenGenerateUIDDialog(string poCode,string productCode)
+    private async Task OpenGenerateUIDDialog(string poCode,string productCode, int qty)
     {
         var parameter = new DialogParameters();
         parameter.Add("PoCode", poCode);
         parameter.Add("ProductCode", productCode);
+        parameter.Add("Qty",qty);
         var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        DialogService.Show<GEnerateUIDGenerateUIDModal>("Generate UID",parameter, options);
+        var result = await  DialogService.Show<GEnerateUIDGenerateUIDModal>("Generate UID",parameter, options).Result;
+        if(result.Data != null)
+        {
+            Elements.Clear();
+            GetReceivePO();
+            //UIDPoco poco = result.Data as UIDPoco;
+            //var results = Elements.FirstOrDefault(x=>x.productCode==poco.productCode);
+            //var s = results.leftUIDGnrtQty - poco.generateuidQty;
+            //results.leftUIDGnrtQty = s;
+            //Elements.Remove(results);            
+            //Elements.Add()
+
+        }
     }
 }

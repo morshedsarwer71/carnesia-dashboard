@@ -38,10 +38,13 @@
 
     [Parameter]
     public string ProductCode { get; set; }
+    [Parameter]
+    public int Qty { get; set; }
 
     // Without Exp Date
     private bool withoutExp { get; set; }
 
+    void Close() => MudDialog.Close(DialogResult.Ok<UIDPoco>(uidForm));
     void Cancel() => MudDialog.Cancel();
 
     // Form Ref
@@ -56,12 +59,19 @@
     {
         //_snackbar.Add(PoCode);
         //_snackbar.Add(ProductCode);
-        uidForm.poCode = PoCode;
-        uidForm.productCode = ProductCode;       
-        var result = await _order.GenerateUID(uidForm);
-        _snackbar.Add("OK");
-        MudDialog.Cancel();
-        
+        if(Qty < uidForm.generateuidQty)
+        {
+            _snackbar.Add("Input value bigger than Left UID Qty");
+        }
+        else
+        {
+            uidForm.poCode = PoCode;
+            uidForm.productCode = ProductCode;
+            uidForm = await _order.GenerateUID(uidForm);
+            _snackbar.Add("testing");
+            Close();
+        }
+
     }
 
 

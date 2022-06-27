@@ -1,0 +1,23 @@
+﻿@using Carnesia.Domain.WMS.PO.POCO
+
+<div class="pa-2" style="width: 50%; margin-top: 10px;">
+	<div class="me-auto" style="width:100%;">
+		<p style="font-size: 7px; padding-left: 10px;">Product ID: @productId</p>
+		<p style="font-size: 7px; padding-left: 10px;">SKU: @sku</p>
+	</div>
+	<div style="width:100%;">
+		<div style="width:fit-content; margin: 0 auto;">
+			<SfBarcodeGenerator Value="@uidData.uidCode" Width="160px" Height="40px">
+				<BarcodeGeneratorDisplayText Text = "" Size="10" Alignment="Alignment.Center" Position="TextPosition.Bottom">
+				</BarcodeGeneratorDisplayText>
+			</SfBarcodeGenerator>
+		</div>
+	</div>
+</div>
+
+@code {
+    [Parameter] public UIDDataPoco uidData { get; set; } = new UIDDataPoco();
+	[Parameter] public string productId { get; set; }
+    [Parameter] public string sku { get; set; }
+
+}
