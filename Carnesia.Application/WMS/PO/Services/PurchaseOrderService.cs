@@ -379,5 +379,22 @@ namespace Carnesia.Application.WMS.PO.Services
                 throw;
             }
         }
-    }
+
+		public async Task<List<UIDProfileDTO>> GetUIDProfile(string poCode, string productCode)
+		{
+			try
+			{
+                var result = await _httpClient.GetFromJsonAsync<List<UIDProfileDTO>>($"PurchaseOrders/uidprofile/{poCode}/{productCode}");
+
+                if (result == null) return null;
+
+                return result; 
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+	}
 }

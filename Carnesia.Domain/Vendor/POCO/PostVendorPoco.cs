@@ -14,5 +14,7 @@ namespace Carnesia.Domain.Vendor.POCO
         public string bankAccountDetails { get; set; }
         public string managerName { get; set; }
         public string phoneNumber { get; set; }
+        public string addressOne { get; set; }
+        public string addressTwo { get; set; }
     }
 }

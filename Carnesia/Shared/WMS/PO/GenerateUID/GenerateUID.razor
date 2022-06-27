@@ -68,7 +68,7 @@
                 </MudTd>
                 <MudTd DataLabel="Print Label">
                     @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenGenerateUIDDialog">Generate UID</MudButton>*@
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenPrintLabelDialog">Print Label</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenPrintLabelDialog(PO.poCode, context.productCode)">Print Label</MudButton>
                 </MudTd>
             </RowTemplate>
             <PagerContent>
@@ -151,10 +151,12 @@
     //}
 
     // Print Label Modal
-    private void OpenPrintLabelDialog()
+    private void OpenPrintLabelDialog(string poCode, string productCode)
     {
+        Console.WriteLine(poCode);
+        var parameters = new DialogParameters { ["poCode"]=poCode, ["productCode"]=productCode  };
         var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        DialogService.Show<GenerateUIDPrintLabelModal>("Print Label", options);
+        DialogService.Show<GenerateUIDPrintLabelModal>("Print Label", parameters, options);
     }
 
     // Print Label Modal

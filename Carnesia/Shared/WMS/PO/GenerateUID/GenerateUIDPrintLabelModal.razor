@@ -1,4 +1,7 @@
-﻿@inject IJSRuntime IJS
+﻿@using Carnesia.Domain.WMS.PO.POCO
+@inject IJSRuntime IJS
+@inject IPurchaseOrder _purchaseOrder
+
 
 <MudDialog>
     <DialogContent>
@@ -6,66 +9,109 @@
             <MudGrid>
                 <MudItem xs="12">
                     <MudRadioGroup @bind-SelectedOption="selectDate" Class="d-flex flex-column">
-                        <MudRadio Option="@("12-6-2022")" Color="Color.Primary" Dense="true">12.6.2022 - 200</MudRadio>
-                        <MudRadio Option="@("13-6-2022")" Color="Color.Primary" Dense="true">13.6.2022 - 150</MudRadio>
+                        @foreach (var el in expList)
+                        {
+                            <MudRadio Option="el.expDate.ToString()" Color="Color.Primary" Dense="true">@el.expDate.ToString() - @el.generatedSKUQty</MudRadio>
+                        }
                     </MudRadioGroup>
                 </MudItem>
-                <MudItem xs="12">
-                    <MudCheckBox @bind-Checked="@labelForm.BSTI" Label="BSTI" Color="Color.Primary"></MudCheckBox>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudCheckBox @bind-Checked="@labelForm.MRP" Label="MRP" Color="Color.Primary"></MudCheckBox>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudCheckBox @bind-Checked="@labelForm.SKU" Label="SKU" Color="Color.Primary"></MudCheckBox>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudCheckBox @bind-Checked="@labelForm.SKU" Label="Product ID" Color="Color.Primary"></MudCheckBox>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudCheckBox @bind-Checked="@labelForm.SKU" Label="Importer Info" Color="Color.Primary"></MudCheckBox>
-                </MudItem>
-                <MudItem xs="12">
-                    <div class="d-flex justify-end">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GoToPrint">Print Label</MudButton>
-                    </div>
-                </MudItem>
             </MudGrid>
+
+            <MudText Class="mt-5">Select Style</MudText>
+            <MudRadioGroup @bind-SelectedOption="selectStyle">
+                <MudGrid>
+                    <MudItem xs="4">
+                        <MudRadio Option="@("Style1")" Color="Color.Primary" Dense="true">
+                            <MudImage Src="@("./Style1.jpeg")" style="width: 100%" />
+                        </MudRadio>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudRadio Option="@("Style2")" Color="Color.Primary" Dense="true">
+                            <MudImage Src="@("./Style2.jpeg")" style="width: 100%" />
+                        </MudRadio>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudRadio Option="@("Style3")" Color="Color.Primary" Dense="true">
+                            <MudImage Src="@("./Style3.jpeg")" style="width: 100%" />
+                        </MudRadio>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudRadio Option="@("Style4")" Color="Color.Primary" Dense="true">
+                            <MudImage Src="@("./Style4.jpeg")" style="width: 100%" />
+                        </MudRadio>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudRadio Option="@("Style5")" Color="Color.Primary" Dense="true">
+                            <MudImage Src="@("./Style5.jpeg")" style="width: 100%" />
+                        </MudRadio>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudRadio Option="@("Style6")" Color="Color.Primary" Dense="true">
+                            <MudImage Src="@("./Style6.jpeg")" style="width: 100%" />
+                        </MudRadio>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudRadio Option="@("Style7")" Color="Color.Primary" Dense="true">
+                            <MudImage Src="@("./Style7.jpeg")" style="width: 100%" />
+                        </MudRadio>
+                    </MudItem>
+                </MudGrid>
+            </MudRadioGroup>
+
+            <MudText Class="mt-5" Color="Color.Error">@errorText</MudText>
+
+            <div class="d-flex justify-end">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GoToPrint">Print Label</MudButton>
+            </div>
         </MudForm>
     </DialogContent>
 </MudDialog>
 
 @code {
+    // Modal On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetExpList(); 
+    }
+
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
+    [Parameter] public string poCode { get; set; }
+    [Parameter] public string productCode { get; set; }
+
     void Cancel() => MudDialog.Cancel();
+
+    // Exp Date List
+    private List<UIDProfileDTO> expList = new List<UIDProfileDTO>();
+
+    // Get Exp Date List
+    private async Task GetExpList()
+    {
+        expList = await _purchaseOrder.GetUIDProfile(poCode, productCode);
+    }
 
     // Form Ref
     MudForm form;
     bool success;
     string[] errors = { };
 
-    // Input Data Bind
-    public LabelForm labelForm = new LabelForm();
-
     // Select Date
     private string selectDate { get; set; }
 
+    // Select Style
+    private string selectStyle { get; set; }
 
-    // Form Class
-    public class LabelForm
-    {
-        public DateTime? Date { get; set; }
-        public int QTY { get; set; }
-        public bool BSTI { get; set; }
-        public bool MRP { get; set; }
-        public bool UID { get; set; }
-        public bool SKU { get; set; }
-    }
+    // Error Text 
+    private string errorText { get; set; }
 
     // Go To Print Label
     private async Task GoToPrint()
     {
-        await IJS.InvokeAsync<object>("open", new object[] { "/print-label", "_blank" });
+        if (String.IsNullOrEmpty(selectStyle))
+        {
+            errorText = "Please select a print style!";
+            return;
+        }
+        await IJS.InvokeAsync<object>("open", new object[] { $"/print-label/{selectStyle}/{selectDate}/{poCode}/{productCode}", "_blank" });
     }
 }

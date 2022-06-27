@@ -1,4 +1,5 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
+@using Carnesia.Domain.Common.POCO
 @using Carnesia.Pages.WMS.PO
 @inject IDialogService DialogService
 @inject IPurchaseOrder _order
@@ -11,7 +12,7 @@
 				<MudTextField @bind-Value="filterInput.POID" Label="PO ID" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="2">
-				<MudAutocomplete T="string" Label="Supplier" Value="filterInput.SupplierName" ValueChanged="(string s) => GetSupplierId(s)" SearchFunc="@SupplierSearch" ResetValueOnEmptyText="@true"/>
+				<MudAutocomplete T="string" Label="Supplier" Value="filterInput.SupplierName" ValueChanged="(string s) => GetSupplierId(s)" SearchFunc="@SupplierSearch"						 ResetValueOnEmptyText="@true"/>
 			</MudItem>
 			<MudItem md="2">
 				<MudSelect @bind-Value="filterInput.Status" Label="Status" AnchorOrigin="Origin.BottomCenter">
@@ -31,7 +32,7 @@
 		</MudGrid>
 
 		@* <MudTable Class="mt-10" Items="@poList" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<POListPoco,bool>(FilterCycleCheck)"> *@
-		<MudTable Class="mt-10" Items="@poList" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped">
+		<MudTable Class="mt-10" Items="@poList" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
 			<ToolBarContent>
 				<MudSpacer />
 				<MudSpacer />
@@ -66,12 +67,11 @@
 		</MudTable>
 
 		<div class="d-flex flex-wrap mt-4">
-			<MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
-			<MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
-			<MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
-			<MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
-			<MudSpacer />
-		</div>
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
 	</MudContainer>
 </MudPaper>
 
@@ -82,11 +82,8 @@
 	// PO List
 	public List<POListPoco> poList = new List<POListPoco>();
 
-	// Table Editor
-	private bool dense { get; set; }
-	private bool bordered { get; set; }
-	private bool hover { get; set; }
-	private bool striped { get; set; }
+	// Table Customaization
+    private TableCommon tableCommon = new TableCommon();
 
 	protected override async Task OnInitializedAsync()
 	{
