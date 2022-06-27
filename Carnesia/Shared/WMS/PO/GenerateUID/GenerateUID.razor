@@ -62,8 +62,8 @@
                 <MudTd DataLabel="QC Passed">@context.qcPassed</MudTd>
                 <MudTd DataLabel="QC Failed">@context.qcFailed</MudTd>
                 <MudTd DataLabel="Not Arrived">@context.notArrivedQty</MudTd>
+                <MudTd DataLabel="Left UID">@context.leftUIDGnrtQty</MudTd>
                 <MudTd DataLabel="Value">@(@context.qcPassed * @context.liftingPrice)</MudTd>
-                <MudTd DataLabel="Left UID">@context.qcPassed</MudTd>
                 <MudTd DataLabel="Generate UID">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="()=>OpenGenerateUIDDialog(PO.poCode,context.productCode)">Generate UID</MudButton>
                     @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenPrintLabelDialog">Print Label</MudButton>*@

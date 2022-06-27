@@ -48,6 +48,7 @@
         uidForm.productCode = ProductCode;       
         var result = await _order.GenerateUID(uidForm);
         _snackbar.Add("OK");
+        MudDialog.Cancel();
         
     }
 

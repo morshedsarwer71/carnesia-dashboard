@@ -67,10 +67,13 @@ a, .btn-link {
     .no-print, .no-print * {
         display: none !important;
     }
-    div{
-        break-inside: avoid;
-    }
+    
+    
 }
+.break-page {
+    break-after: avoid-column;
+}
+
 
 .login-layout {
     display: flex;

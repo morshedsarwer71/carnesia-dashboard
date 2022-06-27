@@ -2,19 +2,45 @@
 @page "/print-label"
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.BarcodeGenerator
+@inject HttpClient httpClient
 
 
 <div class="d-flex flex-wrap" style="width: 3.5in; margin: 0 auto;">
-	
-	@foreach(var item in data)
-	{
+
+	@foreach(var item in Uids.Select((value, i) => new { i, value }))
+	{		
 		
-		<div class="d-flex flex-wrap pa-2" style="width: 50%">
+		<div class="d-flex flex-wrap pa-2" style="@(item.i ==0 || item.i == 1?noBreak:Break)">
+			<div class="ms-2">
+				<img class="d-block ms-auto mt-2" style="width: 55px; margin-left: 5px;" src="./bsti-ai.png" alt="" />
+			</div>
+			<div class="me-auto">
+				<p style="font-size: 7px; padding-left: 2px;">Importer</p>
+				<p style="font-size: 7px; padding-left: 2px;">Arham Trade International</p>
+				<p style="font-size: 7px; padding-left: 2px;">House- 55/1, Road-7</p>
+				<p style="font-size: 7px; padding-left: 2px;">Block- B, Lalmatia, Dhaka.</p>
+				<p style="font-size: 7px; padding-left: 2px;">MRP- Taka 250.00</p>
+				<p style="font-size: 7px; padding-left: 2px; font-weight: 600">EXP- 10/24</p>
+			</div>
+			<div style="width:100%;">
+				<div style="width:fit-content; margin: 0 auto;">
+					<SfBarcodeGenerator Value="@item.value.uidCode"  Width="160px" Height="35px" >
+						<BarcodeGeneratorDisplayText Size="10" Text="@item.value.uidCode"></BarcodeGeneratorDisplayText>
+					</SfBarcodeGenerator>
+				</div>
+			</div>
+		</div>
+	}
+</div>
+
+@*<div style="display: grid; width: 3.5in; grid-template-columns: 1fr 1fr; margin: 0 auto; gap: 8px;">
+	@foreach(var item in Uids.Select((value, i) => new { i, value }))
+	{		
+		<div class="@(item.i%2 == 0 && item.i != 1?noBreak:Break)">
 			<div class="ms-2">
 				<img class="d-block ms-auto" style="width: 55px; margin-left: 5px;" src="./bsti-ai.png" alt="" />
 			</div>
 			<div class="me-auto">
-				<p style="font-size: 7px; padding-left: 2px">Importer</p>
 				<p style="font-size: 7px; padding-left: 2px">Arham Trade International</p>
 				<p style="font-size: 7px; padding-left: 2px">House- 55/1, Road-7</p>
 				<p style="font-size: 7px; padding-left: 2px">Block- B, Lalmatia, Dhaka.</p>
@@ -23,14 +49,34 @@
 			</div>
 			<div style="width:100%;">
 				<div style="width:fit-content; margin: 0 auto;">
-					<SfBarcodeGenerator Value="@item"  Width="160px" Height="50px" >
-						<BarcodeGeneratorDisplayText Text="@item"></BarcodeGeneratorDisplayText>
+					<SfBarcodeGenerator Value="@item.value.uidCode"  Width="160px" Height="45px" >
+						<BarcodeGeneratorDisplayText Size="10" Text="@item.value.uidCode"></BarcodeGeneratorDisplayText>
+					</SfBarcodeGenerator>
+				</div>
+			</div>
+		</div>
+
+		<div class="@(item.i%2 == 0 && item.i != 0?Break:noBreak)">
+			<div class="ms-2">
+				<img class="d-block ms-auto" style="width: 55px; margin-left: 5px;" src="./bsti-ai.png" alt="" />
+			</div>
+			<div class="me-auto">
+				<p style="font-size: 7px; padding-left: 2px">Arham Trade International</p>
+				<p style="font-size: 7px; padding-left: 2px">House- 55/1, Road-7</p>
+				<p style="font-size: 7px; padding-left: 2px">Block- B, Lalmatia, Dhaka.</p>
+				<p style="font-size: 7px; padding-left: 2px">MRP- Taka 250.00</p>
+				<p style="font-size: 7px; padding-left: 2px">EXP- 10/24</p>
+			</div>
+			<div style="width:100%;">
+				<div style="width:fit-content; margin: 0 auto;">
+					<SfBarcodeGenerator Value="@item.value.uidCode"  Width="160px" Height="45px" >
+						<BarcodeGeneratorDisplayText Size="10" Text="@item.value.uidCode"></BarcodeGeneratorDisplayText>
 					</SfBarcodeGenerator>
 				</div>
 			</div>
 		</div>
 	}
-</div>
+</div>*@
 
 @*<div class="d-flex flex-wrap ms-15 mt-2" style="width: 100%;">
 	<div class="d-flex align-center" style="width:51%;" >
@@ -57,9 +103,36 @@
 
 
 @code {
+
+	private List<uids> Uids=new List<uids>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await GetUID();
+	}
+	private async Task GetUID()
+	{
+		Uids = await httpClient.GetFromJsonAsync<List<uids>>("Bin/getuid");
+	}
+	// Class String
+	//private string noBreak = "d-flex flex-wrap pa-2";
+	//private string Break = "d-flex flex-wrap pa-2 break-page";
+
+	private string Break = "width: 50%; margin-top: 87px;";
+	private string noBreak = "width: 50%;";
+
 	private string[] data=new string[]
 {
 	"123456789012345","123456789012346","123456789012347","123456789012348",
 	"123456789012349","123456789012310","123456789012312","123456789012318"
 };
+
+	private class uids
+	
+	{
+		public int id { get; set; }
+		public string profileCode { get; set; }
+		public string uidCode { get; set; }
+		public bool isDelivered { get; set; }
+	}
 }

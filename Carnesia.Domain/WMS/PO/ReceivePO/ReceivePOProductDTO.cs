@@ -18,5 +18,6 @@ namespace Carnesia.Domain.WMS.PO.ReceivePO
         public int qcFailed { get; set; }
         public int notArrivedQty { get; set; }
         public decimal totalPrice { get; set; }
+        public int leftUIDGnrtQty { get; set; }
     }
 }
