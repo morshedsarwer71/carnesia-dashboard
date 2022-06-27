@@ -7,22 +7,28 @@
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
 			<MudGrid>
 				<MudItem md="6">
-					<MudTextField T="string" Label="Vendor Name" @bind-Value="vendorPoco.name" Required="true" RequiredError="Vendor name is required!"/>
+					<MudTextField Label="Vendor Name" @bind-Value="vendorPoco.name" MaxLength="25" Required="true" RequiredError="Vendor name is required!"/>
 				</MudItem>
 				<MudItem md="6">
-					<MudTextField T="string" Label="Phone Number" @bind-Value="vendorPoco.phoneNumber" Required="true" RequiredError="Phone number is required!"/>
+					<MudTextField Label="Phone Number" @bind-Value="vendorPoco.phoneNumber" Required="true" RequiredError="Phone number is required!"/>
 				</MudItem>
 				<MudItem md="6">
-					<MudTextField T="string" Label="Initial" @bind-Value="vendorPoco.initial" Required="true" RequiredError="Initial is required!"/>
+					<MudTextField Label="Initial" @bind-Value="vendorPoco.initial" Required="true" RequiredError="Initial is required!"/>
 				</MudItem>
 				<MudItem md="6">
-					<MudTextField T="string" Label="Owner" @bind-Value="vendorPoco.owner" Required="true" RequiredError="Owner is required!"/>
+					<MudTextField Label="Owner" @bind-Value="vendorPoco.owner" Required="true" RequiredError="Owner is required!"/>
 				</MudItem>
 				<MudItem md="6">
-					<MudTextField T="string" Label="Manager Name" @bind-Value="vendorPoco.managerName" Required="true" RequiredError="Manager name is required!"/>
+					<MudTextField Label="Manager Name" @bind-Value="vendorPoco.managerName" Required="true" RequiredError="Manager name is required!"/>
 				</MudItem>
 				<MudItem md="6">
-					<MudTextField T="string" Label="Bank Account Details" @bind-Value="vendorPoco.bankAccountDetails" Required="true" RequiredError="Bank account details is required!"/>
+					<MudTextField Label="Bank Account Details" @bind-Value="vendorPoco.bankAccountDetails" Required="true" RequiredError="Bank account details is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField Label="Address Field 1" @bind-Value="vendorPoco.addressOne" MaxLength="25" Required="true" RequiredError="Address Field 1 is required!"/>
+				</MudItem>
+				<MudItem md="6">
+					<MudTextField Label="Address Field 2" @bind-Value="vendorPoco.addressTwo" MaxLength="25" Required="true" RequiredError="Address 2 is required!"/>
 				</MudItem>
 			</MudGrid>
 
@@ -39,10 +45,14 @@
 	string[] errors = { };
 	MudForm form;
 
+	// Address
+	private string AddressOne { get; set; }
+	private string AddressTwo { get; set; }
+
 	public PostVendorPoco vendorPoco=new PostVendorPoco();
 	private async Task AddVendor()
 	{
-		var res =await _vendor.AddVendor(vendorPoco);
+		var res = await _vendor.AddVendor(vendorPoco);
 		if (res)
 		{
 			_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;

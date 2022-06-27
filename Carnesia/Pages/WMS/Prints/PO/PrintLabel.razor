@@ -5,10 +5,10 @@
 @inject HttpClient httpClient
 
 
-<div class="d-flex flex-wrap" style="width: 3.5in; margin: 0 auto;">
-
-	@foreach(var item in Uids.Select((value, i) => new { i, value }))
-	{		
+@*<div class="d-flex flex-wrap" style="width: 3.5in; margin: 0 auto;">
+	
+	@foreach(var item in data)
+	{
 		
 		<div class="d-flex flex-wrap pa-2" style="@(item.i ==0 || item.i == 1?noBreak:Break)">
 			<div class="ms-2">
@@ -75,6 +75,15 @@
 				</div>
 			</div>
 		</div>
+
+	}
+</div>*@
+<div class="mx-auto" style="width: 3.5in; display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px; break-inside: auto;">
+	@foreach(var item in data.Select((value, i) => new { i, value }))
+	{
+		<div class="@(item.i%2 == 0 ? NoBreak : Break)" style="height: 20px; border: 1px solid black;">
+			<p>@item.value</p>
+		</div>
 	}
 </div>*@
 
@@ -127,12 +136,6 @@
 	"123456789012349","123456789012310","123456789012312","123456789012318"
 };
 
-	private class uids
-	
-	{
-		public int id { get; set; }
-		public string profileCode { get; set; }
-		public string uidCode { get; set; }
-		public bool isDelivered { get; set; }
-	}
+	private string Break = "break-page";
+	private string NoBreak = "";
 }

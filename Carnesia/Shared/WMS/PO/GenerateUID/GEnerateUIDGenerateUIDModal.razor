@@ -6,12 +6,20 @@
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
             
             <MudGrid>
+                @if (withoutExp == false)
+                {
+                    <MudItem xs="12">
+                        <MudDatePicker @bind-Date="uidForm.expDate" Label="Expiry Date" Required="true" RequiredError="Expiray Date is required!" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField T="int" @bind-Value="uidForm.generateuidQty" Label="Input Qty. of Same Expiry" Required="true" RequiredError="Input QTY is required!" />
+                    </MudItem>
+                }
+
                 <MudItem xs="12">
-                    <MudDatePicker @bind-Date="uidForm.expDate" Label="Expiry Date" Required="true" RequiredError="Expiray Date is required!" />
+                    <MudCheckBox @bind-Checked="@withoutExp" Label="Without Exp Date" Color="Color.Primary"></MudCheckBox>
                 </MudItem>
-                <MudItem xs="12">
-                    <MudTextField T="int" @bind-Value="uidForm.generateuidQty" Label="Input Qty. of Same Expiry" Required="true" RequiredError="Input QTY is required!" />
-                </MudItem>
+
                 <MudItem xs="12">
                     <div class="d-flex justify-end">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GenerateUID">Generate UID</MudButton>
@@ -27,8 +35,12 @@
 
     [Parameter]
     public string PoCode { get; set; }
+
     [Parameter]
     public string ProductCode { get; set; }
+
+    // Without Exp Date
+    private bool withoutExp { get; set; }
 
     void Cancel() => MudDialog.Cancel();
 
