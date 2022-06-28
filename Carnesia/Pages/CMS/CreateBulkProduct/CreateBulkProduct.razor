@@ -1,0 +1,141 @@
+﻿@page "/create-bulk-product"
+@using Carnesia.Domain.CMS.ChildProduct
+@inject IChildProduct _childProduct
+@inject ISnackbar Snackbar
+
+
+
+<MudPaper Class="ma-2 pa-16">
+	<MudContainer Fixed="true">
+		<div class="d-flex justify-center mb-5">
+            <a href="./PoProducts.xlsx" download target="_top">
+			    <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
+                    Download CSV Template
+                </MudButton>
+            </a>
+
+			<InputFile id="fileInput" hidden accept=".xlsx" OnChange="UploadFiles"/>
+            <MudButton HtmlTag="label"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Filled.CloudUpload"
+                       for="fileInput">
+                Upload Files
+            </MudButton>
+		</div>
+
+        <MudTable Items="@Products">
+            <ColGroup>
+                <col style="width: 500px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+                <col style="width: 200px;" />
+            </ColGroup>
+            <HeaderContent>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Product SKU</MudTh>
+                <MudTh>Parent ID</MudTh>
+                <MudTh>MRP</MudTh>
+                <MudTh>Vat Amount</MudTh>
+                <MudTh>Weight</MudTh>
+                <MudTh>UOM</MudTh>
+                <MudTh>Product Dimension</MudTh>
+                <MudTh>Product Points</MudTh>
+                <MudTh>Is Size</MudTh>
+                <MudTh>Color Code</MudTh>
+                <MudTh>Color Name</MudTh>
+                <MudTh>Size Or Qty</MudTh>
+                <MudTh>Meta Title</MudTh>
+                <MudTh>Meta Tags</MudTh>
+                <MudTh>Meta Description</MudTh>
+                <MudTh>Search Tags</MudTh>
+                <MudTh>Is Discount Percent</MudTh>
+                <MudTh>Discount Amount</MudTh>
+                <MudTh>Up Sells</MudTh>
+                <MudTh>Cross Sells</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="Product SKU">@context.productsku</MudTd>
+                <MudTd DataLabel="Parent ID">@context.productParentId</MudTd>
+                <MudTd DataLabel="MRP">@context.mrp</MudTd>
+                <MudTd DataLabel="Vat Amount">@context.vatAmount</MudTd>
+                <MudTd DataLabel="Weight">@context.weight</MudTd>
+                <MudTd DataLabel="UOM">@context.uom</MudTd>
+                <MudTd DataLabel="Product Dimension">@context.productDimension</MudTd>
+                <MudTd DataLabel="Product Points">@context.productPoints</MudTd>
+                <MudTd DataLabel="Is Size">@context.isSize</MudTd>
+                <MudTd DataLabel="Color Code">@context.colorCode</MudTd>
+                <MudTd DataLabel="Color Name">@context.colorName</MudTd>
+                <MudTd DataLabel="Size Or Qty">@context.sizeOrQty</MudTd>
+                <MudTd DataLabel="Meta Title">@context.metaTitle</MudTd>
+                <MudTd DataLabel="Meta Tags">@context.metaTags</MudTd>
+                <MudTd DataLabel="Meta Description">@context.metaDescription</MudTd>
+                <MudTd DataLabel="Search Tags">@context.seachTags</MudTd>
+                <MudTd DataLabel="Is Discount Percent">@context.isPercent</MudTd>
+                <MudTd DataLabel="Discount Amount">@context.discount</MudTd>
+                <MudTd DataLabel="Up Sells">@context.upSells</MudTd>
+                <MudTd DataLabel="Cross Sells">@context.crossSells</MudTd>
+            </RowTemplate>
+        </MudTable>
+
+        <div class="d-flex justify-end mt-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Products.Count <= 0 ? true : false" OnClick="CreateNewProducts" >Submit</MudButton>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Product List
+    private List<ChildProductDetailsDTO> Products = new List<ChildProductDetailsDTO>();
+
+    // Upload .xlsx
+    private async Task UploadFiles (InputFileChangeEventArgs e)
+    {
+        try
+        {
+            Products.Clear();
+            Products =  await _childProduct.UploadBulkProducts(e);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("error");
+            throw;
+        }
+    }
+
+    // Create New Products
+    private async Task CreateNewProducts()
+    {
+        try
+        {
+            var result = await _childProduct.CreateBulkProducts(Products);
+            if (!String.IsNullOrEmpty(result))
+            {
+                Snackbar.Add(result, Severity.Success);
+            }
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something went wrong!", Severity.Error);
+            throw;
+        }
+    }
+}
