@@ -1,5 +1,6 @@
 ﻿@layout PrintLayout
 @page "/print-label/{selectStyle}/{selectDate}/{poCode}/{productCode}"
+@page "/print-label/{selectStyle}/{poCode}/{productCode}"
 @using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Shared.WMS.Print.PO.PrintLabel
 @using Syncfusion.Blazor
@@ -68,12 +69,17 @@
 	}
 	private async Task GetUID()
 	{
+		if (String.IsNullOrEmpty(selectDate))
+		{
+			Uids = await httpClient.GetFromJsonAsync<UIDProfileDTO>($"PurchaseOrders/getuids/{poCode}/{productCode}/na");
+			return;
+		}
 		Uids = await httpClient.GetFromJsonAsync<UIDProfileDTO>($"PurchaseOrders/getuids/{poCode}/{productCode}/{selectDate}");
 	}
 	// Class String
 	//private string noBreak = "d-flex flex-wrap pa-2";
 	//private string Break = "d-flex flex-wrap pa-2 break-page";
 
-	private string Break = "width: 50%; margin-top: 87px;";
-	private string noBreak = "width: 50%;";
+	//private string Break = "width: 50%; margin-top: 87px;";
+	//private string noBreak = "width: 50%;";
 }

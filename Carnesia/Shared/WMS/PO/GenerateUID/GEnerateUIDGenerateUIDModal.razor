@@ -9,10 +9,10 @@
                 @if (withoutExp == false)
                 {
                     <MudItem xs="12">
-                        <MudDatePicker @bind-Date="uidForm.expDate" Label="Expiry Date" Required="true" RequiredError="Expiray Date is required!" />
+                        <MudDatePicker @bind-Date="uidForm.expDate" Label="Expiry Date" Required="true" RequiredError="Expiray Date is                                     required!" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField T="int" @bind-Value="uidForm.generateuidQty" Label="Input Qty. of Same Expiry" Required="true" RequiredError="Input QTY is required!" />
+                        <MudTextField T="int" @bind-Value="uidForm.generateuidQty" Label="Input Qty. of Same Expiry" Required="true"                                       RequiredError="Input QTY is required!" />
                     </MudItem>
                 }
 
@@ -61,14 +61,14 @@
         //_snackbar.Add(ProductCode);
         if(Qty < uidForm.generateuidQty)
         {
-            _snackbar.Add("Input value bigger than Left UID Qty");
+            _snackbar.Add("Input value bigger than Left UID Qty!",  Severity.Error);
         }
         else
         {
             uidForm.poCode = PoCode;
             uidForm.productCode = ProductCode;
             uidForm = await _order.GenerateUID(uidForm);
-            _snackbar.Add("testing");
+            _snackbar.Add("UID Generated Successfully!", Severity.Success );
             Close();
         }
 

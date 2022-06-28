@@ -67,7 +67,7 @@
                 <MudTd DataLabel="Left UID">@context.leftUIDGnrtQty</MudTd>
                 <MudTd DataLabel="Value">@(@context.qcPassed * @context.liftingPrice)</MudTd>
                 <MudTd DataLabel="Generate UID">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="()=>OpenGenerateUIDDialog(PO.poCode,context.productCode,context.leftUIDGnrtQty)">Generate UID</MudButton>
+                    <MudButton Variant="Variant.Filled" Disabled="context.leftUIDGnrtQty <= 0? true : false" Color="Color.Primary" OnClick="()=>OpenGenerateUIDDialog(PO.poCode,context.productCode,context.leftUIDGnrtQty)">Generate UID</MudButton>
                     @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenPrintLabelDialog">Print Label</MudButton>*@
                 </MudTd>
                 <MudTd DataLabel="Print Label">
@@ -174,8 +174,7 @@
         var result = await  DialogService.Show<GEnerateUIDGenerateUIDModal>("Generate UID",parameter, options).Result;
         if(result.Data != null)
         {
-            Elements.Clear();
-            GetReceivePO();
+            await GetReceivePO();
             //UIDPoco poco = result.Data as UIDPoco;
             //var results = Elements.FirstOrDefault(x=>x.productCode==poco.productCode);
             //var s = results.leftUIDGnrtQty - poco.generateuidQty;

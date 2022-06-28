@@ -11,7 +11,7 @@
                     <MudRadioGroup @bind-SelectedOption="selectDate" Class="d-flex flex-column">
                         @foreach (var el in expList)
                         {
-                            <MudRadio Option="el.expDate" Color="Color.Primary" Dense="true">@el.expDate - @el.generatedSKUQty</MudRadio>
+                            <MudRadio Option="el.paramDate" Color="Color.Primary" Dense="true">@el.expDate - @el.generatedSKUQty</MudRadio>
                         }
                     </MudRadioGroup>
                 </MudItem>
@@ -107,10 +107,19 @@
     // Go To Print Label
     private async Task GoToPrint()
     {
+        errorText = string.Empty;
         if (String.IsNullOrEmpty(selectStyle))
         {
             errorText = "Please select a print style!";
             return;
+        }
+        if (selectStyle == "Style1" || selectStyle == "Style2" || selectStyle == "Style5" || selectStyle == "Style7")
+        {
+            if (String.IsNullOrEmpty(selectDate))
+            {
+                errorText = "Please select an exp date for this style!";
+                return;
+            }
         }
         await IJS.InvokeAsync<object>("open", new object[] { $"/print-label/{selectStyle}/{selectDate}/{poCode}/{productCode}", "_blank" });
     }
