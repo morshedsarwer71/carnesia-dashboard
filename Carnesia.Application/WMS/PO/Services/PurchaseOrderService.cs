@@ -71,7 +71,6 @@ namespace Carnesia.Application.WMS.PO.Services
                 using(var package=new ExcelPackage())
                 {
                     var workSheet = package.Workbook.Worksheets.Add("Sheet1");
-
                     #region Header Row
                     workSheet.Cells[1, 1].Value = "SKU";
                     workSheet.Cells[1, 1].Style.Font.Size = 12;
