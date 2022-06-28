@@ -15,10 +15,10 @@ namespace Carnesia.Domain.CMS.ChildProduct
         public decimal weight { get; set; }
         public string uom { get; set; }
         public string productDimension { get; set; }
-        public bool isPublish { get; set; }
-        public bool isHasFreeProd { get; set; }
+        public bool isPublish { get; set; } = true;
+        public bool isHasFreeProd { get; set; } = false;
         public int? productPoints { get; set; }
-        public string description { get; set; } = "Hello World";
+        public string description { get; set; } = "Bulk Upload Description!";
         public bool isSize { get; set; }
         public string? colorCode { get; set; }
         public string? sizeOrQty { get; set; }
