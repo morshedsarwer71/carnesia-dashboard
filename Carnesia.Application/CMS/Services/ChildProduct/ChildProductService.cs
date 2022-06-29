@@ -175,6 +175,7 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
                     var metaTitle = row.Field<string>("MetaTitle");
                     var isPercent = Convert.ToBoolean(row.Field<string>("IsPercent"));
                     var uom = row.Field<string>("UOM");
+                    var productCode = row.Field<string>("ProductCode");
 
 
                     var pop = new ChildProductDetailsDTO()
@@ -202,7 +203,8 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
                         upSells = upSells,
                         metaTitle = metaTitle,
                         isPercent = isPercent,
-                        uom = uom
+                        uom = uom,
+                        productCode = productCode
                         
                     };
                     Products.Add(pop);
