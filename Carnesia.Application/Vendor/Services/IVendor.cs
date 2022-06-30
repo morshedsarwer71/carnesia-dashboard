@@ -14,5 +14,6 @@ namespace Carnesia.Application.Vendor.Services
         Task<string[]> GetVendorsNameAsString();
         Task<VendorDTO> GetVendor(string vendorName);
         Task<bool> AddVendor(PostVendorPoco vendorPoco);
+        Task<bool> UpdateVendor(VendorDTO vendor);
     }
 }

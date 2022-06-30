@@ -7,6 +7,9 @@
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
 			<MudGrid>
 				<MudItem md="6">
+					<MudTextField Label="Importer" @bind-Value="vendorPoco.importer" MaxLength="23" Required="true" RequiredError="Importer is required!"/>
+				</MudItem>
+				<MudItem md="6">
 					<MudTextField Label="Vendor Name" @bind-Value="vendorPoco.name" MaxLength="23" Required="true" RequiredError="Vendor name is required!"/>
 				</MudItem>
 				<MudItem md="6">

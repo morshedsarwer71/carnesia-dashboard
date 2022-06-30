@@ -1,0 +1,40 @@
+﻿@using Carnesia.Domain.WMS.Bin.Models
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudNumericField @bind-Value="FormData.capacity" Label="Capacity" Immediate="true" Required="true" RequiredError="Capacity is required!"/>
+                <MudNumericField @bind-Value="FormData.floor" Label="Floor" Immediate="true" Required="true" RequiredError="Floor is required!"/>
+                <MudNumericField @bind-Value="FormData.room" Label="Room" Immediate="true" Required="true" RequiredError="Room is required!"/>
+                <MudNumericField @bind-Value="FormData.column" Label="Column" Immediate="true" Required="true" RequiredError="Column is required!"/>
+                <MudNumericField @bind-Value="FormData.rack" Label="Rack" Immediate="true" Required="true" RequiredError="Rack is required!"/>
+                <MudNumericField @bind-Value="FormData.shelf" Label="Shelf" Immediate="true" Required="true" RequiredError="Shelf is required!"/>
+                <MudNumericField @bind-Value="FormData.bin" Label="Bin" Immediate="true" Required="true" RequiredError="Bin is required!"/>
+                <div class="d-flex justify-end my-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateBinName" >Submit</MudButton>
+                </div>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public BinDTO FormData{get;set;} = new BinDTO();
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Bin Name
+    private void CreateBinName()
+    {
+        FormData.binName = $"F{FormData.floor}R{FormData.room}C{FormData.column}RA{FormData.rack}S{FormData.shelf}B{FormData.bin}";
+        Submit();
+    }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<BinDTO>(FormData));
+}

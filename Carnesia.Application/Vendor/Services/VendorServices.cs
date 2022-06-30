@@ -76,5 +76,22 @@ namespace Carnesia.Application.Vendor.Services
                 throw;
             }
         }
+
+        public async Task<bool> UpdateVendor(VendorDTO vendor)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"Vendors/update/{vendor.vendorId}", vendor);
+
+                if (result.IsSuccessStatusCode) return true;
+
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
