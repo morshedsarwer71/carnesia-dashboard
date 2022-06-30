@@ -13,6 +13,6 @@ namespace Carnesia.Domain.CMS.ParentProduct
         public string brandName { get; set; }
         public string originId { get; set; }
         public string productType { get; set; } = "Compound";
-        public string description { get; set; }
+        public string description { get; set; } = "PHA+PGJyPjwvcD4=";
     }
 }

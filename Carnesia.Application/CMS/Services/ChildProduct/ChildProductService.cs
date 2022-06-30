@@ -217,5 +217,67 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
                 throw;
             }
         }
+
+        public async Task<List<BulkImageUploadDTO>> UploadXLSXFileForImage(InputFileChangeEventArgs e)
+        {
+            try
+            {
+                var Images = new List<BulkImageUploadDTO>();
+                DataTable dt = new DataTable();
+                var fileStream = e.File.OpenReadStream();
+                var ms = new MemoryStream();
+                await fileStream.CopyToAsync(ms);
+                fileStream.Close();
+                ms.Position = 0;
+                ISheet sheet;
+                var xsswb = new XSSFWorkbook(ms);
+                sheet = xsswb.GetSheetAt(0);
+                IRow hr = sheet.GetRow(0);
+                var rl = new List<string>();
+                int cc = hr.LastCellNum;
+                for (int j = 0; j < cc; j++)
+                {
+                    ICell cell = hr.GetCell(j);
+                    dt.Columns.Add(cell.ToString());
+                }
+                for (int j = (sheet.FirstRowNum + 1); j <= sheet.LastRowNum; j++)
+                {
+                    var r = sheet.GetRow(j);
+                    for (int i = r.FirstCellNum; i < cc; i++)
+                    {
+                        rl.Add(r.GetCell(i).ToString());
+                    }
+                    if (rl.Count > 0)
+                    {
+                        dt.Rows.Add(rl.ToArray());
+                    }
+                    rl.Clear();
+                }
+                foreach (DataRow row in dt.Rows)
+                {
+                    var imageURL = row.Field<string>("ImageURL");
+                    var imageName = row.Field<string>("ImageName");
+                    var altText = row.Field<string>("AltText");
+                    var productId = Convert.ToInt32(row.Field<string>("ProductId"));
+                    
+
+
+                    var pop = new BulkImageUploadDTO()
+                    { 
+                        altText = altText,
+                        imageName = imageName,
+                        imageURL = imageURL,
+                        productId = productId
+                    };
+                    Images.Add(pop);
+                }
+                return Images.Where(x => x.imageURL != null).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

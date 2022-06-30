@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Carnesia.Domain.CMS.ParentProduct;
 using Carnesia.Domain.CMS.SimpleProduct;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Carnesia.Application.CMS.Services.ParentProduct
 {
@@ -19,5 +20,6 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
 
         Task<int> GetParentProductID(string ProductName);
         Task UpdateParentProduct(ParentProductDTO ParentProduct);
+        Task<List<CreateParentProductDTO>> UploadXLSXFile(InputFileChangeEventArgs e);
     }
 }

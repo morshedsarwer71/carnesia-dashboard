@@ -1,0 +1,63 @@
+﻿@page "/bulk-image-upload"
+@using Carnesia.Domain.CMS.ChildProduct
+@inject IChildProduct _childProduct
+
+<MudPaper Class="ma-2 pa-16">
+	<MudContainer Fixed="true">
+		<div class="d-flex justify-center mb-5">
+            <a href="./BulkImage.xlsx" download target="_top">
+			    <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
+                    Download CSV Template
+                </MudButton>
+            </a>
+
+			<InputFile id="fileInput" hidden accept=".xlsx" OnChange="UploadFile"/>
+            <MudButton HtmlTag="label"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Filled.CloudUpload"
+                       for="fileInput">
+                Upload File
+            </MudButton>
+		</div>
+
+        <MudTable Items="@Images" Dense="true" >
+            <HeaderContent>
+                <MudTh>Image URL</MudTh>
+                <MudTh>Image Name</MudTh>
+                <MudTh>ALT Text</MudTh>
+                <MudTh>Product Id</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Image URL">@context.imageURL</MudTd>
+                <MudTd DataLabel="Image Name">@context.imageName</MudTd>
+                <MudTd DataLabel="ALT Text">@context.altText</MudTd>
+                <MudTd DataLabel="Product Id">@context.productId</MudTd>
+            </RowTemplate>
+        </MudTable>
+
+        <div class="d-flex justify-end mt-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Images.Count <= 0 ? true : false">Submit</MudButton>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Image List
+    private List<BulkImageUploadDTO> Images = new List<BulkImageUploadDTO>();
+
+    // Upload .xlsx
+    private async Task UploadFile (InputFileChangeEventArgs e)
+    {
+        try
+        {
+            Images.Clear();
+            Images =  await _childProduct.UploadXLSXFileForImage(e);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Error!");
+            throw;
+        }
+    }
+}
