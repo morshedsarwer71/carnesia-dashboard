@@ -21,7 +21,7 @@ namespace Carnesia.Application.WMS.Bin.Services
         {
             try
             {
-                var result = await _httpClient.PostAsJsonAsync("Bin", bin);
+                var result = await _httpClient.PostAsJsonAsync("Bins", bin);
                 if (result.IsSuccessStatusCode)
                 {
                     var json = await result.Content.ReadAsStringAsync();
@@ -43,7 +43,7 @@ namespace Carnesia.Application.WMS.Bin.Services
             try
             {
                 //bin = "firstbin";
-                var response =await _httpClient.GetFromJsonAsync<List<GetBinDTO>>($"Bin");
+                var response =await _httpClient.GetFromJsonAsync<List<GetBinDTO>>($"Bins");
                 
                 return response;
             }
@@ -59,7 +59,7 @@ namespace Carnesia.Application.WMS.Bin.Services
             try
             {
                 //bin = "firstbin";
-                var response =await _httpClient.GetFromJsonAsync<List<GetBinDTO>>($"Bin/search?storeId={storeId}&binName={bin}&status={status}");
+                var response =await _httpClient.GetFromJsonAsync<List<GetBinDTO>>($"Bins/search?storeId={storeId}&binName={bin}&status={status}");
                 return response;
             }
             catch (Exception)
@@ -73,7 +73,7 @@ namespace Carnesia.Application.WMS.Bin.Services
         {
             try
             {
-                var response = await _httpClient.GetFromJsonAsync<Response>($"Bin/changesbinstatus/{binId}");
+                var response = await _httpClient.GetFromJsonAsync<Response>($"Bins/changesbinstatus/{binId}");
                 return response;
             }
             catch (Exception e)

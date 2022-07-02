@@ -18,5 +18,8 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
         Task<List<ChildProductDetailsDTO>> UploadBulkProducts(InputFileChangeEventArgs e);
         Task<List<BulkImageUploadDTO>> UploadXLSXFileForImage(InputFileChangeEventArgs e);
         Task<string> CreateBulkProducts(List<ChildProductDetailsDTO> products);
+        Task<List<BulkImageUploadDTO>> CreateBulkImages(List<BulkImageUploadDTO> Images);
+        Task<List<BulkCategoryUploadDTO>> UploadXLSXFileForCategory(InputFileChangeEventArgs e);
+        Task<List<BulkCategoryUploadDTO>> CreateBulkCategories(List<BulkCategoryUploadDTO> Categories);
     }
 }

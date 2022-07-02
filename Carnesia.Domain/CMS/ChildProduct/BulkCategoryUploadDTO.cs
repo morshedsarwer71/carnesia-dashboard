@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Carnesia.Domain.CMS.ChildProduct
 {
-    public class BulkImageUploadDTO
+    public class BulkCategoryUploadDTO
     {
-        public string url { get; set; }
-        public string imageName { get; set; }
-        public string altImageName { get; set; }
+        public int parentCatId { get; set; }
+        public int childCatId { get; set; }
+        public int gChildCatId { get; set; }
         public string productCode { get; set; }
         public string description { get; set; }
     }
