@@ -17,5 +17,6 @@ namespace Carnesia.Domain.Vendor.POCO
         public string phoneNumber { get; set; }
         public string addressOne { get; set; }
         public string addressTwo { get; set; }
+        public string description { get; set; }
     }
 }

@@ -1,12 +1,18 @@
 ﻿@page "/vendor"
 @using Carnesia.Shared.VendorManagement.VendorList
 @using Carnesia.Shared.VendorManagement.NewVendor
+@using Carnesia.Shared.VendorManagement.BulkVendorUpload
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            <MudButton Color="Color.Primary" Variant="CurrentPage == VendorList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(VendorList)">@VendorList</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == VendorList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(VendorList)">
+                @VendorList
+            </MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == NewVendor ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(NewVendor)">@NewVendor</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BulkVendorUpload ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BulkVendorUpload)">
+                @BulkVendorUpload
+            </MudButton>
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
@@ -19,12 +25,17 @@ else if(CurrentPage == NewVendor)
 {
     <NewVendor />
 }
+else if(CurrentPage == BulkVendorUpload)
+{
+    <BulkVendorUpload />
+}
 
 
 @code {
     // Pages
     private string VendorList = "Vendor List";
     private string NewVendor = "New Vendor";
+    private string BulkVendorUpload = "Bulk Vendor Upload";
 
     // Current Page
     private string CurrentPage { get; set; } = "Vendor List";
