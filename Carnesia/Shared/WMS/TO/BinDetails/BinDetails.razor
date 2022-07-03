@@ -1,4 +1,7 @@
 ﻿@using Carnesia.Domain.WMS.BinDetails
+@using Carnesia.Domain.WMS.BinInscan
+@inject IPutAway _putAway
+@inject ISnackbar _snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -6,23 +9,29 @@
         <MudText>Total: 13</MudText>
 		<MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="3">
-				<MudTextField T="string" Label="Bin Number" Variant="Variant.Text"/>
+				<MudTextField T="string" @bind-Value="Bin"  Label="Bin Number" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetBinDetails">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
 
 		<MudTable Items="@Elements" Hover="true">
             <HeaderContent>
+<<<<<<< HEAD
                 <MudTh>Product Code</MudTh>
                 <MudTh>SKU</MudTh>
+=======
+                <MudTh>Item Code</MudTh>
+                <MudTh>Product Code</MudTh>
+>>>>>>> b359ee0f11406eb50c63af74cd71365616fdca2d
                 <MudTh>Product Name</MudTh>
                 <MudTh>QTY</MudTh>
                 <MudTh>BIN</MudTh>
                 <MudTh>Expiry Date</MudTh>
             </HeaderContent>
             <RowTemplate>
+<<<<<<< HEAD
                 <MudTd DataLabel="Product Code">@context.ProductCode</MudTd>
                 <MudTd DataLabel="SKU">@context.SKU</MudTd>
                 <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
@@ -30,6 +39,15 @@
                 <MudTd DataLabel="BIN">@context.BIN</MudTd>
                 <MudTd DataLabel="Expiry Date">
                     <MudButton Color="Color.Primary">View</MudButton>
+=======
+                <MudTd DataLabel="Item Code">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.ProductCode</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="QTY">@context.binSKUStockQty</MudTd>
+                <MudTd DataLabel="BIN">@context.binName</MudTd>
+                <MudTd DataLabel="Download CSV">
+                    <MudButton Color="Color.Primary">Download CSV</MudButton>
+>>>>>>> b359ee0f11406eb50c63af74cd71365616fdca2d
                 </MudTd>
             </RowTemplate>
         </MudTable>
@@ -37,6 +55,23 @@
 </MudPaper>
 
 @code {
+	public string Bin { get; set; }
 	// Table Content
-	private IEnumerable<BinDetailsDTO> Elements = new List<BinDetailsDTO>();
+	private List<BinProductDetails> Elements = new List<BinProductDetails>();
+
+	private async Task GetBinDetails()
+	{
+		try
+		{
+			Elements.Clear();
+			var result = await _putAway.BinDetails(Bin);
+			Elements = result.binDetails;
+		}
+		catch (Exception e)
+		{
+			_snackbar.Add("Error from database", Severity.Error);
+			//Console.WriteLine(e);
+			//throw;
+		}
+	}
 }

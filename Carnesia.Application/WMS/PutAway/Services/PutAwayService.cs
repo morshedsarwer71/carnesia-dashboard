@@ -23,12 +23,12 @@ namespace Carnesia.Application.WMS.PutAway.Services
             {
                 var result = await _httpClient.GetFromJsonAsync<BinInscansPoco>($"PutAway/bulkbininscan/{binNumber}/{poCode}");
                 if (result == null)
-                    return null;
+                    throw new NotImplementedException();
                 return result;
             }
             catch (Exception)
             {
-                return null;
+                throw;
             }
         }
 
@@ -48,19 +48,34 @@ namespace Carnesia.Application.WMS.PutAway.Services
             }
         }
 
+        public async Task<BinDetailsPoco> BinDetails(string bin)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<BinDetailsPoco>($"PutAway/bindetails/{bin}");
+                return result;
+            }
+            catch (Exception e)
+            {
+                //Console.WriteLine(e);
+                throw;
+            }
+        }
+
         public async Task<BinInscanDTO> SingleBinInscan(string uid, string binNumber)
         {
             try
             {
                 var result =await _httpClient.GetFromJsonAsync<BinInscanDTO>($"PutAway/singlebininscan/{uid}/{binNumber}");
-                if (result== null)
-                    return null;
+                if (result == null)
+                    throw new NotImplementedException();
+                var data = from r in result.Product 
                 return result;
-
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return null;
+                Console.WriteLine(e);
+                throw;
             }
         }
     }
