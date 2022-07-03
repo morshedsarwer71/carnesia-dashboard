@@ -116,10 +116,9 @@
             Products.Clear();
             Products =  await _childProduct.UploadBulkProducts(e);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
-            Console.WriteLine();
-            throw;
+            Snackbar.Add(exception.Message, Severity.Warning);
         }
     }
 
@@ -134,10 +133,10 @@
                 Snackbar.Add(result, Severity.Success);
             }
         }
-        catch (Exception)
+        catch (Exception exception)
         {
-            Snackbar.Add("Something went wrong!", Severity.Error);
-            throw;
+            Snackbar.Add(exception.Message, Severity.Error);
+            //throw;
         }
     }
 }
