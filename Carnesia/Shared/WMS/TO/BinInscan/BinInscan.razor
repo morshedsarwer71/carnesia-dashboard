@@ -95,32 +95,53 @@
 	private async Task AddSingleBinScan()
 	{
 
-		var result =await _away.SingleBinInscan(UID,BinNumber);		
-		_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-		_snackbar.Add(result.message, Severity.Success);
-		if (result.Product != null)
+		try
 		{
-			//BinNumber = "";
-			UID = "";
-			SingleBin.Add(result.Product);
+			var result =await _away.SingleBinInscan(UID,BinNumber);		
+			_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+			_snackbar.Add(result.message, Severity.Success);
+			if (result.Product != null)
+			{
+				//BinNumber = "";
+				UID = "";
+				SingleBin.Add(result.Product);
 
-		}		
+			}
+		}
+		catch (Exception e)
+		{
+			_snackbar.Add("Bin not found or capacity full", Severity.Error);
+		}	
 	}
 
 	private async Task AddBulKBinScan()
 	{
 
-		var result =await _away.BulkBinInscan(PoCode,BinNumber);		
-		_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-		_snackbar.Add(result.message, Severity.Success);
-		if (result.Products != null)
+		try
 		{
-			//BinNumber = "";
-			PoCode = "";
-			BinNumber = "";
-			BulkBinProduct = result.Products;
+			var result =await _away.BulkBinInscan(PoCode,BinNumber);		
+			_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+			_snackbar.Add(result.message, Severity.Success);
+			if (result.Products != null)
+			{
+	//BinNumber = "";
+				PoCode = "";
+				BinNumber = "";
+				BulkBinProduct = result.Products;
 
-		}		
+			}
+			else
+			{
+				_snackbar.Add("Bin Capacity full", Severity.Warning);
+			}
+		}
+		catch (Exception e)
+		{
+			
+			_snackbar.Add("Bin Capacity full", Severity.Warning);
+			//Console.WriteLine(e);
+			//throw;
+		}
 	}
 
 	}

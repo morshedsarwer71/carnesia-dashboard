@@ -15,16 +15,33 @@ namespace Carnesia.Domain.WMS.BinInscan
     public class BinInscansPoco
     {
         public string message { get; set; }
-        public List<BinInscanProductDTO> Products { get; set; }
+        public List<BinInscanProductDTO>? Products { get; set; }
     }
 
     public class BinInscanProductDTO
     {
         public string sku { get; set; }
         public string productName { get; set; }
+        public string productCode { get; set; }
         public string? url { get; set; }
         public string? binName { get; set; }
         public int inputQty { get; set; }
         public int bin { get; set; }
+    }
+    
+    public class BinDetailsPoco
+    {
+        public string binName { get; set; }
+        public int totalQty { get; set; }
+        public List<BinProductDetails> binDetails { get; set; }
+    }
+    public class BinProductDetails
+    {
+        public string? sku { get; set; }
+        public string ProductCode { get; set; }
+        public string productName { get; set; }
+        public int binSKUStockQty { get; set; }
+        public string binName { get; set; }
+        public string? expDate { get; set; }
     }
 }

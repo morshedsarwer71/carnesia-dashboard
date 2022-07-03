@@ -15,5 +15,8 @@ namespace Carnesia.Domain.Vendor.Models
         public string bankAccountDetails { get; set; }
         public string managerName { get; set; }
         public string phoneNumber { get; set; }
+        public string importer { get; set; }
+        public string addressOne { get; set; }
+        public string addressTwo { get; set; }
     }
 }

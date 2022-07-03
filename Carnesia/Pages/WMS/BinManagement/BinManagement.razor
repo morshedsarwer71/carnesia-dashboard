@@ -1,37 +1,167 @@
 ﻿@page "/bin-management"
-@using Carnesia.Shared.WMS.BinManagement.BinList
-@using Carnesia.Shared.WMS.BinManagement.CreateBin
+@using Carnesia.Domain.WMS.Bin.Models
+@using Carnesia.Domain.WMS.BinList
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.WMS.BinManagement
+@inject IDialogService DialogService
+@inject IBin _bin
+@inject ISnackbar _snackbar
+@inject ISnackbar Snackbar
+@inject IStore _store
 
-<MudPaper Elevation="0">
-    <MudContainer Class="mt-5 d-flex justify-center">
-        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            <MudButton Color="Color.Primary" Variant="CurrentPage == BinList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinList)">@BinList</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == CreateBin ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateBin)">@CreateBin</MudButton>
-        </MudButtonGroup>
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+    <MudContainer Fixed="true">
+        <MudGrid Class="justify-center align-baseline mb-5">
+            <MudItem md="2">
+                <MudAutocomplete T="string" Label="Warehouse" @bind-Value="warehouse" ResetValueOnEmptyText="true" SearchFunc="StoreSearch"/>
+            </MudItem>
+            <MudItem md="2">
+                <MudTextField Label="Bin" @bind-Value="binName" Variant="Variant.Text"/>
+            </MudItem>
+            <MudItem md="2">
+                <MudSelect @bind-Value="status" Label="Status" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="true">Active</MudSelectItem>
+                    <MudSelectItem Value="false">Deactive</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            <MudItem md="2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Filter">Filter</MudButton>
+            </MudItem>
+        </MudGrid>
+
+        <div class="d-flex justify-end my-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddBinModal" >Add New Bin</MudButton>
+        </div>
+
+        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <HeaderContent>
+                <MudTh>BIN</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Warehouse</MudTh>
+                <MudTh>Created on</MudTh>
+                <MudTh>Created by</MudTh>
+                <MudTh>Current Capacity</MudTh>
+                <MudTh>Current Stock</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="BIN">@context.binName</MudTd>
+                <MudTd DataLabel="Status">@context.status</MudTd>
+                <MudTd DataLabel="Warehouse">@context.store</MudTd>
+                <MudTd DataLabel="Created on">@context.createdAt</MudTd>
+                <MudTd DataLabel="Created by">@context.createdBy</MudTd>
+                <MudTd DataLabel="Current Capacity">@context.capacity</MudTd>
+                <MudTd DataLabel="Current Capacity">@context.currentStock</MudTd>
+                <MudTd DataLabel="Current Stock">
+                    @if (context.status == "Active")
+                    {
+                        <MudButton Variant="Variant.Filled" Color=Color.Success @onclick="() => ChangeStatus(context.id)">Deactivate</MudButton>
+                    }
+                    else if (context.status == "Deactive")
+                    {
+                        <MudButton Variant="Variant.Filled" Color=Color.Secondary @onclick="() => ChangeStatus(context.id)">Active</MudButton>
+                    }
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager/>
+            </PagerContent>
+        </MudTable>
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
     </MudContainer>
 </MudPaper>
 
-@if(CurrentPage == BinList)
-{
-    <BinList />
-}
-else if(CurrentPage == CreateBin)
-{
-    <CreateBin />
-}
-
 @code {
-    // Pages
-    private string BinList = "Bin List";
-    private string CreateBin = "Create Bin";
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
 
-    // Current Page
-    private string CurrentPage { get; set; } = "Bin List";
+    // Table Content
+    private List<GetBinDTO> Elements = new List<GetBinDTO>();
+    public string? binName { get; set; }
+    public string warehouse { get; set; }
+    public bool status { get; set; } = true;
+    public int storeId { get; set; } = 0;
+    private string[] stores;
 
-
-    // Change Page
-    private void ChangePage(string page)
+    protected override async Task OnInitializedAsync()
     {
-        CurrentPage = page;
+        stores = await _store.GetStoreNameAsString();
+        Elements = await _bin.GetBins();
+    }
+
+    private async Task<IEnumerable<string>> StoreSearch(string value)
+    {
+        return string.IsNullOrEmpty(value) ? stores : stores.Where(z => z.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<List<GetBinDTO>> Filter()
+    {
+        try
+        {
+            var store = await _store.GetStore(warehouse);
+            storeId = store.storeId;
+            Elements.Clear();
+            //StateHasChanged();
+            Elements = await _bin.GetBinSearch(binName, storeId, status);
+            return Elements;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private async Task ChangeStatus(int binId)
+    {
+        try
+        {
+            var res = await _bin.ChangeStatus(binId);
+            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            _snackbar.Add(res.Message, Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            _snackbar.Add("Error", Severity.Success);
+            throw;
+        }
+    }
+
+    // Add Bin Modal
+    private async Task OpenAddBinModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new BinDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddBinModal>("Add New Bin", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            BinDTO newBin = dialog.Data as BinDTO;
+
+            try
+            {
+                var result = await _bin.AddBin(newBin);
+                if (result != null)
+                {
+                    Snackbar.Add("New Bin Created Successfully!", Severity.Success);
+                    await OnInitializedAsync();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
     }
 }

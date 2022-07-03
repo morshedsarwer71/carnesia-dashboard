@@ -8,7 +8,7 @@
 <MudPaper Class="ma-2 pa-16">
 	<MudContainer Fixed="true">
 		<div class="d-flex justify-center mb-5">
-            <a href="./PoProducts.xlsx" download target="_top">
+            <a href="./BulkProducts.xlsx" download target="_top">
 			    <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
                     Download CSV Template
                 </MudButton>
@@ -20,7 +20,7 @@
                        Color="Color.Primary"
                        StartIcon="@Icons.Filled.CloudUpload"
                        for="fileInput">
-                Upload Files
+                Upload File
             </MudButton>
 		</div>
 
@@ -51,6 +51,7 @@
             <HeaderContent>
                 <MudTh>Product Name</MudTh>
                 <MudTh>Product SKU</MudTh>
+                <MudTh>Product Code</MudTh>
                 <MudTh>Parent ID</MudTh>
                 <MudTh>MRP</MudTh>
                 <MudTh>Vat Amount</MudTh>
@@ -74,6 +75,7 @@
             <RowTemplate>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
                 <MudTd DataLabel="Product SKU">@context.productsku</MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Parent ID">@context.productParentId</MudTd>
                 <MudTd DataLabel="MRP">@context.mrp</MudTd>
                 <MudTd DataLabel="Vat Amount">@context.vatAmount</MudTd>

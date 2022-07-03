@@ -9,6 +9,7 @@ namespace Carnesia.Domain.Vendor.POCO
     public class PostVendorPoco
     {
         public string name { get; set; }
+        public string importer { get; set; }
         public string initial { get; set; }
         public string owner { get; set; }
         public string bankAccountDetails { get; set; }

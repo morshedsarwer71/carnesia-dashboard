@@ -1,7 +1,10 @@
 ﻿@using Carnesia.Domain.Vendor.Models
 @using Carnesia.Domain.Vendor.POCO
 @using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.VendorManagement.VendorUpdate
 @inject IVendor _vendor
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -9,23 +12,33 @@
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="table.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                             Class="mt-0"/>
+                <MudTextField @bind-Value="table.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"                                       IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>Vendor Name</MudTh>
+                <MudTh>Importer</MudTh>
                 <MudTh>Initial</MudTh>
                 <MudTh>Owner</MudTh>
                 <MudTh>Phone Number</MudTh>
                 <MudTh>Bank Account Details</MudTh>
                 <MudTh>Manager Name</MudTh>
+                <MudTh>Address One</MudTh>
+                <MudTh>Address Two</MudTh>
+                <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Vendor Name">@context.name</MudTd>
+                <MudTd DataLabel="Importer">@context.importer</MudTd>
                 <MudTd DataLabel="Initial">@context.initial</MudTd>
                 <MudTd DataLabel="Owner">@context.owner</MudTd>
                 <MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
                 <MudTd DataLabel="Bank Account Details">@context.bankAccountDetails</MudTd>
                 <MudTd DataLabel="Manager Name">@context.managerName</MudTd>
+                <MudTd DataLabel="Address One">@context.addressOne</MudTd>
+                <MudTd DataLabel="Address Two">@context.addressTwo</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateModal(context)" >Edit</MudButton>
+                </MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />
@@ -51,5 +64,37 @@
     protected override async Task OnInitializedAsync()
     {
         Vendors = await _vendor.GetVendorsAsync();
+    }
+
+    // Update Vendor
+    private async Task OpenUpdateModal(VendorDTO Vendor)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", Vendor);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<VendorUpdateModal>("Update Vendor", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            VendorDTO newVendor = dialog.Data as VendorDTO;
+
+            try
+            {
+                var result = await _vendor.UpdateVendor(newVendor);
+                if (result)
+                {
+                    Snackbar.Add("Vendor Updated Successfully!", Severity.Success);
+                    await OnInitializedAsync();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
     }
 }

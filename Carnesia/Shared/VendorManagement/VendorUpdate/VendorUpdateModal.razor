@@ -1,0 +1,35 @@
+﻿@using Carnesia.Domain.Vendor.Models
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField @bind-Value="FormData.importer" Label="Importer" Required="true" RequiredError="Importer is required!"/>
+                    <MudTextField @bind-Value="FormData.name" Label="Vendor Name" Required="true" RequiredError="Vendor Name is required!"/>
+                    <MudTextField @bind-Value="FormData.phoneNumber" Label="Phone Number" Required="true" RequiredError="Phone Number is required!"/>
+                    <MudTextField @bind-Value="FormData.initial" Label="Initial" Required="true" RequiredError="Initial is required!"/>
+                    <MudTextField @bind-Value="FormData.owner" Label="Owner" Required="true" RequiredError="Owner is required!"/>
+                    <MudTextField @bind-Value="FormData.managerName" Label="Manager Name" Required="true" RequiredError="Manager Name is required!"/>
+                    <MudTextField @bind-Value="FormData.bankAccountDetails" Label="Bank Account Details" Required="true" RequiredError="Bank Account Details is required!"/>
+                    <MudTextField @bind-Value="FormData.addressOne" Label="Address Field 1" Required="true" RequiredError="Address Field 1 is required!"/>
+                    <MudTextField @bind-Value="FormData.addressTwo" Label="Address Field 2(Optional)"/>
+                    <div class="d-flex justify-end mt-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit" Class="ml-auto">Update</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public VendorDTO FormData{get;set;} = new VendorDTO();
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<VendorDTO>(FormData));
+}

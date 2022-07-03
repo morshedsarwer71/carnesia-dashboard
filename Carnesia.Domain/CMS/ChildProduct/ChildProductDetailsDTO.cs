@@ -10,6 +10,7 @@ namespace Carnesia.Domain.CMS.ChildProduct
     {
         public string productName { get; set; }
         public string productsku { get; set; }
+        public string productCode { get; set; }
         public int productParentId { get; set; }
         public string productParentName { get; set; }
         public decimal weight { get; set; }

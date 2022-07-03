@@ -16,6 +16,7 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
         Task DeleteImage(int id);
         Task UpdateImage(UpdateProductImageDTO Images, int id);
         Task<List<ChildProductDetailsDTO>> UploadBulkProducts(InputFileChangeEventArgs e);
+        Task<List<BulkImageUploadDTO>> UploadXLSXFileForImage(InputFileChangeEventArgs e);
         Task<string> CreateBulkProducts(List<ChildProductDetailsDTO> products);
     }
 }
