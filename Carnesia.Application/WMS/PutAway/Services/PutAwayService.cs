@@ -69,7 +69,7 @@ namespace Carnesia.Application.WMS.PutAway.Services
                 var result =await _httpClient.GetFromJsonAsync<BinInscanDTO>($"PutAway/singlebininscan/{uid}/{binNumber}");
                 if (result == null)
                     throw new NotImplementedException();
-                var data = from r in result.Product 
+                //var data = from r in result.Product 
                 return result;
             }
             catch (Exception e)
