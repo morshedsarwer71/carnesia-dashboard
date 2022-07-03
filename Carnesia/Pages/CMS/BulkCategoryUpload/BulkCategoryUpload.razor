@@ -38,7 +38,7 @@
         </MudTable>
 
         <div class="d-flex justify-end mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Categories.Count <= 0 ? true : false">Submit</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateBulkCategories" Disabled="Categories.Count <= 0 ? true : false">Submit</MudButton>
         </div>
 
         @if (RejectedCategories.Count > 0)
@@ -88,7 +88,7 @@
     }
 
     // Create Bulk Images
-    private async Task CreateBulkImages()
+    private async Task CreateBulkCategories()
     {
         try
         {

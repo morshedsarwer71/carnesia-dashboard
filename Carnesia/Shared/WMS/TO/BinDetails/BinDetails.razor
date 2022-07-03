@@ -2,6 +2,8 @@
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
+        <MudText Typo="Typo.h3">F4R1C1RA1B11</MudText>
+        <MudText>Total: 13</MudText>
 		<MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="3">
 				<MudTextField T="string" Label="Bin Number" Variant="Variant.Text"/>
@@ -13,19 +15,21 @@
 
 		<MudTable Items="@Elements" Hover="true">
             <HeaderContent>
-                <MudTh>Item Code</MudTh>
+                <MudTh>Product Code</MudTh>
+                <MudTh>SKU</MudTh>
                 <MudTh>Product Name</MudTh>
                 <MudTh>QTY</MudTh>
                 <MudTh>BIN</MudTh>
-                <MudTh>Download CSV</MudTh>
+                <MudTh>Expiry Date</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
+                <MudTd DataLabel="Product Code">@context.ProductCode</MudTd>
+                <MudTd DataLabel="SKU">@context.SKU</MudTd>
                 <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
                 <MudTd DataLabel="QTY">@context.QTY</MudTd>
                 <MudTd DataLabel="BIN">@context.BIN</MudTd>
-                <MudTd DataLabel="Download CSV">
-                    <MudButton Color="Color.Primary">Download CSV</MudButton>
+                <MudTd DataLabel="Expiry Date">
+                    <MudButton Color="Color.Primary">View</MudButton>
                 </MudTd>
             </RowTemplate>
         </MudTable>
