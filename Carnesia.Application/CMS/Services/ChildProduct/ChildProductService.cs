@@ -24,6 +24,48 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
             _httpClient = httpClient;
         }
 
+        public async Task<List<BulkCategoryUploadDTO>> CreateBulkCategories(List<BulkCategoryUploadDTO> Categories)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync<List<BulkCategoryUploadDTO>>("Products/categories/bulk", Categories);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var json = await result.Content.ReadAsStringAsync();
+                    var deserialized = JsonConvert.DeserializeObject<List<BulkCategoryUploadDTO>>(json);
+                    return deserialized;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<BulkImageUploadDTO>> CreateBulkImages(List<BulkImageUploadDTO> Images)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync<List<BulkImageUploadDTO>>("Products/images/bulk", Images);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var json = await result.Content.ReadAsStringAsync();
+                    var deserialized = JsonConvert.DeserializeObject<List<BulkImageUploadDTO>>(json);
+                    return deserialized;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<string> CreateBulkProducts(List<ChildProductDetailsDTO> products)
         {
             try
@@ -218,6 +260,67 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
             }
         }
 
+        public async Task<List<BulkCategoryUploadDTO>> UploadXLSXFileForCategory(InputFileChangeEventArgs e)
+        {
+            try
+            {
+                var Categories = new List<BulkCategoryUploadDTO>();
+                DataTable dt = new DataTable();
+                var fileStream = e.File.OpenReadStream();
+                var ms = new MemoryStream();
+                await fileStream.CopyToAsync(ms);
+                fileStream.Close();
+                ms.Position = 0;
+                ISheet sheet;
+                var xsswb = new XSSFWorkbook(ms);
+                sheet = xsswb.GetSheetAt(0);
+                IRow hr = sheet.GetRow(0);
+                var rl = new List<string>();
+                int cc = hr.LastCellNum;
+                for (int j = 0; j < cc; j++)
+                {
+                    ICell cell = hr.GetCell(j);
+                    dt.Columns.Add(cell.ToString());
+                }
+                for (int j = (sheet.FirstRowNum + 1); j <= sheet.LastRowNum; j++)
+                {
+                    var r = sheet.GetRow(j);
+                    for (int i = r.FirstCellNum; i < cc; i++)
+                    {
+                        rl.Add(r.GetCell(i).ToString());
+                    }
+                    if (rl.Count > 0)
+                    {
+                        dt.Rows.Add(rl.ToArray());
+                    }
+                    rl.Clear();
+                }
+                foreach (DataRow row in dt.Rows)
+                {
+                    
+                    var productCode = row.Field<string>("ProductCode");
+                    var parentCatId = Convert.ToInt32(row.Field<string>("ParentCat"));
+                    var childCatId = Convert.ToInt32(row.Field<string>("ChildCat"));
+                    var gChildCatId = Convert.ToInt32(row.Field<string>("GrandChildCat"));
+
+                    var pop = new BulkCategoryUploadDTO()
+                    {
+                        productCode = productCode,
+                        parentCatId = parentCatId,
+                        childCatId = childCatId,
+                        gChildCatId = gChildCatId,
+                    };
+                    Categories.Add(pop);
+                }
+                return Categories.Where(x => x.parentCatId != null).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<BulkImageUploadDTO>> UploadXLSXFileForImage(InputFileChangeEventArgs e)
         {
             try
@@ -255,23 +358,21 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
                 }
                 foreach (DataRow row in dt.Rows)
                 {
-                    var imageURL = row.Field<string>("ImageURL");
+                    var url = row.Field<string>("ImageURL");
                     var imageName = row.Field<string>("ImageName");
-                    var altText = row.Field<string>("AltText");
-                    var productId = Convert.ToInt32(row.Field<string>("ProductId"));
-                    
-
+                    var altImageName = row.Field<string>("AltText");
+                    var productCode = row.Field<string>("ProductCode");
 
                     var pop = new BulkImageUploadDTO()
                     { 
-                        altText = altText,
+                        altImageName = altImageName,
                         imageName = imageName,
-                        imageURL = imageURL,
-                        productId = productId
+                        url = url,
+                        productCode = productCode
                     };
                     Images.Add(pop);
                 }
-                return Images.Where(x => x.imageURL != null).ToList();
+                return Images.Where(x => x.url != null).ToList();
             }
             catch (Exception)
             {

@@ -1,0 +1,124 @@
+﻿@using Carnesia.Domain.Vendor.POCO
+@inject IVendor _vendor
+@inject ISnackbar Snackbar
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<div class="d-flex justify-center mb-5">
+            <a href="./BulkVendor.xlsx" download target="_top">
+			    <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
+                    Download CSV Template
+                </MudButton>
+            </a>
+
+			<InputFile id="fileInput" hidden accept=".xlsx" OnChange="UploadFile"/>
+            <MudButton HtmlTag="label"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Filled.CloudUpload"
+                       for="fileInput">
+                Upload File
+            </MudButton>
+		</div>
+
+        <MudTable Items="@Vendors">
+            <HeaderContent>
+                <MudTh>Importer</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>Initial</MudTh>
+                <MudTh>Owner</MudTh>
+                <MudTh>Phone Number</MudTh>
+                <MudTh>Bank Account Details</MudTh>
+                <MudTh>Manager Name</MudTh>
+                <MudTh>Address One</MudTh>
+                <MudTh>Address Two</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Importer">@context.importer</MudTd>
+                <MudTd DataLabel="Name">@context.name</MudTd>
+                <MudTd DataLabel="Initial">@context.initial</MudTd>
+                <MudTd DataLabel="Owner">@context.owner</MudTd>
+                <MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+                <MudTd DataLabel="Bank Account Details">@context.bankAccountDetails</MudTd>
+                <MudTd DataLabel="Manager Name">@context.managerName</MudTd>
+                <MudTd DataLabel="Address One">@context.addressOne</MudTd>
+                <MudTd DataLabel="Address Two">@context.addressTwo</MudTd>
+            </RowTemplate>
+        </MudTable>
+
+        <div class="d-flex justify-end my-5">
+            <MudButton Disabled="Vendors.Count <= 0 ? true : false" Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateBulkVendors" >Submit</MudButton>
+        </div>
+
+        @if (RejectedVendors.Count > 0)
+        {
+            <MudText>Rejected Vendors</MudText>
+            <MudTable Items="@RejectedVendors">
+                <HeaderContent>
+                    <MudTh>Importer</MudTh>
+                    <MudTh>Name</MudTh>
+                    <MudTh>Initial</MudTh>
+                    <MudTh>Owner</MudTh>
+                    <MudTh>Phone Number</MudTh>
+                    <MudTh>Bank Account Details</MudTh>
+                    <MudTh>Manager Name</MudTh>
+                    <MudTh>Address One</MudTh>
+                    <MudTh>Address Two</MudTh>
+                    <MudTh>Description</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Importer">@context.importer</MudTd>
+                    <MudTd DataLabel="Name">@context.name</MudTd>
+                    <MudTd DataLabel="Initial">@context.initial</MudTd>
+                    <MudTd DataLabel="Owner">@context.owner</MudTd>
+                    <MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+                    <MudTd DataLabel="Bank Account Details">@context.bankAccountDetails</MudTd>
+                    <MudTd DataLabel="Manager Name">@context.managerName</MudTd>
+                    <MudTd DataLabel="Address One">@context.addressOne</MudTd>
+                    <MudTd DataLabel="Address Two">@context.addressTwo</MudTd>
+                    <MudTd DataLabel="Description">@context.description</MudTd>
+                </RowTemplate>
+            </MudTable>
+        
+            <div class="d-flex justify-end mt-5" >
+                <MudButton Variant="Variant.Filled" Color="Color.Success">Download XLSX</MudButton>
+            </div>
+        }
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Vendor List
+    private List<PostVendorPoco> Vendors = new List<PostVendorPoco>();
+    private List<PostVendorPoco> RejectedVendors = new List<PostVendorPoco>();
+
+    // Upload .xlsx
+    private async Task UploadFile (InputFileChangeEventArgs e)
+    {
+        try
+        {
+            Vendors.Clear();
+            Vendors =  await _vendor.UploadXLSXFile(e);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Error!");
+            throw;
+        }
+    }
+
+    // Create Bulk Vendor
+    private async Task CreateBulkVendors()
+    {
+        try
+        {
+            RejectedVendors = await _vendor.CreateBulkVendors(Vendors);
+            Snackbar.Add("Vendor Created Successfully!", Severity.Success);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Error", Severity.Error);
+            throw;
+        }
+    }
+}

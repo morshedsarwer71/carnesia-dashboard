@@ -1,4 +1,4 @@
-﻿@page "/bulk-image-upload"
+﻿@page "/bulk-category-upload"
 @using Carnesia.Domain.CMS.ChildProduct
 @inject IChildProduct _childProduct
 @inject ISnackbar Snackbar
@@ -6,7 +6,7 @@
 <MudPaper Class="ma-2 pa-16">
 	<MudContainer Fixed="true">
 		<div class="d-flex justify-center mb-5">
-            <a href="./BulkImage.xlsx" download target="_top">
+            <a href="./BulkCategories.xlsx" download target="_top">
 			    <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
                     Download CSV Template
                 </MudButton>
@@ -22,41 +22,41 @@
             </MudButton>
 		</div>
 
-        <MudTable Items="@Images" Dense="true" >
+        <MudTable Items="@Categories" Dense="true" >
             <HeaderContent>
-                <MudTh>Image URL</MudTh>
-                <MudTh>Image Name</MudTh>
-                <MudTh>ALT Text</MudTh>
-                <MudTh>Product Id</MudTh>
+                <MudTh>Product Code</MudTh>
+                <MudTh>Parent Cat</MudTh>
+                <MudTh>Child Cat</MudTh>
+                <MudTh>Grandchild Cat</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Image URL">@context.url</MudTd>
-                <MudTd DataLabel="Image Name">@context.imageName</MudTd>
-                <MudTd DataLabel="ALT Text">@context.altImageName</MudTd>
-                <MudTd DataLabel="Product Id">@context.productCode</MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="Parent Cat">@context.parentCatId</MudTd>
+                <MudTd DataLabel="Child Cat">@context.childCatId</MudTd>
+                <MudTd DataLabel="Grandchild Cat">@context.gChildCatId</MudTd>
             </RowTemplate>
         </MudTable>
 
         <div class="d-flex justify-end mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Images.Count <= 0 ? true : false">Submit</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Categories.Count <= 0 ? true : false">Submit</MudButton>
         </div>
 
-        @if (RejectedImages.Count > 0)
+        @if (RejectedCategories.Count > 0)
         {
-            <MudText>Rejected Images</MudText>
-            <MudTable Items="@RejectedImages" Dense="true" >
+            <MudText>Rejected Categories</MudText>
+            <MudTable Items="@RejectedCategories" Dense="true" >
                 <HeaderContent>
-                    <MudTh>Image URL</MudTh>
-                    <MudTh>Image Name</MudTh>
-                    <MudTh>ALT Text</MudTh>
                     <MudTh>Product Code</MudTh>
+                    <MudTh>Parent Cat</MudTh>
+                    <MudTh>Child Cat</MudTh>
+                    <MudTh>Grandchild Cat</MudTh>
                     <MudTh>Description</MudTh>
                 </HeaderContent>
                 <RowTemplate>
-                    <MudTd DataLabel="Image URL">@context.url</MudTd>
-                    <MudTd DataLabel="Image Name">@context.imageName</MudTd>
-                    <MudTd DataLabel="ALT Text">@context.altImageName</MudTd>
                     <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                    <MudTd DataLabel="Parent Cat">@context.parentCatId</MudTd>
+                    <MudTd DataLabel="Child Cat">@context.childCatId</MudTd>
+                    <MudTd DataLabel="Grandchild Cat">@context.gChildCatId</MudTd>
                     <MudTd DataLabel="Description">@context.description</MudTd>
                 </RowTemplate>
             </MudTable>
@@ -68,17 +68,17 @@
 </MudPaper>
 
 @code {
-    // Image List
-    private List<BulkImageUploadDTO> Images = new List<BulkImageUploadDTO>();
-    private List<BulkImageUploadDTO> RejectedImages = new List<BulkImageUploadDTO>();
+    // Category List
+    private List<BulkCategoryUploadDTO> Categories = new List<BulkCategoryUploadDTO>();
+    private List<BulkCategoryUploadDTO> RejectedCategories = new List<BulkCategoryUploadDTO>();
 
     // Upload .xlsx
     private async Task UploadFile (InputFileChangeEventArgs e)
     {
         try
         {
-            Images.Clear();
-            Images =  await _childProduct.UploadXLSXFileForImage(e);
+            Categories.Clear();
+            Categories =  await _childProduct.UploadXLSXFileForCategory(e);
         }
         catch (Exception)
         {
@@ -92,8 +92,8 @@
     {
         try
         {
-            RejectedImages = await _childProduct.CreateBulkImages(Images);
-            Snackbar.Add("Images Created Successfully!", Severity.Success);
+            RejectedCategories = await _childProduct.CreateBulkCategories(Categories);
+            Snackbar.Add("Categories Added Successfully!", Severity.Success);
         }
         catch (Exception)
         {
