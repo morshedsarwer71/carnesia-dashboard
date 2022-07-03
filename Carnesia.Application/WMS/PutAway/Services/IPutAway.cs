@@ -10,7 +10,7 @@ namespace Carnesia.Application.WMS.PutAway.Services
 {
     public interface IPutAway
     {
-        Task<BinInscanDTO> SingleBinInscan(string uid,string binNumber);
+        Task<List<BinInscanProductDTO>> SingleBinInscan(string uid, string binNumber, List<BinInscanProductDTO> list);
         Task<BinInscansPoco> BulkBinInscan(string poCode,string binNumber);
         Task<UIDHistoryPoco> GetUIDHistory(string uid);
 

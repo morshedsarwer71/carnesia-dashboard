@@ -3,147 +3,145 @@
 @inject ISnackbar _snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
-	<MudContainer Fixed="true">
-		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
+    <MudContainer Fixed="true">
+        <div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
             <MudText Class="px-15 py-2" Typo="Typo.h6">Bin Inscan</MudText>
         </div>
-		<MudGrid Class="justify-center align-baseline mb-5">
-			<MudItem md="3">
-				<MudTextField T="string" Label="Bin Number" @bind-Value="BinNumber" Variant="Variant.Text"/>
-			</MudItem>
-			<MudItem md="3">
-				<MudTextField T="string" Label="UID" @bind-Value="UID" Variant="Variant.Text"/>
-			</MudItem>
-			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="AddSingleBinScan">Add</MudButton>
-			</MudItem>
-		</MudGrid>
+        <MudGrid Class="justify-center align-baseline mb-5">
+            <MudItem md="3">
+                <MudTextField T="string" Label="Bin Number" @bind-Value="BinNumber" Variant="Variant.Text"/>
+            </MudItem>
+            <MudItem md="3">
+                <MudTextField T="string" Label="UID" @bind-Value="UID" Variant="Variant.Text"/>
+            </MudItem>
+            <MudItem md="3">
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="AddSingleBinScan">Add</MudButton>
+            </MudItem>
+        </MudGrid>
 
-		<MudTable Items="@SingleBin" Hover="true">
-			<HeaderContent>
-				<MudTh>Item Code</MudTh>
-				<MudTh>Product Name</MudTh>
-				<MudTh>Input QTY</MudTh>
-				<MudTh>BIN</MudTh>
-				<MudTh>Image</MudTh>
-			</HeaderContent>
-			<RowTemplate>
-				<MudTd DataLabel="Item Code">@context.sku</MudTd>
-				<MudTd DataLabel="Product Name">@context.productName</MudTd>
-				<MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
-				<MudTd DataLabel="BIN">@context.binName</MudTd>
-				<MudTd DataLabel="Image">
-					<MudImage Src="@context.url" Width="50" Height="50" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg"/>
-				</MudTd>
-			</RowTemplate>
-		</MudTable>
-	</MudContainer>
+        <MudTable Items="@SingleBin" Hover="true">
+            <HeaderContent>
+                <MudTh>Item Code</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Input QTY</MudTh>
+                <MudTh>BIN</MudTh>
+                <MudTh>Image</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Item Code">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
+                <MudTd DataLabel="BIN">@context.binName</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage Src="@context.url" Width="50" Height="50" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg"/>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudContainer>
 </MudPaper>
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
-	<MudContainer Fixed="true">
-		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
+    <MudContainer Fixed="true">
+        <div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
             <MudText Class="px-15 py-2" Typo="Typo.h6">Bulk Bin Inscan</MudText>
         </div>
 
-		<MudGrid Class="justify-center align-baseline mb-5">
-			<MudItem md="4">
-				<MudTextField T="string" Label="Bin Number" @bind-Value="BinNumber" Variant="Variant.Text"/>
-			</MudItem>
-			<MudItem md="4">
-				<MudTextField T="string" Label="PO ID" @bind-Value="PoCode" Variant="Variant.Text"/>
-			</MudItem>
-			<MudItem md="4">
-				<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="AddBulKBinScan">Add</MudButton>
-			</MudItem>
-		</MudGrid>
+        <MudGrid Class="justify-center align-baseline mb-5">
+            <MudItem md="4">
+                <MudTextField T="string" Label="Bin Number" @bind-Value="BinNumber" Variant="Variant.Text"/>
+            </MudItem>
+            <MudItem md="4">
+                <MudTextField T="string" Label="PO ID" @bind-Value="PoCode" Variant="Variant.Text"/>
+            </MudItem>
+            <MudItem md="4">
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="AddBulKBinScan">Add</MudButton>
+            </MudItem>
+        </MudGrid>
 
-		<MudTable Items="@BulkBinProduct" Hover="true">
-			<HeaderContent>
-				<MudTh>Item Code</MudTh>
-				<MudTh>Product Name</MudTh>
-				<MudTh>Input QTY</MudTh>
-				<MudTh>BIN</MudTh>
-				<MudTh>Image</MudTh>
-			</HeaderContent>
-			<RowTemplate>
-				<MudTd DataLabel="Item Code">@context.sku</MudTd>
-				<MudTd DataLabel="Product Name">@context.productName</MudTd>
-				<MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
-				<MudTd DataLabel="BIN">@context.binName</MudTd>
-				<MudTd DataLabel="Image">
-					<MudImage Src="@context.url"  Width="50" Height="50" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
-				</MudTd>
-			</RowTemplate>
-		</MudTable>
+        <MudTable Items="@BulkBinProduct" Hover="true">
+            <HeaderContent>
+                <MudTh>Item Code</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Input QTY</MudTh>
+                <MudTh>BIN</MudTh>
+                <MudTh>Image</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Item Code">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
+                <MudTd DataLabel="BIN">@context.binName</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage Src="@context.url" Width="50" Height="50" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
 
-		@*<div class="mt-5 d-flex justify-end">
+        @*<div class="mt-5 d-flex justify-end">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddBuldBinScan">Bulk Submit</MudButton>
         </div>*@
-	</MudContainer>
+    </MudContainer>
 </MudPaper>
 
 @code {
-	public string BinNumber { get; set; }
-	public string PoCode { get; set; }
-	public string UID { get; set; }
-	// Table Content
+    public string BinNumber { get; set; }
+    public string PoCode { get; set; }
+    public string UID { get; set; }
+    // Table Content
 
-	private List<BinInscanProductDTO> SingleBin = new List<BinInscanProductDTO>();
-	private List<BinInscanProductDTO> BulkBinProduct = new List<BinInscanProductDTO>();
+    private List<BinInscanProductDTO> SingleBin = new List<BinInscanProductDTO>();
+    private List<BinInscanProductDTO> BulkBinProduct = new List<BinInscanProductDTO>();
 
-	private async Task AddSingleBinScan()
-	{
+    private async Task AddSingleBinScan()
+    {
+        try
+        {
+            var result = await _away.SingleBinInscan(UID, BinNumber, SingleBin);
+            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            _snackbar.Add("Scanned Successfully", Severity.Success);
+            if (result != null)
+            {
+    //need clear list and re assign
+    //BinNumber = "";
+                UID = "";
+                SingleBin.Clear();
+                SingleBin = result;
+    //SingleBin.Add(result.Product);
+            }
+        }
+        catch (Exception e)
+        {
+            _snackbar.Add("Bin not found or capacity full", Severity.Error);
+        }
+    }
 
-		try
-		{
-			var result =await _away.SingleBinInscan(UID,BinNumber);		
-			_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-			_snackbar.Add(result.message, Severity.Success);
-			if (result.Product != null)
-			{
-				//BinNumber = "";
-				UID = "";
-				SingleBin.Add(result.Product);
+    private async Task AddBulKBinScan()
+    {
+        try
+        {
+            var result = await _away.BulkBinInscan(PoCode, BinNumber);
+            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            _snackbar.Add(result.message, Severity.Success);
+            if (result.Products != null)
+            {
+    //BinNumber = "";
+                PoCode = "";
+                BinNumber = "";
+                BulkBinProduct = result.Products;
+            }
+            else
+            {
+                _snackbar.Add("Bin Capacity full", Severity.Warning);
+            }
+        }
+        catch (Exception e)
+        {
+            _snackbar.Add("Bin Capacity full", Severity.Warning);
+    //Console.WriteLine(e);
+    //throw;
+        }
+    }
 
-			}
-		}
-		catch (Exception e)
-		{
-			_snackbar.Add("Bin not found or capacity full", Severity.Error);
-		}	
-	}
-
-	private async Task AddBulKBinScan()
-	{
-
-		try
-		{
-			var result =await _away.BulkBinInscan(PoCode,BinNumber);		
-			_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-			_snackbar.Add(result.message, Severity.Success);
-			if (result.Products != null)
-			{
-	//BinNumber = "";
-				PoCode = "";
-				BinNumber = "";
-				BulkBinProduct = result.Products;
-
-			}
-			else
-			{
-				_snackbar.Add("Bin Capacity full", Severity.Warning);
-			}
-		}
-		catch (Exception e)
-		{
-			
-			_snackbar.Add("Bin Capacity full", Severity.Warning);
-			//Console.WriteLine(e);
-			//throw;
-		}
-	}
-
-	}
+}
 
 }
