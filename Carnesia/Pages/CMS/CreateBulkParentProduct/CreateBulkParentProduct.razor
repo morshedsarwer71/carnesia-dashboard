@@ -1,6 +1,7 @@
 ﻿@page "/bulk-parent-product"
 @using Carnesia.Domain.CMS.ParentProduct
 @inject IParentProduct _parentProduct
+@inject ISnackbar Snackbar
 
 <MudPaper Class="ma-2 pa-16">
 	<MudContainer Fixed="true">
@@ -37,14 +38,39 @@
         </MudTable>
 
         <div class="d-flex justify-end mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Products.Count <= 0 ? true : false">Submit</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateBulkParents" Disabled="Products.Count <= 0 ? true : false">Submit</MudButton>
         </div>
+
+        @if (RejectedProducts.Count > 0)
+        {
+            <MudText>Rejected Parent Products</MudText>
+            <MudTable Items="@RejectedProducts" Dense="true" >
+                <HeaderContent>
+                    <MudTh>Product Name</MudTh>
+                    <MudTh>Brand ID</MudTh>
+                    <MudTh>Product Type</MudTh>
+                    <MudTh>Origin</MudTh>
+                    <MudTh>Description</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Product Name">@context.name</MudTd>
+                    <MudTd DataLabel="Brand ID">@context.brandId</MudTd>
+                    <MudTd DataLabel="Product Type">@context.productType</MudTd>
+                    <MudTd DataLabel="Origin">@context.originId</MudTd>
+                    <MudTd DataLabel="Description">Please Check The Brand Id.</MudTd>
+                </RowTemplate>
+            </MudTable>
+            <div class="d-flex justify-end mt-5">
+                <MudButton Variant="Variant.Filled" Color="Color.Success">Download XLSX</MudButton>
+            </div>
+        }
 	</MudContainer>
 </MudPaper>
 
 @code {
     // Parent Product List
     private List<CreateParentProductDTO> Products = new List<CreateParentProductDTO>();
+    private List<CreateParentProductDTO> RejectedProducts = new List<CreateParentProductDTO>();
 
     // Upload .xlsx
     private async Task UploadFile (InputFileChangeEventArgs e)
@@ -57,6 +83,21 @@
         catch (Exception)
         {
             Console.WriteLine("Error!");
+            throw;
+        }
+    }
+
+    // Create Bulk Images
+    private async Task CreateBulkParents()
+    {
+        try
+        {
+            RejectedProducts = await _parentProduct.CreateBulkParents(Products);
+            Snackbar.Add("Products Added Successfully!", Severity.Success);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Error", Severity.Error);
             throw;
         }
     }

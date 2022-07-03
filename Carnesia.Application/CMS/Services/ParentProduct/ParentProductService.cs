@@ -25,6 +25,27 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
             _httpClient = httpClient;
         }
 
+        public async Task<List<CreateParentProductDTO>> CreateBulkParents(List<CreateParentProductDTO> Parents)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync<List<CreateParentProductDTO>>("ProductParent/bulk", Parents);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var json = await result.Content.ReadAsStringAsync();
+                    var deserialized = JsonConvert.DeserializeObject<List<CreateParentProductDTO>>(json);
+                    return deserialized;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task CreateParentProduct(CreateParentProductDTO ParentProduct)
         {
             try
