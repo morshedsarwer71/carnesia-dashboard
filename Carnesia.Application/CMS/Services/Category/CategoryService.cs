@@ -85,6 +85,20 @@ namespace Carnesia.Application.CMS.Services.Category
             }
         }
 
+        public async Task<List<CategoryXLSLDTO>> GetCategoriesForXLSL()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<CategoryXLSLDTO>>("Category/categorieslist");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<string[]> GetChildCatAsString(IList<ChildCategoryDTO> ChildCategories)
         {
             var list = new List<string>();

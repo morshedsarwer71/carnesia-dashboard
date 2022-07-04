@@ -183,7 +183,8 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
                     var r = sheet.GetRow(j);
                     for (int i = r.FirstCellNum; i < cc; i++)
                     {
-                        rl.Add(r.GetCell(i).ToString());
+                        var item = r.GetCell(i).ToString();
+                        rl.Add(item);
                     }
                     if (rl.Count > 0)
                     {

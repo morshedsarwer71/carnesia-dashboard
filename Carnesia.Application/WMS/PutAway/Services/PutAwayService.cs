@@ -62,15 +62,33 @@ namespace Carnesia.Application.WMS.PutAway.Services
             }
         }
 
-        public async Task<BinInscanDTO> SingleBinInscan(string uid, string binNumber)
+        public async Task<List<BinInscanProductDTO>> SingleBinInscan(string uid, string binNumber,List<BinInscanProductDTO> list)
         {
             try
             {
                 var result =await _httpClient.GetFromJsonAsync<BinInscanDTO>($"PutAway/singlebininscan/{uid}/{binNumber}");
                 if (result == null)
+                {
                     throw new NotImplementedException();
-                //var data = from r in result.Product 
-                return result;
+                }
+                else
+                {
+                    list.Add(result.Product);
+                    var data = (from r in list
+                        group r by r.productCode
+                        into grp
+                        select new BinInscanProductDTO()
+                        {
+                            productCode =grp.Key,
+                            bin = grp.Select(x=>x.bin).First(),
+                            sku = grp.Select(x=>x.sku).First(),
+                            url = grp.Select(x=>x.url).First(),
+                            binName = grp.Select(x=>x.binName).First(),
+                            inputQty = grp.Select(x=>x.inputQty).First(),
+                            productName = grp.Select(x=>x.productName).First(),
+                        }).ToList<BinInscanProductDTO>();
+                    return data;
+                }
             }
             catch (Exception e)
             {

@@ -3,6 +3,10 @@
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.CMS.Category
 @using Carnesia.Shared.CMS.Category
+@using Syncfusion.XlsIO
+@using System.IO
+@using System.Data
+@inject Microsoft.JSInterop.IJSRuntime JS
 @inject IDialogService DialogService
 @inject ICategory _category
 @inject ISnackbar Snackbar
@@ -126,6 +130,10 @@
             <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
             <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
         </div>
+
+		<div class="mb-5 d-flex justify-end">
+            <MudButton StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Color="Color.Success" OnClick="CreateDocument">Download XLSL</MudButton>
+        </div>
 	</MudContainer>
 </MudPaper>
 
@@ -134,6 +142,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		Elements = await _category.GetCategories();
+		Categories = await _category.GetCategoriesForXLSL();
 	}
 
 	// Table Customaization
@@ -141,6 +150,9 @@
 
 	// Table Content
 	private IEnumerable<ParentCategoryDTO> Elements = new List<ParentCategoryDTO>();
+	
+	// For XLSL
+	private List<CategoryXLSLDTO> Categories = new List<CategoryXLSLDTO>();
 
 	// Show Details
 	private void ShowChild(int id)
@@ -289,5 +301,54 @@
                 throw;
             }
         }
+    }
+
+	// Create Document
+    private async Task CreateDocument()
+    {
+        using (ExcelEngine excelEngine = new ExcelEngine())
+        {
+            IApplication application = excelEngine.Excel;
+            application.DefaultVersion = ExcelVersion.Xlsx;
+
+            //Create a workbook.
+            IWorkbook workbook = application.Workbooks.Create(1);
+            IWorksheet worksheet = workbook.Worksheets[0];
+
+            //Initialize DataTable and data get from SampleDataTable method.
+            DataTable table = ParentDataTable();
+
+            //Export data from DataTable to Excel worksheet.
+            worksheet.ImportDataTable(table, true, 1, 1);
+
+            worksheet.UsedRange.AutofitColumns();
+
+            //Save the document as a stream and return the stream.
+            using (MemoryStream stream = new MemoryStream())
+            {
+                //Save the created Excel document to MemoryStream
+                workbook.SaveAs(stream);
+
+                //Download the excel file.
+                await JS.SaveAs("Categories.xlsx", stream.ToArray());
+            }
+        }
+    }
+
+    private DataTable ParentDataTable()
+    {
+        DataTable reports = new DataTable();
+        reports.Columns.Add("ID", typeof(int));
+        reports.Columns.Add("ParentCat");
+        reports.Columns.Add("ParentID", typeof(int));
+        reports.Columns.Add("ChildCat");
+        reports.Columns.Add("ChildID", typeof(int));
+        reports.Columns.Add("GrandChildCat");
+
+        foreach (var item in Categories)
+        {
+            reports.Rows.Add(item.id, item.parentCat, item.parentId, item.childCat, item.childCatId, item.gChildCat);
+        }
+        return reports;
     }
 }

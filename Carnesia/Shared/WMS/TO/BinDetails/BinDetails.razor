@@ -4,17 +4,17 @@
 @inject ISnackbar _snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
-	<MudContainer Fixed="true">
+    <MudContainer Fixed="true">
         <MudText Typo="Typo.h3">F4R1C1RA1B11</MudText>
         <MudText>Total: 13</MudText>
-		<MudGrid Class="justify-center align-baseline mb-5">
-			<MudItem md="3">
-				<MudTextField T="string" @bind-Value="Bin"  Label="Bin Number" Variant="Variant.Text"/>
-			</MudItem>
-			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetBinDetails">Filter</MudButton>
-			</MudItem>
-		</MudGrid>
+        <MudGrid Class="justify-center align-baseline mb-5">
+            <MudItem md="3">
+                <MudTextField T="string" @bind-Value="Bin" Label="Bin Number" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem md="3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetBinDetails">Filter</MudButton>
+            </MudItem>
+        </MudGrid>
 
 		<MudTable Items="@Temp" Hover="true">
             <HeaderContent>
@@ -36,7 +36,7 @@
                 </MudTd>
             </RowTemplate>
         </MudTable>
-	</MudContainer>
+    </MudContainer>
 </MudPaper>
 
 @code {
@@ -45,19 +45,19 @@
 	private List<BinProductDetails> Elements = new List<BinProductDetails>();
 	private List<BinDetailsDTO> Temp = new List<BinDetailsDTO>();
 
-	private async Task GetBinDetails()
-	{
-		try
-		{
-			Elements.Clear();
-			var result = await _putAway.BinDetails(Bin);
-			Elements = result.binDetails;
-		}
-		catch (Exception e)
-		{
-			_snackbar.Add("Error from database", Severity.Error);
-			//Console.WriteLine(e);
-			//throw;
-		}
-	}
+    private async Task GetBinDetails()
+    {
+        try
+        {
+            Elements.Clear();
+            var result = await _putAway.BinDetails(Bin);
+            Elements = result.binDetails;
+        }
+        catch (Exception e)
+        {
+            _snackbar.Add("Error from database", Severity.Error);
+            //Console.WriteLine(e);
+            //throw;
+        }
+    }
 }

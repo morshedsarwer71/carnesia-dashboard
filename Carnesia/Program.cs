@@ -36,7 +36,7 @@ using Syncfusion.Blazor;
 
 
 
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjU4NDc3QDMyMzAyZTMxMmUzMEwvOTZmTHFNNFFNb1BIdURQazB5NWpCYXpvbzNQYzFIZnZrRldyZFlOVGc9");
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjY3OTMzQDMxMzgyZTM0MmUzMEtBS0dyOEpaTnpmSXZvaHNsT0doNW5HZ1l5L2J5cmRtRmtkQU5GamlQejg9");
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddMudServices();
 builder.RootComponents.Add<App>("#app");

@@ -1,5 +1,9 @@
 ﻿@page "/bulk-image-upload"
 @using Carnesia.Domain.CMS.ChildProduct
+@using Syncfusion.XlsIO
+@using System.IO
+@using System.Data
+@inject Microsoft.JSInterop.IJSRuntime JS
 @inject IChildProduct _childProduct
 @inject ISnackbar Snackbar
 
@@ -60,8 +64,8 @@
                     <MudTd DataLabel="Description">@context.description</MudTd>
                 </RowTemplate>
             </MudTable>
-            <div class="d-flex justify-end mt-5">
-                <MudButton Variant="Variant.Filled" Color="Color.Success">Download XLSX</MudButton>
+            <div class="mb-5 d-flex justify-end">
+                <MudButton StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Color="Color.Success" Disabled="RejectedImages.Count > 0 ? false : true" OnClick="CreateDocument">Download XLSL</MudButton>
             </div>
         }
 	</MudContainer>
@@ -100,5 +104,53 @@
             Snackbar.Add("Error", Severity.Error);
             throw;
         }
+    }
+
+    // Create Document
+    private async Task CreateDocument()
+    {
+        using (ExcelEngine excelEngine = new ExcelEngine())
+        {
+            IApplication application = excelEngine.Excel;
+            application.DefaultVersion = ExcelVersion.Xlsx;
+
+            //Create a workbook.
+            IWorkbook workbook = application.Workbooks.Create(1);
+            IWorksheet worksheet = workbook.Worksheets[0];
+
+            //Initialize DataTable and data get from SampleDataTable method.
+            DataTable table = ParentDataTable();
+
+            //Export data from DataTable to Excel worksheet.
+            worksheet.ImportDataTable(table, true, 1, 1);
+
+            worksheet.UsedRange.AutofitColumns();
+
+            //Save the document as a stream and return the stream.
+            using (MemoryStream stream = new MemoryStream())
+            {
+                //Save the created Excel document to MemoryStream
+                workbook.SaveAs(stream);
+
+                //Download the excel file.
+                await JS.SaveAs("CategoryBulkError.xlsx", stream.ToArray());
+            }
+        }
+    }
+
+    private DataTable ParentDataTable()
+    {
+        DataTable reports = new DataTable();
+        reports.Columns.Add("ImageURL");
+        reports.Columns.Add("ImageName");
+        reports.Columns.Add("AltTest");
+        reports.Columns.Add("ProductCode");
+        reports.Columns.Add("Description");
+
+        foreach (var item in RejectedImages)
+        {
+            reports.Rows.Add(item.url, item.imageName, item.altImageName, item.productCode, item.description);
+        }
+        return reports;
     }
 }

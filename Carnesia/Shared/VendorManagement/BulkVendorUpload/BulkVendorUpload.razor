@@ -1,4 +1,8 @@
 ﻿@using Carnesia.Domain.Vendor.POCO
+@using Syncfusion.XlsIO
+@using System.IO
+@using System.Data
+@inject Microsoft.JSInterop.IJSRuntime JS
 @inject IVendor _vendor
 @inject ISnackbar Snackbar
 
@@ -80,8 +84,8 @@
                 </RowTemplate>
             </MudTable>
         
-            <div class="d-flex justify-end mt-5" >
-                <MudButton Variant="Variant.Filled" Color="Color.Success">Download XLSX</MudButton>
+            <div class="mb-5 d-flex justify-end">
+                <MudButton StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Disabled="RejectedVendors.Count <= 0 ? true : false" Color="Color.Success" OnClick="CreateDocument">Download XLSL</MudButton>
             </div>
         }
 	</MudContainer>
@@ -120,5 +124,58 @@
             Snackbar.Add("Error", Severity.Error);
             throw;
         }
+    }
+
+    // Create Document
+    private async Task CreateDocument()
+    {
+        using (ExcelEngine excelEngine = new ExcelEngine())
+        {
+            IApplication application = excelEngine.Excel;
+            application.DefaultVersion = ExcelVersion.Xlsx;
+
+            //Create a workbook.
+            IWorkbook workbook = application.Workbooks.Create(1);
+            IWorksheet worksheet = workbook.Worksheets[0];
+
+            //Initialize DataTable and data get from SampleDataTable method.
+            DataTable table = ParentDataTable();
+
+            //Export data from DataTable to Excel worksheet.
+            worksheet.ImportDataTable(table, true, 1, 1);
+
+            worksheet.UsedRange.AutofitColumns();
+
+            //Save the document as a stream and return the stream.
+            using (MemoryStream stream = new MemoryStream())
+            {
+                //Save the created Excel document to MemoryStream
+                workbook.SaveAs(stream);
+
+                //Download the excel file.
+                await JS.SaveAs("VendorBulkError.xlsx", stream.ToArray());
+            }
+        }
+    }
+
+    private DataTable ParentDataTable()
+    {
+        DataTable reports = new DataTable();
+        reports.Columns.Add("VendorName");
+        reports.Columns.Add("Importer");
+        reports.Columns.Add("Initial");
+        reports.Columns.Add("Owner");
+        reports.Columns.Add("PhoneNumber");
+        reports.Columns.Add("BankAccountDetails");
+        reports.Columns.Add("ManagerName");
+        reports.Columns.Add("AddressOne");
+        reports.Columns.Add("AddressTwo");
+        reports.Columns.Add("Description");
+
+        foreach (var item in RejectedVendors)
+        {
+            reports.Rows.Add( item.name, item.importer, item.initial, item.owner, item.phoneNumber, item.bankAccountDetails, item.managerName, item.addressOne, item.addressTwo, item.description);
+        }
+        return reports;
     }
 }
