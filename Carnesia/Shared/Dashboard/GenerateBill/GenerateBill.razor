@@ -1,0 +1,230 @@
+﻿@using Carnesia.Domain.Dashboard.GenerateBill
+@using Carnesia.Domain.Common.POCO
+@inject IJSRuntime JSRuntime
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+       <div @ref="generateBill" tabindex="0" onkeydown="@KeyCombo">
+        <div class="d-flex justify-end mt-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCustomerModal" >Create Customer</MudButton>
+        </div>
+        <MudGrid Class="justify-space-between mb-5">
+            <MudItem sm="4">
+                <MudTextField @bind-Value="uid" Placeholder="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
+            </MudItem>
+            <MudItem sm="4">
+                <MudTextField @bind-Value="customerPhoneNumber" Placeholder="Customer Phone Number" Immediate="true" Variant="Variant.Text" OnKeyPress="GetCustomer" />
+            </MudItem>
+        </MudGrid>
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
+            <HeaderContent>
+                <MudTh>Product Name & SKU</MudTh>
+                <MudTh>MRP</MudTh>
+                <MudTh>Selling Price</MudTh>
+                <MudTh>Quantity</MudTh>
+                <MudTh>Subtotal Value</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="BrandProduct Name & SKU">@context.productName - @context.productSKU</MudTd>
+                <MudTd DataLabel="MRP">@context.mrp</MudTd>
+                <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+                <MudTd DataLabel="Quantity">@context.qty</MudTd>
+                <MudTd DataLabel="Subtotal Value">@(context.qty * context.sellingPrice)</MudTd>
+            </RowTemplate>
+            <FooterContent>
+                <MudTFootRow>
+                    <MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
+                    <MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.qty * e.sellingPrice))</MudTd>
+                </MudTFootRow>
+                <MudTFootRow>
+                    <MudTd colspan="4" Style="text-align: end;">Item:</MudTd>
+                    <MudTd colspan="1" Style="text-align: end;">@(Elements.Count)</MudTd>
+                </MudTFootRow>
+                <MudTFootRow>
+                    <MudTd colspan="4" Style="text-align: end;">Quantity:</MudTd>
+                    <MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.qty))</MudTd>
+                </MudTFootRow>
+                <MudTFootRow>
+                    <MudTd colspan="4" Style="text-align: end;">Discount Value:</MudTd>
+                    <MudTd colspan="1" Style="text-align: end;">600</MudTd>
+                </MudTFootRow>
+                <MudTFootRow>
+                    <MudTd colspan="4" Style="text-align: end;">Reward Value:</MudTd>
+                    <MudTd colspan="1" Style="text-align: end;">0</MudTd>
+                </MudTFootRow>
+                <MudTFootRow>
+                    <MudTd colspan="4" Style="text-align: end;">Vat:</MudTd>
+                    <MudTd colspan="1" Style="text-align: end;">5%</MudTd>
+                </MudTFootRow>
+                <MudTFootRow>
+                    <MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+                    <MudTd colspan="1" Style="text-align: end; font-weight: 600;">1200</MudTd>
+                </MudTFootRow>
+            </FooterContent>
+        </MudTable>
+
+        <MudGrid>
+            <MudItem sm="6">
+                <MudGrid Class="align-baseline">
+                    <MudItem sm="9">
+                        <MudTextField T="string" Placeholder="Creadit Value" Immediate="true" Variant="Variant.Text" />
+                    </MudItem>
+                    <MudItem sm="3">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Use</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem sm="6">
+                <MudGrid Class="align-baseline">
+                    <MudItem sm="9">
+                        <MudTextField T="string" Placeholder="Reward Points" Immediate="true" Variant="Variant.Text" />
+                    </MudItem>
+                    <MudItem sm="3">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Use</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem sm="6">
+                <MudGrid Class="align-baseline">
+                    <MudItem sm="9">
+                        <MudTextField T="string" Placeholder="Membership ID" Immediate="true" Variant="Variant.Text" />
+                    </MudItem>
+                    <MudItem sm="3">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Apply</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem sm="6">
+                <MudGrid Class="align-baseline">
+                    <MudItem sm="9">
+                        <MudTextField T="string" Placeholder="Coupon Code" Immediate="true" Variant="Variant.Text" />
+                    </MudItem>
+                    <MudItem sm="3">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Apply</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+
+        <div class="mt-5">
+            <MudText>Name: Rohan Rahi</MudText>
+            <MudText>Phone Number: 01436740923</MudText>
+            <MudText>Address: Port High School Colony</MudText>
+        </div>
+
+        <div class="mt-5 mx-auto" style="width: fit-content;">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Add Comment</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePOS" >Generate Bill</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintInvoice" >Print Invoice</MudButton>
+        </div>
+       </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Div Ref
+    protected ElementReference generateBill;
+
+    // Invoke Focus
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) 
+        {
+            await JSRuntime.InvokeVoidAsync("SetFocusToElement", generateBill);
+        }            
+    }
+
+    // On Page Load
+    protected override async Task OnInitializedAsync()
+    {
+        var tempData = new GenerateBillProductTableDTO()
+            {
+                productName = "Hello",
+                productSKU = "sku-1",
+                mrp = 150,
+                sellingPrice = 120,
+                qty = 15
+            };
+
+        Elements.Add(tempData);
+
+        var tempDataTwo = new GenerateBillProductTableDTO()
+            {
+                productName = "Hi",
+                productSKU = "sku-2",
+                mrp = 299,
+                sellingPrice = 279,
+                qty = 25
+            };
+
+        Elements.Add(tempDataTwo);
+    }
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private List<GenerateBillProductTableDTO> Elements = new List<GenerateBillProductTableDTO>();
+
+    // Scan UID
+    private string uid { get; set; }
+
+    private async Task AddProduct(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(uid))
+            {
+                Console.WriteLine(uid);
+                uid = String.Empty;
+            }
+        }
+    }
+
+    // Get Customer
+    private string customerPhoneNumber { get; set; }
+
+    private async Task GetCustomer(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(customerPhoneNumber))
+            {
+                Console.WriteLine(customerPhoneNumber);
+            }
+        }
+    }
+
+    // Get Key Combo
+    protected async Task KeyCombo(KeyboardEventArgs e)
+    {
+        if (e.CtrlKey && e.Key == "F1")
+        {
+            await GeneratePOS();
+        }
+
+        if (e.CtrlKey && e.Key == "F2")
+        {
+            await PrintInvoice();
+        }
+    }
+
+    // Generate POS
+    private async Task GeneratePOS()
+    {
+        Console.WriteLine("Bill Generated");
+    }
+
+    // Print Invoice
+    private async Task PrintInvoice()
+    {
+        Console.WriteLine("Print Invoice");
+    }
+
+    // Create Customer
+    private async Task OpenCustomerModal()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<CreateCustomerModal>("Add New Customer", options).Result;
+    }
+}

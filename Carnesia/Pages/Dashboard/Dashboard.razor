@@ -1,0 +1,43 @@
+﻿@page "/dashboard"
+@using Carnesia.Shared.Dashboard.CustomerProfile
+@using Carnesia.Shared.Dashboard.GenerateBill
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == DashBoard ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DashBoard)">@DashBoard</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CustomerProfile ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CustomerProfile)">@CustomerProfile</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateBill ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateBill)">@GenerateBill</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == Orders ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Orders)">@Orders</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ReturnAndRefund ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReturnAndRefund)">@ReturnAndRefund</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if (CurrentPage == CustomerProfile)
+{
+    <CustomerProfile />
+}
+else if (CurrentPage == GenerateBill)
+{
+    <GenerateBill />
+}
+
+@code {
+    // Pages
+    public string DashBoard = "Dashboard";
+    public string CustomerProfile = "Customer Profile";
+    public string GenerateBill = "Generate Bill";
+    public string Orders = "Orders";
+    public string ReturnAndRefund = "Return & Refund";
+
+
+    // Current Page
+    public string CurrentPage { get; set; } = "Dashboard";
+
+    // Change Current Page
+    void ChangePage(string pageName)
+    {
+        CurrentPage = pageName;
+    }
+}
