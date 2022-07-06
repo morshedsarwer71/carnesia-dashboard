@@ -20,11 +20,11 @@
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenBrandModal" >Add New Brand</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<BrandDTO,bool>(FilterFuncInitial)">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>Brand Name</MudTh>
@@ -35,7 +35,7 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Brand Name">@context.name</MudTd>
-                <MudTd DataLabel="Brand Name">
+                <MudTd DataLabel="Image">
                     <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Description">@context.description</MudTd>
@@ -196,4 +196,18 @@
         }
         return reports;
     }
+
+
+    // Table Search
+    private bool FilterFuncInitial(BrandDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+    private bool FilterFunc(BrandDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
 }

@@ -1,0 +1,57 @@
+﻿@using Carnesia.Domain.Dashboard.ReturnRefund
+@using Carnesia.Domain.Common.POCO
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<div class="d-flex justify-end">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Receive Return</MudButton>
+		</div>
+		<MudGrid Class="justify-center">
+			<MudItem sm="4">
+				<MudTextField T="string" Variant="Variant.Text" Placeholder="Order ID" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudTextField T="string" Variant="Variant.Text" Placeholder="UID" />
+			</MudItem>
+		</MudGrid>
+		<div class="d-flex justify-center my-5">
+			<MudImage Src="https://cdn.pixabay.com/photo/2022/06/29/10/58/fox-7291456_960_720.jpg" Alt="Fox" Style="width: 30%;" />
+		</div>
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <HeaderContent>
+                <MudTh>Product Code</MudTh>
+                <MudTh>Product SKU</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Sold Quantity</MudTh>
+                <MudTh>Image</MudTh>
+                <MudTh>Received</MudTh>
+                <MudTh>Selling Price</MudTh>
+                <MudTh>Received Amount</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="Product SKU">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
+                <MudTd DataLabel="Sold Quantity">@context.soldQTY</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageURL}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                </MudTd>
+                <MudTd DataLabel="Received">@context.received</MudTd>
+                <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+                <MudTd DataLabel="Received Amount">@context.receivedAmount</MudTd>
+            </RowTemplate>
+        </MudTable>
+        <div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit & Return</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<ReturnRefundDTO> Elements = new List<ReturnRefundDTO>();
+}

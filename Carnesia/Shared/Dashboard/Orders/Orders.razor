@@ -1,0 +1,106 @@
+﻿@using Carnesia.Domain.Dashboard.Orders
+@using Carnesia.Domain.Common.POCO
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center">
+			<MudItem sm="3">
+				<MudTextField T="string" Placeholder="Customer Phone Number" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudTextField T="string" Placeholder="Customer ID" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudTextField T="string" Placeholder="Order ID" Variant="Variant.Text" />
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center">
+			<MudItem sm="9" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+			<HeaderContent>
+                <MudTh></MudTh>
+                <MudTh>Order Date</MudTh>
+                <MudTh>Order ID</MudTh>
+                <MudTh>Customer ID</MudTh>
+                <MudTh>Customer Name</MudTh>
+                <MudTh>Address</MudTh>
+                <MudTh>Order Value(SP)</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Re-Print</MudTh>
+            </HeaderContent>
+			<RowTemplate>
+                <MudTd DataLabel="">
+                    @if (!context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowDetails(context.orderID)" />
+					}
+					else if (context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowDetails(context.orderID)" />
+					}
+                </MudTd>
+                <MudTd DataLabel="Order Date">@context.orderDate</MudTd>
+                <MudTd DataLabel="Order ID">@context.orderID</MudTd>
+                <MudTd DataLabel="Customer ID">@context.customerID</MudTd>
+                <MudTd DataLabel="Customer Name">@context.customerName</MudTd>
+                <MudTd DataLabel="Address">@context.address</MudTd>
+                <MudTd DataLabel="Order Value(SP)">@context.orderValue</MudTd>
+                <MudTd DataLabel="Status">@context.status</MudTd>
+                <MudTd DataLabel="Re-Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info">Re-Print Invoice</MudButton>
+				</MudTd>
+            </RowTemplate>
+			<ChildRowContent>
+				@if (context.showDetails)
+				{
+					<td colspan="9">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.details" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+									<HeaderContent>
+										<MudTh>Product Code</MudTh>
+										<MudTh>SKU</MudTh>
+										<MudTh>Product Name</MudTh>
+										<MudTh>MRP</MudTh>
+										<MudTh>Selling Price</MudTh>
+										<MudTh>Quantity</MudTh>
+										<MudTh>Subtotal Value</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="Product Code">@DetailsContext.productCode</MudTd>
+										<MudTd DataLabel="SKU">@DetailsContext.productSKU</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
+										<MudTd DataLabel="MRP">@DetailsContext.mrp</MudTd>
+										<MudTd DataLabel="Selling Price">@DetailsContext.sellingPrice</MudTd>
+										<MudTd DataLabel="Quantity">@DetailsContext.qty</MudTd>
+										<MudTd DataLabel="Subtotal Value">@(DetailsContext.qty * DetailsContext.sellingPrice)</MudTd>
+								   </RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private IEnumerable<OrderDTO> Elements = new List<OrderDTO>();
+
+	// Show Details
+	private void ShowDetails(string id)
+	{
+		OrderDTO tmpElements = Elements.First(f => f.orderID == id);
+		tmpElements.showDetails = !tmpElements.showDetails;
+	}
+}

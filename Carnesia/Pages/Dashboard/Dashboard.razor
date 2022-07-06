@@ -1,6 +1,8 @@
 ﻿@page "/dashboard"
 @using Carnesia.Shared.Dashboard.CustomerProfile
 @using Carnesia.Shared.Dashboard.GenerateBill
+@using Carnesia.Shared.Dashboard.Orders
+@using Carnesia.Shared.Dashboard.ReturnRefund
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
@@ -17,10 +19,15 @@
 @if (CurrentPage == CustomerProfile)
 {
     <CustomerProfile />
-}
-else if (CurrentPage == GenerateBill)
+}else if (CurrentPage == GenerateBill)
 {
     <GenerateBill />
+}else if (CurrentPage == Orders)
+{
+    <Orders />
+}else if (CurrentPage == ReturnAndRefund)
+{
+    <ReturnRefund />
 }
 
 @code {
