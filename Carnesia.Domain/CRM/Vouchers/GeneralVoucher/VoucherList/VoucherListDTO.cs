@@ -18,7 +18,7 @@ namespace Carnesia.Domain.CRM.Vouchers.GeneralVoucher.VoucherList
         public string voucherDiscType { get; set; }
         public decimal discAmntOrPercent { get; set; }
         public decimal upToDiscAmnt { get; set; }
-        public DateTime approvalDate { get; set; }
+        public object approvalDate { get; set; }
         public string approvedBy { get; set; }
         public string description { get; set; }
     }

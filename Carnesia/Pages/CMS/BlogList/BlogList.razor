@@ -8,11 +8,11 @@
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
-				<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+				<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<BlogPostDTO,bool>(FilterFuncInitial)">
 			        <ToolBarContent>
                         <MudSpacer />
                         <MudSpacer />
-                        <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"                                             IconSize="Size.Medium" Class="mt-0"/>
+                        <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
                     </ToolBarContent>
                     <HeaderContent>
                         <MudTh>Title</MudTh>
@@ -85,5 +85,17 @@
     private void NavigateToUpdate(int id)
     {
         NavigationManager.NavigateTo($"update-blog/{id}");
+    }
+
+    // Table Search
+    private bool FilterFuncInitial(BlogPostDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+    private bool FilterFunc(BlogPostDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
     }
 }

@@ -17,11 +17,11 @@
 			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="OpenAddParentCategoryModal">Add New Category</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ParentCategoryDTO,bool>(FilterFuncInitial)">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+                <MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh></MudTh>
@@ -45,7 +45,7 @@
                     <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="@context.parentCat" Elevation="25" Class="rounded-lg" Style="width:50px" />
                 </MudTd>
                 <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateParentCategoryModal(context.parentCat, context.id)">Edit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateParentCategoryModal(context.id)">Edit</MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => OpenAddChildCategoryModal(context.id)">Add New Child</MudButton>
                     @*<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => OpenDeleteCategoryModal(context.parentCat, context.id)">Delete</MudButton>*@
                 </MudTd>
@@ -196,12 +196,31 @@
 	}
 
 	// Update Parent Category Modal
-	private void OpenUpdateParentCategoryModal(string parentCat, int parentId)
+	private async Task OpenUpdateParentCategoryModal(int parentId)
 	{
-		var parameters = new DialogParameters { ["parentCat"]=parentCat, ["parentId"]=parentId };
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new ParentUpdateDTO());
+		parameters.Add("parentId", parentId);
 
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		DialogService.Show<UpdateParentModal>("Update Parent Category", parameters, options);
+		var dialog = await DialogService.Show<UpdateParentModal>("Update Parent Category", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			ParentUpdateDTO newCategory = dialog.Data as ParentUpdateDTO;
+
+			try
+			{
+				await _category.UpdateParentCat(newCategory, parentId);
+				Snackbar.Add("Parent Category Updated Successfully!", Severity.Success);
+				await OnInitializedAsync();
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
 	}
 
 	// Add Child Category Modal
@@ -350,5 +369,19 @@
             reports.Rows.Add(item.id, item.parentCat, item.parentId, item.childCat, item.childCatId, item.gChildCat);
         }
         return reports;
+    }
+
+	// Table Search
+    private bool FilterFuncInitial(ParentCategoryDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+    private bool FilterFunc(ParentCategoryDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.parentCat.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+		if (element.parentCat.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+        return false;
     }
 }

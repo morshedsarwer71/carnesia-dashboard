@@ -16,6 +16,22 @@ namespace Carnesia.Application.CMS.Services.CampaignList
         {
             _httpClient = httpClient;
         }
+
+        public async Task<CampaignDTO> GetCampaignByID(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<CampaignDTO>($"Campaign/{id}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<CampaignDTO>> GetCampaigns()
         {
             try

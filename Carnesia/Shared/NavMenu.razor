@@ -39,29 +39,25 @@
         <MudText Class="border-2 px-4 py-1">CMS</MudText>
     </div>
 
-    <MudNavLink Href="/create-blogpost" Match="NavLinkMatch.Prefix">Create Blog</MudNavLink>
+    <MudNavGroup Title="Home Page" Expanded="false">
+        <MudNavLink Href="/full-width-banner" Match="NavLinkMatch.Prefix">Full Width Banner</MudNavLink>
+        <MudNavLink Href="/gif-banner" Match="NavLinkMatch.Prefix">Gif Banner</MudNavLink>
+        <MudNavLink Href="/home-carousel" Match="NavLinkMatch.Prefix">Home Carousel</MudNavLink>
+        <MudNavLink Href="/under-carousel-banner" Match="NavLinkMatch.Prefix">Under Carousel Banner</MudNavLink>
+        <MudNavLink Href="/homepage-section" Match="NavLinkMatch.Prefix">Homepage Section </MudNavLink>
+    </MudNavGroup>
 
-    <MudNavLink Href="/blog-list" Match="NavLinkMatch.Prefix">Blog List</MudNavLink>
+    <MudNavGroup Title="Brand Management" Expanded="false">
+        <MudNavLink Href="/brand" Match="NavLinkMatch.Prefix">Brand</MudNavLink>
+    </MudNavGroup>
 
-    <MudNavLink Href="/brand" Match="NavLinkMatch.Prefix">Brand</MudNavLink>
-
-    <MudNavLink Href="/create-campaign" Match="NavLinkMatch.Prefix">Create Campaign</MudNavLink>
-
-    <MudNavLink Href="/campaign-list" Match="NavLinkMatch.Prefix">Campaign List</MudNavLink>
-
-    <MudNavLink Href="/category" Match="NavLinkMatch.Prefix">Category</MudNavLink>
-
-    <MudNavLink Href="/full-width-banner" Match="NavLinkMatch.Prefix">Full Width Banner</MudNavLink>
-
-    <MudNavLink Href="/gif-banner" Match="NavLinkMatch.Prefix">Gif Banner</MudNavLink>
-
-    <MudNavLink Href="/home-carousel" Match="NavLinkMatch.Prefix">Home Carousel</MudNavLink>
-
-    <MudNavLink Href="/under-carousel-banner" Match="NavLinkMatch.Prefix">Under Carousel Banner</MudNavLink>
-
-    <MudNavLink Href="/tobag" Match="NavLinkMatch.Prefix">To Bag</MudNavLink>
+    <MudNavGroup Title="Campaign Management" Expanded="false">
+        <MudNavLink Href="/create-campaign" Match="NavLinkMatch.Prefix">Create Campaign</MudNavLink>
+        <MudNavLink Href="/campaign-list" Match="NavLinkMatch.Prefix">Campaign List</MudNavLink>
+    </MudNavGroup>
 
     <MudNavGroup Title="Product Management" Expanded="false">
+        <MudNavLink Href="/category" Match="NavLinkMatch.Prefix">Category</MudNavLink>
         <MudNavLink Href="/parent-product" Match="NavLinkMatch.Prefix">Parent Product</MudNavLink>
         <MudNavLink Href="/bulk-parent-product" Match="NavLinkMatch.Prefix">Bulk Parent Product</MudNavLink>
         <MudNavLink Href="/create-compound-product" Match="NavLinkMatch.Prefix">Create Compound Product</MudNavLink>
@@ -71,6 +67,14 @@
         <MudNavLink Href="/bulk-category-upload" Match="NavLinkMatch.Prefix">Bulk Category Upload</MudNavLink>
         <MudNavLink Href="/product-list" Match="NavLinkMatch.Prefix">Product List</MudNavLink>
     </MudNavGroup>
+
+    <MudNavGroup Title="Blog Management" Expanded="false">
+        <MudNavLink Href="/create-blogpost" Match="NavLinkMatch.Prefix">Create Blog</MudNavLink>
+        <MudNavLink Href="/blog-list" Match="NavLinkMatch.Prefix">Blog List</MudNavLink>
+    </MudNavGroup>
+
+
+
 
     @*CRM*@
     <div class="d-flex justify-center mt-5">

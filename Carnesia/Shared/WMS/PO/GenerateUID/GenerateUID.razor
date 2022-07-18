@@ -33,13 +33,7 @@
 			</MudItem>
 		</MudGrid>
 
-        @*<MudTable Items="@Elements" Dense="@dense" Hover="@hover" SortLabel="Sort By" Filter="new Func<ReceivePOProductDTO,bool>(FilterCycleCheck)" Class="mt-5">*@
-        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" SortLabel="Sort By"             Class="mt-5">
-            <ToolBarContent>
-                <MudSpacer />
-                <MudSpacer />
-                <MudTextField @bind-Value="SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
-            </ToolBarContent>
+        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" SortLabel="Sort By" Class="mt-5">
             <HeaderContent>
                 <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.sku)">SKU Code</MudTableSortLabel></MudTh>
                 <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.productCode)">Product Code</MudTableSortLabel></MudTh>

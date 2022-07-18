@@ -58,6 +58,9 @@
                         <MudNumericField @bind-Value="FormData.vatAmount" Label="Vat Amount"/>
                     </MudItem>
                     <MudItem sm="6">
+                        <MudNumericField @bind-Value="FormData.shelfLife" Label="Shelf Life" Required="true" RequiredError="Shelf Life is required!" />
+                    </MudItem>
+                    <MudItem sm="6">
                         <MudTextField @bind-Value="FormData.upSells" Label="Up Sell SKU. Separate with comma" Required="true" RequiredError="Up Sell SKU are required!" />
                     </MudItem>
                     <MudItem sm="6">

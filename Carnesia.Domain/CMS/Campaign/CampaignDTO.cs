@@ -21,6 +21,7 @@ namespace Carnesia.Domain.CMS.Campaign
         public bool isPublish { get; set; }
         public string imageFileUrl { get; set; }
         public string imageWebUrl { get; set; }
+        public string base64Attch { get; set; }
         public List<CampaignProductDTO> products { get; set; }
     }
 }

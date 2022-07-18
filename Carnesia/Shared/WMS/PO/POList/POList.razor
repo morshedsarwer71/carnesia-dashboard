@@ -31,13 +31,7 @@
 			</MudItem>
 		</MudGrid>
 
-		@* <MudTable Class="mt-10" Items="@poList" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<POListPoco,bool>(FilterCycleCheck)"> *@
 		<MudTable Class="mt-10" Items="@poList" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
-			<ToolBarContent>
-				<MudSpacer />
-				<MudSpacer />
-				<MudTextField @bind-Value="searchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
-			</ToolBarContent>
 			<HeaderContent>
 				<MudTh>Date</MudTh>
 				<MudTh>PO ID</MudTh>

@@ -221,7 +221,7 @@
 		});
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<AddDistrictModal>("Add New Zone", parameters, options).Result;
+        var dialog = await DialogService.Show<AddZoneModal>("Add New Zone", parameters, options).Result;
 
         if (dialog.Data != null)
         {
@@ -255,7 +255,7 @@
 		});
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<AddDistrictModal>("Update Zone", parameters, options).Result;
+        var dialog = await DialogService.Show<AddZoneModal>("Update Zone", parameters, options).Result;
 
         if (dialog.Data != null)
         {

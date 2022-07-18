@@ -12,6 +12,7 @@ namespace Carnesia.Domain.CMS.ChildProduct
         public string productsku { get; set; }
         public string productCode { get; set; }
         public int productParentId { get; set; }
+        public int shelfLife { get; set; }
         public string productParentName { get; set; }
         public decimal weight { get; set; }
         public string uom { get; set; }

@@ -12,11 +12,11 @@
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="NavigateToCreateCampaign" >Add New Campaign</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<CampaignDTO,bool>(FilterFuncInitial)" >
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+                <MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>Campaign Name</MudTh>
@@ -101,5 +101,19 @@
     private void NavigateToUpdate(int id)
     {
         NavigationManager.NavigateTo($"update-campaign/{id}");
+    }
+
+    // Table Search
+    private bool FilterFuncInitial(CampaignDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+    private bool FilterFunc(CampaignDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.campaignName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.platformType.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
     }
 }

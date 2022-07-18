@@ -1,12 +1,252 @@
 ﻿@page "/update-campaign/{id:int}"
+@using Carnesia.Domain.CMS.Campaign
+@using Carnesia.Shared.CMS.CreateCampaign
+@inject ICampaignList _campaignList
+@inject ICreateCampaign _createCampaign
+@inject IProducts _products
+@inject IBase64 _base64
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
-		
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    <MudTextField @bind-Value="campaign.campaignName" Label="Campaign Name" Required="true" RequiredError="Campaign name is required!"/>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudSelect Disabled="true" @bind-Value="campaign.platformType" Label="Platform" Required="true" RequiredError="Platform type is required!" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="@("App")" />
+                        <MudSelectItem Value="@("Web")" />
+                        <MudSelectItem Value="@("General")" />
+                    </MudSelect>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="campaign.startDate" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="campaign.endDate" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTimePicker Label="End Time" @bind-Time="EndTime" />
+                </MudItem>
+                <MudItem sm="11">
+                    <MudTextField Lines="5" @bind-Value="campaign.description" Label="Description" Required="true" RequiredError="Description is required!"/>
+                </MudItem>
+            </MudGrid>
+            <div class="mt-5">
+                <InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
+
+                <MudButton HtmlTag="label"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            StartIcon="@Icons.Filled.CloudUpload"
+                            Disabled="DisableUpdate"
+                            for="fileInput">
+                    Upload Images
+                </MudButton>
+                <MudText Class="mt-1">1080 * 420(Max 150Kb)</MudText>
+            </div>
+
+            <MudImage Src="@($"data:image/webp;base64,{campaign.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
+
+            <div class="d-flex align-center justify-space-between mt-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success || DisableUpdate)" Class="ml-auto" OnClick="UpdateDetails">Update Campaign</MudButton>
+            </div>
+
+            <div class="d-flex justify-end my-5">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenProductModal" Disabled="DisableUpdate" >Add Product</MudButton>
+            </div>
+
+            <MudTable Items="@campaign.products" Hover="true" Dense="true">
+                <HeaderContent>
+                    <MudTh>SKU</MudTh>
+                    <MudTh>Stock</MudTh>
+                    <MudTh>Regular Price</MudTh>
+                    <MudTh>Discount Type</MudTh>
+                    <MudTh>Discount Amount</MudTh>
+                    <MudTh>After Discount</MudTh>
+                    <MudTh>Action</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="SKU">@context.productSku</MudTd>
+                    <MudTd DataLabel="Stock">@context.stock</MudTd>
+                    <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
+                    <MudTd DataLabel="Discount Type">@context.discType</MudTd>
+                    <MudTd DataLabel="Discount Amount">@context.discAmount</MudTd>
+                    <MudTd DataLabel="After Discount">@context.atrDiscAmount</MudTd>
+                    <MudTd DataLabel="Action">
+                        @*<MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" @onclick="() => DeleteProduct(context.id)" />*@
+                        @*<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteProduct(context.id)" Disabled="DisableUpdate" >Delete</MudButton>*@
+                        <MudButton OnClick="() => DeleteProduct(context.id)" Disabled="DisableUpdate" >
+                            <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+                        </MudButton>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+		</MudForm>
 	</MudContainer>
 </MudPaper>
 
 @code {
-	[Parameter]
+    [Parameter]
     public int id { get; set; }
+
+    // Disable Update
+    private bool DisableUpdate { get; set; } = false;
+
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCampaign();
+        await SetTime();
+        await CheckStart();
+    }
+
+    // Campaign
+    private CampaignDTO campaign = new CampaignDTO();
+
+    //Time
+    private TimeSpan? StartTime = new TimeSpan();
+    private TimeSpan? EndTime = new TimeSpan();
+
+    // Get Campaign
+    private async Task GetCampaign()
+    {
+        campaign = await _campaignList.GetCampaignByID(id);
+    }
+
+    // Set Time
+    private async Task SetTime()
+    {
+        StartTime = TimeSpan.Parse(campaign.startTime.Remove(campaign.startTime.Length - 5));
+        EndTime = TimeSpan.Parse(campaign.endTime.Remove(campaign.endTime.Length - 5));
+    }
+
+    // Check Start Time
+    private async Task CheckStart()
+    {
+        var startDateTime = Convert.ToDateTime($"{campaign.startDate}T{StartTime}.000Z");
+        if (DateTime.Now >= startDateTime)
+        {
+            DisableUpdate = true;
+        }
+    }
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Upload Image
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            campaign.base64Attch = await _base64.ConvertToBase64(153600, 1080, 420, e);
+        }
+        catch(Exception error)
+        {
+            Snackbar.Add(error.Message, Severity.Error);
+        }
+    }
+
+    // Update Campaign Details
+    private async Task UpdateDetails()
+    {
+        try
+        {
+            var CampaignDetails = new AddCampaignDetailsDTO()
+                {
+                    campaignName = campaign.campaignName,
+                    startDate = $"{campaign.startDate}T{StartTime}.000Z",
+                    endDate = $"{campaign.endDate}T{EndTime}.000Z",
+                    description = campaign.description,
+                    isPublish = campaign.isPublish,
+                    base64Attch = campaign.base64Attch
+                };
+
+            var result = await _createCampaign.UpdateCampaignDetails(CampaignDetails, id);
+
+            if (result)
+            {
+                Snackbar.Add("Campaign Details Updated Successfully!", Severity.Success);
+                return;
+            }
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }catch(Exception){ throw; }
+    }
+
+    // Add Product Modal
+    private async Task OpenProductModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddCampaignProductDTO(){campaignCode = campaign.campaignCode});
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddProductModal>("Add New Product", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddCampaignProductDTO newProduct = dialog.Data as AddCampaignProductDTO;
+
+            if (newProduct.discType == "Cash")
+            {
+                newProduct.discPrice = newProduct.regularPrice - newProduct.discAmount;
+            }
+            else
+            {
+                newProduct.discPrice = newProduct.regularPrice - ((newProduct.regularPrice * newProduct.discAmount) / 100);
+            }
+
+            newProduct.productId = await _products.GetProductIdBySku(newProduct.sku);
+
+            try
+            {
+                var result = await _createCampaign.AddProductToCampaign(newProduct);
+                if (result)
+                {
+                    Snackbar.Add("Campaign Details Updated Successfully!", Severity.Success);
+                    await GetCampaign();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+    }
+
+    // Delete Banner
+    private async Task DeleteProduct(int id)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
+
+        if (!dialog.Cancelled)
+        {
+            try
+            {
+                var result = await _createCampaign.DeleteCampaignProduct(id);
+                if (result)
+                {
+                    Snackbar.Add("Product Deleted Successfully!", Severity.Success);
+                    await GetCampaign();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+    }
 }

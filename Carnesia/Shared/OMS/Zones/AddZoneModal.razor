@@ -3,7 +3,7 @@
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                    <MudTextField @bind-Value="@FormData.zoneName" Immediate="true" Label="District Name" Required="true" RequiredError="District Name is required!"/>
+                    <MudTextField @bind-Value="@FormData.zoneName" Immediate="true" Label="Zone Name" Required="true" RequiredError="Zone Name is required!"/>
                     <MudNumericField @bind-Value="@FormData.regularDeliveryDay" Immediate="true" Label="Regular Delivery Day" Required="true" RequiredError="Regular Delivery Day is                              required!"/>
                     <MudNumericField @bind-Value="@FormData.regularPrice" Immediate="true" Label="Regular Delivery Price" Required="true" RequiredError="Regular Delivery Price is                                required!"/>
                     <MudNumericField @bind-Value="@FormData.expressDeliveryDay" Immediate="true" Label="Express Delivery Day" Required="true" RequiredError="Express Delivery Day is                              required!"/>

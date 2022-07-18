@@ -5,17 +5,16 @@
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ToBagListSectionDTO,bool>(FilterFuncInitial)">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+                <MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh></MudTh>
                 <MudTh>Section Name</MudTh>
                 <MudTh>publish</MudTh>
-                @*<MudTh>Action</MudTh>*@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="">
@@ -32,9 +31,6 @@
                 <MudTd DataLabel="Publish">
                      <MudSwitch @bind-Checked="@context.isPublished" Color="Color.Primary" @onclick="(() => TogglePublishSection(context.id))"/>
                 </MudTd>
-                @*<MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
-                </MudTd>*@
             </RowTemplate>
             <ChildRowContent>
 				@if (context.ShowDetails)
@@ -53,7 +49,7 @@
 								   <RowTemplate>
 										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
 										<MudTd DataLabel="Image">
-											<MudImage Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25"														 Class="rounded-lg" Style="width:50px" />
+											<MudImage Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
 										</MudTd>
 										<MudTd DataLabel="Link">@DetailsContext.link</MudTd>
 										<MudTd DataLabel="Link">
@@ -139,4 +135,16 @@
 			throw;
 		}
 	}
+
+	// Table Search
+    private bool FilterFuncInitial(ToBagListSectionDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+    private bool FilterFunc(ToBagListSectionDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.sectionName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
 }

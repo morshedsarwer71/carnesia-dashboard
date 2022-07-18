@@ -5,6 +5,7 @@
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudAutocomplete T="string" Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Required="true" ResetValueOnEmptyText="true" />
+                <MudNumericField @bind-Value="FormData.stock" Label="Stock" Variant="Variant.Text" Required="true" RequiredError="Stock is required!" />
                 <MudNumericField @bind-Value="FormData.regularPrice" Label="Regular Price" Variant="Variant.Text" Required="true" RequiredError="Regular Price is required!" />
                 <MudSelect @bind-Value="FormData.discType" Label="Discount Type" Required="true" AnchorOrigin="Origin.BottomCenter">
                     <MudSelectItem Value="@("Cash")" />

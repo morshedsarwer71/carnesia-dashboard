@@ -10,6 +10,7 @@ namespace Carnesia.Application.CMS.Services.CampaignList
     public interface ICampaignList
     {
         Task<List<CampaignDTO>> GetCampaigns();
+        Task<CampaignDTO> GetCampaignByID(int id);
         Task Publishtoggle(int CampaignId);
     }
 }

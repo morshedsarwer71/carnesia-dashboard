@@ -1,4 +1,4 @@
-﻿@page "/tobag"
+﻿@page "/homepage-section"
 
 @using Carnesia.Shared.CMS.ToBag.CreateTobag
 @using Carnesia.Shared.CMS.ToBag.ToBagList
@@ -23,11 +23,11 @@ else if(CurrentPage == ToBagList){
 
 @code {
     // Pages 
-    private string CreateTobag = "Create To Bag";
-    private string ToBagList = "To Bag";
+    private string CreateTobag = "Create Sections";
+    private string ToBagList = "Sections";
 
     // Current Page 
-    private string CurrentPage { get; set; } = "To Bag";
+    private string CurrentPage { get; set; } = "Sections";
 
     // Change Current Page
     void ChangePage(string pageName)

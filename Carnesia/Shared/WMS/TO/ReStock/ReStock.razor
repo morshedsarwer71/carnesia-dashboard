@@ -34,13 +34,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" MultiSelection="true"
-        @bind-SelectedItems="SelectedStocks">
-            <ToolBarContent>
-                <MudSpacer />
-                <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                    Class="mt-0"/>
-            </ToolBarContent>
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" MultiSelection="true" @bind-SelectedItems="SelectedStocks">
             <HeaderContent>
                 <MudTh></MudTh>
                 <MudTh>SKU</MudTh>

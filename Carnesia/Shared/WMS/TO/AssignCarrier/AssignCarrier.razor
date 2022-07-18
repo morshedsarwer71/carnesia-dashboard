@@ -16,11 +16,6 @@
 		</MudGrid>
 
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
-            <ToolBarContent>
-                <MudSpacer />
-                <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
-            </ToolBarContent>
             <HeaderContent>
                 <MudTh>Created on</MudTh>
                 <MudTh>TO ID</MudTh>

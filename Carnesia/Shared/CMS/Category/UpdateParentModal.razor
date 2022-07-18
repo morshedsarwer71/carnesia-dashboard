@@ -1,13 +1,13 @@
 ﻿@using Carnesia.Domain.CMS.Category
 @inject ICategory _category
-@inject ISnackbar Snackbar
+@inject IBase64 _base64
 
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                    <MudTextField @bind-Value="parentCat" Immediate="true" Label="Category Name" Required="true" RequiredError="Category Name is required!"/>
+                    <MudTextField @bind-Value="FormData.parentCat" Immediate="true" Label="Category Name" Required="true" RequiredError="Category Name is required!"/>
 
-                    @*<InputFile id="category-image" OnChange="@ValidateImage" hidden accept=".webp" />
+                    <InputFile id="category-image" OnChange="@ValidateImage" hidden accept=".webp" />
                     <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="category-image" Class="mt-5">
                         Upload Category Images
                     </MudButton>
@@ -15,43 +15,52 @@
 
                     <br/>
                     <MudText Color="Color.Error">@ImageError</MudText>
-                    <MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />*@
+                    <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
 
                     <div class="d-flex justify-end my-5">
-                        <MudButton Variant="Variant.Filled" Color="Color.Warning" Disabled="@(!success)" Class="ml-auto" OnClick="UpdateCategory">Update</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Warning" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Update</MudButton>
                     </div>
             </MudForm>
     </DialogContent>
 </MudDialog>
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetParent();
+    }
+
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    [Parameter] public string parentCat { get; set; }
     [Parameter] public int parentId { get; set; }
 
-    // Submit Close
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    [Parameter]
+    public ParentUpdateDTO FormData{get;set;} = new ParentUpdateDTO();
 
-    // Update Parent Category
-    private async Task UpdateCategory()
+    // Get Parent
+    private async Task GetParent()
     {
-        var FormData = new ParentUpdateDTO()
-        {
-            parentCat = parentCat
-        };
+        FormData = await _category.GetParentById(parentId);
+    }
 
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<ParentUpdateDTO>(FormData));
+
+    // Image Error
+    private string ImageError { get; set; }
+
+    // Image Validation
+    private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
+    {
+        ImageError = String.Empty;
         try
         {
-            await _category.UpdateParentCat(FormData, parentId);
-
-            Snackbar.Add("Parent Category Updated Successfully!", Severity.Success);
-            Submit();
-
+            FormData.base64Attch = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
         }
-        catch (Exception)
+        catch(Exception e)
         {
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            ImageError = e.Message;
         }
     }
 

@@ -29,5 +29,7 @@ namespace Carnesia.Application.CMS.Services.Category
 
         Task CreateGrandChildCat(CreateGrandChildCatDTO GrandChildCat);
         Task<List<CategoryXLSLDTO>> GetCategoriesForXLSL();
+
+        Task<ParentUpdateDTO> GetParentById(int id);
     }
 }

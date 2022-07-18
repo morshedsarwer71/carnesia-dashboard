@@ -19,13 +19,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Loading="loadingBar" Class="mt-10" Items="@awaitingPos" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered"						 Striped="@tableCommon.Striped">
-		@* <MudTable Loading="loadingBar" Class="mt-10" Items="@awaitingPos" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<AwaitingPo,bool>(FilterCycleCheck)"> *@
-			<ToolBarContent>
-				<MudSpacer />
-				<MudSpacer />
-				<MudTextField @bind-Value="SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
-			</ToolBarContent>
+		<MudTable Loading="loadingBar" Class="mt-10" Items="@awaitingPos" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
 			<HeaderContent>
 				<MudTh>Date</MudTh>
 				<MudTh>PO ID</MudTh>

@@ -35,11 +35,6 @@
         </MudGrid>
 
         <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CanCancelEdit="@true" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated", Severity.Info))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
-            <ToolBarContent>
-                <MudSpacer />
-                <MudSpacer />
-                <MudTextField @bind-Value="SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
-            </ToolBarContent>
             <HeaderContent>
                 <MudTh>SKU Code</MudTh>
                 <MudTh>Product Code</MudTh>
@@ -59,7 +54,6 @@
                 <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
                 <MudTd DataLabel="QC Passed">@(context.poQuantity - (context.qcFailed + context.notArrivedQty))</MudTd>
-                @*<MudTd DataLabel="QC Passed">6000</MudTd>*@
                 <MudTd DataLabel="QC Failed">@context.qcFailed</MudTd>
                 <MudTd DataLabel="Not Arrived">@context.notArrivedQty</MudTd>
                 <MudTd DataLabel="Value">@(((context.poQuantity - (context.qcFailed + context.notArrivedQty)) * context.liftingPrice))</MudTd>
@@ -101,11 +95,7 @@
             <MudList Clickable="true">
                 <MudListItem>Total PO Quantity: @PO.totalQty </MudListItem>
                 <MudDivider />
-                @*<MudListItem>Total Quantity Received: 500</MudListItem>*@
-                @*<MudDivider />*@
                 <MudListItem>Total PO Amount: @PO.totalValue</MudListItem>
-                @*<MudDivider />*@
-                @*<MudListItem>Total Received Amount: 5000000</MudListItem>*@
             </MudList>
         </MudPaper>
     </MudContainer>

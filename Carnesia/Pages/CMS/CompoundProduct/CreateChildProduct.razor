@@ -14,7 +14,7 @@
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudGrid>
                     <MudItem sm="6"> 
-                        <MudAutocomplete Value="ChildProductInfoData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product"                                                SearchFunc="@ParentProductSearch" ResetValueOnEmptyText="true" Required="true" />
+                        <MudAutocomplete Value="ChildProductInfoData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product" SearchFunc="@ParentProductSearch" ResetValueOnEmptyText="true" Required="true" />
                     </MudItem>
                     <MudItem sm="6">
                         <MudTextField @bind-Value="ChildProductInfoData.productName" Label="Product Name" Required="true" RequiredError="Product Name is required!"/>
@@ -23,13 +23,13 @@
                         <MudTextField @bind-Value="ChildProductInfoData.productsku" Label="Product SKU" Required="true" RequiredError="Product SKU is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.productDimension" Label="Product Dimension" Required="true" RequiredError="Product Dimension is                                   required!"/>
+                        <MudTextField @bind-Value="ChildProductInfoData.productDimension" Label="Product Dimension" Required="true" RequiredError="Product Dimension is required!"/>
                     </MudItem>
                     <MudItem sm="6">
                         <MudNumericField @bind-Value="ChildProductInfoData.weight" Label="Product Weight" Required="true" RequiredError="Product Weight is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudSelect @bind-Value="ChildProductInfoData.uom" Label="Unit of Measurements" Required="true" RequiredError="Unit of Measurements is required!"                                                     AnchorOrigin="Origin.BottomCenter">
+                        <MudSelect @bind-Value="ChildProductInfoData.uom" Label="Unit of Measurements" Required="true" RequiredError="Unit of Measurements is required!" AnchorOrigin="Origin.BottomCenter">
                             <MudSelectItem Value="@("mg")" />
                             <MudSelectItem Value="@("g")" />
                             <MudSelectItem Value="@("kg")" />
@@ -57,16 +57,19 @@
                         <MudNumericField @bind-Value="ChildProductInfoData.vatAmount" Label="Vat Amount"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.upSells" Label="Up Sell SKU. Separate with comma" Required="true" RequiredError="Up Sell SKU are                                  required!" />
+                        <MudNumericField @bind-Value="ChildProductInfoData.shelfLife" Label="Shelf Life" Required="true" RequiredError="Shelf Life is required!" />
                     </MudItem>
                     <MudItem sm="6">
-                        <MudTextField @bind-Value="ChildProductInfoData.crossSells" Label="Cross Sell SKU. Separate with comma" Required="true" RequiredError="Cross Sell SKU                             required!" />
+                        <MudTextField @bind-Value="ChildProductInfoData.upSells" Label="Up Sell SKU. Separate with comma" Required="true" RequiredError="Up Sell SKU are required!" />
                     </MudItem>
                     <MudItem sm="6">
-					    <MudTextField @bind-Value="ChildProductInfoData.metaTags" Label="Meta Tags. Separate with comma" Required="true" RequiredError="Meta Tags are                                     required!" />
+                        <MudTextField @bind-Value="ChildProductInfoData.crossSells" Label="Cross Sell SKU. Separate with comma" Required="true" RequiredError="Cross Sell SKU required!" />
+                    </MudItem>
+                    <MudItem sm="6">
+					    <MudTextField @bind-Value="ChildProductInfoData.metaTags" Label="Meta Tags. Separate with comma" Required="true" RequiredError="Meta Tags are required!" />
 				    </MudItem>
                     <MudItem sm="6">
-					    <MudTextField @bind-Value="ChildProductInfoData.seachTags" Label="Search Tags. Separate with comma" Required="true" RequiredError="Search Tags are                                required!" />
+					    <MudTextField @bind-Value="ChildProductInfoData.seachTags" Label="Search Tags. Separate with comma" Required="true" RequiredError="Search Tags are required!" />
 				    </MudItem>
                     <MudItem sm="6">
 					    <MudTextField @bind-Value="ChildProductInfoData.metaTitle" Label="Meta Title" Required="true" RequiredError="Meta Title are required!" />
@@ -89,7 +92,7 @@
                         <MudItem sm="6">
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudColorPicker Label="Color Code" @bind-Text="ChildProductInfoData.colorCode" Style="@($"color: {ChildProductInfoData.colorCode};")"                                                         ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
+                                    <MudColorPicker Label="Color Code" @bind-Text="ChildProductInfoData.colorCode" Style="@($"color: {ChildProductInfoData.colorCode};")" ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
                                 </MudItem>
                                 <MudItem xs="6">
                                     <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Size" Color="Color.Primary" />
@@ -101,7 +104,7 @@
                         </MudItem>
                     }
                     <MudItem xs="12">
-					    <MudTextField @bind-Value="ChildProductInfoData.metaDescription" Label="Meta Description" Lines="5" Required="true" RequiredError="Meta Description                               required!" />
+					    <MudTextField @bind-Value="ChildProductInfoData.metaDescription" Label="Meta Description" Lines="5" Required="true" RequiredError="Meta Description required!" />
 				    </MudItem>
                 </MudGrid>
 
@@ -144,13 +147,13 @@
                 <MudText Class="mt-5">Category</MudText>
                 <MudGrid>
                     <MudItem md="4" sm="6">
-                        <MudAutocomplete Value="CategoryData.parentCatName" ValueChanged="(string s) => GetParentCatId(s)"  SearchFunc="@ParentCatSearch" Label="Category"                                                   ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Value="CategoryData.parentCatName" ValueChanged="(string s) => GetParentCatId(s)"  SearchFunc="@ParentCatSearch" Label="Category" ResetValueOnEmptyText="true" />
                     </MudItem>
                     <MudItem md="4" sm="6">
-                        <MudAutocomplete Value="CategoryData.childCatName" ValueChanged="(string s) => GetChildCatId(s)" Label="Child Category" SearchFunc="@ChildCatSearch"                                          ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Value="CategoryData.childCatName" ValueChanged="(string s) => GetChildCatId(s)" Label="Child Category" SearchFunc="@ChildCatSearch" ResetValueOnEmptyText="true" />
                     </MudItem>
                     <MudItem md="4" sm="6">
-                        <MudAutocomplete Value="CategoryData.gChildCatName" ValueChanged="(string s) => GetGrandChildId(s)" Label="Grand Child Category"                                                  SearchFunc="@GrandChildCatSearch" ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Value="CategoryData.gChildCatName" ValueChanged="(string s) => GetGrandChildId(s)" Label="Grand Child Category" SearchFunc="@GrandChildCatSearch" ResetValueOnEmptyText="true" />
                     </MudItem>
                 </MudGrid>
 
@@ -172,7 +175,7 @@
                     @foreach(var image in ProductImages)
                     {
                         
-                        <MudBadge OnClick="() => RemoveImage(image)" Icon="@Icons.Filled.DeleteOutline" Color="Color.Error" Overlap="true" Class="mx-6 my-4"                                              Style="cursor:pointer">
+                        <MudBadge OnClick="() => RemoveImage(image)" Icon="@Icons.Filled.DeleteOutline" Color="Color.Error" Overlap="true" Class="mx-6 my-4" Style="cursor:pointer">
                             <MudImage Src="@($"data:image/webp;base64,{image.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
                         </MudBadge>
                     }
