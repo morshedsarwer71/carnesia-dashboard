@@ -3,6 +3,7 @@
 @using Carnesia.Domain.CMS.UnderCarouselBanner
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Shared.CMS.UnderCarouselBanner
+@using Carnesia.Shared.CommonComponents
 @inject IUnderCarouselBanner _underBanner
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
@@ -31,7 +32,7 @@
                 <MudTd DataLabel="Name">@context.bannerName</MudTd>
                 <MudTd DataLabel="Placement">@context.bannerPlacement</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imagePath}")" Alt="@context.bannerName" Elevation="25" Class="rounded-lg" Style="width:50px" />
+                    <MudImage @onclick="() => ShowImage(context.imagePath)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imagePath}")" Alt="@context.bannerName" Elevation="25" Class="rounded-lg" Style="width:50px" />
                 </MudTd>
                 <MudTd DataLabel="URL">@context.url</MudTd>
                 <MudTd DataLabel="Publish">
@@ -153,6 +154,16 @@
         if (element.bannerPlacement.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
+    }
+
+    // Show Image
+    private void ShowImage(string url)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ImageUrl", url);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<ShowImageModal>("Image", parameters, options);
     }
 
 }

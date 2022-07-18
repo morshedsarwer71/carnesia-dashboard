@@ -1,7 +1,9 @@
 ﻿@using Carnesia.Domain.CMS.ToBagList
 @using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.CommonComponents
 @inject IToBag _toBag
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
@@ -49,7 +51,7 @@
 								   <RowTemplate>
 										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
 										<MudTd DataLabel="Image">
-											<MudImage Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
+											<MudImage @onclick="() => ShowImage(DetailsContext.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
 										</MudTd>
 										<MudTd DataLabel="Link">@DetailsContext.link</MudTd>
 										<MudTd DataLabel="Link">
@@ -146,5 +148,15 @@
         if (element.sectionName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
+    }
+
+	// Show Image
+    private void ShowImage(string url)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ImageUrl", url);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<ShowImageModal>("Image", parameters, options);
     }
 }

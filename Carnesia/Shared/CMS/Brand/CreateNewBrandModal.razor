@@ -29,7 +29,10 @@
     // On Page Load
     protected override async Task OnInitializedAsync()
     {
-        await GetBrand();
+        if (FormData.brandId > 0)
+        {
+            await GetBrand();
+        }
     }
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }

@@ -3,6 +3,7 @@
 @using Carnesia.Domain.CMS.Brand
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Shared.CMS.Brand
+@using Carnesia.Shared.CommonComponents
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject IBrand _brand
@@ -36,7 +37,7 @@
             <RowTemplate>
                 <MudTd DataLabel="Brand Name">@context.name</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Description">@context.description</MudTd>
                 <MudTd DataLabel="Publish">
@@ -208,6 +209,16 @@
         if (element.name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
+    }
+
+    // Show Image
+    private void ShowImage(string url)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ImageUrl", url);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<ShowImageModal>("Image", parameters, options);
     }
 
 }

@@ -3,6 +3,7 @@
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.CMS.Category
 @using Carnesia.Shared.CMS.Category
+@using Carnesia.Shared.CommonComponents
 @using Syncfusion.XlsIO
 @using System.IO
 @using System.Data
@@ -42,7 +43,7 @@
                 </MudTd>
                 <MudTd DataLabel="Category Name">@context.parentCat</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="@context.parentCat" Elevation="25" Class="rounded-lg" Style="width:50px" />
+                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="@context.parentCat" Elevation="25" Class="rounded-lg" Style="width:50px" />
                 </MudTd>
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateParentCategoryModal(context.id)">Edit</MudButton>
@@ -383,5 +384,15 @@
 		if (element.parentCat.Contains(searchString, StringComparison.OrdinalIgnoreCase))
 			return true;
         return false;
+    }
+
+	// Show Image
+    private void ShowImage(string url)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ImageUrl", url);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<ShowImageModal>("Image", parameters, options);
     }
 }

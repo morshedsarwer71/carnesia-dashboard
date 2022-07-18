@@ -3,6 +3,7 @@
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.CMS.GifBanner
 @using Carnesia.Shared.CMS.GifBanner
+@using Carnesia.Shared.CommonComponents
 @inject IGifBanner _gifBanner
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
@@ -31,7 +32,7 @@
                 <MudTd DataLabel="URL">@context.url</MudTd>
                 <MudTd DataLabel="URL">@context.description</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageWebUrl}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.imageWebUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageWebUrl}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteBanner(context.id)">Delete</MudButton>
@@ -132,5 +133,15 @@
         if (element.url.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
+    }
+
+    // Show Image
+    private void ShowImage(string url)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ImageUrl", url);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<ShowImageModal>("Image", parameters, options);
     }
 }

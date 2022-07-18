@@ -16,7 +16,7 @@ namespace Carnesia.Domain.CMS.GifBanner
         public string imageFileUrl { get; set; }
         public string imageWebUrl { get; set; }
         public object approvedBy { get; set; }
-        public DateTime approvelDate { get; set; }
+        public string approvelDate { get; set; }
         public object approvalNote { get; set; }
         public object createdBy { get; set; }
         public DateTime createdAt { get; set; }
