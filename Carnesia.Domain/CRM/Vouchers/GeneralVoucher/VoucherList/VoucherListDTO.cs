@@ -12,7 +12,9 @@ namespace Carnesia.Domain.CRM.Vouchers.GeneralVoucher.VoucherList
         public string gvCode { get; set; }
         public int numOfVoucher { get; set; }
         public string startDate { get; set; }
+        public string startTime { get; set; }
         public string endDate { get; set; }
+        public string endTime { get; set; }
         public decimal minCartAmount { get; set; }
         public string platformType { get; set; }
         public string voucherDiscType { get; set; }

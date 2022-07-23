@@ -42,6 +42,20 @@ namespace Carnesia.Application.CRM.Services.Vouchers.GeneralVoucher
             }
         }
 
+        public async Task<VoucherListDTO> GetVoucherById(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<VoucherListDTO>($"Voucher/general/{id}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<VoucherListDTO>> GetVouchers()
         {
             try

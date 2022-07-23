@@ -8,10 +8,10 @@
         <MudForm Style="max-height: 90vh;" @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
             <MudGrid>
                 <MudItem xs="12">
-                    <MudRadioGroup @bind-SelectedOption="selectDate" Class="d-flex flex-column">
+                    <MudRadioGroup @bind-SelectedOption="expId" Class="d-flex flex-column">
                         @foreach (var el in expList)
                         {
-                            <MudRadio Option="el.paramDate" Color="Color.Primary" Dense="true">@el.expDate - @el.generatedSKUQty</MudRadio>
+                            <MudRadio Option="el.id" Color="Color.Primary" Dense="true">@el.expDate - @el.generatedSKUQty</MudRadio>
                         }
                     </MudRadioGroup>
                 </MudItem>
@@ -96,7 +96,10 @@
     string[] errors = { };
 
     // Select Date
-    private string selectDate { get; set; }
+    //private string selectDate { get; set; }
+
+    // EXP id
+    private int expId { get; set; }
 
     // Select Style
     private string selectStyle { get; set; }
@@ -104,9 +107,23 @@
     // Error Text 
     private string errorText { get; set; }
 
+    // Set Id
+    private void SetId(int id)
+    {
+        expId = id;
+    }
+
+    // Get Exp Date
+    private string GetExpDate()
+    {
+        var result = expList.FirstOrDefault(x => x.id == expId);
+        return result.paramDate;
+    }
+
     // Go To Print Label
     private async Task GoToPrint()
     {
+
         errorText = string.Empty;
         if (String.IsNullOrEmpty(selectStyle))
         {
@@ -115,12 +132,12 @@
         }
         if (selectStyle == "Style1" || selectStyle == "Style2" || selectStyle == "Style5" || selectStyle == "Style7")
         {
-            if (String.IsNullOrEmpty(selectDate))
+            if (String.IsNullOrEmpty(GetExpDate()))
             {
                 errorText = "Please select an exp date for this style!";
                 return;
             }
         }
-        await IJS.InvokeAsync<object>("open", new object[] { $"/print-label/{selectStyle}/{selectDate}/{poCode}/{productCode}", "_blank" });
+        await IJS.InvokeAsync<object>("open", new object[] { $"/print-label/{expId}/{selectStyle}", "_blank" });
     }
 }

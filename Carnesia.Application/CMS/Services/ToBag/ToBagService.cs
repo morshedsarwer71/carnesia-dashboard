@@ -17,6 +17,20 @@ namespace Carnesia.Application.CMS.Services.ToBag
         {
             _httpClient = httpClient;
         }
+
+        public async Task AddSingleToBag(AddToBagDTO ToBag)
+        {
+            try
+            {
+                await _httpClient.PostAsJsonAsync("ToBag/addtobagtosection", ToBag);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task CreateToBag(NewToBagDTO ToBag)
         {
             try
@@ -47,6 +61,7 @@ namespace Carnesia.Application.CMS.Services.ToBag
         {
             try
             {
+                Console.WriteLine(id);
                 await _httpClient.DeleteAsync($"ToBag/deletetobag/{id}");
             }
             catch (Exception)
@@ -88,6 +103,19 @@ namespace Carnesia.Application.CMS.Services.ToBag
             try
             {
                 await _httpClient.PostAsync($"ToBag/toggletobag/{id}", null);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task UpdateSection(ToBagListSectionDTO Section)
+        {
+            try
+            {
+                await _httpClient.PutAsJsonAsync($"ToBag/updatetobagSection/{Section.id}", Section);
             }
             catch (Exception)
             {

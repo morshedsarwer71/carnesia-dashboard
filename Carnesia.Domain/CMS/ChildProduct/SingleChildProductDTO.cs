@@ -18,6 +18,7 @@ namespace Carnesia.Domain.CMS.ChildProduct
         public string productDimension { get; set; }
         public bool isPublish { get; set; }
         public bool isHasFreeProd { get; set; }
+        public bool isNewArrival { get; set; }
         public int productPoints { get; set; }
         public string description { get; set; }
         public bool isSize { get; set; }

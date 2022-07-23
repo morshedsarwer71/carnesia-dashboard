@@ -8,12 +8,14 @@ namespace Carnesia.Domain.WMS.PO.POCO
 {
     public class UIDProfileDTO
     {
+        public int id { get; set; }
         public decimal mrp { get; set; }
         public string sku { get; set; }
         public string productCode { get; set; }
         public bool isLabelPrint { get; set; }
         public string expDate { get; set; }
         public string paramDate { get; set; }
+        public string createdDate { get; set; }
         public int generatedSKUQty { get; set; }
         public string vendor { get; set; }
         public string addressOne { get; set; }

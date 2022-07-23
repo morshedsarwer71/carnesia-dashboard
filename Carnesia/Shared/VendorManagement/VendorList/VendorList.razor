@@ -78,7 +78,19 @@
     private async Task OpenUpdateModal(VendorDTO Vendor)
     {
         var parameters = new DialogParameters();
-        parameters.Add("FormData", Vendor);
+        parameters.Add("FormData", new VendorDTO()
+        {
+            vendorId = Vendor.vendorId,
+            name = Vendor.name,
+            initial = Vendor.initial,
+            owner = Vendor.owner,
+            bankAccountDetails = Vendor.bankAccountDetails,
+            managerName = Vendor.managerName,
+            phoneNumber = Vendor.phoneNumber,
+            importer = Vendor.importer,
+            addressOne = Vendor.addressOne,
+            addressTwo = Vendor.addressTwo
+        });
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
         var dialog = await DialogService.Show<VendorUpdateModal>("Update Vendor", parameters, options).Result;
@@ -90,7 +102,7 @@
             try
             {
                 var result = await _vendor.UpdateVendor(newVendor);
-                if (result)
+                if (result == true)
                 {
                     Snackbar.Add("Vendor Updated Successfully!", Severity.Success);
                     await OnInitializedAsync();

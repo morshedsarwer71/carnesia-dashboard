@@ -1,0 +1,70 @@
+﻿@using Carnesia.Domain.CMS.BunchProducts
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudGrid Class="mb-5">
+                    <MudItem xs="12">
+                        <MudTextField T="string" Label="Bunch Name" Required="true" RequiredError="Bunch name is required!"/>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudTimePicker Label="ENd Time" @bind-Time="EndTime" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField T="string" Label="Description" Lines="5" Required="true" RequiredError="Description is required!"/>
+                    </MudItem>
+                </MudGrid>
+
+                <div class="my-5 d-flex justify-end">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary">Add Product</MudButton>
+                </div>
+
+                <MudTable Items="@Products" Hover="true" Dense="true">
+                    <HeaderContent>
+                        <MudTh>SKU</MudTh>
+                        <MudTh>Product Id</MudTh>
+                        <MudTh>Regular Price</MudTh>
+                        <MudTh>Selling Price</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="SKU">@context.sku</MudTd>
+                        <MudTd DataLabel="Product Id">@context.productId</MudTd>
+                        <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
+                        <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+                    </RowTemplate>
+                </MudTable>
+
+                <div class="d-flex align-center justify-space-between">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                </div>
+        </MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Start End Date Time
+    private string StartDate { get; set; }
+    private string EndDate { get; set; }
+    private TimeSpan? StartTime = new TimeSpan();
+    private TimeSpan? EndTime = new TimeSpan();
+
+    // Products List
+    private List<AddBunchProductsProductDTO> Products = new List<AddBunchProductsProductDTO>();
+
+
+}

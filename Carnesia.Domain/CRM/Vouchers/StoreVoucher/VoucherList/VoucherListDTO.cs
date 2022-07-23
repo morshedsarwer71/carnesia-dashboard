@@ -11,8 +11,8 @@ namespace Carnesia.Domain.CRM.Vouchers.StoreVoucher.VoucherList
         public int id { get; set; }
         public string voucherCode { get; set; }
         public int numOfVoucher { get; set; }
-        public DateTime startDate { get; set; }
-        public DateTime endDate { get; set; }
+        public string startDate { get; set; }
+        public string endDate { get; set; }
         public decimal minCartAmount { get; set; }
         public string voucherDiscType { get; set; }
         public decimal discAmntOrPercent { get; set; }

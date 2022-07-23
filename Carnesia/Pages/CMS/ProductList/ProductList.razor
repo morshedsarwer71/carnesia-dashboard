@@ -11,24 +11,18 @@
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>Product Name</MudTh>
                 <MudTh>SKU</MudTh>
-                <MudTh>Product Type</MudTh>
-                <MudTh>Brand Name</MudTh>
-                <MudTh>Origin</MudTh>
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Product Name">@context.childName</MudTd>
-                <MudTd DataLabel="SKU">@context.sku</MudTd>
-                <MudTd DataLabel="Product Type">@context.pproductType</MudTd>
-                <MudTd DataLabel="Brand Name">@context.brandName</MudTd>
-                <MudTd DataLabel="Origin">@context.origin</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="SKU">@context.productsku</MudTd>
                 <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.childId)" >Edit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.productId)" >Edit</MudButton>
                 </MudTd>
             </RowTemplate>
             <PagerContent>

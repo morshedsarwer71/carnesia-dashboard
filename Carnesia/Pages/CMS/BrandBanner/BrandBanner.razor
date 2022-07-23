@@ -1,0 +1,158 @@
+﻿@page "/brand-banner"
+
+@using Carnesia.Domain.CMS.BrandBanner
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.CommonComponents
+@using Carnesia.Shared.CMS.BrandBanner
+@inject IBrandBanner _brandBanner
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudPaper Class="ma-2 pa-16">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh></MudTh>
+                <MudTh>Brand Name</MudTh>
+                <MudTh>Image</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="">
+                    @if (!context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBanners(context.brandId)" />
+					}
+					else if (context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBanners(context.brandId)" />
+					}
+                </MudTd>
+                <MudTd DataLabel="Brand Name">@context.name</MudTd>
+                <MudTd DataLabel="Image">
+                     <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                </MudTd>
+				<MudTd DataLabel="Action">
+                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddBanner(context.brandId)">Add Banner</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <ChildRowContent>
+				@if (context.showDetails)
+				{
+					<td colspan="4">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.brandBanners" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+										<MudTh>Name</MudTh>
+										<MudTh>Image</MudTh>
+										<MudTh>URL</MudTh>
+										<MudTh>Action</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
+										<MudTd DataLabel="Image">
+											<MudImage @onclick="() => ShowImage(DetailsContext.bannerUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.bannerUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
+										</MudTd>
+										<MudTd DataLabel="URL">@DetailsContext.url</MudTd>
+										<MudTd DataLabel="Action">
+											<MudButton Variant="Variant.Filled" Color="Color.Warning">Edit</MudButton>
+										</MudTd>
+								   </RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBanners();
+    }
+
+    // Brand Banner
+    private IEnumerable<BrandBannerDTO> Elements = new List<BrandBannerDTO>();
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Get BAnners
+    private async Task GetBanners()
+    {
+        Elements = await _brandBanner.GetBrandBanners();
+    }
+
+    // Show Details
+    private void ShowBanners(int id)
+    {
+        BrandBannerDTO tmpElements = Elements.First(f => f.brandId == id);
+        tmpElements.showDetails = !tmpElements.showDetails;
+    }
+
+    // Add Brand Banner Modal
+    private async Task AddBanner(int id)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddBrandBannerDTO(){
+            brandId = id
+        });
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddBrandBannerModal>("Add New Brand Banner", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddBrandBannerDTO newBrandBanner = dialog.Data as AddBrandBannerDTO;
+
+            try
+            {
+                var result = await _brandBanner.CreateBrandBanner(newBrandBanner);
+
+                if (result)
+                { 
+                    Snackbar.Add("New Brand Banner Created Successfully!", Severity.Success);
+                    await GetBanners();
+                    return;
+                }
+
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+    }
+
+	// Show Image
+    private void ShowImage(string url)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ImageUrl", url);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<ShowImageModal>("Image", parameters, options);
+    }
+}

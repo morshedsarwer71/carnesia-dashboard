@@ -1,0 +1,28 @@
+﻿@using Carnesia.Domain.CMS.ToBagList
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudTextField @bind-Value="FormData.sectionName" Label="Section Name" Immediate="true" Required="true" RequiredError="Section Name is required!"/>
+
+                <div class="d-flex justify-end my-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Update</MudButton>
+                </div>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public ToBagListSectionDTO FormData{get;set;} = new ToBagListSectionDTO();
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<ToBagListSectionDTO>(FormData));
+}

@@ -1,6 +1,5 @@
 ﻿@layout PrintLayout
-@page "/print-label/{selectStyle}/{selectDate}/{poCode}/{productCode}"
-@page "/print-label/{selectStyle}/{poCode}/{productCode}"
+@page "/print-label/{expId:int}/{selectStyle}"
 @using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Shared.WMS.Print.PO.PrintLabel
 @using Syncfusion.Blazor
@@ -17,6 +16,7 @@
 			<div class="print-label-parent break-page">
 				@if(selectStyle == "Style1")
 				{
+					if(uidLength % 2 != 0){}
 					<PrintLabelStyleOne productId="@Uids.productCode" sku="@Uids.sku" expDate="@Uids.expDate" uidData="@Uids.uid[i]" />
 					<PrintLabelStyleOne productId="@Uids.productCode" sku="@Uids.sku" expDate="@Uids.expDate" uidData="@Uids.uid[i + 1]" />
 				}
@@ -53,33 +53,37 @@
 @code {
 	// URL Parameters
 	[Parameter] public string selectStyle { get; set; }
-	[Parameter] public string selectDate { get; set; }
-	[Parameter] public string poCode { get; set; }
-	[Parameter] public string productCode { get; set; }
+	[Parameter] public int expId { get; set; }
 
 	// Uid Length
 	private int uidLength { get; set; }
 
-	private UIDProfileDTO Uids=new UIDProfileDTO();
+	private UIDProfileDTO Uids= new UIDProfileDTO();
 
 	protected override async Task OnInitializedAsync()
 	{
 		await GetUID();
+		await AddOne();
 		uidLength = Uids.uid.Count;
 	}
 	private async Task GetUID()
 	{
-		if (String.IsNullOrEmpty(selectDate))
-		{
-			Uids = await httpClient.GetFromJsonAsync<UIDProfileDTO>($"PurchaseOrders/getuids/{poCode}/{productCode}/na");
-			return;
-		}
-		Uids = await httpClient.GetFromJsonAsync<UIDProfileDTO>($"PurchaseOrders/getuids/{poCode}/{productCode}/{selectDate}");
+		Uids = await httpClient.GetFromJsonAsync<UIDProfileDTO>($"PurchaseOrders/getuids/{expId}");
 	}
-	// Class String
-	//private string noBreak = "d-flex flex-wrap pa-2";
-	//private string Break = "d-flex flex-wrap pa-2 break-page";
 
-	//private string Break = "width: 50%; margin-top: 87px;";
-	//private string noBreak = "width: 50%;";
+	private async Task AddOne()
+	{
+		if (Uids.uid.Count % 2 != 0)
+		{
+			var tempUid = new UIDDataPoco()
+				{
+					id = 404,
+					isDelivered = false,
+					uidCode = "test",
+					profileCode = "test"
+				};
+
+			Uids.uid.Add(tempUid);
+		}
+	}
 }

@@ -20,7 +20,7 @@ namespace Carnesia.Application.CMS.Services.ProductList
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<List<ProductListDTO>>("Products/productdetails");
+                var result = await _httpClient.GetFromJsonAsync<List<ProductListDTO>>("Products/productlist");
                 return result;
             }
             catch (Exception)

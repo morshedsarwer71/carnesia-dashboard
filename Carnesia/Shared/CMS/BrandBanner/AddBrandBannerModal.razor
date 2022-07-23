@@ -1,12 +1,12 @@
-﻿@using Carnesia.Domain.CMS.Brand
+﻿@using Carnesia.Domain.CMS.BrandBanner
 @inject IBase64 _base64
-@inject IBrand _brand
+@inject IBrandBanner _brandBanner
 
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudTextField @bind-Value="FormData.name" Label="Brand Name" Immediate="true" Required="true" RequiredError="Brand Name is required!"/>
-                <MudTextField @bind-Value="FormData.description" Lines="5" Label="Description" Immediate="true" Required="true" RequiredError="Description is required!"/>
+                <MudTextField @bind-Value="FormData.name" Label="Banner Name" Immediate="true" Required="true" RequiredError="Banner Name is required!"/>
+                <MudTextField @bind-Value="FormData.url" Label="URL" Immediate="true"/>
 
                 <InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
                 <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5">
@@ -19,40 +19,18 @@
                 <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
 
                 <div class="d-flex justify-end my-5">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateBrand">Submit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateBanner">Submit</MudButton>
                 </div>
         </MudForm>
     </DialogContent>
 </MudDialog>
 
-@code {
-    // On Page Load
-    protected override async Task OnInitializedAsync()
-    {
-        if (FormData.brandId > 0)
-        {
-            await GetBrand();
-        }
-    }
 
+@code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public CreateBrandDTO FormData{get;set;} = new CreateBrandDTO();
-
-    // Get Brand
-    private async Task GetBrand()
-    {
-        var result = await _brand.GetBrandById(FormData.brandId);
-
-        if (result != null)
-        {
-            FormData = result;
-        }
-    }
-
-    // Submit Close
-    void Submit() => MudDialog.Close(DialogResult.Ok<CreateBrandDTO>(FormData));
+    public AddBrandBannerDTO FormData{get;set;} = new AddBrandBannerDTO();
 
     // Form Ref
     bool success;
@@ -76,8 +54,11 @@
         }
     }
 
-    // Create Brand
-    private void CreateBrand()
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<AddBrandBannerDTO>(FormData));
+
+    // Create Banner
+    private void CreateBanner()
     {
         if (String.IsNullOrEmpty(FormData.base64Attch))
         {
