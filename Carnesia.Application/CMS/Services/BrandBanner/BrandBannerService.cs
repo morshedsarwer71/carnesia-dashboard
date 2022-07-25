@@ -37,6 +37,19 @@ namespace Carnesia.Application.CMS.Services.BrandBanner
             }
         }
 
+        public async Task DeleteBanner(int id)
+        {
+            try
+            {
+                await _httpClient.DeleteAsync($"Brands/DeleteBrandBanner/{id}");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<BrandBannerDTO>> GetBrandBanners()
         {
             try

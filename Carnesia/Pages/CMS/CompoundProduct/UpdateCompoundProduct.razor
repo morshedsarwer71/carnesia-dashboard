@@ -93,7 +93,7 @@
                         <MudItem sm="6">
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudColorPicker Label="Color Code" @bind-Text="FormData.colorCode" Style="@($"color: {FormData.colorCode};")"                                                                     ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
+                                    <MudColorPicker Label="Color Code" @bind-Text="FormData.colorCode" Style="@($"color: {FormData.colorCode};")" ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
                                 </MudItem>
                                 <MudItem xs="6">
                                     <MudSwitch Class="mt-5" @bind-Checked="@FormData.isSize" Label="Is Size" Color="Color.Primary" />
@@ -149,13 +149,13 @@
                 <MudText Class="mt-5">Category</MudText>
                 <MudGrid>
                     <MudItem md="4" sm="6">
-                        <MudAutocomplete Value="CategoryData.parentCatName" ValueChanged="(string s) => GetParentCatId(s)"  SearchFunc="@ParentCatSearch" Label="Category"                                     ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Value="CategoryData.parentCatName" ValueChanged="(string s) => GetParentCatId(s)"  SearchFunc="@ParentCatSearch" Label="Category" ResetValueOnEmptyText="true" />
                     </MudItem>
                     <MudItem md="4" sm="6">
-                        <MudAutocomplete Value="CategoryData.childCatName" ValueChanged="(string s) => GetChildCatId(s)" Label="Child Category" SearchFunc="@ChildCatSearch"                              ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Value="CategoryData.childCatName" ValueChanged="(string s) => GetChildCatId(s)" Label="Child Category" SearchFunc="@ChildCatSearch" ResetValueOnEmptyText="true" />
                     </MudItem>
                     <MudItem md="4" sm="6">
-                        <MudAutocomplete Value="CategoryData.gChildCatName" ValueChanged="(string s) => GetGrandChildId(s)" Label="Grand Child Category"                                                  SearchFunc="@GrandChildCatSearch" ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Value="CategoryData.gChildCatName" ValueChanged="(string s) => GetGrandChildId(s)" Label="Grand Child Category" SearchFunc="@GrandChildCatSearch" ResetValueOnEmptyText="true" />
                     </MudItem>
                 </MudGrid>
 
@@ -182,7 +182,7 @@
                         @foreach(var image in FormData.images)
                         {
                         
-                            <MudBadge Icon="@Icons.Filled.DeleteOutline" OnClick="() =>RemoveImage(image.id)" Color="Color.Error" Overlap="true" Class="mx-6 my-4"                                            Style="cursor:pointer">
+                            <MudBadge Icon="@Icons.Filled.DeleteOutline" OnClick="() =>RemoveImage(image.id)" Color="Color.Error" Overlap="true" Class="mx-6 my-4" Style="cursor:pointer">
                                 <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{image.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
                             </MudBadge>
                         }
@@ -190,7 +190,7 @@
                     @foreach(var image in ProductImages)
                     {
                         
-                        <MudBadge OnClick="() => DeleteImage(image)" Icon="@Icons.Filled.DeleteOutline" Color="Color.Error" Overlap="true" Class="mx-6 my-4"                                              Style="cursor:pointer">
+                        <MudBadge OnClick="() => DeleteImage(image)" Icon="@Icons.Filled.DeleteOutline" Color="Color.Error" Overlap="true" Class="mx-6 my-4" Style="cursor:pointer">
                             <MudImage Src="@($"data:image/webp;base64,{image.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
                         </MudBadge>
                     }

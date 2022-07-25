@@ -61,7 +61,7 @@
 										</MudTd>
 										<MudTd DataLabel="URL">@DetailsContext.url</MudTd>
 										<MudTd DataLabel="Action">
-											<MudButton Variant="Variant.Filled" Color="Color.Warning">Edit</MudButton>
+											<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteBanner(DetailsContext.id)">Delete</MudButton>
 										</MudTd>
 								   </RowTemplate>
 								</MudTable>
@@ -141,6 +141,28 @@
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+    }
+
+    // Delete Banner
+    private async Task DeleteBanner(int id)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
+
+        if (!dialog.Cancelled)
+        {
+            try
+            {
+                await _brandBanner.DeleteBanner(id);
+                Snackbar.Add("Banner Deleted Successfully!", Severity.Success);
+                await GetBanners();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
                 throw;
             }
         }

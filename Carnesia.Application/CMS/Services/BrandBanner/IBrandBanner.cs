@@ -12,5 +12,6 @@ namespace Carnesia.Application.CMS.Services.BrandBanner
     {
         Task<List<BrandBannerDTO>> GetBrandBanners();
         Task<bool> CreateBrandBanner(AddBrandBannerDTO banner);
+        Task DeleteBanner(int id);
     }
 }
