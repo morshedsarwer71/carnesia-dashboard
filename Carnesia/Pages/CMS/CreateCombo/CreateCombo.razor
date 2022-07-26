@@ -1,0 +1,108 @@
+﻿@page "/create-combo"
+
+@using Carnesia.Domain.CMS.ComboProducts
+@inject IProducts _products
+<MudPaper Class="ma-2 pa-16">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudGrid Class="mb-5">
+                    <MudItem sm="6">
+                        <MudTextField @bind-Value="FormData.comboProductName" Label="Combo Name" Required="true" RequiredError="Combo name is required!"/>
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Required="true" ResetValueOnEmptyText="true" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudTimePicker Label="End Time" @bind-Time="EndTime" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" />
+                    </MudItem>
+                    <MudItem sm="6">
+                        <MudNumericField Label="Combo Price" @bind-Value="FormData.comboPrice" />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="FormData.description" Label="Description" Lines="5" Required="true" RequiredError="Description is required!"/>
+                    </MudItem>
+                </MudGrid>
+
+                @*<div class="my-5 d-flex justify-end">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenProductModal" >Add Product</MudButton>
+                </div>*@
+
+                <MudTable Items="@Products" Hover="true" Dense="true">
+                    <HeaderContent>
+                        <MudTh>SKU</MudTh>
+                        <MudTh>Regular Price</MudTh>
+                        <MudTh>Discount Type</MudTh>
+                        <MudTh>Discount Ammount</MudTh>
+                        <MudTh>After Discount</MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="SKU">@context.sku</MudTd>
+                        <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
+                        <MudTd DataLabel="Discount Type">@context.discountType</MudTd>
+                        <MudTd DataLabel="Discount Ammount">@context.discountAmount</MudTd>
+                        <MudTd DataLabel="After Discount">@context.afterDiscAmount</MudTd>
+                    </RowTemplate>
+                </MudTable>
+
+                <div class="mt-5">
+                    @*<InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />*@
+
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Filled.CloudUpload"
+                               for="fileInput">
+                        Upload Images
+                    </MudButton>
+                    <MudText Class="mt-1">600 * 600(Max 50Kb)</MudText>
+                </div>
+
+                <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attach}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
+
+                @*<div class="d-flex align-center justify-space-between"> 
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateNewBunch" >Submit</MudButton>
+                </div>*@
+        </MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Start End Date Time
+    private string StartDate { get; set; }
+    private string EndDate { get; set; }
+    private TimeSpan? StartTime = new TimeSpan();
+    private TimeSpan? EndTime = new TimeSpan();
+
+    // Products
+    private List<AddComboProductDTO> Products = new List<AddComboProductDTO>();
+
+    // Details
+    private AddComboDetailsDTO FormData = new AddComboDetailsDTO();
+
+    // Product SKU List
+    private string[] ProductSKU = new string[]{};
+
+    // Autocomplite Search Func for ParentCat
+    private async Task<IEnumerable<string>> ProductSKUSearch(string value)
+    {
+        return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}

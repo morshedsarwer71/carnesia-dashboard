@@ -53,11 +53,11 @@
                 </MudItem>
 
                 <MudItem sm="6" md="4">
-                    <MudNumericField Immediate="true" @bind-Value="PoProduct.quantity" Label="Quantity" Variant="Variant.Text" Min="1" Required="true" RequiredError="Quantity is                                 required!" />
+                    <MudNumericField Immediate="true" @bind-Value="PoProduct.quantity" Label="Quantity" Variant="Variant.Text" Min="1" Required="true" RequiredError="Quantity is required!" />
                 </MudItem>
 
                 <MudItem sm="6" md="4">
-                    <MudNumericField Immediate="true" @bind-Value="PoProduct.liftingPrice" Label="Lifting Price" Variant="Variant.Text" Min="0.01m" Required="true" RequiredError="Listing                        price is required!" />
+                    <MudNumericField Immediate="true" @bind-Value="PoProduct.liftingPrice" Label="Lifting Price" Variant="Variant.Text" Min="0.01m" Required="true" RequiredError="Listing price is required!" />
                 </MudItem>
             </MudGrid>
             <div class="mt-5 d-flex justify-end">
@@ -265,7 +265,19 @@
             if (product != null)
             {
                 form.Reset();
-                products.Add(product);
+                bool isThere = products.Any( x=> x.sku == product.sku);
+                if (isThere)
+                {
+                    int ListIndex = products.FindIndex(x => x.sku == product.sku);
+
+                    products[ListIndex].quantity += product.quantity;
+                    products[ListIndex].liftingPrice = product.liftingPrice;
+                    products[ListIndex].TotalPrice = products[ListIndex].quantity * products[ListIndex].liftingPrice;
+                }
+                else
+                {
+                    products.Add(product);
+                }
             }
             else
             {

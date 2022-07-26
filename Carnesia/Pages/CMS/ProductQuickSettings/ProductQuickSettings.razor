@@ -1,0 +1,92 @@
+﻿@page "/product-quick-setting"
+
+@using Carnesia.Domain.CMS.ProductList
+@using Carnesia.Domain.Common.POCO
+@inject IProductList _productList
+@inject ISnackbar Snackbar
+
+<MudPaper Class="ma-2 pa-16">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CanCancelEdit="@true" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("MRP Updated", Severity.Info))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
+            <HeaderContent>
+                <MudTh>Product Name</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>MRP</MudTh>
+                <MudTh>Is Publish</MudTh>
+                <MudTh>New Arrivals</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="SKU">@context.productsku</MudTd>
+                <MudTd DataLabel="MRP">@context.mrp</MudTd>
+                <MudTd DataLabel="Is Publish">
+                    <MudSwitch @bind-Checked="context.isPublish" Color="Color.Primary" />    
+                </MudTd>
+                <MudTd DataLabel="New Arrivals">
+                    <MudSwitch @bind-Checked="context.isNewArrival" Color="Color.Primary" /> 
+                </MudTd>
+            </RowTemplate>
+            <RowEditingTemplate>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="SKU">@context.productsku</MudTd>
+                <MudTd DataLabel="MRP">
+                    <MudNumericField @bind-Value="@context.mrp" Required />
+                </MudTd>
+                <MudTd DataLabel="Is Publish">
+                    <MudSwitch @bind-Checked="context.isPublish" Color="Color.Primary" />
+                </MudTd>
+                <MudTd DataLabel="New Arrivals">
+                    <MudSwitch @bind-Checked="context.isNewArrival" Color="Color.Primary" />
+                </MudTd>
+            </RowEditingTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetProducts();
+	}
+
+	// Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+	// Product List
+	private List<ProductQuickSettingDTO> Elements = new List<ProductQuickSettingDTO>();
+
+	// Get Products
+	private async Task GetProducts()
+	{
+		Elements = await _productList.GetAllProducts();
+	}
+
+    // Before Edit
+    private ProductQuickSettingDTO beforeEdit;
+
+    // Backup Item
+    private void BackupItem(object element)
+    {
+        beforeEdit = new()
+            {
+                mrp = ((ProductQuickSettingDTO)element).mrp,
+            };
+    }
+
+    // Reset Items If Edit Cancel
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((ProductQuickSettingDTO)element).mrp = beforeEdit.mrp;
+    }
+}

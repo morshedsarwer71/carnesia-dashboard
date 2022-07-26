@@ -15,7 +15,7 @@
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
 			<MudGrid>
                     <MudItem sm="6"> 
-                        <MudAutocomplete Value="FormData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product" SearchFunc="@ParentProductSearch"                                            ResetValueOnEmptyText="true" Required="true" />
+                        <MudAutocomplete Value="FormData.productParentName" ValueChanged="(string s) => GetParentId(s)" Label="Parent Product" SearchFunc="@ParentProductSearch" ResetValueOnEmptyText="true" Required="true" />
                     </MudItem>
                     <MudItem sm="6">
                         <MudTextField @bind-Value="FormData.productName" Label="Product Name" Required="true" RequiredError="Product Name is required!"/>
@@ -253,19 +253,23 @@
     // Get Child And Grand As String
     private async Task GetChildAndGrandCatsString()
     {
-        CategoryData.parentCatId = FormData.prodCategories[0].parentCatId;
-        CategoryData.parentCatName = FormData.prodCategories[0].parentCatName;
-        CategoryData.childCatId = FormData.prodCategories[0].childCatId;
-        CategoryData.childCatName = FormData.prodCategories[0].childCatName;
-        CategoryData.gChildCatId = FormData.prodCategories[0].gChildCatId;
-        CategoryData.gChildCatName = FormData.prodCategories[0].gChildCatName;
-
-
-        ChildCats = await _category.GetChildCatAsStringByParentId(FormData.prodCategories[0].parentCatId);
-
-        if (!String.IsNullOrEmpty(FormData.prodCategories[0].childCatId.ToString()) && FormData.prodCategories[0].childCatId != 0) 
+        if (FormData.prodCategories.Count() > 0) 
         {
-            GrandChildCats = await _category.GetGrandChildCatAsStringByChildId(FormData.prodCategories[0].childCatId);
+            CategoryData.parentCatId = FormData.prodCategories[0].parentCatId;
+            CategoryData.parentCatName = FormData.prodCategories[0].parentCatName;
+            CategoryData.childCatId = FormData.prodCategories[0].childCatId;
+            CategoryData.childCatName = FormData.prodCategories[0].childCatName;
+            CategoryData.gChildCatId = FormData.prodCategories[0].gChildCatId;
+            CategoryData.gChildCatName = FormData.prodCategories[0].gChildCatName;
+
+            if (FormData.prodCategories[0].parentCatId > 0)
+            {
+                ChildCats = await _category.GetChildCatAsStringByParentId(FormData.prodCategories[0].parentCatId);
+            }
+            if (FormData.prodCategories[0].childCatId > 0)
+            {
+                GrandChildCats = await _category.GetGrandChildCatAsStringByChildId(FormData.prodCategories[0].childCatId);
+            }
         }
     }
 

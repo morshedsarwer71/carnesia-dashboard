@@ -1,0 +1,47 @@
+﻿@using Carnesia.Domain.CMS.BunchProduct
+@inject IProducts _products
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Required="true" ResetValueOnEmptyText="true" />
+                <MudNumericField @bind-Value="FormData.regularPrice" Label="Regular Price" Immediate="true" Required="true" RequiredError="Regular Price is required!"/>
+                <MudNumericField @bind-Value="FormData.sellingPrice" Label="Selling Price" Immediate="true" Required="true" RequiredError="Selling Price is required!"/>
+
+                <div class="d-flex justify-end my-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+                </div>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    // Modal On Load
+    protected override async Task OnInitializedAsync()
+    {
+        ProductSKU = await _products.GetProductsAsSKU();
+    }
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public AddBunchProductProductsDTO FormData{get;set;} = new AddBunchProductProductsDTO();
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<AddBunchProductProductsDTO>(FormData));
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Product SKU List
+    private string[] ProductSKU = new string[]{};
+
+    // Autocomplite Search Func for ParentCat
+    private async Task<IEnumerable<string>> ProductSKUSearch(string value)
+    {
+        return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+}

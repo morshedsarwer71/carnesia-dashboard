@@ -10,5 +10,6 @@ namespace Carnesia.Application.CMS.Services.ProductList
     public interface IProductList
     {
         Task<List<ProductListDTO>> GetProducts();
+        Task<List<ProductQuickSettingDTO>> GetAllProducts();
     }
 }

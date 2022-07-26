@@ -16,6 +16,21 @@ namespace Carnesia.Application.CMS.Services.ProductList
         {
             _httpClient = httpClient;
         }
+
+        public async Task<List<ProductQuickSettingDTO>> GetAllProducts()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<ProductQuickSettingDTO>>("Products/productlist");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<ProductListDTO>> GetProducts()
         {
             try

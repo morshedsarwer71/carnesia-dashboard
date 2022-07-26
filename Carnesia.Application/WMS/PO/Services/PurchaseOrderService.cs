@@ -22,6 +22,7 @@ using NPOI.XSSF.UserModel;
 using Carnesia.Domain.WMS.TrackUID;
 using System.Drawing;
 using System.Drawing.Printing;
+using Carnesia.Domain.WMS.UpdateUID;
 
 namespace Carnesia.Application.WMS.PO.Services
 {
@@ -409,5 +410,53 @@ namespace Carnesia.Application.WMS.PO.Services
 				throw;
 			}
 		}
-	}
+
+        public async Task<List<UpdateUIDDTO>> GetAllUids(string po, string product)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<UpdateUIDDTO>>($"PurchaseOrders/deleteuidprofile/{po}/{product}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteUID(string uid)
+        {
+            try
+            {
+                var result = await _httpClient.DeleteAsync($"PurchaseOrders/deleteuid/{uid}");
+
+                if (result.IsSuccessStatusCode) return true;
+
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateUidExp(UIDDateUpdateDTO uid, int id)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"PurchaseOrders/edituidprofile/{id}", uid);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+    }
 }

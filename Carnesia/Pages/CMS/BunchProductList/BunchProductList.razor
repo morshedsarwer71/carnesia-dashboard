@@ -1,0 +1,102 @@
+﻿@page "/bunch"
+
+@using Carnesia.Domain.CMS.BunchProduct
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.CommonComponents
+@inject IBunchProduct _bunchProduct
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+
+<MudPaper Class="ma-2 pa-16">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<BunchProductDTO,bool>(FilterFuncInitial)">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Bunch Name</MudTh>
+                <MudTh>Image</MudTh>
+                <MudTh>Regular Price</MudTh>
+                <MudTh>Bunch Price</MudTh>
+                <MudTh>Start Date</MudTh>
+                <MudTh>End Date</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Bunch Name">@context.name</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                </MudTd>
+                <MudTd DataLabel="Regular Price">@context.totalRegularPrice</MudTd>
+                <MudTd DataLabel="Bunch Price">@context.totalBunchPrice</MudTd>
+                <MudTd DataLabel="Start Date">@context.startDate</MudTd>
+                <MudTd DataLabel="End Date">@context.endDate</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => NavigateToUpdate(context.id)">
+                        Edit
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetBunchs();
+	}
+
+	// Product List
+	private List<BunchProductDTO> Elements = new List<BunchProductDTO>();
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Get Bunch
+	private async Task GetBunchs()
+	{
+		Elements = await _bunchProduct.GetBunchProducts();
+	}
+
+    // Table Search
+    private bool FilterFuncInitial(BunchProductDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+    private bool FilterFunc(BunchProductDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    // Show Image
+    private void ShowImage(string url)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ImageUrl", url);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<ShowImageModal>("Image", parameters, options);
+    }
+
+    // Navigate To Bunch Update 
+    private void NavigateToUpdate(int id)
+    {
+        NavigationManager.NavigateTo($"bunch/{id}");
+    }
+}

@@ -1,4 +1,4 @@
-﻿@page "/create-bunch"
+﻿@page "/bunch/{id:int}"
 
 @using Carnesia.Domain.CMS.BunchProduct
 @using Carnesia.Shared.CMS.BunchProduct
@@ -8,7 +8,7 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-<MudPaper Class="pa-16 ma-2">
+<MudPaper Class="ma-2 pa-16">
 	<MudContainer Fixed="true">
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudGrid Class="mb-5">
@@ -16,13 +16,13 @@
                         <MudTextField @bind-Value="FormData.name" Label="Bunch Name" Required="true" RequiredError="Bunch name is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
+                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.startDate" />
                     </MudItem>
                     <MudItem sm="6">
                         <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
                     </MudItem>
                     <MudItem sm="6">
-                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
+                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.endDate" />
                     </MudItem>
                     <MudItem sm="6">
                         <MudTimePicker Label="End Time" @bind-Time="EndTime" />
@@ -42,17 +42,20 @@
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenProductModal" >Add Product</MudButton>
                 </div>
 
-                <MudTable Items="@Products" Hover="true" Dense="true">
+                <MudTable Items="@FormData.bunchProductTags" Hover="true" Dense="true">
                     <HeaderContent>
                         <MudTh>SKU</MudTh>
                         <MudTh>Regular Price</MudTh>
                         <MudTh>Selling Price</MudTh>
-                        <MudTh></MudTh>
+                        <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd DataLabel="SKU">@context.sku</MudTd>
                         <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
                         <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+                        <MudTd DataLabel="Action">
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteProduct(context.id)" >Delete</MudButton>
+                        </MudTd>
                     </RowTemplate>
                 </MudTable>
 
@@ -72,34 +75,54 @@
                 <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
 
                 <div class="d-flex align-center justify-space-between"> 
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateNewBunch" >Submit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="UpdateBunch">Update</MudButton>
                 </div>
         </MudForm>
 	</MudContainer>
 </MudPaper>
 
 @code {
+    [Parameter]
+    public int id { get; set; }
+
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBunchById();
+        await SetTime();
+    }
+
     // Form Ref
     bool success;
     string[] errors = { };
     MudForm form;
 
-    // Start End Date Time
-    private string StartDate { get; set; }
-    private string EndDate { get; set; }
+    // Bunch
+    private SingleBunchProductDTO FormData = new SingleBunchProductDTO();
+
+    // Get Bunch
+    private async Task GetBunchById()
+    {
+        FormData = await _bunchProduct.GetBunchById(id);
+    }
+
+    //Time
     private TimeSpan? StartTime = new TimeSpan();
     private TimeSpan? EndTime = new TimeSpan();
 
-    // Form Data
-    private AddBunchProductDTO FormData = new AddBunchProductDTO();
-    private List<AddBunchProductProductsDTO> Products = new List<AddBunchProductProductsDTO>();
+    // Set Time
+    private async Task SetTime()
+    {
+        StartTime = TimeSpan.Parse(FormData.startTime.Remove(FormData.startTime.Length - 5));
+        EndTime = TimeSpan.Parse(FormData.endTime.Remove(FormData.endTime.Length - 5));
+    }
 
     // Upload Image
     private async Task UploadImage(InputFileChangeEventArgs e)
     {
         try
         {
-            FormData.base64Attch = await _base64.ConvertToBase64(51200, 600, 600, e);
+            FormData.base64Attch = await _base64.ConvertToBase64(153600, 1080, 420, e);
         }
         catch(Exception error)
         {
@@ -111,7 +134,9 @@
     private async Task OpenProductModal()
     {
         var parameters = new DialogParameters();
-        parameters.Add("FormData", new AddBunchProductProductsDTO());
+        parameters.Add("FormData", new AddBunchProductProductsDTO(){
+            bunchProductCode = FormData.code
+        });
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
         var dialog = await DialogService.Show<AddProductsModal>("Add New Product", parameters, options).Result;
@@ -122,51 +147,68 @@
 
             newProduct.productId = await _products.GetProductIdBySku(newProduct.sku);
 
-            Products.Add(newProduct);
+            try
+            {
+                var result = await _bunchProduct.AddNewProduct(newProduct);
+
+                if (result)
+                {
+                    await GetBunchById();
+                    Snackbar.Add("Product Added Successfully!", Severity.Success);
+                    return;
+                }
+                Snackbar.Add("Something went wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 
-    // Create New Bunch
-    private async Task CreateNewBunch()
+    // Delete Product
+    private async Task DeleteProduct(int id)
     {
-        if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
+
+        if (!dialog.Cancelled)
         {
-            Snackbar.Add("Start & End Date is required!", Severity.Error);
-            return;
+            try
+            {
+                var result = await _bunchProduct.DeleteProduct(id);
+                if (result)
+                {
+                    Snackbar.Add("Product Deleted Successfully!", Severity.Success);
+                    await GetBunchById();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
+    }
 
-        if (String.IsNullOrEmpty(FormData.base64Attch))
-        {
-            Snackbar.Add("Campaign image is required!", Severity.Error);
-            return;
-        }
-
-        FormData.startDate = $"{StartDate}T{StartTime}.000Z";
-        FormData.endDate = $"{EndDate}T{EndTime}.000Z";
-
-        FormData.bunchProductTag = Products;
-
+    // Update Bunch
+    private async Task UpdateBunch()
+    {
+        FormData.startDate = $"{FormData.startDate}T{StartTime}.000Z";
+        FormData.endDate = $"{FormData.endDate}T{EndTime}.000Z";
         try
         {
-            var result = await _bunchProduct.CreateBunchProduct(FormData);
+            var result = await _bunchProduct.UpdateBunch(FormData);
 
             if (result)
             {
-                Snackbar.Add("New Bunch Created Successfully!", Severity.Success);
-                FormData = new AddBunchProductDTO();
-                Products = new List<AddBunchProductProductsDTO>();
-                StartDate = String.Empty;
-                EndDate = String.Empty;
-                StartTime = new TimeSpan();
-                EndTime = new TimeSpan();
+                Snackbar.Add("Bunch Updated Successfully!", Severity.Success);
+                await GetBunchById();
+                await SetTime();
                 return;
             }
             Snackbar.Add("Something Went Wrong!", Severity.Error);
-        }
-        catch (Exception)
-        {
-            throw;
-        }
+        }catch(Exception){ throw; }
     }
-
 }

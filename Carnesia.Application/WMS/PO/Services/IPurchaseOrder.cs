@@ -14,6 +14,7 @@ using Carnesia.Domain.WMS.PO.ViewModels.Awaiting;
 using Microsoft.AspNetCore.Components.Forms;
 using Carnesia.Domain.WMS.UIDReport;
 using Carnesia.Domain.WMS.TrackUID;
+using Carnesia.Domain.WMS.UpdateUID;
 
 namespace Carnesia.Application.WMS.PO.Services
 {
@@ -40,6 +41,10 @@ namespace Carnesia.Application.WMS.PO.Services
         Task<Response> ChangeStatus(string poCode, int statusId);
 
         Task<List<SkuHistory>> SKUHistory(string productCode);
+
+        Task<List<UpdateUIDDTO>> GetAllUids(string po, string product);
+        Task<bool> DeleteUID(string uid);
+        Task<bool> UpdateUidExp(UIDDateUpdateDTO uid, int id);
 
 
 

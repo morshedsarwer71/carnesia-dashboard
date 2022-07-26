@@ -1,0 +1,173 @@
+﻿@page "/update-uid"
+
+@using Carnesia.Domain.WMS.UpdateUID
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.WMS.CycleCount.UpdateUID
+@inject IPurchaseOrder _purchaseOrder
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudPaper Class="ma-2 pa-16">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" Class="mb-5">
+			<MudGrid Class="justify-center">
+				<MudItem sm="4">
+					<MudTextField @bind-Value="poCode" Label="Po Code" Required="true" RequiredError="Po Code is required!" />
+				</MudItem>
+				<MudItem sm="4">
+					<MudTextField @bind-Value="productCode" Label="Product Code" Required="true" RequiredError="Product Code is required!" />
+				</MudItem>
+			</MudGrid>
+			<MudGrid Class="justify-center">
+				<MudItem sm="8" Class="d-flex justify-end">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="GetUIDS">Filter</MudButton>
+				</MudItem>
+			</MudGrid>
+		</MudForm>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <HeaderContent>
+                <MudTh></MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>QTY</MudTh>
+                <MudTh>EXP Date</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="">
+                    @if (!context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowUID(context.id)" />
+					}
+					else if (context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowUID(context.id)" />
+					}
+                </MudTd>
+                <MudTd DataLabel="SKU">@context.sku</MudTd>
+                <MudTd DataLabel="QTY">@context.generatedSKUQty</MudTd>
+                <MudTd DataLabel="EXP Date">@context.expDate</MudTd>
+                <MudTd DataLabel="Action">
+					<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateModal(context.paramDate, context.id)">Edit</MudButton>
+				</MudTd>
+            </RowTemplate>
+            <ChildRowContent>
+				@if (context.showDetails)
+				{
+					<td colspan="5">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.uid" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+										<MudTh>UID</MudTh>
+										<MudTh>Action</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="UID">@DetailsContext.uidCode</MudTd>
+										<MudTd DataLabel="Action">
+											<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteUID(DetailsContext.uidCode)">Delete</MudButton>
+										</MudTd>
+								   </RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+
+	// Filter State
+	private string poCode { get; set; }
+	private string productCode { get; set; }
+
+	// UIDS
+	private List<UpdateUIDDTO> Elements = new List<UpdateUIDDTO>();
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Get UIDS
+	private async Task GetUIDS()
+	{
+		Elements = await _purchaseOrder.GetAllUids(poCode, productCode);
+	}
+
+	// Show Details
+	private void ShowUID(int id)
+	{
+		UpdateUIDDTO tmpElements = Elements.First(f => f.id == id);
+		tmpElements.showDetails = !tmpElements.showDetails;
+	}
+
+	// Delete UID
+	private async Task DeleteUID(string uid)
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
+
+		if (!dialog.Cancelled)
+		{
+			try
+			{
+				var result = await _purchaseOrder.DeleteUID(uid);
+				if (result)
+				{
+					Snackbar.Add("UID Deleted Successfully!", Severity.Success);
+					await GetUIDS();
+					return;
+				}
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+    }
+
+	// Update Exp Date
+    private async Task OpenUpdateModal(string expDate, int id)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new UIDDateUpdateDTO()
+            {
+                expDate = DateTime.Parse(expDate)
+            });
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<UpdateExpModal>("Update EXP", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            UIDDateUpdateDTO newEXP = dialog.Data as UIDDateUpdateDTO;
+
+            try
+			{
+				var result = await _purchaseOrder.UpdateUidExp(newEXP, id);
+				if (result)
+				{
+					Snackbar.Add("UID Updated Successfully!", Severity.Success);
+					await GetUIDS();
+					return;
+				}
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+    }
+}
