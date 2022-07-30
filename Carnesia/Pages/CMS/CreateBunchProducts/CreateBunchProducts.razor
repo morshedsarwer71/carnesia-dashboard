@@ -47,12 +47,17 @@
                         <MudTh>SKU</MudTh>
                         <MudTh>Regular Price</MudTh>
                         <MudTh>Selling Price</MudTh>
-                        <MudTh></MudTh>
+                        <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd DataLabel="SKU">@context.sku</MudTd>
                         <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
                         <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+                        <MudTd DataLabel="Action">
+                            <MudButton OnClick="() => RemoveProduct(context)" >
+                                <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+                            </MudButton>
+                        </MudTd>
                     </RowTemplate>
                 </MudTable>
 
@@ -105,6 +110,12 @@
         {
             Snackbar.Add(error.Message, Severity.Error);
         }
+    }
+
+    // Remove Products
+    private void RemoveProduct(AddBunchProductProductsDTO product)
+    {
+        Products.Remove(product);
     }
 
     // Add Product Modal

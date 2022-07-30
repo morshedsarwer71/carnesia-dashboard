@@ -19,7 +19,7 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
         Task<string[]> GetParentProductAsString();
 
         Task<int> GetParentProductID(string ProductName);
-        Task UpdateParentProduct(ParentProductDTO ParentProduct);
+        Task<bool> UpdateParentProduct(ParentProductDTO ParentProduct);
         Task<List<CreateParentProductDTO>> UploadXLSXFile(InputFileChangeEventArgs e);
         Task<List<CreateParentProductDTO>> CreateBulkParents(List<CreateParentProductDTO> Parents);
     }

@@ -4,6 +4,7 @@
 @using Carnesia.Shared.WMS.PO.ReceivePo
 @using Carnesia.Shared.WMS.PO.AwaitingApproval
 @using Carnesia.Shared.WMS.PO.GenerateUID
+@using Carnesia.Shared.WMS.PO.BulkUID
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
@@ -14,6 +15,7 @@
             </MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == ReceivePO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReceivePO)">Receive PO</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateUID)">Generate UID</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BulkUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BulkUID)">Bulk UID</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == PurchaseOrderList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PurchaseOrderList)">
                 Purchase Order List
             </MudButton>
@@ -41,6 +43,10 @@ else if(CurrentPage == GenerateUID)
 {
     <GenerateUID />
 }
+else if(CurrentPage == BulkUID)
+{
+    <BulkUID />
+}
 
 @code {
     // Pages
@@ -49,6 +55,7 @@ else if(CurrentPage == GenerateUID)
     public string ReceivePO = "Receive PO";
     public string PurchaseOrderList = "Purchase Order List";
     public string GenerateUID = "Generate UID";
+    public string BulkUID = "Bulk UID";
 
     // Current Page
     public string CurrentPage { get; set; } = "Create PO";

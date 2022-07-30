@@ -33,6 +33,15 @@
                         <MudTextField @bind-Value="ChildProductInfoData.weight" Label="Product Weight" Required="true" RequiredError="Product Weight is required!"/>
                     </MudItem>
                     <MudItem sm="6">
+                        <MudSelect @bind-Value="ChildProductInfoData.uom" Label="Unit of Measurements" Required="true" RequiredError="Unit of Measurements is required!" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="@("mg")" />
+                            <MudSelectItem Value="@("g")" />
+                            <MudSelectItem Value="@("kg")" />
+                            <MudSelectItem Value="@("ml")" />
+                            <MudSelectItem Value="@("l")" />
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem sm="6">
                         <MudTextField @bind-Value="ChildProductInfoData.productDimension" Label="Product Dimension" Required="true" RequiredError="Product Dimension is required!"/>
                     </MudItem>
                     <MudItem sm="6">

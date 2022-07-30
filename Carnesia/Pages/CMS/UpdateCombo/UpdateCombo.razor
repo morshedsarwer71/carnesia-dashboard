@@ -1,4 +1,4 @@
-﻿@page "/create-combo"
+﻿@page "/update-combo/{id:int}"
 
 @using Carnesia.Domain.CMS.ComboProducts
 @using Carnesia.Shared.CMS.Combo
@@ -16,16 +16,16 @@
                         <MudTextField @bind-Value="FormData.comboProductName" Label="Combo Name" Required="true" RequiredError="Combo name is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudAutocomplete Label="Parent Combo Product" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Required="true" ResetValueOnEmptyText="true" />
+                        <MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Required="true" ResetValueOnEmptyText="true" />
                     </MudItem>
                     <MudItem sm="6">
-                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
+                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.startDate" />
                     </MudItem>
                     <MudItem sm="6">
                         <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
                     </MudItem>
                     <MudItem sm="6">
-                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
+                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.endDate" />
                     </MudItem>
                     <MudItem sm="6">
                         <MudTimePicker Label="End Time" @bind-Time="EndTime" />
@@ -45,7 +45,7 @@
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenProductModal" >Add Product</MudButton>
                 </div>
 
-                <MudTable Items="@Products" Hover="true" Dense="true">
+                <MudTable Items="@FormData.products" Hover="true" Dense="true">
                     <HeaderContent>
                         <MudTh>SKU</MudTh>
                         <MudTh>Regular Price</MudTh>
@@ -61,7 +61,7 @@
                         <MudTd DataLabel="Discount Ammount">@context.discountAmount</MudTd>
                         <MudTd DataLabel="After Discount">@context.afterDiscAmount</MudTd>
                         <MudTd DataLabel="Action">
-                            <MudButton OnClick="() => RemoveProduct(context)" >
+                            <MudButton OnClick="() => RemoveProduct(context.id)" >
                                 <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
                             </MudButton>
                         </MudTd>
@@ -81,10 +81,10 @@
                     <MudText Class="mt-1">600 * 600(Max 50Kb)</MudText>
                 </div>
 
-                <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attach}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
+                <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
 
                 <div class="d-flex align-center justify-space-between"> 
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateNewCombo">Submit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="UpdateDetails">Update</MudButton>
                 </div>
         </MudForm>
 	</MudContainer>
@@ -95,23 +95,37 @@
     protected override async Task OnInitializedAsync()
     {
         ProductSKU = await _products.GetProductsAsSKU();
+        await GetCombo();
+        await SetTime();
     }
+
+    [Parameter]
+    public int id { get; set; }
+
     // Form Ref
     bool success;
     string[] errors = { };
     MudForm form;
 
-    // Start End Date Time
-    private string StartDate { get; set; }
-    private string EndDate { get; set; }
+    // Details
+    private ComboListDTO FormData = new ComboListDTO();
+
+    // Get Campaign
+    private async Task GetCombo()
+    {
+        FormData = await _combo.GetComboById(id);
+    }
+
+    //Time
     private TimeSpan? StartTime = new TimeSpan();
     private TimeSpan? EndTime = new TimeSpan();
 
-    // Products
-    private List<AddComboProductDTO> Products = new List<AddComboProductDTO>();
-
-    // Details
-    private AddComboDetailsDTO FormData = new AddComboDetailsDTO();
+    // Set Time
+    private async Task SetTime()
+    {
+        StartTime = TimeSpan.Parse(FormData.startTime.Remove(FormData.startTime.Length - 5));
+        EndTime = TimeSpan.Parse(FormData.endTime.Remove(FormData.endTime.Length - 5));
+    }
 
     // Product SKU List
     private string[] ProductSKU = new string[]{};
@@ -127,7 +141,7 @@
     {
         try
         {
-            FormData.base64Attach = await _base64.ConvertToBase64(153600, 1080, 420, e);
+            FormData.base64Attch = await _base64.ConvertToBase64(153600, 1080, 420, e);
         }
         catch(Exception error)
         {
@@ -135,17 +149,40 @@
         }
     }
 
-    // Remove Products
-    private void RemoveProduct(AddComboProductDTO product)
+    // Delete Product
+    private async Task RemoveProduct(int id)
     {
-        Products.Remove(product);
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
+
+        if (!dialog.Cancelled)
+        {
+            try
+            {
+                var result = await _combo.RemoveProduct(id);
+                if (result)
+                {
+                    Snackbar.Add("Product Deleted Successfully!", Severity.Success);
+                    await GetCombo();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 
     // Add Product Modal
     private async Task OpenProductModal()
     {
         var parameters = new DialogParameters();
-        parameters.Add("FormData", new AddComboProductDTO());
+        parameters.Add("FormData", new AddComboProductDTO()
+        {
+            comboCode = FormData.comboCode
+        });
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
         var dialog = await DialogService.Show<AddComboProductModal>("Add New Product", parameters, options).Result;
@@ -165,71 +202,53 @@
 
             newProduct.productId = await _products.GetProductIdBySku(newProduct.sku);
 
-            Products.Add(newProduct);
+            try
+            {
+                var result = await _combo.AddProduct(newProduct);
+                if (result)
+                {
+                    Snackbar.Add("Product Added Successfully!", Severity.Success);
+                    await GetCombo();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 
-    // Create New Combo
-    private AddComboDTO NewCombo = new AddComboDTO();
-
-    private async Task CreateNewCombo()
+    // Update Combo Details
+    private async Task UpdateDetails()
     {
-        if (String.IsNullOrEmpty(FormData.sku))
-        {
-            Snackbar.Add("Parent Combo Product is required!", Severity.Error);
-            return;
-        }
-
-        FormData.productId = await _products.GetProductIdBySku(FormData.sku);
-
-        if (Products.Count() <= 0)
-        {
-            Snackbar.Add("Child Combo Products is required!", Severity.Error);
-            return;
-        }
-        
-        if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
-        {
-            Snackbar.Add("Start & End Date is required!", Severity.Error);
-            return;
-        }
-
-        if (String.IsNullOrEmpty(FormData.base64Attach))
-        {
-            Snackbar.Add("Campaign image is required!", Severity.Error);
-            return;
-        }
-
-        FormData.startDate = $"{StartDate}T{StartTime}.000Z";
-        FormData.endDate = $"{EndDate}T{EndTime}.000Z";
-
-        NewCombo.comboProductDTO = FormData;
-        NewCombo.comboProductTags = Products;
-
         try
         {
-            var result = await _combo.CreateCombo(NewCombo);
+
+            var comboDetails = new ComboListDTO()
+                {
+                    comboProductName =  FormData.comboProductName,
+                    productId = FormData.productId,
+                    regularPrice = FormData.regularPrice,
+                    comboPrice = FormData.comboPrice,
+                    description = FormData.description,
+                    isApproved = FormData.isApproved,
+                    base64Attch = FormData.base64Attch,
+                    comboId = FormData.comboId,
+                    startDate = $"{FormData.startDate}T{StartTime}.000Z",
+                    endDate = $"{FormData.endDate}T{EndTime}.000Z",
+                };
+
+            var result = await _combo.UpdateCombo(comboDetails);
+
             if (result)
             {
-                Snackbar.Add("New Combo Created Successfully!", Severity.Success);
-                Products.Clear();
-                NewCombo = new AddComboDTO();
-                FormData = new AddComboDetailsDTO();
-
-                StartDate = String.Empty;
-                EndDate = String.Empty;
-                StartTime = new TimeSpan();
-                EndTime = new TimeSpan();
-
+                Snackbar.Add("Combo Details Updated Successfully!", Severity.Success);
                 return;
             }
-
             Snackbar.Add("Something Went Wrong!", Severity.Error);
-        }
-        catch (Exception)
-        {
-            
-            throw;
-        }
+        }catch(Exception){ throw; }
     }
 }

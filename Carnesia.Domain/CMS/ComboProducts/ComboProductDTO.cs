@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace Carnesia.Domain.CMS.ComboProducts
 {
-    public class AddComboProductDTO
+    public class ComboProductDTO
     {
+        public int id { get; set; }
         public int productId { get; set; }
+        public string sku { get; set; }
+        public string productName { get; set; }
         public decimal discountAmount { get; set; }
         public decimal regularPrice { get; set; }
         public decimal afterDiscAmount { get; set; }
         public string discountType { get; set; }
-        public string sku { get; set; }
-        public string comboCode { get; set; }
     }
 }

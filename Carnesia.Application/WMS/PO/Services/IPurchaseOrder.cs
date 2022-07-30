@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Carnesia.Domain.WMS.UIDReport;
 using Carnesia.Domain.WMS.TrackUID;
 using Carnesia.Domain.WMS.UpdateUID;
+using Carnesia.Domain.WMS.PO.POCO;
 
 namespace Carnesia.Application.WMS.PO.Services
 {
@@ -46,7 +47,8 @@ namespace Carnesia.Application.WMS.PO.Services
         Task<bool> DeleteUID(string uid);
         Task<bool> UpdateUidExp(UIDDateUpdateDTO uid, int id);
 
-
+        Task<List<BulkUIDPoco>> GenerateBulkUID(List<BulkUIDPoco> bulkUIDs);
+        Task<List<BulkUIDPoco>> UploadXLSXFile(InputFileChangeEventArgs e);
 
     }
 }

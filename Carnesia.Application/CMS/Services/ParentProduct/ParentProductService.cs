@@ -114,11 +114,13 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
             }
         }
 
-        public async Task UpdateParentProduct(ParentProductDTO ParentProduct)
+        public async Task<bool> UpdateParentProduct(ParentProductDTO ParentProduct)
         {
             try
             {
-                await _httpClient.PutAsJsonAsync($"ProductParent/{ParentProduct.id}", ParentProduct);
+                var result = await _httpClient.PutAsJsonAsync($"ProductParent/{ParentProduct.id}", ParentProduct);
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

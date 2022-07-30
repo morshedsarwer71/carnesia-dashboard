@@ -1,5 +1,9 @@
 ﻿@using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.WMS.PO.ReceivePO
+@using Syncfusion.XlsIO
+@using System.IO
+@using System.Data
+@inject Microsoft.JSInterop.IJSRuntime JS
 @inject ISnackbar Snackbar
 @inject IReceivePO _receivePO
 @inject IDialogService DialogService
@@ -89,6 +93,12 @@
             <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
             <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
             <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+
+        <div class="mt-5 d-flex justify-end">
+            <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;" OnClick="CreateDocument" Disabled="Elements.Count() <= 0 ? true : false">
+                Download CSV
+            </MudButton>
         </div>
 
         <MudPaper Width="400px" Square="true" Class="mt-10">
@@ -196,5 +206,54 @@
                 throw;
             }
         }
+    }
+
+    // Create Document
+    private async Task CreateDocument()
+    {
+        using (ExcelEngine excelEngine = new ExcelEngine())
+        {
+            IApplication application = excelEngine.Excel;
+            application.DefaultVersion = ExcelVersion.Xlsx;
+
+            //Create a workbook.
+            IWorkbook workbook = application.Workbooks.Create(1);
+            IWorksheet worksheet = workbook.Worksheets[0];
+
+            //Initialize DataTable and data get from SampleDataTable method.
+            DataTable table = PODataTable();
+
+            //Export data from DataTable to Excel worksheet.
+            worksheet.ImportDataTable(table, true, 1, 1);
+
+            worksheet.UsedRange.AutofitColumns();
+
+            //Save the document as a stream and return the stream.
+            using (MemoryStream stream = new MemoryStream())
+            {
+                //Save the created Excel document to MemoryStream
+                workbook.SaveAs(stream);
+
+                //Download the excel file.
+                await JS.SaveAs("PO.xlsx", stream.ToArray());
+            }
+        }
+    }
+
+    private DataTable PODataTable()
+    {
+        DataTable reports = new DataTable();
+        reports.Columns.Add("POID");
+        reports.Columns.Add("ProductCode");
+        reports.Columns.Add("ProfileCode");
+        reports.Columns.Add("LiftingPrice", typeof(decimal));
+        reports.Columns.Add("SkuQty", typeof(int));
+        reports.Columns.Add("Date");
+
+        foreach (var item in Elements)
+        {
+            reports.Rows.Add(POID, item.productCode, "Test", item.liftingPrice, item.poQuantity - (item.qcFailed + item.notArrivedQty), "Test");
+        }
+        return reports;
     }
 }

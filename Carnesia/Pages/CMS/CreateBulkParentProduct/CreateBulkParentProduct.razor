@@ -91,7 +91,7 @@
         }
     }
 
-    // Create Bulk Images
+    // Create Bulk Parents
     private async Task CreateBulkParents()
     {
         try
@@ -133,7 +133,7 @@
                 workbook.SaveAs(stream);
 
                 //Download the excel file.
-                await JS.SaveAs("CategoryBulkError.xlsx", stream.ToArray());
+                await JS.SaveAs("UIDBulkError.xlsx", stream.ToArray());
             }
         }
     }

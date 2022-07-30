@@ -458,5 +458,88 @@ namespace Carnesia.Application.WMS.PO.Services
                 throw;
             }
         }
+
+        public async Task<List<BulkUIDPoco>> GenerateBulkUID(List<BulkUIDPoco> bulkUIDs)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync<List<BulkUIDPoco>>("PurchaseOrders/generateuidbulk", bulkUIDs);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var json = await result.Content.ReadAsStringAsync();
+                    var deserialized = JsonConvert.DeserializeObject<List<BulkUIDPoco>>(json);
+                    return deserialized;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<BulkUIDPoco>> UploadXLSXFile(InputFileChangeEventArgs e)
+        {
+            try
+            {
+                var UIDs = new List<BulkUIDPoco>();
+                DataTable dt = new DataTable();
+                var fileStream = e.File.OpenReadStream();
+                var ms = new MemoryStream();
+                await fileStream.CopyToAsync(ms);
+                fileStream.Close();
+                ms.Position = 0;
+                ISheet sheet;
+                var xsswb = new XSSFWorkbook(ms);
+                sheet = xsswb.GetSheetAt(0);
+                IRow hr = sheet.GetRow(0);
+                var rl = new List<string>();
+                int cc = hr.LastCellNum;
+                for (int j = 0; j < cc; j++)
+                {
+                    ICell cell = hr.GetCell(j);
+                    dt.Columns.Add(cell.ToString());
+                }
+                for (int j = (sheet.FirstRowNum + 1); j <= sheet.LastRowNum; j++)
+                {
+                    var r = sheet.GetRow(j);
+                    for (int i = r.FirstCellNum; i < cc; i++)
+                    {
+                        rl.Add(r.GetCell(i).ToString());
+                    }
+                    if (rl.Count > 0)
+                    {
+                        dt.Rows.Add(rl.ToArray());
+                    }
+                    rl.Clear();
+                }
+                foreach (DataRow row in dt.Rows)
+                {
+                    var poCode = row.Field<string>("POID");
+                    var productCode = row.Field<string>("ProductCode");
+                    var profileCode = row.Field<string>("ProfileCode");
+                    var expDate = row.Field<string>("Date");
+                    var generateuidQty = Convert.ToInt32(row.Field<string>("SkuQty"));
+
+                    var pop = new BulkUIDPoco()
+                    {
+                        poCode = poCode,
+                        profileCode = profileCode,
+                        productCode = productCode,
+                        expDate = expDate,
+                        generateuidQty = generateuidQty
+                    };
+                    UIDs.Add(pop);
+                }
+                return UIDs.Where(x => x.poCode != null).ToList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
