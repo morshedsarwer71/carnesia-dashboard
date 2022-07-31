@@ -459,23 +459,17 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
-        public async Task<List<BulkUIDPoco>> GenerateBulkUID(List<BulkUIDPoco> bulkUIDs)
+        public async Task<bool> GenerateBulkUID(List<BulkUIDPoco> bulkUIDs)
         {
             try
             {
-                var result = await _httpClient.PostAsJsonAsync<List<BulkUIDPoco>>("PurchaseOrders/generateuidbulk", bulkUIDs);
+                var result = await _httpClient.PostAsJsonAsync("PurchaseOrders/generateuidbulk", bulkUIDs);
 
-                if (result.IsSuccessStatusCode)
-                {
-                    var json = await result.Content.ReadAsStringAsync();
-                    var deserialized = JsonConvert.DeserializeObject<List<BulkUIDPoco>>(json);
-                    return deserialized;
-                }
-                return null;
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -520,7 +514,7 @@ namespace Carnesia.Application.WMS.PO.Services
                     var poCode = row.Field<string>("POID");
                     var productCode = row.Field<string>("ProductCode");
                     var profileCode = row.Field<string>("ProfileCode");
-                    var expDate = row.Field<string>("Date") == "null" ? null : row.Field<string>("Date");
+                    var expDate = row.Field<string>("ExpDate") == "null" ? null : row.Field<string>("ExpDate");
                     var generateuidQty = Convert.ToInt32(row.Field<string>("SkuQty"));
 
                     var pop = new BulkUIDPoco()

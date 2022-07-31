@@ -46,7 +46,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateBulkUIDs" Disabled="UIDS.Count <= 0 ? true : false">Submit</MudButton>
         </div>
 
-        @if (RejectedUIDS.Count > 0)
+@*        @if (RejectedUIDS.Count > 0)
         {
             <MudText>Rejected UIDS</MudText>
             <MudTable Items="@RejectedUIDS">
@@ -68,14 +68,14 @@
             <div class="mb-5 d-flex justify-end">
                 <MudButton StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Color="Color.Success" Disabled="RejectedUIDS.Count > 0 ? false : true" OnClick="CreateDocument">Download XLSL</MudButton>
             </div>
-        }
+        }*@
     </MudContainer>
 </MudPaper>
 
 @code {
     // UID List
     private List<BulkUIDPoco> UIDS = new List<BulkUIDPoco>();
-    private List<BulkUIDPoco> RejectedUIDS = new List<BulkUIDPoco>();
+    //private List<BulkUIDPoco> RejectedUIDS = new List<BulkUIDPoco>();
 
     // Upload .xlsx
     private async Task UploadFile (InputFileChangeEventArgs e)
@@ -92,65 +92,70 @@
         }
     }
 
-    // Create Document
-    private async Task CreateDocument()
-    {
-        using (ExcelEngine excelEngine = new ExcelEngine())
-        {
-            IApplication application = excelEngine.Excel;
-            application.DefaultVersion = ExcelVersion.Xlsx;
+    //// Create Document
+    //private async Task CreateDocument()
+    //{
+    //    using (ExcelEngine excelEngine = new ExcelEngine())
+    //    {
+    //        IApplication application = excelEngine.Excel;
+    //        application.DefaultVersion = ExcelVersion.Xlsx;
 
-            //Create a workbook.
-            IWorkbook workbook = application.Workbooks.Create(1);
-            IWorksheet worksheet = workbook.Worksheets[0];
+    //        //Create a workbook.
+    //        IWorkbook workbook = application.Workbooks.Create(1);
+    //        IWorksheet worksheet = workbook.Worksheets[0];
 
-            //Initialize DataTable and data get from SampleDataTable method.
-            DataTable table = UIDDataTable();
+    //        //Initialize DataTable and data get from SampleDataTable method.
+    //        DataTable table = UIDDataTable();
 
-            //Export data from DataTable to Excel worksheet.
-            worksheet.ImportDataTable(table, true, 1, 1);
+    //        //Export data from DataTable to Excel worksheet.
+    //        worksheet.ImportDataTable(table, true, 1, 1);
 
-            worksheet.UsedRange.AutofitColumns();
+    //        worksheet.UsedRange.AutofitColumns();
 
-            //Save the document as a stream and return the stream.
-            using (MemoryStream stream = new MemoryStream())
-            {
-                //Save the created Excel document to MemoryStream
-                workbook.SaveAs(stream);
+    //        //Save the document as a stream and return the stream.
+    //        using (MemoryStream stream = new MemoryStream())
+    //        {
+    //            //Save the created Excel document to MemoryStream
+    //            workbook.SaveAs(stream);
 
-                //Download the excel file.
-                await JS.SaveAs("UIDBulkError.xlsx", stream.ToArray());
-            }
-        }
-    }
+    //            //Download the excel file.
+    //            await JS.SaveAs("UIDBulkError.xlsx", stream.ToArray());
+    //        }
+    //    }
+    //}
 
-    private DataTable UIDDataTable()
-    {
-        DataTable reports = new DataTable();
-        reports.Columns.Add("POID");
-        reports.Columns.Add("ProductCode");
-        reports.Columns.Add("ProfileCode");
-        reports.Columns.Add("SkuQty", typeof(int));
-        reports.Columns.Add("Date");
+    //private DataTable UIDDataTable()
+    //{
+    //    DataTable reports = new DataTable();
+    //    reports.Columns.Add("POID");
+    //    reports.Columns.Add("ProductCode");
+    //    reports.Columns.Add("ProfileCode");
+    //    reports.Columns.Add("SkuQty", typeof(int));
+    //    reports.Columns.Add("Date");
 
-        foreach (var item in RejectedUIDS)
-        {
-            reports.Rows.Add(item.poCode, item.productCode, item.profileCode, item.generateuidQty, item.expDate);
-        }
-        return reports;
-    }
+    //    foreach (var item in RejectedUIDS)
+    //    {
+    //        reports.Rows.Add(item.poCode, item.productCode, item.profileCode, item.generateuidQty, item.expDate);
+    //    }
+    //    return reports;
+    //}
 
     // Create Bulk UIDs
     private async Task CreateBulkUIDs()
     {
         try
         {
-            RejectedUIDS = await _purchaseOrder.GenerateBulkUID(UIDS);
-            Snackbar.Add("UIDS Generated Successfully!", Severity.Success);
+            var result = await _purchaseOrder.GenerateBulkUID(UIDS);
+            if (result)
+            {
+                Snackbar.Add("UIDS Generated Successfully!", Severity.Success);
+                return;
+            }
+            Snackbar.Add("Error While Generating UIDS!", Severity.Error);
         }
         catch (Exception)
         {
-            Snackbar.Add("Error", Severity.Error);
+            Snackbar.Add("Error While Generating UIDS!", Severity.Error);
             throw;
         }
     }

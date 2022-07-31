@@ -47,7 +47,7 @@ namespace Carnesia.Application.WMS.PO.Services
         Task<bool> DeleteUID(string uid);
         Task<bool> UpdateUidExp(UIDDateUpdateDTO uid, int id);
 
-        Task<List<BulkUIDPoco>> GenerateBulkUID(List<BulkUIDPoco> bulkUIDs);
+        Task<bool> GenerateBulkUID(List<BulkUIDPoco> bulkUIDs);
         Task<List<BulkUIDPoco>> UploadXLSXFile(InputFileChangeEventArgs e);
 
     }
