@@ -252,7 +252,7 @@
 
         foreach (var item in Elements)
         {
-            reports.Rows.Add(POID, item.productCode, "Test", item.liftingPrice, item.poQuantity - (item.qcFailed + item.notArrivedQty), "Test");
+            reports.Rows.Add(POID, item.productCode, "null", item.liftingPrice, item.poQuantity - (item.qcFailed + item.notArrivedQty), "null");
         }
         return reports;
     }

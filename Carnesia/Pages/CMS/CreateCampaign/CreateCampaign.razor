@@ -180,6 +180,17 @@
         {
             AddCampaignProductDTO newProduct = dialog.Data as AddCampaignProductDTO;
 
+            bool isThere = Products.Any( x=> x.sku == newProduct.sku);
+
+            if (isThere)
+            {
+                int ListIndex = Products.FindIndex(x => x.sku == newProduct.sku);
+
+                Products[ListIndex].stock += newProduct.stock;
+
+                return;
+            }
+
             if (newProduct.discType == "Cash")
             {
                 newProduct.discPrice = newProduct.regularPrice - newProduct.discAmount;

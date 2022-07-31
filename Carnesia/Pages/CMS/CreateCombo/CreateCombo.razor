@@ -153,6 +153,14 @@
         if (dialog.Data != null)
         {
             AddComboProductDTO newProduct = dialog.Data as AddComboProductDTO;
+            bool isThere = Products.Any( x=> x.sku == newProduct.sku);
+
+            if (isThere)
+            {
+                Snackbar.Add("This Product Already Exists!", Severity.Error);
+                return;
+            }
+
 
             if (newProduct.discountType == "Cash")
             {

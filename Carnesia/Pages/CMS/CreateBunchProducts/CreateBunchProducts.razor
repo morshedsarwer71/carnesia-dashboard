@@ -131,6 +131,14 @@
         {
             AddBunchProductProductsDTO newProduct = dialog.Data as AddBunchProductProductsDTO;
 
+            bool isThere = Products.Any( x=> x.sku == newProduct.sku);
+
+            if (isThere)
+            {
+                Snackbar.Add("This Product Already Exists!", Severity.Error);
+                return;
+            }
+
             newProduct.productId = await _products.GetProductIdBySku(newProduct.sku);
 
             Products.Add(newProduct);

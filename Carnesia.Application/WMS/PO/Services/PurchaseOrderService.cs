@@ -520,7 +520,7 @@ namespace Carnesia.Application.WMS.PO.Services
                     var poCode = row.Field<string>("POID");
                     var productCode = row.Field<string>("ProductCode");
                     var profileCode = row.Field<string>("ProfileCode");
-                    var expDate = row.Field<string>("Date");
+                    var expDate = row.Field<string>("Date") == "null" ? null : row.Field<string>("Date");
                     var generateuidQty = Convert.ToInt32(row.Field<string>("SkuQty"));
 
                     var pop = new BulkUIDPoco()
