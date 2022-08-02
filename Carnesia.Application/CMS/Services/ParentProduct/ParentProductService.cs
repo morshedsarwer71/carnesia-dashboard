@@ -122,9 +122,9 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
                 if (result.IsSuccessStatusCode) return true;
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
                 throw;
             }
         }

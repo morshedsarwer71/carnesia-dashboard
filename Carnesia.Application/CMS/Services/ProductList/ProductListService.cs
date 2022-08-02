@@ -17,11 +17,40 @@ namespace Carnesia.Application.CMS.Services.ProductList
             _httpClient = httpClient;
         }
 
+        public async Task<bool> ApproveProduct(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<bool>($"Products/approveprice/{id}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<ProductQuickSettingDTO>> GetAllProducts()
         {
             try
             {
                 var result = await _httpClient.GetFromJsonAsync<List<ProductQuickSettingDTO>>("Products/productlist");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<ProductQuickSettingDTO>> GetAllUnapprovedProducts()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<ProductQuickSettingDTO>>("Products/approvepriceproducts");
                 return result;
             }
             catch (Exception)
@@ -37,6 +66,22 @@ namespace Carnesia.Application.CMS.Services.ProductList
             {
                 var result = await _httpClient.GetFromJsonAsync<List<ProductListDTO>>("Products/productdetails");
                 return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> QuickSetting(ProductQuickSettingUpdateDTO product)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("Products/quickproduct", product);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

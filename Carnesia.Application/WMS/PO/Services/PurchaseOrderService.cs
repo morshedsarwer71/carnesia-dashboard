@@ -514,7 +514,7 @@ namespace Carnesia.Application.WMS.PO.Services
                     var poCode = row.Field<string>("POID");
                     var productCode = row.Field<string>("ProductCode");
                     var profileCode = row.Field<string>("ProfileCode");
-                    var expDate = row.Field<string>("ExpDate") == "null" ? null : row.Field<string>("ExpDate");
+                    var expDate = row.Field<string>("ExpDate");
                     var generateuidQty = Convert.ToInt32(row.Field<string>("SkuQty"));
 
                     var pop = new BulkUIDPoco()
@@ -527,6 +527,7 @@ namespace Carnesia.Application.WMS.PO.Services
                     };
                     UIDs.Add(pop);
                 }
+
                 return UIDs.Where(x => x.poCode != null).ToList();
             }
             catch (Exception)

@@ -11,10 +11,19 @@
                     <MudItem sm="6">
                         <MudTextField @bind-Value="ToBagSection.sectionName" Label="Section Name" Required="true" RequiredError="Section name is required!"/>
                     </MudItem>
+                    <MudItem sm="6">
+                        <MudSelect @bind-Value="ToBagSection.allignment" Label="Allignment" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Allignment is required!">
+                            <MudSelectItem Value="@("8*1")" />
+                            <MudSelectItem Value="@("12*1")" />
+                            <MudSelectItem Value="@("3*2")" />
+                            <MudSelectItem Value="@("4*2")" />
+                            <MudSelectItem Value="@("6*2")" />
+                        </MudSelect>
+                    </MudItem>
                 </MudGrid>
 
                 <div class="d-flex justify-end my-5">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenAddToBagModal">Add To Bag</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenAddToBagModal">Add Thumbnail</MudButton>
                 </div>
 
                 <MudTable Items="@ToBags" Hover="true" Dense="true">
@@ -84,9 +93,19 @@
     // Create To Bag
     private async Task CreateNewToBag()
     {
+        string[] allignmentArray = ToBagSection.allignment.Split("*");
+        int sum = 1;
+        Array.ForEach(allignmentArray, delegate (string i) { sum = sum * int.Parse(i); });
+
         if (ToBags.Count == 0)
         {
-            Snackbar.Add("Please Add To Bag!", Severity.Error);
+            Snackbar.Add("Please Add Thumbnail!", Severity.Error);
+            return;
+        }
+
+        if (ToBags.Count != sum)
+        {
+            Snackbar.Add($"Please Add or Remove Thumbnail to Match {ToBagSection.allignment}!", Severity.Error);
             return;
         }
 

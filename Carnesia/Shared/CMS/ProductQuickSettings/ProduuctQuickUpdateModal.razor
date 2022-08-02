@@ -1,0 +1,35 @@
+﻿@using Carnesia.Domain.CMS.ProductList
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudNumericField @bind-Value="FormData.mrp" Label="MRP" Immediate="true" Required="true" RequiredError="MRP is required!"/>
+                <MudNumericField @bind-Value="FormData.discount" Label="Discount" Immediate="true"/>
+
+                <div class="d-flex flex-column">
+                    <MudCheckBox Color="Color.Primary" @bind-Checked="@FormData.isPercent" Class="ml-n2" Label="Is Percent!"/>
+                    <MudCheckBox Color="Color.Primary" @bind-Checked="@FormData.isPublish" Class="ml-n2" Label="Is Publish!"/>
+                    <MudCheckBox Color="Color.Primary" @bind-Checked="@FormData.isNewArrival" Class="ml-n2" Label="New Arraival!"/>
+                </div>
+
+                <div class="d-flex justify-end my-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+                </div>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public ProductQuickSettingUpdateDTO FormData{get;set;} = new ProductQuickSettingUpdateDTO();
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<ProductQuickSettingUpdateDTO>(FormData));
+}

@@ -22,8 +22,7 @@
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
-	    <MudTable Items="@Elements" MultiSelection="true" Dense="@dense" Hover="@hover" CanCancelEdit="@true" @bind-SelectedItems="@selectedItems" SortLabel="Sort By"
-                        CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated"))" RowEditPreview="BackupItem"                                                                       RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
+	    <MudTable Items="@Elements" MultiSelection="true" Dense="@dense" Hover="@hover" CanCancelEdit="@true" @bind-SelectedItems="@selectedItems" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated"))"           RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
             <ToolBarContent>
                 <MudText Typo="Typo.h6">PO List Details</MudText>
                 <MudSpacer />

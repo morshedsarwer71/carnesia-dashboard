@@ -32,6 +32,7 @@
                 <MudTh>Image</MudTh>
                 <MudTh>Description</MudTh>
                 <MudTh>Publish</MudTh>
+                <MudTh>Top Brand</MudTh>
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -42,6 +43,9 @@
                 <MudTd DataLabel="Description">@context.description</MudTd>
                 <MudTd DataLabel="Publish">
                     <MudSwitch @bind-Checked="context.isPublished" Color="Color.Primary" @onclick="(() => PublishUnpublish(context.brandId)) " />
+                </MudTd>
+                <MudTd DataLabel="Top Brand">
+                    <MudSwitch @bind-Checked="context.isTopBrand" Color="Color.Primary" @onclick="(() => ToggleTopBrand(context.brandId)) " />
                 </MudTd>
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateModal(context.brandId)">
@@ -145,6 +149,27 @@
         {
             await _brand.ToggleBrand(id);
             Snackbar.Add("Brand Successfully Toggled!", Severity.Success);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }
+    }
+
+    // Toggle Top Brand
+    private async Task ToggleTopBrand(int id)
+    {
+        try
+        {
+            var result = await _brand.ToggleTopBrands(id);
+            if (result)
+            {
+                Snackbar.Add("Brand Successfully Toggled!", Severity.Success);
+                Elements = await _brand.GetBrands();
+                return;
+            }
+            Elements = await _brand.GetBrands();
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
         }
         catch (Exception)
         {

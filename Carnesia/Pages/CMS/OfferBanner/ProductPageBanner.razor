@@ -1,0 +1,142 @@
+﻿@page "/product-page-banner"
+
+@using Carnesia.Domain.CMS.OfferBanner
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.CommonComponents
+@using Carnesia.Shared.CMS.OfferBanner
+@inject IOfferBanner _offerBanner
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudPaper Class="ma-2 pa-16">
+	<MudContainer Fixed="true">
+		<div class="d-flex justify-end">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenOfferModal">Add New Offer Banner</MudButton>
+		</div>
+
+        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<OfferBannerDTO,bool>(FilterFuncInitial)">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>Image</MudTh>
+                <MudTh>Publish</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Name">@context.name</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                </MudTd>
+                <MudTd DataLabel="Publish">
+                    <MudSwitch @bind-Checked="context.isPublished" Color="Color.Primary" @onclick="(() => TogglePublish(context.id)) " />
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetOffers();
+    }
+
+    // Api Url 
+    private string url = "OfferBanner/offerbanner";
+    private string urlToggle = "OfferBanner/OfferTogglePublish/";
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private List<OfferBannerDTO> Elements = new List<OfferBannerDTO>();
+
+    // Get Offers
+    private async Task GetOffers()
+    {
+        Elements = await _offerBanner.GetPfferBanners(url);
+    }
+
+    // Toggle Publish
+    private async Task TogglePublish(int id)
+    {
+        try
+        {
+            var result = await _offerBanner.ToggleBanner(urlToggle, id);
+            if (result)
+            {
+                Snackbar.Add("Banner Successfully Toggled!", Severity.Success);
+                await GetOffers();
+                return;
+            }
+            await GetOffers();
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }
+    }
+
+    // Add Offer Banner Modal
+    private async Task OpenOfferModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddOfferBannerDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddOfferBannerModal>("Add New Banner", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddOfferBannerDTO newOffer = dialog.Data as AddOfferBannerDTO;
+
+            try
+            {
+                var result = await _offerBanner.CreateNewBanner(url, newOffer);
+
+                if (result)
+                {
+                    Snackbar.Add("New Banner Created Successfully!", Severity.Success);
+                    await GetOffers();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
+
+    // Table Search
+    private bool FilterFuncInitial(OfferBannerDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+    private bool FilterFunc(OfferBannerDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    // Show Image
+    private void ShowImage(string url)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ImageUrl", url);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<ShowImageModal>("Image", parameters, options);
+    }
+}

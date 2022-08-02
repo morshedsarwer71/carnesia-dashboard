@@ -12,6 +12,7 @@ namespace Carnesia.Domain.CMS.Brand
         public string name { get; set; }
         public string description { get; set; }
         public bool isPublished { get; set; }
+        public bool isTopBrand { get; set; }
         public string imageUrl { get; set; }
     }
 }

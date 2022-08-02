@@ -1,0 +1,222 @@
+﻿@page "/campaign-banner"
+
+@using Carnesia.Domain.CMS.Campaign
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.CommonComponents
+@using Carnesia.Shared.CMS.CreateCampaign
+@inject ICampaignList _campaign
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudPaper Class="ma-2 pa-16">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<CampaignBannerDTO,bool>(FilterFuncInitial)">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh></MudTh>
+                <MudTh>Campaign Name</MudTh>
+                <MudTh>Start Date</MudTh>
+                <MudTh>End Date</MudTh>
+                <MudTh>Platform</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="">
+                    @if (!context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBanner(context.id)" />
+					}
+					else if (context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBanner(context.id)" />
+					}
+                </MudTd>
+                <MudTd DataLabel="Campaign Name">@context.campaignName</MudTd>
+                <MudTd DataLabel="Start Date">@context.startDate</MudTd>
+                <MudTd DataLabel="End Date">@context.endDate</MudTd>
+                <MudTd DataLabel="Platform">@context.platformType</MudTd>
+                
+				<MudTd DataLabel="Action">
+                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenBannerModal(context.id)">Add Banner</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <ChildRowContent>
+				@if (context.ShowDetails)
+				{
+					<td colspan="6">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.campaignBanners" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+								   <HeaderContent>
+										<MudTh>Name</MudTh>
+										<MudTh>Image</MudTh>
+										<MudTh>URL</MudTh>
+										<MudTh>Publish</MudTh>
+										<MudTh>Action</MudTh>
+								   </HeaderContent>
+								   <RowTemplate>
+										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
+										<MudTd DataLabel="Image">
+											<MudImage @onclick="() => ShowImage(DetailsContext.bannerUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.bannerUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
+										</MudTd>
+										<MudTd DataLabel="URL">@DetailsContext.url</MudTd>
+										<MudTd DataLabel="Publish">
+											<MudSwitch @bind-Checked="DetailsContext.isPublished" Color="Color.Primary" @onclick="(() => TogglePublish(DetailsContext.id)) " />
+										</MudTd>
+										<MudTd DataLabel="Action">
+											<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteBanner(DetailsContext.id)">Delete</MudButton>
+										</MudTd>
+								   </RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetBanners();
+	}
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private List<CampaignBannerDTO> Elements = new List<CampaignBannerDTO>();
+
+	// Get Banners
+	private async Task GetBanners()
+	{
+		Elements = await _campaign.GetCampaignBanners();
+	}
+
+	// Show Details
+	private void ShowBanner(int id)
+	{
+		CampaignBannerDTO tmpElements = Elements.First(f => f.id == id);
+		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+
+	// Add Banner Modal
+    private async Task OpenBannerModal(int id)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddCampaignBannerDTO(){ campaignId = id});
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddCampaignBannerModal>("Add New Banner", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddCampaignBannerDTO newOffer = dialog.Data as AddCampaignBannerDTO;
+
+            try
+            {
+                var result = await _campaign.AddCampaignBanner(newOffer);
+
+                if (result)
+                {
+                    Snackbar.Add("New Banner Created Successfully!", Severity.Success);
+                    await GetBanners();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
+
+	// Toggle Publish
+    private async Task TogglePublish(int id)
+    {
+        try
+        {
+            var result = await _campaign.ToggleBannerPublish(id);
+            if (result)
+            {
+                Snackbar.Add("Banner Successfully Toggled!", Severity.Success);
+                await GetBanners();
+                return;
+            }
+            await GetBanners();
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }
+    }
+
+	// Delete Banner
+    private async Task DeleteBanner(int id)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
+
+        if (!dialog.Cancelled)
+        {
+            try
+            {
+                var result = await _campaign.DeleteBanner(id);
+                if (result)
+                {
+                    Snackbar.Add("Banner Deleted Successfully!", Severity.Success);
+                    await GetBanners();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+    }
+
+
+	// Table Search
+	private bool FilterFuncInitial(CampaignBannerDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+	private bool FilterFunc(CampaignBannerDTO element, string searchString)
+	{
+		if (string.IsNullOrWhiteSpace(searchString))
+			return true;
+		if (element.campaignName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		return false;
+	}
+
+	// Show Image
+	private void ShowImage(string url)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("ImageUrl", url);
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		DialogService.Show<ShowImageModal>("Image", parameters, options);
+	}
+}

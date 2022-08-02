@@ -12,6 +12,7 @@ namespace Carnesia.Domain.CMS.ProductList
         public string parentName { get; set; }
         public string childName { get; set; }
         public string sku { get; set; }
+        public string productCode { get; set; }
         public bool isPublish { get; set; }
         public string brandName { get; set; }
         public string origin { get; set; }

@@ -37,8 +37,8 @@
                      <MudSwitch @bind-Checked="@context.isPublished" Color="Color.Primary" @onclick="(() => TogglePublishSection(context.id))"/>
                 </MudTd>
 				<MudTd DataLabel="Action">
-                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddToBagModal(context.sectioncode)">Add To Bag</MudButton>
-                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenSectionModal(context)">Edit</MudButton>
+                     @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddToBagModal(context.sectioncode)">Add To Bag</MudButton>
+                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenSectionModal(context)">Edit</MudButton>*@
                      <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteSection(context.id)">Delete</MudButton>
                 </MudTd>
             </RowTemplate>
@@ -53,8 +53,8 @@
 										<MudTh>Name</MudTh>
 										<MudTh>Image</MudTh>
 										<MudTh>Link</MudTh>
-										<MudTh>Publish</MudTh>
-										<MudTh>Action</MudTh>
+										@*<MudTh>Publish</MudTh>*@
+										@*<MudTh>Action</MudTh>*@
 								   </HeaderContent>
 								   <RowTemplate>
 										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
@@ -62,12 +62,12 @@
 											<MudImage @onclick="() => ShowImage(DetailsContext.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
 										</MudTd>
 										<MudTd DataLabel="Link">@DetailsContext.link</MudTd>
-										<MudTd DataLabel="Link">
+										@*<MudTd DataLabel="Link">
 											 <MudSwitch @bind-Checked="@DetailsContext.isPublished" Color="Color.Primary" @onclick="() => TogglePublishToBag(DetailsContext.id)"/>
-										</MudTd>
-										<MudTd DataLabel="Action">
+										</MudTd>*@
+										@*<MudTd DataLabel="Action">
 											<MudButton Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
-										</MudTd>
+										</MudTd>*@
 								   </RowTemplate>
 								</MudTable>
 							</MudCardContent>

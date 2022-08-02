@@ -1,6 +1,7 @@
 ﻿@using Carnesia.Domain.WMS.PO.POCO
 @using Carnesia.Domain.Common.POCO
-@using Carnesia.Pages.WMS.PO
+@using Carnesia.Shared.CommonComponents
+@*@using Carnesia.Pages.WMS.PO*@
 @inject IDialogService DialogService
 @inject IPurchaseOrder _order
 @inject IVendor _vendor
@@ -51,7 +52,7 @@
 				<MudTd DataLabel="Status">@context.poStatus</MudTd>
 				<MudTd DataLabel="Status Updated On">@context.statusUpdateDate</MudTd>
 				<MudTd DataLabel="Action">
-					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" />
+					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" OnClick="() => ViewDetailsModal(context.poCode)" />
 					<MudIconButton Icon="@Icons.Filled.Edit" Color="Color.Success" aria-label="Edit" OnClick="() => OpenStatusDialog(context.poCode)" />
 				</MudTd>
 			</RowTemplate>
@@ -146,6 +147,14 @@
 			
 		}
 	}
+
+	// View Details Modal
+    private async Task ViewDetailsModal(string pocode)
+    {
+        var parameters = new DialogParameters { ["poCode"]=pocode };
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth=true, CloseButton=true, MaxWidth=MaxWidth.Large };
+        DialogService.Show<POListDetails>("", parameters,options);
+    }
 	
 
 }

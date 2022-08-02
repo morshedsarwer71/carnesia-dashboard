@@ -17,6 +17,54 @@ namespace Carnesia.Application.CMS.Services.CampaignList
             _httpClient = httpClient;
         }
 
+        public async Task<bool> AddCampaignBanner(AddCampaignBannerDTO banner)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("Campaign/campaignbanner", banner);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteBanner(int id)
+        {
+            try
+            {
+                var result = await _httpClient.DeleteAsync($"Campaign/DeleteCampaignBanner/{id}");
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<CampaignBannerDTO>> GetCampaignBanners()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<CampaignBannerDTO>>("Campaign/campaignbanner");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<CampaignDTO> GetCampaignByID(int id)
         {
             try
@@ -51,6 +99,22 @@ namespace Carnesia.Application.CMS.Services.CampaignList
             try
             {
                 await _httpClient.PostAsync($"Campaign/togglepublish/{CampaignId}", null);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> ToggleBannerPublish(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"Campaign/ToggleCampaigndBanner/{id}");
+
+                if (result == "toggled") return true;
+                return false;
             }
             catch (Exception)
             {

@@ -16,6 +16,7 @@
             <HeaderContent>
                 <MudTh>Product Name</MudTh>
                 <MudTh>SKU</MudTh>
+                <MudTh>Product Code</MudTh>
                 <MudTh>Brand</MudTh>
                 <MudTh>Origin</MudTh>
                 <MudTh>Product Type</MudTh>
@@ -24,11 +25,12 @@
             <RowTemplate>
                 <MudTd DataLabel="Product Name">@context.childName</MudTd>
                 <MudTd DataLabel="SKU">@context.sku</MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Brand">@context.brandName</MudTd>
                 <MudTd DataLabel="Origin">@context.origin</MudTd>
                 <MudTd DataLabel="Product Type">@context.pproductType</MudTd>
                 <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.childId)" >Edit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.childId, context.pproductType)" >Edit</MudButton>
                 </MudTd>
             </RowTemplate>
             <PagerContent>
@@ -65,9 +67,16 @@
     }
 
     // Go To Update
-    private void GoToUpdate(int id)
+    private void GoToUpdate(int id, string pType)
     {
-        NavigationManager.NavigateTo($"update-simple-product/{id}");
+        if (pType == "Compound".ToLower())
+        {
+            NavigationManager.NavigateTo($"update-compound-product/{id}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"update-simple-product/{id}");
+        }
     }
 
     // Table Search

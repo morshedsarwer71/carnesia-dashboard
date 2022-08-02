@@ -9,6 +9,7 @@ namespace Carnesia.Domain.CMS.CreateToBag
     public class AddToBagSectionDTO
     {
         public string sectionName { get; set; }
+        public string allignment { get; set; }
         public bool isPublished { get; set; } = true;
     }
 }

@@ -107,6 +107,22 @@ namespace Carnesia.Application.CMS.Services.Brand
             }
         }
 
+        public async Task<bool> ToggleTopBrands(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"Brands/ToggleTopBrand/{id}");
+
+                if (result == "Toggled") return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task UpdateBrand(CreateBrandDTO Brand)
         {
             try
