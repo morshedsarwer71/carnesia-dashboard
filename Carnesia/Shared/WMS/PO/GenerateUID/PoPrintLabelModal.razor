@@ -1,0 +1,57 @@
+﻿@inject IJSRuntime IJS
+
+<MudDialog>
+    <DialogContent>
+            <MudText Class="mt-5">Select Style</MudText>
+            <MudRadioGroup @bind-SelectedOption="selectStyle">
+                <MudGrid>
+                    <MudItem xs="4">
+                        <MudRadio Option="@("Style3")" Color="Color.Primary" Dense="true">
+                            <MudImage Src="@("./Style3.jpeg")" style="width: 100%" />
+                        </MudRadio>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudRadio Option="@("Style4")" Color="Color.Primary" Dense="true">
+                            <MudImage Src="@("./Style4.jpeg")" style="width: 100%" />
+                        </MudRadio>
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudRadio Option="@("Style6")" Color="Color.Primary" Dense="true">
+                            <MudImage Src="@("./Style6.jpeg")" style="width: 100%" />
+                        </MudRadio>
+                    </MudItem>
+                </MudGrid>
+            </MudRadioGroup>
+
+            <MudText Class="mt-5" Color="Color.Error">@errorText</MudText>
+
+            <div class="d-flex justify-end">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(selectStyle)" OnClick="GoToPrint">Print Label</MudButton>
+            </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string poCode { get; set; }
+
+    // Select Style
+    private string selectStyle { get; set; }
+
+    // Error Text 
+    private string errorText { get; set; }
+
+    // Go To Print Label
+    private async Task GoToPrint()
+    {
+
+        errorText = string.Empty;
+        if (String.IsNullOrEmpty(selectStyle))
+        {
+            errorText = "Please select a print style!";
+            return;
+        }
+        await IJS.InvokeAsync<object>("open", new object[] { $"/po-print-label/{poCode}/{selectStyle}", "_blank" });
+    }
+}

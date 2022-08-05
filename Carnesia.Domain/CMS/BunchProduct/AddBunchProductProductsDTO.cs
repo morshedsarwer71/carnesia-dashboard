@@ -11,7 +11,5 @@ namespace Carnesia.Domain.CMS.BunchProduct
         public int productId { get; set; }
         public string sku { get; set; }
         public string bunchProductCode { get; set; }
-        public decimal regularPrice { get; set; }
-        public decimal sellingPrice { get; set; }
     }
 }

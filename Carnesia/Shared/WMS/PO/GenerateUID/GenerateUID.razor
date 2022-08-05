@@ -37,6 +37,10 @@
 			</MudItem>
 		</MudGrid>
 
+        <div class="mt-5 d-flex justify-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Elements.Count <= 0" OnClick="OpenAllPrintLabelDialog">Print All UIDS</MudButton>
+        </div>
+
         <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" SortLabel="Sort By" Class="mt-5">
             <HeaderContent>
                 <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.sku)">SKU Code</MudTableSortLabel></MudTh>
@@ -161,10 +165,16 @@
     // Print Label Modal
     private void OpenPrintLabelDialog(string poCode, string productCode)
     {
-        Console.WriteLine(poCode);
         var parameters = new DialogParameters { ["poCode"]=poCode, ["productCode"]=productCode  };
         var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
         DialogService.Show<GenerateUIDPrintLabelModal>("Print Label", parameters, options);
+    }
+
+    private void OpenAllPrintLabelDialog()
+    {
+        var parameters = new DialogParameters { ["poCode"]=PO.poCode  };
+        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
+        DialogService.Show<PoPrintLabelModal>("Print Label", parameters, options);
     }
 
     // Print Label Modal

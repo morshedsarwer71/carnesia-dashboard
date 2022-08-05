@@ -1,0 +1,76 @@
+﻿@layout PrintLayout
+@page "/po-print-label/{po}/{selectStyle}"
+@using Carnesia.Domain.WMS.PO.POCO
+@using Carnesia.Shared.WMS.Print.PO.PrintLabel
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.BarcodeGenerator
+@inject HttpClient httpClient
+
+<div style="width: 3.5in; margin: 0 auto;">
+	@if (Uids.Count > 0)
+	{
+		foreach (var item in Uids)
+		{
+			@for (var i = 0; i < item.uid.Count; i = i + 2)
+			{
+				<div class="print-label-parent break-page">
+					@if(selectStyle == "Style3")
+					{
+						<PrintLabelStyleThree vendor="@item.vendor" addOne="@item.addressOne" addTwo="@item.addressTwo" mrp="@item.mrp" uidData="@item.uid[i]" />
+						<PrintLabelStyleThree vendor="@item.vendor" addOne="@item.addressOne" addTwo="@item.addressTwo" mrp="@item.mrp" uidData="@item.uid[i + 1]" />
+					}else if(selectStyle == "Style4")
+					{
+						<PrintLabelStyleFour productId="@item.productCode" sku="@item.sku" uidData="@item.uid[i]" />
+						<PrintLabelStyleFour productId="@item.productCode" sku="@item.sku" uidData="@item.uid[i + 1]" />
+					}else if(selectStyle == "Style6")
+					{
+						<PrintLabelStyleSix vendor="@item.vendor" addOne="@item.addressOne" addTwo="@item.addressTwo" mrp="@item.mrp" uidData="@item.uid[i]" />
+						<PrintLabelStyleSix vendor="@item.vendor" addOne="@item.addressOne" addTwo="@item.addressTwo" mrp="@item.mrp" uidData="@item.uid[i + 1]" />
+					}
+				</div>
+			}
+		}
+	}
+</div>
+
+@code {
+	// URL Param
+	[Parameter] public string po { get; set; }
+	[Parameter] public string selectStyle { get; set; }
+
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetUID();
+		await CheckOdd();
+		//uidLength = Uids.uid.Count;
+	}
+
+	//UID LIST
+	private List<UIDProfileDTO> Uids= new List<UIDProfileDTO>();
+
+	// Get UIDS
+	private async Task GetUID()
+	{
+		Uids = await httpClient.GetFromJsonAsync<List<UIDProfileDTO>>($"PurchaseOrders/getuidsbypocode/{po}");
+	}
+
+	// Check Odd
+	private async Task CheckOdd()
+	{
+		foreach (var item in Uids)
+		{
+			if (item.uid.Count % 2 != 0)
+			{
+				var tempUid = new UIDDataPoco()
+				{
+					id = 404,
+					isDelivered = false,
+					uidCode = "dummy",
+					profileCode = "dummy"
+				};
+				item.uid.Add(tempUid);
+			}
+		}
+	}
+}

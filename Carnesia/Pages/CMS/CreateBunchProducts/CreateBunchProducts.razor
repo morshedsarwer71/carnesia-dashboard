@@ -27,12 +27,6 @@
                     <MudItem sm="6">
                         <MudTimePicker Label="End Time" @bind-Time="EndTime" />
                     </MudItem>
-                    <MudItem sm="6">
-                        <MudNumericField Label="Regular Price" @bind-Value="FormData.totalRegularPrice" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudNumericField Label="Bunch Price" @bind-Value="FormData.totalBunchPrice" />
-                    </MudItem>
                     <MudItem xs="12">
                         <MudTextField @bind-Value="FormData.description" Label="Description" Lines="5" Required="true" RequiredError="Description is required!"/>
                     </MudItem>
@@ -45,14 +39,10 @@
                 <MudTable Items="@Products" Hover="true" Dense="true">
                     <HeaderContent>
                         <MudTh>SKU</MudTh>
-                        <MudTh>Regular Price</MudTh>
-                        <MudTh>Selling Price</MudTh>
                         <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd DataLabel="SKU">@context.sku</MudTd>
-                        <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
-                        <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
                         <MudTd DataLabel="Action">
                             <MudButton OnClick="() => RemoveProduct(context)" >
                                 <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
@@ -157,6 +147,12 @@
         if (String.IsNullOrEmpty(FormData.base64Attch))
         {
             Snackbar.Add("Campaign image is required!", Severity.Error);
+            return;
+        }
+
+        if  (Products.Count <= 0)
+        {
+            Snackbar.Add("Please add product!", Severity.Error);
             return;
         }
 
