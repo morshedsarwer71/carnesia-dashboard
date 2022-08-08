@@ -11,177 +11,178 @@
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudGrid Class="mb-5">
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="FormData.name" Label="Bunch Name" Required="true" RequiredError="Bunch name is required!"/>
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudTimePicker Label="End Time" @bind-Time="EndTime" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="FormData.description" Label="Description" Lines="5" Required="true" RequiredError="Description is required!"/>
-                    </MudItem>
-                </MudGrid>
+			<MudGrid Class="mb-5">
+				<MudItem xs="12">
+					<MudTextField @bind-Value="FormData.name" Label="Bunch Name" Required="true" RequiredError="Bunch name is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTimePicker Label="Start Time" @bind-Time="StartTime" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTimePicker Label="End Time" @bind-Time="EndTime" />
+				</MudItem>
+				<MudItem xs="12">
+					<MudTextField @bind-Value="FormData.description" Label="Description" Lines="5" Required="true" RequiredError="Description is required!" />
+				</MudItem>
+			</MudGrid>
 
-                <div class="my-5 d-flex justify-end">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenProductModal" >Add Product</MudButton>
-                </div>
+			<div class="my-5 d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenProductModal">Add Product</MudButton>
+			</div>
 
-                <MudTable Items="@Products" Hover="true" Dense="true">
-                    <HeaderContent>
-                        <MudTh>SKU</MudTh>
-                        <MudTh>Action</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="SKU">@context.sku</MudTd>
-                        <MudTd DataLabel="Action">
-                            <MudButton OnClick="() => RemoveProduct(context)" >
-                                <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
-                            </MudButton>
-                        </MudTd>
-                    </RowTemplate>
-                </MudTable>
+			<MudTable Items="@Products" Hover="true" Dense="true">
+				<HeaderContent>
+					<MudTh>SKU</MudTh>
+					<MudTh>Action</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="SKU">@context.sku</MudTd>
+					<MudTd DataLabel="Action">
+						<MudButton OnClick="() => RemoveProduct(context)">
+							<MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+						</MudButton>
+					</MudTd>
+				</RowTemplate>
+			</MudTable>
 
-                <div class="mt-5">
-                    <InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
+			<div class="mt-5">
+				<InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
 
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Filled.CloudUpload"
-                               for="fileInput">
-                        Upload Images
-                    </MudButton>
-                    <MudText Class="mt-1">600 * 600(Max 50Kb)</MudText>
-                </div>
+				<MudButton HtmlTag="label"
+						   Variant="Variant.Filled"
+						   Color="Color.Primary"
+						   StartIcon="@Icons.Filled.CloudUpload"
+						   for="fileInput">
+					Upload Images
+				</MudButton>
+				<MudText Class="mt-1">600 * 600(Max 50Kb)</MudText>
+			</div>
 
-                <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
+			<MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;" />
 
-                <div class="d-flex align-center justify-space-between"> 
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateNewBunch" >Submit</MudButton>
-                </div>
-        </MudForm>
+			<div class="d-flex align-center justify-space-between">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateNewBunch">Submit</MudButton>
+			</div>
+		</MudForm>
 	</MudContainer>
 </MudPaper>
 
 @code {
-    // Form Ref
-    bool success;
-    string[] errors = { };
-    MudForm form;
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
 
-    // Start End Date Time
-    private string StartDate { get; set; }
-    private string EndDate { get; set; }
-    private TimeSpan? StartTime = new TimeSpan();
-    private TimeSpan? EndTime = new TimeSpan();
+	// Start End Date Time
+	private string StartDate { get; set; }
+	private string EndDate { get; set; }
+	private TimeSpan? StartTime = new TimeSpan();
+	private TimeSpan? EndTime = new TimeSpan();
 
-    // Form Data
-    private AddBunchProductDTO FormData = new AddBunchProductDTO();
-    private List<AddBunchProductProductsDTO> Products = new List<AddBunchProductProductsDTO>();
+	// Form Data
+	private AddBunchProductDTO FormData = new AddBunchProductDTO();
+	private List<AddBunchProductProductsDTO> Products = new List<AddBunchProductProductsDTO>();
 
-    // Upload Image
-    private async Task UploadImage(InputFileChangeEventArgs e)
-    {
-        try
-        {
-            FormData.base64Attch = await _base64.ConvertToBase64(51200, 600, 600, e);
-        }
-        catch(Exception error)
-        {
-            Snackbar.Add(error.Message, Severity.Error);
-        }
-    }
+	// Upload Image
+	private async Task UploadImage(InputFileChangeEventArgs e)
+	{
+		try
+		{
+			FormData.base64Attch = await _base64.ConvertToBase64(51200, 600, 600, e);
+		}
+		catch (Exception error)
+		{
+			Snackbar.Add(error.Message, Severity.Error);
+		}
+	}
 
-    // Remove Products
-    private void RemoveProduct(AddBunchProductProductsDTO product)
-    {
-        Products.Remove(product);
-    }
+	// Remove Products
+	private void RemoveProduct(AddBunchProductProductsDTO product)
+	{
+		Products.Remove(product);
+	}
 
-    // Add Product Modal
-    private async Task OpenProductModal()
-    {
-        var parameters = new DialogParameters();
-        parameters.Add("FormData", new AddBunchProductProductsDTO());
+	// Add Product Modal
+	private async Task OpenProductModal()
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new AddBunchProductProductsDTO());
 
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<AddProductsModal>("Add New Product", parameters, options).Result;
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<AddProductsModal>("Add New Product", parameters, options).Result;
 
-        if (dialog.Data != null)
-        {
-            AddBunchProductProductsDTO newProduct = dialog.Data as AddBunchProductProductsDTO;
+		if (dialog.Data != null)
+		{
+			AddBunchProductProductsDTO newProduct = dialog.Data as AddBunchProductProductsDTO;
 
-            bool isThere = Products.Any( x=> x.sku == newProduct.sku);
+			bool isThere = Products.Any(x => x.sku == newProduct.sku);
 
-            if (isThere)
-            {
-                Snackbar.Add("This Product Already Exists!", Severity.Error);
-                return;
-            }
+			if (isThere)
+			{
+				Snackbar.Add("This Product Already Exists!", Severity.Error);
+				return;
+			}
 
-            newProduct.productId = await _products.GetProductIdBySku(newProduct.sku);
+			newProduct.productId = await _products.GetProductIdBySku(newProduct.sku);
 
-            Products.Add(newProduct);
-        }
-    }
+			Products.Add(newProduct);
+		}
+	}
 
-    // Create New Bunch
-    private async Task CreateNewBunch()
-    {
-        if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
-        {
-            Snackbar.Add("Start & End Date is required!", Severity.Error);
-            return;
-        }
+	// Create New Bunch
+	private async Task CreateNewBunch()
+	{
+		try
+		{
+			if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
+			{
+				Snackbar.Add("Start & End Date is required!", Severity.Error);
+				return;
+			}
 
-        if (String.IsNullOrEmpty(FormData.base64Attch))
-        {
-            Snackbar.Add("Campaign image is required!", Severity.Error);
-            return;
-        }
+			if (String.IsNullOrEmpty(FormData.base64Attch))
+			{
+				Snackbar.Add("Campaign image is required!", Severity.Error);
+				return;
+			}
 
-        if  (Products.Count <= 0)
-        {
-            Snackbar.Add("Please add product!", Severity.Error);
-            return;
-        }
+			if (Products.Count <= 0)
+			{
+				Snackbar.Add("Please add product!", Severity.Error);
+				return;
+			}
 
-        FormData.startDate = $"{StartDate}T{StartTime}.000Z";
-        FormData.endDate = $"{EndDate}T{EndTime}.000Z";
+			FormData.startDate = $"{StartDate}T{StartTime}.000Z";
+			FormData.endDate = $"{EndDate}T{EndTime}.000Z";
 
-        FormData.bunchProductTag = Products;
+			FormData.bunchProductTag = Products;
+			var result = await _bunchProduct.CreateBunchProduct(FormData);
 
-        try
-        {
-            var result = await _bunchProduct.CreateBunchProduct(FormData);
-
-            if (result)
-            {
-                Snackbar.Add("New Bunch Created Successfully!", Severity.Success);
-                FormData = new AddBunchProductDTO();
-                Products = new List<AddBunchProductProductsDTO>();
-                StartDate = String.Empty;
-                EndDate = String.Empty;
-                StartTime = new TimeSpan();
-                EndTime = new TimeSpan();
-                return;
-            }
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
+			if (result)
+			{
+				Snackbar.Add("New Bunch Created Successfully!", Severity.Success);
+				form.Reset();
+				Products.Clear();
+				//FormData = new AddBunchProductDTO();
+				//Products = new List<AddBunchProductProductsDTO>();
+				StartDate.Remove(0);
+				EndDate.Remove(0);
+				//StartTime = new TimeSpan();
+				//EndTime = new TimeSpan();
+				return;
+			}
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+		catch (Exception)
+		{
+			throw;
+		}
+	}
 
 }

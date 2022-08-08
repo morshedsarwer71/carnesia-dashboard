@@ -81,8 +81,14 @@
         try
         {
 
-            await _underBanner.PublishToggle(id);
-            Snackbar.Add("Published Changed!", Severity.Success);
+            var result = await _underBanner.PublishToggle(id);
+            if (result)
+            {
+                Snackbar.Add("Published Changed!", Severity.Success);
+                await GettAllBanners();
+                return;
+            }
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
         }
         catch (Exception)
         {

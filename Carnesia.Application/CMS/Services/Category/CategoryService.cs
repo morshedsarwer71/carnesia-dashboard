@@ -45,11 +45,14 @@ namespace Carnesia.Application.CMS.Services.Category
             }
         }
 
-        public async Task CreateParentCat(CreateParentCatDTO parentCat)
+        public async Task<bool> CreateParentCat(CreateParentCatDTO parentCat)
         {
             try
             {
-                await _httpClient.PostAsJsonAsync("Category/parent", parentCat);
+                var result = await _httpClient.PostAsJsonAsync("Category/parent", parentCat);
+
+                if(result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

@@ -14,7 +14,7 @@ namespace Carnesia.Application.CMS.Services.ToBag
         Task AddSingleToBag(AddToBagDTO ToBag);
         Task<List<ToBagListSectionDTO>> GetAllToBags();
         Task DeleteToBag(int id);
-        Task DeleteSection(int id);
+        Task<bool> DeleteSection(int id);
         Task PublishToggleSection(int id);
         Task PublishToggleToBag(int id);
         Task UpdateSection(ToBagListSectionDTO Section);

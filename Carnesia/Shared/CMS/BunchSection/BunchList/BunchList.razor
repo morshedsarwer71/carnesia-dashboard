@@ -1,15 +1,14 @@
-﻿@using Carnesia.Domain.CMS.ToBagList
-@using Carnesia.Domain.CMS.CreateToBag
+﻿@using Carnesia.Domain.CMS.BunchSection
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Shared.CommonComponents
-@using Carnesia.Shared.CMS.CreateToBag
-@inject IToBag _toBag
+@using Carnesia.Shared.CMS.ToBag.ToBagList
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject IBunchSection _bunchSection
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ToBagListSectionDTO,bool>(FilterFuncInitial)">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<BunchSectionListDTO,bool>(FilterFuncInitial)">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
@@ -19,7 +18,7 @@
                 <MudTh></MudTh>
                 <MudTh>Section Name</MudTh>
                 <MudTh>Allignment</MudTh>
-                <MudTh>publish</MudTh>
+                @*<MudTh>publish</MudTh>*@
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -35,28 +34,24 @@
                 </MudTd>
                 <MudTd DataLabel="Section Name">@context.sectionName</MudTd>
                 <MudTd DataLabel="Allignment">@context.allignment</MudTd>
-                <MudTd DataLabel="Publish">
+                @*<MudTd DataLabel="Publish">
                      <MudSwitch @bind-Checked="@context.isPublished" Color="Color.Primary" @onclick="(() => TogglePublishSection(context.id))"/>
-                </MudTd>
+                </MudTd>*@
 				<MudTd DataLabel="Action">
-                     @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddToBagModal(context.sectioncode)">Add To Bag</MudButton>
-                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenSectionModal(context)">Edit</MudButton>*@
                      <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteSection(context.id)">Delete</MudButton>
                 </MudTd>
             </RowTemplate>
             <ChildRowContent>
 				@if (context.ShowDetails)
 				{
-					<td colspan="5">
+					<td colspan="4">
 						<MudCard Elevation="0">
 							<MudCardContent Class="pa-0">
-								<MudTable Items="@context.tobags" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+								<MudTable Items="@context.bunchThums" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
 								   <HeaderContent>
 										<MudTh>Name</MudTh>
 										<MudTh>Image</MudTh>
 										<MudTh>Link</MudTh>
-										@*<MudTh>Publish</MudTh>*@
-										@*<MudTh>Action</MudTh>*@
 								   </HeaderContent>
 								   <RowTemplate>
 										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
@@ -64,12 +59,6 @@
 											<MudImage @onclick="() => ShowImage(DetailsContext.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
 										</MudTd>
 										<MudTd DataLabel="Link">@DetailsContext.link</MudTd>
-										@*<MudTd DataLabel="Link">
-											 <MudSwitch @bind-Checked="@DetailsContext.isPublished" Color="Color.Primary" @onclick="() => TogglePublishToBag(DetailsContext.id)"/>
-										</MudTd>*@
-										@*<MudTd DataLabel="Action">
-											<MudButton Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
-										</MudTd>*@
 								   </RowTemplate>
 								</MudTable>
 							</MudCardContent>
@@ -95,63 +84,32 @@
 	// Page On Load
 	protected override async Task OnInitializedAsync()
 	{
-		await GetAllToBags();
+		await GetAllBunchSections();
 	}
 
 	// Table Customaization
 	private TableCommon tableCommon = new TableCommon();
 
 	// Table Content
-	private IEnumerable<ToBagListSectionDTO> Elements = new List<ToBagListSectionDTO>();
+	private List<BunchSectionListDTO> Elements = new List<BunchSectionListDTO>();
 
 	// Get All To Bags
-	private async Task GetAllToBags()
+	private async Task GetAllBunchSections()
 	{
-		Elements = await _toBag.GetAllToBags();
+		Elements = await _bunchSection.GetAllBunchSections();
 	}
 
 	// Show Details
 	private void ShowToBag(int id)
 	{
-		ToBagListSectionDTO tmpElements = Elements.First(f => f.id == id);
+		BunchSectionListDTO tmpElements = Elements.First(f => f.id == id);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
 	}
 
-	// Toggle Publish
-	private async Task TogglePublishSection(int id)
-	{
-		try
-		{
-			await _toBag.PublishToggleSection(id);
-			Snackbar.Add("Publish Toggled Successfully!", Severity.Success);
-			await GetAllToBags();
-		}
-		catch (Exception)
-		{
-			Snackbar.Add("Something Went Wrong!", Severity.Success);
-			throw;
-		}
-	}
-
-	private async Task TogglePublishToBag(int id)
-	{
-		try
-		{
-			await _toBag.PublishToggleToBag(id);
-			Snackbar.Add("Publish Toggled Successfully!", Severity.Success);
-			await GetAllToBags();
-		}
-		catch (Exception)
-		{
-			Snackbar.Add("Something Went Wrong!", Severity.Success);
-			throw;
-		}
-	}
-
 	// Table Search
-	private bool FilterFuncInitial(ToBagListSectionDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+	private bool FilterFuncInitial(BunchSectionListDTO element) => FilterFunc(element, tableCommon.SearchTerm);
 
-	private bool FilterFunc(ToBagListSectionDTO element, string searchString)
+	private bool FilterFunc(BunchSectionListDTO element, string searchString)
 	{
 		if (string.IsNullOrWhiteSpace(searchString))
 			return true;
@@ -170,37 +128,6 @@
 		DialogService.Show<ShowImageModal>("Image", parameters, options);
 	}
 
-	// Update Section Modal
-	private async Task OpenSectionModal(ToBagListSectionDTO Section)
-	{
-		var parameters = new DialogParameters();
-		parameters.Add("FormData", new ToBagListSectionDTO(){
-			sectionName = Section.sectionName,
-			isPublished = Section.isPublished,
-			id = Section.id
-		});
-
-		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<UpdateSectionModal>("Update Section", parameters, options).Result;
-
-		if (dialog.Data != null)
-		{
-			ToBagListSectionDTO newSection = dialog.Data as ToBagListSectionDTO;
-
-			try
-			{
-				await _toBag.UpdateSection(newSection);
-				Snackbar.Add("Section Updated Successfully!", Severity.Success);
-				await GetAllToBags();
-			}
-			catch (Exception)
-			{
-				Snackbar.Add("Something Went Wrong!", Severity.Error);
-				throw;
-			}
-		}
-	}
-
 	// Delete Section
 	private async Task DeleteSection(int id)
 	{
@@ -213,14 +140,15 @@
 		{
 			try
 			{
-				var result = await _toBag.DeleteSection(id);
+				var result = await _bunchSection.DeleteBunchSection(id);
 				if (result)
 				{
 					Snackbar.Add("Section Deleted Successfully!", Severity.Success);
-					await GetAllToBags();
+					await GetAllBunchSections();
 					return;
 				}
 				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				
 			}
 			catch (Exception)
 			{
@@ -230,33 +158,4 @@
 		}
 	}
 
-	// Add To Bag
-	private async Task AddToBagModal(string sectionCode)
-	{
-		var parameters = new DialogParameters();
-		parameters.Add("FormData", new AddToBagDTO()
-		{
-			sectionCode = sectionCode
-		});
-
-		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<AddToBagModal>("Delete Section", parameters, options).Result;
-
-		if (dialog.Data != null)
-        {
-            AddToBagDTO newToBag = dialog.Data as AddToBagDTO;
-
-            try
-            {
-                await _toBag.AddSingleToBag(newToBag);
-                Snackbar.Add("New To Bag Created Successfully!", Severity.Success);
-                await OnInitializedAsync();
-            }
-            catch (Exception)
-            {
-                Snackbar.Add("Something Went Wrong!", Severity.Error);
-                throw;
-            }
-        }
-	}
 }

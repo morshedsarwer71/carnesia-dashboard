@@ -11,6 +11,7 @@ namespace Carnesia.Domain.CMS.ToBagList
         public int id { get; set; }
         public string sectionName { get; set; }
         public string sectioncode { get; set; }
+        public string allignment { get; set; }
         public bool isPublished { get; set; }
         public List<ToBagListDTO> tobags { get; set; }
         public bool ShowDetails { get; set; } = false;

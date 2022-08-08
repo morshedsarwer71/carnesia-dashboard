@@ -2,6 +2,7 @@
 @using Carnesia.Domain.OMS.PendingOrder
 @using Carnesia.Shared.OMS.PendingOrder
 @inject IDialogService DialogService
+@inject IPendingOrder _pendingOrder
 
 <MudPaper Class="pa-16 pb-16 pt-10 ma-10">
 	<MudContainer Fixed="true">
@@ -53,43 +54,51 @@
 				<MudTh>Status</MudTh>
 				<MudTh>Source</MudTh>
 				<MudTh>Assign To</MudTh>
+				<MudTh>Total</MudTh>
+				<MudTh>Grand Total</MudTh>
+				<MudTh>Discount</MudTh>
+				<MudTh>Shipping Price</MudTh>
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="">
 					@if (!context.ShowDetails)
 					{
-						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.OrderId)" />
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.orderId)" />
 					}
 					else if (context.ShowDetails)
 					{
-						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.OrderId)" />
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.orderId)" />
 					}
 				</MudTd>
-				<MudTd DataLabel="Order Id">@context.OrderId</MudTd>
-				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
-				<MudTd DataLabel="Order Value">@context.OrderValue</MudTd>
-				<MudTd DataLabel="Payment Method">@context.PaymentMethode</MudTd>
-				<MudTd DataLabel="To Be Collected">@context.ToBeCollected</MudTd>
-				<MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
-				<MudTd DataLabel="Phone Number">@context.PhoneNumber</MudTd>
-				<MudTd DataLabel="Address">@context.Address</MudTd>
-				<MudTd DataLabel="Status">@context.Status</MudTd>
-				<MudTd DataLabel="Source">@context.Source</MudTd>
-				<MudTd DataLabel="Assign To">@context.AssignTo</MudTd>
+				<MudTd DataLabel="Order Id">@context.orderId</MudTd>
+				<MudTd DataLabel="Order Date">@context.orderDate</MudTd>
+				<MudTd DataLabel="Order Value">@context.orderValue</MudTd>
+				<MudTd DataLabel="Payment Method">@context.paymentMethod</MudTd>
+				<MudTd DataLabel="To Be Collected">@context.tobeCollected</MudTd>
+				<MudTd DataLabel="Customer Name">@context.customerName</MudTd>
+				<MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+				<MudTd DataLabel="Address">@context.address</MudTd>
+				<MudTd DataLabel="Status">@context.paymentStatus</MudTd>
+				<MudTd DataLabel="Source">@context.source</MudTd>
+				<MudTd DataLabel="Assign To">@context.assignto</MudTd>
+				<MudTd DataLabel="Total">@context.products.total</MudTd>
+				<MudTd DataLabel="Grand Total">@context.products.grandTotal</MudTd>
+				<MudTd DataLabel="Discount">@context.products.discount</MudTd>
+				<MudTd DataLabel="Shipping Price">@context.products.shippingPrice</MudTd>
 				<MudTd DataLabel="Action" Class="d-flex flex-column align-center">
 					<MudButton Variant="Variant.Text" Color="Color.Primary">Edit</MudButton>
 					<MudButton Variant="Variant.Text" Color="Color.Success">Verify</MudButton>
 					<MudButton Variant="Variant.Text" Color="Color.Secondary">Cancel</MudButton>
 				</MudTd>
 			</RowTemplate>
-						<ChildRowContent>
+			<ChildRowContent>
 				@if (context.ShowDetails)
 				{
-					<td colspan="14">
+					<td colspan="18">
 						<MudCard Elevation="0">
 							<MudCardContent Class="pa-0">
-								<MudTable Items="@context.Details" Context="DetailsContext" Hover="true" Elevation="0" CanCancelEdit="true" IsEditRowSwitchingBlocked="true"											 RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues">
+								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Hover="true" Elevation="0" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues">
 								   <HeaderContent>
 										<MudTh>SKU</MudTh>
 										<MudTh>Product Name</MudTh>
@@ -98,27 +107,21 @@
 										<MudTh>Amount</MudTh>
 								   </HeaderContent>
 								   <RowTemplate>
-										<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
-										<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
-										<MudTd DataLabel="Quantity">@DetailsContext.QTY</MudTd>
-										<MudTd DataLabel="Price">@DetailsContext.Price</MudTd>
-										<MudTd DataLabel="Amount">@DetailsContext.Amount</MudTd>
+										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
+										<MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>
+										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
+										<MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
 								   </RowTemplate>
 								   <RowEditingTemplate>
-										<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
-										<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
+										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
 										<MudTd DataLabel="Quantity">
-											<MudNumericField @bind-Value="@DetailsContext.QTY" Required />
+											<MudNumericField @bind-Value="@DetailsContext.quantity" Required />
 										</MudTd>
-										<MudTd DataLabel="Price">@DetailsContext.Price</MudTd>
-										<MudTd DataLabel="Amount">@DetailsContext.Amount</MudTd>
+										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
+										<MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
 									</RowEditingTemplate>
-									<GroupFooterTemplate>
-										<MudTh colspan="5" Style="text-align: right; font-weight: 600;">Total: 1350</MudTh>
-										<MudTh colspan="5" Style="text-align: right;">Shipping: 60</MudTh>
-										<MudTh colspan="5" Style="text-align: right;">Discount: 100</MudTh>
-										<MudTh colspan="5" Style="text-align: right; font-weight: 600;">Grand Total: 1310</MudTh>
-									</GroupFooterTemplate>
 								</MudTable>
 							</MudCardContent>
 						</MudCard>
@@ -136,17 +139,29 @@
 </MudPaper>
 
 @code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetOrders();
+	}
+
 	// Table Content
-	private IEnumerable<PendingOrderDTO> Elements = new List<PendingOrderDTO>();
+	private List<PendingOrderDTO> Elements = new List<PendingOrderDTO>();
 	private HashSet<PendingOrderDTO> SelectedItems = new HashSet<PendingOrderDTO>();
 
+	// Get Orders
+	private async Task GetOrders()
+	{
+		Elements = await _pendingOrder.GetAllPendingOrders();
+	}
+
 	// Details Table Edit States
-	private PendingOrderDetailsDTO BeforeEdit;
+	private PendingOrderProductsDTO BeforeEdit;
 
 	// Show Details
-	private void ShowBtnPress(string orderId)
+	private void ShowBtnPress(int orderId)
 	{
-		PendingOrderDTO tmpElements = Elements.First(f => f.OrderId == orderId);
+		PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
 	}
 
@@ -155,14 +170,14 @@
     {
         BeforeEdit = new()
         {
-            QTY = ((PendingOrderDetailsDTO)element).QTY
+            quantity = ((PendingOrderProductsDTO)element).quantity
         };
     }
 
 	// Details Table Edit Cancel
 	private void ResetItemToOriginalValues(object element)
     {
-        ((PendingOrderDetailsDTO)element).QTY = BeforeEdit.QTY;
+        ((PendingOrderProductsDTO)element).quantity = BeforeEdit.quantity;
     }
 
 	// Cancel Modal

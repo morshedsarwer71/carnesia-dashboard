@@ -69,7 +69,7 @@
     // Go To Update
     private void GoToUpdate(int id, string pType)
     {
-        if (pType == "Compound".ToLower())
+        if (pType.ToLower() == "compound")
         {
             NavigationManager.NavigateTo($"update-compound-product/{id}");
         }

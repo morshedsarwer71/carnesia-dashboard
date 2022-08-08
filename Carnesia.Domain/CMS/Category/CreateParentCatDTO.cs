@@ -9,6 +9,6 @@ namespace Carnesia.Domain.CMS.Category
     public class CreateParentCatDTO
     {
         public string parentCat { get; set; }
-        public string base64Attach { get; set; }
+        public string base64Attch { get; set; }
     }
 }

@@ -1,0 +1,37 @@
+﻿@page "/bunch-section"
+
+@using Carnesia.Shared.CMS.BunchSection.CreateBunch
+@using Carnesia.Shared.CMS.BunchSection.BunchList
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BunchList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BunchList)">@BunchList</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == CreateBunch ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateBunch)">
+                @CreateBunch
+            </MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == CreateBunch){
+    <CreateBunchSection />
+}
+else if(CurrentPage == BunchList){
+    <BunchList />
+}
+
+@code {
+    // Pages 
+    private string CreateBunch = "Create Sections";
+    private string BunchList = "Sections";
+
+    // Current Page 
+    private string CurrentPage { get; set; } = "Sections";
+
+    // Change Current Page
+    void ChangePage(string pageName)
+    {
+        CurrentPage = pageName;
+    }
+}

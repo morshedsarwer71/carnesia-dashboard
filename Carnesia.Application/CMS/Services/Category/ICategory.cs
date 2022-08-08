@@ -14,7 +14,7 @@ namespace Carnesia.Application.CMS.Services.Category
         Task<List<ParentCategoryDTO>> GetCategories();
 
         Task UpdateParentCat(ParentUpdateDTO parentCat, int id);
-        Task CreateParentCat(CreateParentCatDTO parentCat);
+        Task<bool> CreateParentCat(CreateParentCatDTO parentCat);
 
         Task CreateChildCat(CreateChildCategoryDTO childCatData);
         Task UpdateChildCat(ChildUpdateDTO childCat, int id);

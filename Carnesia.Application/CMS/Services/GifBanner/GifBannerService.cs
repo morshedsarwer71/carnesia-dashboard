@@ -56,5 +56,19 @@ namespace Carnesia.Application.CMS.Services.GifBanner
                 throw;
             }
         }
+
+        public async Task<bool> ToggleGifBanner(int id)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsync($"HomePage/Togglepublishgifbanner/{id}", null);
+                if(result.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

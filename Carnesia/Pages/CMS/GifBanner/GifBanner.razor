@@ -25,6 +25,7 @@
                 <MudTh>URL</MudTh>
                 <MudTh>Description</MudTh>
                 <MudTh>Image</MudTh>
+                <MudTh>Publish</MudTh>
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -33,6 +34,9 @@
                 <MudTd DataLabel="URL">@context.description</MudTd>
                 <MudTd DataLabel="Image">
                     <MudImage @onclick="() => ShowImage(context.imageWebUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageWebUrl}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                </MudTd>
+                <MudTd DataLabel="Publish">
+                    <MudSwitch @bind-Checked="@context.isPublish" Color="Color.Primary" @onclick="(() => ToggleBanner(context.id))"/>
                 </MudTd>
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteBanner(context.id)">Delete</MudButton>
@@ -143,5 +147,26 @@
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
         DialogService.Show<ShowImageModal>("Image", parameters, options);
+    }
+
+    // Toggle Banner
+    private async Task ToggleBanner(int id)
+    {
+        try
+        {
+            var result = await _gifBanner.ToggleGifBanner(id);
+            if (result)
+            {
+                Snackbar.Add("Banner Toggled Successfully!", Severity.Success);
+                await GetBanners();
+                return;
+            }
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
+        }
     }
 }

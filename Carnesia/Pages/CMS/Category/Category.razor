@@ -184,9 +184,15 @@
 
 			try
 			{
-				await _category.CreateParentCat(newCategory);
-				Snackbar.Add("New Category Created Successfully!", Severity.Success);
-				await OnInitializedAsync();
+				var result = await _category.CreateParentCat(newCategory);
+
+				if (result)
+				{
+					Snackbar.Add("New Category Created Successfully!", Severity.Success);
+					await OnInitializedAsync();
+					return;
+				}
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
 			}
 			catch (Exception)
 			{

@@ -12,5 +12,6 @@ namespace Carnesia.Application.CMS.Services.GifBanner
         Task<List<GifBannerDTO>> GetGifBanners();
         Task AddGifBanner(AddGifBannerDTO Banner);
         Task RemoveBanner(int BannerId);
+        Task<bool> ToggleGifBanner(int id);
     }
 }

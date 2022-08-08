@@ -16,7 +16,7 @@ namespace Carnesia.Application.CMS.Services.Brand
 
         Task<string[]> GetBrandsNameAsString();
         Task<BrandDTO> GetBrand(string BrandName);
-        Task ToggleBrand(int id);
+        Task<bool> ToggleBrand(int id);
         Task<bool> ToggleTopBrands(int id);
     }
 }

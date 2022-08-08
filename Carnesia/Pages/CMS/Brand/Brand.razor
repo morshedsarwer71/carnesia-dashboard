@@ -147,12 +147,19 @@
     {
         try
         {
-            await _brand.ToggleBrand(id);
-            Snackbar.Add("Brand Successfully Toggled!", Severity.Success);
+            var result = await _brand.ToggleBrand(id);
+            if (result)
+            {
+                Snackbar.Add("Brand Successfully Toggled!", Severity.Success);
+                await OnInitializedAsync();
+                return;
+            }
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
         }
         catch (Exception)
         {
             Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
         }
     }
 

@@ -31,11 +31,14 @@ namespace Carnesia.Application.CMS.Services.UnderCarouselBanner
             }
         }
 
-        public async Task PublishToggle(int id)
+        public async Task<bool> PublishToggle(int id)
         {
             try
             {
-                await _httpClient.PostAsync("HomePage/ToggleBannerPublish", null);
+                var result = await _httpClient.PostAsync($"HomePage/ToggleBannerPublish/{id}", null);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

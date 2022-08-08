@@ -44,11 +44,13 @@ namespace Carnesia.Application.CMS.Services.ToBag
             }
         }
 
-        public async Task DeleteSection(int id)
+        public async Task<bool> DeleteSection(int id)
         {
             try
             {
-                await _httpClient.DeleteAsync($"ToBag/deletetobagsection/{id}");
+                var result = await _httpClient.DeleteAsync($"ToBag/deletetobagsection/{id}");
+                if(result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

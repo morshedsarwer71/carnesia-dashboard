@@ -8,10 +8,11 @@ namespace Carnesia.Domain.OMS.PendingOrder
 {
     public class PendingOrderDetailsDTO
     {
-        public string SKU { get; set; }
-        public string ProductName { get; set; }
-        public int QTY { get; set; }
-        public decimal Price { get; set; }
-        public decimal Amount { get; set; }
+        public decimal total { get; set; }
+        public decimal grandTotal { get; set; }
+        public decimal discount { get; set; }
+        public decimal shippingPrice { get; set; }
+        public bool ShowDetails { get; set; }
+        public List<PendingOrderProductsDTO> orderProducts { get; set; }
     }
 }

@@ -94,11 +94,13 @@ namespace Carnesia.Application.CMS.Services.Brand
             }
         }
 
-        public async Task ToggleBrand(int id)
+        public async Task<bool> ToggleBrand(int id)
         {
             try
             {
-                await _httpClient.PostAsync($"Brands/Toggle/{id}", null);
+                var result = await _httpClient.GetAsync($"Brands/Toggle/{id}");
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {
