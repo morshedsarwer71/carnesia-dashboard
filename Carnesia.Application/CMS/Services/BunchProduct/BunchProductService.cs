@@ -51,7 +51,23 @@ namespace Carnesia.Application.CMS.Services.BunchProduct
             }
         }
 
-        public async Task<bool> DeleteProduct(int id)
+		public async Task<bool> DeleteBunch(int id)
+		{
+			try
+			{
+                var result = await _httpClient.DeleteAsync($"BunchProducts?id={id}");
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<bool> DeleteProduct(int id)
         {
             try
             {

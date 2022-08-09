@@ -4,7 +4,14 @@
 	<div class="me-auto" style="width:100%;">
 		<p style="font-size: 7px; padding-left: 10px;">Product ID: @productId</p>
 		<p style="font-size: 7px; padding-left: 10px;">SKU: @sku</p>
-		<p style="font-size: 7px; padding-left: 10px; font-weight: 600">EXP- @expDate</p>
+		@if (String.IsNullOrEmpty(expDate))
+		{
+			<p style="font-size: 7px; padding-left: 10px; font-weight: 600; color: transparent;">EXP- @expDate</p>
+		}
+		else
+		{
+			<p style="font-size: 7px; padding-left: 10px; font-weight: 600">EXP- @expDate</p>
+		}
 	</div>
 	<div style="width:100%;">
 		<div style="width:fit-content; margin: 0 auto;">

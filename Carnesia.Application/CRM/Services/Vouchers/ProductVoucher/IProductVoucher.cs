@@ -11,7 +11,7 @@ namespace Carnesia.Application.CRM.Services.Vouchers.ProductVoucher
     public interface IProductVoucher
     {
         Task<List<ProductVoucherListDTO>> GetAllVouchers();
-        Task CreateVoucher(CreateProductVoucherDTO Voucher);
+        Task<bool> CreateVoucher(CreateProductVoucherDTO Voucher);
         Task RemoveVoucher(int id);
     }
 }

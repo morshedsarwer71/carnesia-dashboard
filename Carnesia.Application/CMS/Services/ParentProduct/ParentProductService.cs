@@ -104,7 +104,7 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<List<ParentProductDTO>>("ProductParent");
+                var result = await _httpClient.GetFromJsonAsync<List<ParentProductDTO>>("ProductParent/getcompoundproductparent");
                 return result;
             }
             catch (Exception)

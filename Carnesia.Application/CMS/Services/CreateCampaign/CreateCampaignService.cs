@@ -43,11 +43,14 @@ namespace Carnesia.Application.CMS.Services.CreateCampaign
             }
         }
 
-        public async Task CreateCampaign(AddCampaignDTO Campaign)
+        public async Task<bool> CreateCampaign(AddCampaignDTO Campaign)
         {
             try
             {
-                await _httpClient.PostAsJsonAsync("Campaign", Campaign);
+                var result = await _httpClient.PostAsJsonAsync("Campaign", Campaign);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

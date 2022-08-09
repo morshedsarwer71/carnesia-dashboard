@@ -86,3 +86,9 @@ a, .btn-link {
     display: flex;
     flex-wrap: wrap;
 }
+
+.table-cell {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 2px;
+}

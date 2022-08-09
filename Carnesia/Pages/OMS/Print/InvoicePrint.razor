@@ -1,0 +1,99 @@
+﻿@layout PrintLayout
+@page "/invoice-print"
+
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.BarcodeGenerator
+
+<div style="width: 2.84in; margin: 0 auto; padding: 3px">
+	<h2>Logo</h2>
+	<hr />
+	<h2 style="text-align:center; font-weight: 600;">Invoice</h2>
+	<hr />
+	<h5>Outlet Address: Mirpur, Dhaka.</h5>
+	<h5>Phone #01700000000</h5>
+	<br />
+	<h5 style="font-weight: 600;">Cutomer Copy</h5>
+	<SfBarcodeGenerator Value="1234567890123456" Height="50px">
+		<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
+		</BarcodeGeneratorDisplayText>
+	</SfBarcodeGenerator>
+	<h5>Order Date: 12/4/2022</h5>
+	<h5>Customer Name: Nafis Muhymeen Tarek</h5>
+	<h5>Phone #01800000000</h5>
+	<h5>Cutomer Address: Port High School Colony</h5>
+	<h5>Area: Bandar</h5>
+	<h5>District: Chattogram</h5>
+	<h5>Shipping Zone: Halishahar</h5>
+	<br />
+	<h4 style="font-weight: 600;">Payment: Card</h4>
+	<table style="width: 100%; border-collapse: collapse;">
+		<tr style="font-size: 11px;">
+			<th class="table-cell">Product Name & SKU</th>
+			<th class="table-cell">Price</th>
+			<th class="table-cell">Qty.</th>
+			<th class="table-cell">Discount</th>
+			<th class="table-cell">Total</th>
+		</tr>
+		<tr style="font-size: 8px;">
+			<td class="table-cell">
+				<p>Tarte Shape Shifter Double Ended Bamboo Brow Brush</p>
+				<p>SKU-MNL100019020822</p>
+			</td>
+			<td class="table-cell">100</td>
+			<td class="table-cell">10</td>
+			<td class="table-cell">0</td>
+			<td class="table-cell">1000</td>
+		</tr>
+		<tr style="font-size: 8px;">
+			<td class="table-cell">
+				<p>Tarte Shape Shifter Double Ended Bamboo Brow Brush</p>
+				<p>SKU-MNL100019020822</p>
+			</td>
+			<td class="table-cell">100</td>
+			<td class="table-cell">10</td>
+			<td class="table-cell">0</td>
+			<td class="table-cell">1000</td>
+		</tr>
+		<tr style="font-size: 8px;">
+			<td class="table-cell">
+				<p>Tarte Shape Shifter Double Ended Bamboo Brow Brush</p>
+				<p>SKU-MNL100019020822</p>
+			</td>
+			<td class="table-cell">100</td>
+			<td class="table-cell">10</td>
+			<td class="table-cell">0</td>
+			<td class="table-cell">1000</td>
+		</tr>
+		<tr style="font-size: 8px;">
+			<td class="table-cell">
+				<p>Tarte Shape Shifter Double Ended Bamboo Brow Brush</p>
+				<p>SKU-MNL100019020822</p>
+			</td>
+			<td class="table-cell">100</td>
+			<td class="table-cell">10</td>
+			<td class="table-cell">0</td>
+			<td class="table-cell">1000</td>
+		</tr>
+	</table>
+
+	<div style="text-align:end; margin-top: 10px;">
+		<h6>Subtotal: 14460</h6>
+		<h6>Shipping: 60</h6>
+		<h6>Discount: 640</h6>
+		<h6>Credit Used: 200</h6>
+		<h6>Reward Value: 100</h6>
+		<h6>Vat(5%): 723</h6>
+		<h6>Grand Total: 14303</h6>
+	</div>
+	<h6>Instruction: Deliver before 2pm.</h6>
+	<h6>Wishes: Get literature from marketing team.</h6>
+
+	<div style="text-align:center; margin-top: 10px;">
+		<h6>www.carnesia.com</h6>
+		<h6>Helpline: 01900000000</h6>
+	</div>
+</div>
+
+@code {
+
+}

@@ -10,7 +10,7 @@ namespace Carnesia.Application.CMS.Services.CreateCampaign
 {
     public interface ICreateCampaign
     {
-        Task CreateCampaign(AddCampaignDTO Campaign);
+        Task<bool> CreateCampaign(AddCampaignDTO Campaign);
         Task<bool> UpdateCampaignDetails(AddCampaignDetailsDTO Campaign, int id);
         Task<bool> AddProductToCampaign(AddCampaignProductDTO Product);
         Task<bool> DeleteCampaignProduct (int id);

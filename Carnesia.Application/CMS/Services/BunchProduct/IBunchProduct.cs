@@ -15,5 +15,6 @@ namespace Carnesia.Application.CMS.Services.BunchProduct
         Task<bool> AddNewProduct(AddBunchProductProductsDTO product);
         Task<bool> DeleteProduct(int id);
         Task<bool> UpdateBunch(SingleBunchProductDTO bunch);
+        Task<bool> DeleteBunch(int id);
     }
 }

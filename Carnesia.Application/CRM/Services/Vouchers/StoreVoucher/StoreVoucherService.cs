@@ -17,11 +17,14 @@ namespace Carnesia.Application.CRM.Services.Vouchers.StoreVoucher
         {
             _httpClient = httpClient;
         }
-        public async Task CreateStoreVoucher(CreateStoreVoucherDTO Voucher)
+        public async Task<bool> CreateStoreVoucher(CreateStoreVoucherDTO Voucher)
         {
             try
             {
-                await _httpClient.PostAsJsonAsync("Voucher/store", Voucher);
+                var result = await _httpClient.PostAsJsonAsync("Voucher/store", Voucher);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

@@ -10,7 +10,7 @@
                     <MudTextField @bind-Value="FormData.gvCode" Label="Code" Required="true" RequiredError="Code is required!"/>
                 </MudItem>
                 <MudItem sm="6">
-                    <MudNumericField @bind-Value="FormData.numOfVoucher" Label="Number of Voucher" Min="1" Required="true" RequiredError="Number of Voucher is required!"/>
+                    <MudNumericField @bind-Value="FormData.numOfVoucher" Label="Number of Voucher" Required="true" RequiredError="Number of Voucher is required!"/>
                 </MudItem>
                 <MudItem sm="6">
                     <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
@@ -25,7 +25,7 @@
                     <MudTimePicker Label="End Time" @bind-Time="EndTime" />
                 </MudItem>
                 <MudItem sm="6">
-                    <MudNumericField @bind-Value="FormData.minCartAmount" Label="Minimum Cart Amount" Min="1" Required="true" RequiredError="Minimum Cart Amount is required!"/>
+                    <MudNumericField @bind-Value="FormData.minCartAmount" Label="Minimum Cart Amount" Required="true" RequiredError="Minimum Cart Amount is required!"/>
                 </MudItem>
                 <MudItem sm="6">
                     <MudSelect @bind-Value="FormData.platformType" Label="Voucher Platform" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Voucher Platform is required!">
@@ -41,10 +41,10 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem sm="6">
-                    <MudNumericField @bind-Value="FormData.discAmntOrPercent" Label="Discount Amount" Min="1" Required="true" RequiredError="Discount Amount is required!"/>
+                    <MudNumericField @bind-Value="FormData.discAmntOrPercent" Label="Discount Amount" Required="true" RequiredError="Discount Amount is required!"/>
                 </MudItem>
                 <MudItem sm="6">
-                    <MudNumericField @bind-Value="FormData.upToDiscAmnt" Label="Up to Discount Amount" Min="1" Required="true" RequiredError="Up to Discount Amount is required!"/>
+                    <MudNumericField @bind-Value="FormData.upToDiscAmnt" Label="Up to Discount Amount" Required="true" RequiredError="Up to Discount Amount is required!"/>
                 </MudItem>
                 <MudItem sm="6">
                     <MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!"/>
@@ -59,6 +59,9 @@
 </MudPaper>
 
 @code {
+    // New Date Time
+	public static string TodayDate = DateTime.Now.ToString("yyyy-MM-dd");
+
     // Form Ref
     bool success;
     string[] errors = { };
@@ -68,8 +71,8 @@
     private AddGeneralVoucherDTO FormData = new AddGeneralVoucherDTO();
 
     // Start End Date
-    private string StartDate { get; set; }
-    private string EndDate { get; set; }
+    private string StartDate { get; set; } = TodayDate;
+	private string EndDate { get; set; } = TodayDate;
     private TimeSpan? StartTime = new TimeSpan();
     private TimeSpan? EndTime = new TimeSpan();
 
@@ -87,8 +90,18 @@
 
         try
         {
-            await _generalVoucher.CreateNewVoucher(FormData);
-            Snackbar.Add("New Voucher Created Successfully!", Severity.Success);
+            var result = await _generalVoucher.CreateNewVoucher(FormData);
+			if (result)
+			{
+				Snackbar.Add("New Voucher Created Successfully!", Severity.Success);
+				form.Reset();
+				StartDate = TodayDate;
+				EndDate = TodayDate;
+				StartTime = new TimeSpan();
+				EndTime = new TimeSpan();
+				return;
+			}
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
         }
         catch (Exception)
         {

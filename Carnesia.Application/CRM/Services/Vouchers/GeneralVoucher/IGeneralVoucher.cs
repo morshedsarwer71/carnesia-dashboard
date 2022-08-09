@@ -10,7 +10,7 @@ namespace Carnesia.Application.CRM.Services.Vouchers.GeneralVoucher
 {
     public interface IGeneralVoucher
     {
-        Task CreateNewVoucher(AddGeneralVoucherDTO VoucherData);
+        Task<bool> CreateNewVoucher(AddGeneralVoucherDTO VoucherData);
 
         Task<List<VoucherListDTO>> GetVouchers();
         Task<VoucherListDTO> GetVoucherById(int id);

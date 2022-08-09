@@ -27,12 +27,6 @@
                     <MudItem sm="6">
                         <MudTimePicker Label="End Time" @bind-Time="EndTime" />
                     </MudItem>
-                    <MudItem sm="6">
-                        <MudNumericField Label="Regular Price" @bind-Value="FormData.totalRegularPrice" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudNumericField Label="Bunch Price" @bind-Value="FormData.totalBunchPrice" />
-                    </MudItem>
                     <MudItem xs="12">
                         <MudTextField @bind-Value="FormData.description" Label="Description" Lines="5" Required="true" RequiredError="Description is required!"/>
                     </MudItem>
@@ -45,14 +39,12 @@
                 <MudTable Items="@FormData.bunchProductTags" Hover="true" Dense="true">
                     <HeaderContent>
                         <MudTh>SKU</MudTh>
-                        <MudTh>Regular Price</MudTh>
-                        <MudTh>Selling Price</MudTh>
+                        <MudTh>Code</MudTh>
                         <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd DataLabel="SKU">@context.sku</MudTd>
-                        <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
-                        <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+                        <MudTd DataLabel="Code">@context.productCode</MudTd>
                         <MudTd DataLabel="Action">
                             <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteProduct(context.id)" >Delete</MudButton>
                         </MudTd>

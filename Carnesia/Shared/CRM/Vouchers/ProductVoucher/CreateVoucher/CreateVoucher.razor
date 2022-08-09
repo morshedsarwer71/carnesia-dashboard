@@ -7,189 +7,208 @@
 <MudPaper Class="pa-16 pt-16 ma-2 mt-10">
 	<MudContainer Fixed="true">
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-            <MudGrid>
-                <MudItem sm="6">
-                    <MudTextField @bind-Value="FormData.pvCode" Label="Code" Required="true" RequiredError="Code is required!"/>
-                </MudItem>
-                <MudItem sm="6">
-                    <MudNumericField @bind-Value="FormData.numOfVoucher" Label="Number of Voucher" Required="true" RequiredError="Number of Voucher is required!"/>
-                </MudItem>
-                <MudItem sm="6">
-                    <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
-                </MudItem>
-                <MudItem sm="6">
-                    <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
-                </MudItem>
-                <MudItem sm="6">
-                    <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
-                </MudItem>
-                <MudItem sm="6">
-                    <MudTimePicker Label="End Time" @bind-Time="EndTime" />
-                </MudItem>
-                <MudItem sm="6">
-                    <MudNumericField @bind-Value="FormData.minCartAmount" Label="Minimum Cart Amount" Required="true" RequiredError="Minimum Cart Amount is required!"/>
-                </MudItem>
-                <MudItem sm="6">
-                    <MudSelect @bind-Value="FormData.voucherDiscType" Label="Discount Type" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Discount Type is required!">
-                        <MudSelectItem Value="@("Cash")" />
-                        <MudSelectItem Value="@("Percent")" />
-                    </MudSelect>
-                </MudItem>
-                <MudItem sm="6">
-                    <MudNumericField @bind-Value="FormData.discAmntOrPercent" Label="Discount Amount" Required="true" RequiredError="Discount Amount is required!"/>
-                </MudItem>
-                <MudItem sm="6">
-                    <MudNumericField @bind-Value="FormData.upToDiscAmnt" Label="Up to Discount Amount" Required="true" RequiredError="Up to Discount Amount is required!"/>
-                </MudItem>
-                <MudItem sm="6">
-                    <MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!"/>
-                </MudItem>
-            </MudGrid>
+			<MudGrid>
+				<MudItem sm="6">
+					<MudTextField @bind-Value="FormData.pvCode" Label="Code" Required="true" RequiredError="Code is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField @bind-Value="FormData.numOfVoucher" Label="Number of Voucher" Required="true" RequiredError="Number of Voucher is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTimePicker Label="Start Time" @bind-Time="StartTime" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTimePicker Label="End Time" @bind-Time="EndTime" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField @bind-Value="FormData.minCartAmount" Label="Minimum Cart Amount" Required="true" RequiredError="Minimum Cart Amount is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudSelect @bind-Value="FormData.voucherDiscType" Label="Discount Type" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Discount Type is required!">
+						<MudSelectItem Value="@("Cash")" />
+						<MudSelectItem Value="@("Percent")" />
+					</MudSelect>
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField @bind-Value="FormData.discAmntOrPercent" Label="Discount Amount" Required="true" RequiredError="Discount Amount is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField @bind-Value="FormData.upToDiscAmnt" Label="Up to Discount Amount" Required="true" RequiredError="Up to Discount Amount is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
+				</MudItem>
+			</MudGrid>
 
-            <MudGrid Class="justify-center align-baseline my-5">
-                <MudItem md="3" sm="6">
-                    <MudAutocomplete T="string" Label="Product SKU" @bind-Value="ProductCurrent" SearchFunc="@SearchProduct" ResetValueOnEmptyText="true" />
-                </MudItem>
-                <MudItem md="3" sm="6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddProducts">Add</MudButton>
-                </MudItem>
-            </MudGrid>
+			<MudGrid Class="justify-center align-baseline my-5">
+				<MudItem md="3" sm="6">
+					<MudAutocomplete T="string" Label="Product SKU" @bind-Value="ProductCurrent" SearchFunc="@SearchProduct" ResetValueOnEmptyText="true" />
+				</MudItem>
+				<MudItem md="3" sm="6">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddProducts">Add</MudButton>
+				</MudItem>
+			</MudGrid>
 
-            <MudTable Items="@Products" Hover="true" Dense="true">
-                <HeaderContent>
-                    <MudTh>Name</MudTh>
-                    <MudTh>SkU</MudTh>
-                    <MudTh>Action</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="Name">@context.productName</MudTd>
-                    <MudTd DataLabel="SKU">@context.productsku</MudTd>
-                    <MudTd DataLabel="Action">
-                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveProduct(context)" >Delete</MudButton>
-                    </MudTd>
-                </RowTemplate>
-            </MudTable>
-                    
-            <div class="d-flex align-center justify-space-between mt-6">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="!success" OnClick="CreateNewVoucher" Class="ml-auto">Submit</MudButton>
-            </div>
-        </MudForm>
+			<MudTable Items="@Products" Hover="true" Dense="true">
+				<HeaderContent>
+					<MudTh>Name</MudTh>
+					<MudTh>Code</MudTh>
+					<MudTh>SkU</MudTh>
+					<MudTh>Action</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="Name">@context.productName</MudTd>
+					<MudTd DataLabel="Code">@context.productCode</MudTd>
+					<MudTd DataLabel="SKU">@context.productsku</MudTd>
+					<MudTd DataLabel="Action">
+						<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveProduct(context)">Delete</MudButton>
+					</MudTd>
+				</RowTemplate>
+			</MudTable>
+
+			<div class="d-flex align-center justify-space-between mt-6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="!success" OnClick="CreateNewVoucher" Class="ml-auto">Submit</MudButton>
+			</div>
+		</MudForm>
 	</MudContainer>
 </MudPaper>
 
 @code {
-    // Page On Load
-    protected override async Task OnInitializedAsync()
-    {
-        await GetProductSKU();
-    }
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetProductSKU();
+	}
 
-    // Form Ref
-    bool success;
-    string[] errors = { };
-    MudForm form;
+	// New Date Time
+	public static string TodayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-    // Form Data
-    private CreateProductVoucherDetailsDTO FormData = new CreateProductVoucherDetailsDTO();
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
 
-    // Start End Date
-    private string StartDate { get; set; }
-    private string EndDate { get; set; }
-    private TimeSpan? StartTime = new TimeSpan();
-    private TimeSpan? EndTime = new TimeSpan();
+	// Form Data
+	private CreateProductVoucherDetailsDTO FormData = new CreateProductVoucherDetailsDTO();
 
-    // Product Current Value
-    private string ProductCurrent { get; set; }
+	// Start End Date
+	private string StartDate { get; set; } = TodayDate;
+	private string EndDate { get; set; } = TodayDate;
+	private TimeSpan? StartTime = new TimeSpan();
+	private TimeSpan? EndTime = new TimeSpan();
 
-    // Products List
-    private List<ProductsBySKUDTO> Products = new List<ProductsBySKUDTO>();
+	// Product Current Value
+	private string ProductCurrent { get; set; }
 
-    // Products Id List
-    private List<CreateProductVoucherProductDTO> ProductsIDS = new List<CreateProductVoucherProductDTO>();
+	// Products List
+	private List<ProductsBySKUDTO> Products = new List<ProductsBySKUDTO>();
 
-    // Get All Products
-    private string[] products = new string[]{};
+	// Products Id List
+	private List<CreateProductVoucherProductDTO> ProductsIDS = new List<CreateProductVoucherProductDTO>();
 
-    private async Task GetProductSKU()
-    {
-        products = await _products.GetProductsAsSKU();
-    }
+	// Get All Products
+	private string[] products = new string[] { };
 
-    // Product Search
-    private async Task<IEnumerable<string>> SearchProduct(string value)
-    {
-        return string.IsNullOrEmpty(value) ? products : products.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
+	private async Task GetProductSKU()
+	{
+		products = await _products.GetProductsAsSKU();
+	}
 
-    // Add Products
-    private async Task AddProducts()
-    {
-        try
-        {
-            var product = await _products.GetProductBySku(ProductCurrent);
-            Products.Add(product);
-            ProductCurrent = String.Empty;
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
+	// Product Search
+	private async Task<IEnumerable<string>> SearchProduct(string value)
+	{
+		return string.IsNullOrEmpty(value) ? products : products.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+	}
 
-    // Remove Product
-    private void RemoveProduct(ProductsBySKUDTO product)
-    {
-        Products.Remove(product);
-    }
+	// Add Products
+	private async Task AddProducts()
+	{
+		bool isThere = Products.Any(x => x.productsku == ProductCurrent);
 
-    // Get Products ID
-    private async Task GetProductsId()
-    {
-        foreach(var product in Products)
-        {
-            var id = await _products.GetProductIdBySku(product.productsku);
-            ProductsIDS.Add(new CreateProductVoucherProductDTO() { productId = id });
-        }
-    }
+		if (isThere)
+		{
+			Snackbar.Add("This Product Already Exists!", Severity.Error);
+			return;
+		}
 
-    // Create New Voucher
-    private CreateProductVoucherDTO NewVoucher = new CreateProductVoucherDTO();
+		try
+		{
+			var product = await _products.GetProductBySku(ProductCurrent);
+			Products.Add(product);
+			ProductCurrent = String.Empty;
+		}
+		catch (Exception)
+		{
+			throw;
+		}
+	}
 
-    private async Task CreateNewVoucher()
-    {
-        if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
-        {
-            Snackbar.Add("Start & End Date is required!", Severity.Error);
-            return;
-        }
+	// Remove Product
+	private void RemoveProduct(ProductsBySKUDTO product)
+	{
+		Products.Remove(product);
+	}
 
-        if (Products.Count == 0)
-        {
-            Snackbar.Add("Please Add Product!", Severity.Error);
-            return;
-        }
+	// Get Products ID
+	private async Task GetProductsId()
+	{
+		foreach (var product in Products)
+		{
+			ProductsIDS.Add(new CreateProductVoucherProductDTO() { productId = product.productId, productName = product.productName, productSku = product.productsku });
+		}
+	}
 
-        FormData.startDate = $"{StartDate}T{StartTime}.000Z";
-        FormData.endDate = $"{EndDate}T{EndTime}.000Z";
+	// Create New Voucher
+	private CreateProductVoucherDTO NewVoucher = new CreateProductVoucherDTO();
 
-        await GetProductsId();
+	private async Task CreateNewVoucher()
+	{
+		if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
+		{
+			Snackbar.Add("Start & End Date is required!", Severity.Error);
+			return;
+		}
 
-        NewVoucher.createProductVoucherDTO = FormData;
-        NewVoucher.prodVoucherProductsDTOs = ProductsIDS;
+		if (Products.Count == 0)
+		{
+			Snackbar.Add("Please Add Product!", Severity.Error);
+			return;
+		}
 
-        try
-        {
-            await _productVoucher.CreateVoucher(NewVoucher);
-            Snackbar.Add("New Voucher Created Successfully!", Severity.Success);
-            form.Reset();
-            StartDate = String.Empty;
-            EndDate = String.Empty;
-            Products = new List<ProductsBySKUDTO>();
-        }
-        catch (Exception)
-        {
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-            throw;
-        }
-    }
+		FormData.startDate = $"{StartDate}T{StartTime}.000Z";
+		FormData.endDate = $"{EndDate}T{EndTime}.000Z";
+
+		await GetProductsId();
+
+		NewVoucher.createProductVoucherDTO = FormData;
+		NewVoucher.prodVoucherProductsDTOs = ProductsIDS;
+
+		try
+		{
+			var result = await _productVoucher.CreateVoucher(NewVoucher);
+			if (result)
+			{
+				Snackbar.Add("New Voucher Created Successfully!", Severity.Success);
+				form.Reset();
+				Products = new List<ProductsBySKUDTO>();
+				StartDate = TodayDate;
+				EndDate = TodayDate;
+				StartTime = new TimeSpan();
+				EndTime = new TimeSpan();
+				return;
+			}
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			throw;
+		}
+	}
 }

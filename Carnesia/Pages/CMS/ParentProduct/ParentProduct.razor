@@ -13,177 +13,177 @@
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
-        <div class="mb-5 d-flex justify-end">
-            <MudButton StartIcon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenParentModal" >Add Parent Product</MudButton>
-        </div>
+		<div class="mb-5 d-flex justify-end">
+			<MudButton StartIcon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenParentModal">Add Parent Product</MudButton>
+		</div>
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
-            <ToolBarContent>
-                <MudSpacer />
-                <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"                                 IconSize="Size.Medium" Class="mt-0"/>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>Product Name</MudTh>
-                <MudTh>Product Type</MudTh>
-                <MudTh>Brand Name</MudTh>
-                <MudTh>Origin</MudTh>
-                <MudTh>Action</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Product Name">@context.name</MudTd>
-                <MudTd DataLabel="Product Type">@context.productType</MudTd>
-                <MudTd DataLabel="Brand Name">@context.brand</MudTd>
-                <MudTd DataLabel="Origin">@context.originId</MudTd>
-                <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => UpdateParentModal(context)" >Edit</MudButton>
-                </MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
+			<ToolBarContent>
+				<MudSpacer />
+				<MudSpacer />
+				<MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+			</ToolBarContent>
+			<HeaderContent>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Product Type</MudTh>
+				<MudTh>Brand Name</MudTh>
+				<MudTh>Origin</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Product Name">@context.name</MudTd>
+				<MudTd DataLabel="Product Type">@context.productType</MudTd>
+				<MudTd DataLabel="Brand Name">@context.brand</MudTd>
+				<MudTd DataLabel="Origin">@context.originId</MudTd>
+				<MudTd DataLabel="Action">
+					<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => UpdateParentModal(context)">Edit</MudButton>
+				</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
 
-        <div class="d-flex flex-wrap mt-4">
-            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
-        </div>
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
 
-        <div class="mb-5 d-flex justify-end">
-            <MudButton StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Color="Color.Success" OnClick="CreateDocument">Download XLSL</MudButton>
-        </div>
+		<div class="mb-5 d-flex justify-end">
+			<MudButton StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Color="Color.Success" OnClick="CreateDocument">Download XLSL</MudButton>
+		</div>
 	</MudContainer>
 </MudPaper>
 
 @code {
-    // Page On Load
-    protected override async Task OnInitializedAsync()
-    {
-        await GetParentProducts();
-    }
-    // Table Customaization
-    private TableCommon tableCommon = new TableCommon();
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetParentProducts();
+	}
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
 
-    // Table Content
-    private IEnumerable<ParentProductDTO> Elements = new List<ParentProductDTO>();
+	// Table Content
+	private IEnumerable<ParentProductDTO> Elements = new List<ParentProductDTO>();
 
-    // Get Parent Products
-    private async Task GetParentProducts()
-    {
-        Elements = await _parentProduct.GetParentProducts();
-    }
+	// Get Parent Products
+	private async Task GetParentProducts()
+	{
+		Elements = await _parentProduct.GetParentProducts();
+	}
 
-    // Add Parent Product Modal
-    private async Task OpenParentModal()
-    {
-        var parameters = new DialogParameters();
-        parameters.Add("FormData", new CreateParentProductDTO());
+	// Add Parent Product Modal
+	private async Task OpenParentModal()
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new CreateParentProductDTO());
 
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<AddParentProductModal>("Add New Parent Product", parameters, options).Result;
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<AddParentProductModal>("Add New Parent Product", parameters, options).Result;
 
-        if (dialog.Data != null)
-        {
-            CreateParentProductDTO newParentProduct = dialog.Data as CreateParentProductDTO;
+		if (dialog.Data != null)
+		{
+			CreateParentProductDTO newParentProduct = dialog.Data as CreateParentProductDTO;
 
-            try
-            {
-                await _parentProduct.CreateParentProduct(newParentProduct);
-                Snackbar.Add("New Parent Product Created Successfully!", Severity.Success);
-                await GetParentProducts();
-            }
-            catch (Exception)
-            {
-                Snackbar.Add("Something Went Wrong!", Severity.Error);
-                throw;
-            }
-        }
-    }
+			try
+			{
+				await _parentProduct.CreateParentProduct(newParentProduct);
+				Snackbar.Add("New Parent Product Created Successfully!", Severity.Success);
+				await GetParentProducts();
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
+	}
 
-    // Update Parent Product Modal
-    private async Task UpdateParentModal(ParentProductDTO ParentProduct)
-    {
-        var parameters = new DialogParameters();
-        parameters.Add("FormData", new ParentProductDTO()
-        {
-            id = ParentProduct.id,
-            name = ParentProduct.name,
-            brandID = ParentProduct.brandID,
-            brand = ParentProduct.brand,
-            originId = ParentProduct.originId,
-            description = ParentProduct.description,
-            productType = ParentProduct.productType
-        });
+	// Update Parent Product Modal
+	private async Task UpdateParentModal(ParentProductDTO ParentProduct)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new ParentProductDTO()
+			{
+				id = ParentProduct.id,
+				name = ParentProduct.name,
+				brandID = ParentProduct.brandID,
+				brand = ParentProduct.brand,
+				originId = ParentProduct.originId,
+				description = ParentProduct.description,
+				productType = ParentProduct.productType
+			});
 
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<UpdateParentProductModal>("Update Parent Product", parameters, options).Result;
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<UpdateParentProductModal>("Update Parent Product", parameters, options).Result;
 
-        if (dialog.Data != null)
-        {
-            ParentProductDTO newParentProduct = dialog.Data as ParentProductDTO;
+		if (dialog.Data != null)
+		{
+			ParentProductDTO newParentProduct = dialog.Data as ParentProductDTO;
 
-            try
-            {
-                await _parentProduct.UpdateParentProduct(newParentProduct);
-                Snackbar.Add("Parent Product Updated Successfully!", Severity.Success);
-                await GetParentProducts();
-            }
-            catch (Exception)
-            {
-                Snackbar.Add("Something Went Wrong!", Severity.Error);
-                throw;
-            }
-        }
-    }
+			try
+			{
+				await _parentProduct.UpdateParentProduct(newParentProduct);
+				Snackbar.Add("Parent Product Updated Successfully!", Severity.Success);
+				await GetParentProducts();
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
+	}
 
-    // Create Document
-    private async Task CreateDocument()
-    {
-        using (ExcelEngine excelEngine = new ExcelEngine())
-        {
-            IApplication application = excelEngine.Excel;
-            application.DefaultVersion = ExcelVersion.Xlsx;
+	// Create Document
+	private async Task CreateDocument()
+	{
+		using (ExcelEngine excelEngine = new ExcelEngine())
+		{
+			IApplication application = excelEngine.Excel;
+			application.DefaultVersion = ExcelVersion.Xlsx;
 
-            //Create a workbook.
-            IWorkbook workbook = application.Workbooks.Create(1);
-            IWorksheet worksheet = workbook.Worksheets[0];
+			//Create a workbook.
+			IWorkbook workbook = application.Workbooks.Create(1);
+			IWorksheet worksheet = workbook.Worksheets[0];
 
-            //Initialize DataTable and data get from SampleDataTable method.
-            DataTable table = ParentDataTable();
+			//Initialize DataTable and data get from SampleDataTable method.
+			DataTable table = ParentDataTable();
 
-            //Export data from DataTable to Excel worksheet.
-            worksheet.ImportDataTable(table, true, 1, 1);
+			//Export data from DataTable to Excel worksheet.
+			worksheet.ImportDataTable(table, true, 1, 1);
 
-            worksheet.UsedRange.AutofitColumns();
+			worksheet.UsedRange.AutofitColumns();
 
-            //Save the document as a stream and return the stream.
-            using (MemoryStream stream = new MemoryStream())
-            {
-                //Save the created Excel document to MemoryStream
-                workbook.SaveAs(stream);
+			//Save the document as a stream and return the stream.
+			using (MemoryStream stream = new MemoryStream())
+			{
+				//Save the created Excel document to MemoryStream
+				workbook.SaveAs(stream);
 
-                //Download the excel file.
-                await JS.SaveAs("Parents.xlsx", stream.ToArray());
-            }
-        }
-    }
+				//Download the excel file.
+				await JS.SaveAs("Parents.xlsx", stream.ToArray());
+			}
+		}
+	}
 
-    private DataTable ParentDataTable()
-    {
-        DataTable reports = new DataTable();
-        reports.Columns.Add("ID", typeof(int));
-        reports.Columns.Add("ProductName");
-        reports.Columns.Add("ProductType");
-        reports.Columns.Add("BrandID", typeof(int));
-        reports.Columns.Add("BrandName");
-        reports.Columns.Add("Origin");
+	private DataTable ParentDataTable()
+	{
+		DataTable reports = new DataTable();
+		reports.Columns.Add("ID", typeof(int));
+		reports.Columns.Add("ProductName");
+		reports.Columns.Add("ProductType");
+		reports.Columns.Add("BrandID", typeof(int));
+		reports.Columns.Add("BrandName");
+		reports.Columns.Add("Origin");
 
-        foreach (var item in Elements)
-        {
-            reports.Rows.Add(item.id, item.name, item.productType, item.brandID, item.brand, item.originId);
-        }
-        return reports;
-    }
-    
+		foreach (var item in Elements)
+		{
+			reports.Rows.Add(item.id, item.name, item.productType, item.brandID, item.brand, item.originId);
+		}
+		return reports;
+	}
+
 }

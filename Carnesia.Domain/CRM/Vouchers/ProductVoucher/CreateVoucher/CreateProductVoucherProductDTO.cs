@@ -9,5 +9,7 @@ namespace Carnesia.Domain.CRM.Vouchers.ProductVoucher.CreateVoucher
     public class CreateProductVoucherProductDTO
     {
         public int productId { get; set; }
+        public string productName { get; set; }
+        public string productSku { get; set; }
     }
 }
