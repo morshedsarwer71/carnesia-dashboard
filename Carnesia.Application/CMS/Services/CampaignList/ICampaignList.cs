@@ -16,5 +16,6 @@ namespace Carnesia.Application.CMS.Services.CampaignList
         Task<bool> AddCampaignBanner(AddCampaignBannerDTO banner);
         Task<bool> ToggleBannerPublish(int id);
         Task<bool> DeleteBanner(int id);
+        Task<bool> ToggleHomePlacement(int id);
     }
 }

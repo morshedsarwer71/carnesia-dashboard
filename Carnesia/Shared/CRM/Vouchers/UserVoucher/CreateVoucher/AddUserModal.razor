@@ -1,0 +1,47 @@
+﻿@using Carnesia.Domain.HRM.User
+@inject IUser _user
+<MudDialog>
+	<DialogContent>
+		<MudAutocomplete T="string" ValueChanged="(string s) => GetUser(s)" Label="Parent Product" SearchFunc="@UserSearch" ResetValueOnEmptyText="true" Required="true" />
+		<div Class="mt-5 d-flex justify-end">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Disabled="String.IsNullOrEmpty(FormData.id)">Add</MudButton>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	// On Page Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetUserString();
+	}
+
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	[Parameter]
+	public UsersDTO FormData { get; set; } = new UsersDTO();
+
+	// User String
+	private string[] UserArray = new string[] { };
+
+	// Get User String
+	private async Task GetUserString()
+	{
+		UserArray = await _user.GetUsersAsString();
+	}
+
+	// Autocomplite Search Func for Parent Product
+	private async Task<IEnumerable<string>> UserSearch(string value)
+	{
+		return string.IsNullOrEmpty(value) ? UserArray : UserArray.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+	}
+
+	// Get User ID
+	private async Task GetUser(string s)
+	{
+		FormData = await _user.GetUserByConcat(s);
+	}
+
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<UsersDTO>(FormData));
+}

@@ -122,5 +122,21 @@ namespace Carnesia.Application.CMS.Services.CampaignList
                 throw;
             }
         }
+
+        public async Task<bool> ToggleHomePlacement(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"Campaign/togglehome/{id}");
+
+                if (result == "Togglesd") return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

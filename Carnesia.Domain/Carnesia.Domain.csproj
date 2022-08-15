@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="CRM\Vouchers\AutoApply\VoucherList\" />
     <Folder Include="Vendor\ViewModels\" />
     <Folder Include="WMS\Adminastration\Models\" />
     <Folder Include="WMS\Adminastration\ViewModels\" />

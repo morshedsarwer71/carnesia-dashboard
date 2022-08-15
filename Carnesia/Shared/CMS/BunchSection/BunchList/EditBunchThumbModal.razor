@@ -1,0 +1,82 @@
+﻿@using Carnesia.Domain.CMS.BunchSection
+@inject IBase64 _base64
+@inject IBunchSection _bunchSection
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField @bind-Value="FormData.name" Label="Thumb Name" Required="true" RequiredError="Thumb Name is required!"/>
+                    <MudTextField @bind-Value="FormData.link" Label="Link" Required="true" RequiredError="Link is required!"/>
+
+                    <InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
+                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5" Required="true">
+                        Upload Banner Images
+                    </MudButton>
+                    <MudText>100 * 100(Max 50Kb)</MudText>
+
+                    <br/>
+                    <MudText Color="Color.Error">@ImageError</MudText>
+                    <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+
+                    <div class="d-flex justify-end my-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="AddToBag" Class="ml-auto">Submit</MudButton>
+                    </div>
+            </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Modal On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetThumb();
+    }
+
+    [Parameter]
+    public BunchThumDTO FormData{get;set;} = new BunchThumDTO();
+
+    // Get Bunch
+    private async Task GetThumb()
+    {
+        FormData = await _bunchSection.GetBunchThumb(FormData.id);
+    }
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    // Image Error
+    private string ImageError { get; set; }
+
+    // Image Validation
+    private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
+    {
+        ImageError = String.Empty;
+        try
+        {
+            FormData.base64Attch = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
+        }
+        catch(Exception e)
+        {
+            ImageError = e.Message;
+        }
+    }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<BunchThumDTO>(FormData));
+
+    // Create Banner
+    private void AddToBag()
+    {
+        if (String.IsNullOrEmpty(FormData.base64Attch))
+        {
+            ImageError = "Please upload a image!";
+            return;
+        }
+
+        Submit(); 
+    }
+}

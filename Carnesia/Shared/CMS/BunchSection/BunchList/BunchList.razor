@@ -9,21 +9,21 @@
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<BunchSectionListDTO,bool>(FilterFuncInitial)">
-            <ToolBarContent>
-                <MudSpacer />
-                <MudSpacer />
-                <MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh></MudTh>
-                <MudTh>Section Name</MudTh>
-                <MudTh>Allignment</MudTh>
-                @*<MudTh>publish</MudTh>*@
-                <MudTh>Action</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="">
-                    @if (!context.ShowDetails)
+			<ToolBarContent>
+				<MudSpacer />
+				<MudSpacer />
+				<MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+			</ToolBarContent>
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Section Name</MudTh>
+				<MudTh>Allignment</MudTh>
+				<MudTh>Home</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.ShowDetails)
 					{
 						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowToBag(context.id)" />
 					}
@@ -31,52 +31,56 @@
 					{
 						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowToBag(context.id)" />
 					}
-                </MudTd>
-                <MudTd DataLabel="Section Name">@context.sectionName</MudTd>
-                <MudTd DataLabel="Allignment">@context.allignment</MudTd>
-                @*<MudTd DataLabel="Publish">
-                     <MudSwitch @bind-Checked="@context.isPublished" Color="Color.Primary" @onclick="(() => TogglePublishSection(context.id))"/>
-                </MudTd>*@
+				</MudTd>
+				<MudTd DataLabel="Section Name">@context.sectionName</MudTd>
+				<MudTd DataLabel="Allignment">@context.allignment</MudTd>
+				<MudTd DataLabel="Home">
+					<MudSwitch @bind-Checked="@context.isHome" Color="Color.Primary" @onclick="() => ToggleHome(context.id)" />
+				</MudTd>
 				<MudTd DataLabel="Action">
-                     <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteSection(context.id)">Delete</MudButton>
-                </MudTd>
-            </RowTemplate>
-            <ChildRowContent>
+					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteSection(context.id)">Delete</MudButton>
+				</MudTd>
+			</RowTemplate>
+			<ChildRowContent>
 				@if (context.ShowDetails)
 				{
 					<td colspan="4">
 						<MudCard Elevation="0">
 							<MudCardContent Class="pa-0">
 								<MudTable Items="@context.bunchThums" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
-								   <HeaderContent>
+									<HeaderContent>
 										<MudTh>Name</MudTh>
 										<MudTh>Image</MudTh>
 										<MudTh>Link</MudTh>
-								   </HeaderContent>
-								   <RowTemplate>
+										<MudTh>Action</MudTh>
+									</HeaderContent>
+									<RowTemplate>
 										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
 										<MudTd DataLabel="Image">
 											<MudImage @onclick="() => ShowImage(DetailsContext.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
 										</MudTd>
 										<MudTd DataLabel="Link">@DetailsContext.link</MudTd>
-								   </RowTemplate>
+										<MudTd DataLabel="Link">
+											<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateThumbModal(DetailsContext.id)">Edit</MudButton>
+										</MudTd>
+									</RowTemplate>
 								</MudTable>
 							</MudCardContent>
 						</MudCard>
 					</td>
 				}
 			</ChildRowContent>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
 
-        <div class="d-flex flex-wrap mt-4">
-            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
-        </div>
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
 	</MudContainer>
 </MudPaper>
 
@@ -148,13 +152,68 @@
 					return;
 				}
 				Snackbar.Add("Something Went Wrong!", Severity.Error);
-				
+
 			}
 			catch (Exception)
 			{
 				Snackbar.Add("Something Went Wrong!", Severity.Error);
 				throw;
 			}
+		}
+	}
+
+	// Update Thumb
+	private async Task OpenUpdateThumbModal(int id)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new BunchThumDTO() { id = id });
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<EditBunchThumbModal>("Add New Thumb", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			BunchThumDTO newToBag = dialog.Data as BunchThumDTO;
+
+			try
+			{
+				var result = await _bunchSection.UpdateThumb(newToBag);
+
+				if (result)
+				{
+					Snackbar.Add("Thumb Updated Successfully!", Severity.Success);
+					await GetAllBunchSections();
+					return;
+				}
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
+	}
+
+	// Toggle Home View
+	private async Task ToggleHome(int id)
+	{
+		try
+		{
+			var result = await _bunchSection.ToggleHomePlacement(id);
+
+			if (result)
+			{
+				Snackbar.Add("Section Toggled Successfully!", Severity.Success);
+				await GetAllBunchSections();
+				return;
+			}
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			throw;
 		}
 	}
 

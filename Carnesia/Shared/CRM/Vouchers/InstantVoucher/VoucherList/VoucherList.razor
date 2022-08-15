@@ -6,87 +6,99 @@
 
 <MudPaper Class="pa-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
-            <ToolBarContent>
-                <MudSpacer />
-                <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>Code</MudTh>
-                <MudTh>Start Date</MudTh>
-                <MudTh>End Date</MudTh>
-                <MudTh>Minimum Cart Amount</MudTh>
-                <MudTh>Discount Type</MudTh>
-                <MudTh>Discount Amount</MudTh>
-                <MudTh>Up To</MudTh>
-                <MudTh>Description</MudTh>
-                <MudTh>Action</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Code">@context.ivCode</MudTd>
-                <MudTd DataLabel="Start Date">@context.startDate</MudTd>
-                <MudTd DataLabel="End Date">@context.endDate</MudTd>
-                <MudTd DataLabel="Minimum Cart Amount">@context.minCartAmount</MudTd>
-                <MudTd DataLabel="Discount Type">@context.voucherDiscType</MudTd>
-                <MudTd DataLabel="Discount Amount">@context.discAmntOrPercent</MudTd>
-                <MudTd DataLabel="Up To">@context.upToDiscAmnt</MudTd>
-                <MudTd DataLabel="Description">@context.description</MudTd>
-                <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.instantVId)" >Delete</MudButton>
-                </MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<InstantVoucherListDTO,bool>(FilterFuncInitial)">
+			<ToolBarContent>
+				<MudSpacer />
+				<MudSpacer />
+				<MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+			</ToolBarContent>
+			<HeaderContent>
+				<MudTh>Code</MudTh>
+				<MudTh>Start Date</MudTh>
+				<MudTh>End Date</MudTh>
+				<MudTh>Minimum Cart Amount</MudTh>
+				<MudTh>Discount Type</MudTh>
+				<MudTh>Discount Amount</MudTh>
+				<MudTh>Up To</MudTh>
+				<MudTh>Description</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Code">@context.ivCode</MudTd>
+				<MudTd DataLabel="Start Date">@context.startDate</MudTd>
+				<MudTd DataLabel="End Date">@context.endDate</MudTd>
+				<MudTd DataLabel="Minimum Cart Amount">@context.minCartAmount</MudTd>
+				<MudTd DataLabel="Discount Type">@context.voucherDiscType</MudTd>
+				<MudTd DataLabel="Discount Amount">@context.discAmntOrPercent</MudTd>
+				<MudTd DataLabel="Up To">@context.upToDiscAmnt</MudTd>
+				<MudTd DataLabel="Description">@context.description</MudTd>
+				<MudTd DataLabel="Action">
+					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.instantVId)">Delete</MudButton>
+				</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
 
-        <div class="d-flex flex-wrap mt-4">
-            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
-        </div>
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
 	</MudContainer>
 </MudPaper>
 
 @code {
-    // Page On Load
-    protected override async Task OnInitializedAsync()
-    {
-        await GetVouchers();
-    }
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetVouchers();
+	}
 	// Table Content
 	private IEnumerable<InstantVoucherListDTO> Elements = new List<InstantVoucherListDTO>();
 
 	// Table Customaization
 	private TableCommon tableCommon = new TableCommon();
 
-    // Get Vouchers
-    private async Task GetVouchers()
-    {
-        Elements = await _instantVoucher.GetAllVouchers();
-    }
+	// Get Vouchers
+	private async Task GetVouchers()
+	{
+		Elements = await _instantVoucher.GetAllVouchers();
+	}
 
-    // Delete Voucher
-    private async Task DeleteVoucher(int id)
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<DeleteVoucherModal>("Delete Confirmation", options).Result;
+	// Delete Voucher
+	private async Task DeleteVoucher(int id)
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<DeleteVoucherModal>("Delete Confirmation", options).Result;
 
-        if (!dialog.Cancelled)
-        {
-            try
-            {
-                await _instantVoucher.RemoveVoucher(id);
-                Snackbar.Add("Voucher Deleted Successfully!", Severity.Success);
-                await GetVouchers();
-            }
-            catch (Exception)
-            {
-                Snackbar.Add("Something Went Wrong!", Severity.Error);
-                throw;
-            }
-        }
-    }
+		if (!dialog.Cancelled)
+		{
+			try
+			{
+				await _instantVoucher.RemoveVoucher(id);
+				Snackbar.Add("Voucher Deleted Successfully!", Severity.Success);
+				await GetVouchers();
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
+	}
+
+	// Table Search
+	private bool FilterFuncInitial(InstantVoucherListDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+	private bool FilterFunc(InstantVoucherListDTO element, string searchString)
+	{
+		if (string.IsNullOrWhiteSpace(searchString))
+			return true;
+		if (element.ivCode.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		return false;
+	}
 }

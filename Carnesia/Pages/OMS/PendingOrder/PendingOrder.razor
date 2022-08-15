@@ -8,13 +8,13 @@
 	<MudContainer Fixed="true">
 		<MudGrid Class="align-baseline mb-5">
 			<MudItem md="4">
-				<MudTextField T="string" Label="Order Id" Variant="Variant.Text"/>
+				<MudTextField T="string" Label="Order Id" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="4">
-				<MudTextField T="string" Label="Customer Name" Variant="Variant.Text"/>
+				<MudTextField T="string" Label="Customer Name" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="4">
-				<MudTextField T="string" Label="Customer Phone Number" Variant="Variant.Text"/>
+				<MudTextField T="string" Label="Customer Phone Number" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="4">
 				<MudSelect T="string" Label="Shipphing Area" AnchorOrigin="Origin.BottomCenter">
@@ -54,10 +54,6 @@
 				<MudTh>Status</MudTh>
 				<MudTh>Source</MudTh>
 				<MudTh>Assign To</MudTh>
-				<MudTh>Total</MudTh>
-				<MudTh>Grand Total</MudTh>
-				<MudTh>Discount</MudTh>
-				<MudTh>Shipping Price</MudTh>
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
@@ -82,10 +78,6 @@
 				<MudTd DataLabel="Status">@context.paymentStatus</MudTd>
 				<MudTd DataLabel="Source">@context.source</MudTd>
 				<MudTd DataLabel="Assign To">@context.assignto</MudTd>
-				<MudTd DataLabel="Total">@context.products.total</MudTd>
-				<MudTd DataLabel="Grand Total">@context.products.grandTotal</MudTd>
-				<MudTd DataLabel="Discount">@context.products.discount</MudTd>
-				<MudTd DataLabel="Shipping Price">@context.products.shippingPrice</MudTd>
 				<MudTd DataLabel="Action" Class="d-flex flex-column align-center">
 					<MudButton Variant="Variant.Text" Color="Color.Primary">Edit</MudButton>
 					<MudButton Variant="Variant.Text" Color="Color.Success">Verify</MudButton>
@@ -95,25 +87,25 @@
 			<ChildRowContent>
 				@if (context.ShowDetails)
 				{
-					<td colspan="18">
+					<td colspan="14">
 						<MudCard Elevation="0">
 							<MudCardContent Class="pa-0">
-								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Hover="true" Elevation="0" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues">
-								   <HeaderContent>
+								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Dense="true" Striped="true" Hover="true" Elevation="0" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CustomFooter="true">
+									<HeaderContent>
 										<MudTh>SKU</MudTh>
 										<MudTh>Product Name</MudTh>
 										<MudTh>Quantity</MudTh>
 										<MudTh>Price</MudTh>
 										<MudTh>Amount</MudTh>
-								   </HeaderContent>
-								   <RowTemplate>
+									</HeaderContent>
+									<RowTemplate>
 										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
 										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
 										<MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>
 										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
 										<MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
-								   </RowTemplate>
-								   <RowEditingTemplate>
+									</RowTemplate>
+									<RowEditingTemplate>
 										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
 										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
 										<MudTd DataLabel="Quantity">
@@ -122,6 +114,24 @@
 										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
 										<MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
 									</RowEditingTemplate>
+									<FooterContent>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
+											<MudTd colspan="1" Style="text-align: end;">@context.products.total</MudTd>
+										</MudTFootRow>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end;">Discount:</MudTd>
+											<MudTd colspan="1" Style="text-align: end;">@context.products.discount</MudTd>
+										</MudTFootRow>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end;">Shipping Price:</MudTd>
+											<MudTd colspan="1" Style="text-align: end;">@context.products.shippingPrice</MudTd>
+										</MudTFootRow>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+											<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@context.products.grandTotal</MudTd>
+										</MudTFootRow>
+									</FooterContent>
 								</MudTable>
 							</MudCardContent>
 						</MudCard>
@@ -131,9 +141,6 @@
 			<PagerContent>
 				<MudTablePager PageSizeOptions="new int[]{50, 100}" />
 			</PagerContent>
-			<FooterContent>
-				<MudTd colspan="5">Select All</MudTd>
-			</FooterContent>
 		</MudTable>
 	</MudContainer>
 </MudPaper>
@@ -167,30 +174,30 @@
 
 	// Details Table Edit Backup
 	private void BackupItem(object element)
-    {
-        BeforeEdit = new()
-        {
-            quantity = ((PendingOrderProductsDTO)element).quantity
-        };
-    }
+	{
+		BeforeEdit = new()
+			{
+				quantity = ((PendingOrderProductsDTO)element).quantity
+			};
+	}
 
 	// Details Table Edit Cancel
 	private void ResetItemToOriginalValues(object element)
-    {
-        ((PendingOrderProductsDTO)element).quantity = BeforeEdit.quantity;
-    }
+	{
+		((PendingOrderProductsDTO)element).quantity = BeforeEdit.quantity;
+	}
 
 	// Cancel Modal
-    private void OpenCancelDialog()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
-        DialogService.Show<CancelModal>("Cancel Item?", options);
-    }
+	private void OpenCancelDialog()
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
+		DialogService.Show<CancelModal>("Cancel Item?", options);
+	}
 
 	// Edit Order Modal
-    private void OpenEditOrderDialog()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = false, MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
-        DialogService.Show<CancelModal>("Edit Order", options);
-    }
+	private void OpenEditOrderDialog()
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = false, MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
+		DialogService.Show<CancelModal>("Edit Order", options);
+	}
 }

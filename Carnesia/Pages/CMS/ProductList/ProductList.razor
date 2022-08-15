@@ -2,94 +2,160 @@
 
 @using Carnesia.Domain.CMS.ProductList
 @using Carnesia.Domain.Common.POCO
+@using Syncfusion.XlsIO
+@using System.IO
+@using System.Data
+@inject Microsoft.JSInterop.IJSRuntime JS
 @inject IProductList _products
+@inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ProductListDTO,bool>(FilterFuncInitial)">
-            <ToolBarContent>
-                <MudSpacer />
-                <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" Immediate="false" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>Product Name</MudTh>
-                <MudTh>SKU</MudTh>
-                <MudTh>Product Code</MudTh>
-                <MudTh>Brand</MudTh>
-                <MudTh>Origin</MudTh>
-                <MudTh>Product Type</MudTh>
-                <MudTh>Action</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Product Name">@context.childName</MudTd>
-                <MudTd DataLabel="SKU">@context.sku</MudTd>
-                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
-                <MudTd DataLabel="Brand">@context.brandName</MudTd>
-                <MudTd DataLabel="Origin">@context.origin</MudTd>
-                <MudTd DataLabel="Product Type">@context.pproductType</MudTd>
-                <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.childId, context.pproductType)" >Edit</MudButton>
-                </MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ProductListDTO,bool>(FilterFuncInitial)" Loading="_loading" LoadingProgressColor="Color.Info">
+			<ToolBarContent>
+				<MudSpacer />
+				<MudSpacer />
+				<MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" Immediate="false" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+			</ToolBarContent>
+			<HeaderContent>
+				<MudTh>Product Name</MudTh>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Code</MudTh>
+				<MudTh>Brand</MudTh>
+				<MudTh>Origin</MudTh>
+				<MudTh>Product Type</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Product Name">@context.childName</MudTd>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Brand">@context.brandName</MudTd>
+				<MudTd DataLabel="Origin">@context.origin</MudTd>
+				<MudTd DataLabel="Product Type">@context.pproductType</MudTd>
+				<MudTd DataLabel="Action">
+					<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.childId, context.pproductType)">Edit</MudButton>
+				</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
 
-        <div class="d-flex flex-wrap mt-4">
-            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
-        </div>
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
+
+		<div class="mb-5 d-flex justify-end">
+			<MudButton StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Color="Color.Success" OnClick="CreateDocument">Download XLSL</MudButton>
+		</div>
 	</MudContainer>
 </MudPaper>
 
 @code {
-    // Page On Load
-    protected override async Task OnInitializedAsync()
-    {
-        await GetProducts();
-    }
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetProducts();
+	}
 
-    // Table Customaization
-    private TableCommon tableCommon = new TableCommon();
+	// Loading
+	private bool _loading { get; set; } = false;
 
-    // Table Content
-    private IEnumerable<ProductListDTO> Elements = new List<ProductListDTO>();
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
 
-    // Get Products
-    private async Task GetProducts()
-    {
-        Elements = await _products.GetProducts();
-    }
+	// Table Content
+	private IEnumerable<ProductListDTO> Elements = new List<ProductListDTO>();
 
-    // Go To Update
-    private void GoToUpdate(int id, string pType)
-    {
-        if (pType.ToLower() == "compound")
-        {
-            NavigationManager.NavigateTo($"update-compound-product/{id}");
-        }
-        else
-        {
-            NavigationManager.NavigateTo($"update-simple-product/{id}");
-        }
-    }
+	// Get Products
+	private async Task GetProducts()
+	{
+		_loading = true;
+		Elements = await _products.GetProducts();
+		_loading = false;
+	}
 
-    // Table Search
-    private bool FilterFuncInitial(ProductListDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+	// Go To Update
+	private void GoToUpdate(int id, string pType)
+	{
+		if (pType.ToLower() == "compound")
+		{
+			NavigationManager.NavigateTo($"update-compound-product/{id}");
+		}
+		else
+		{
+			NavigationManager.NavigateTo($"update-simple-product/{id}");
+		}
+	}
 
-    private bool FilterFunc(ProductListDTO element, string searchString)
-    {
-        if (string.IsNullOrWhiteSpace(searchString))
-            return true;
-        if (element.childName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (element.sku.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        return false;
-    }
+	// Table Search
+	private bool FilterFuncInitial(ProductListDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+	private bool FilterFunc(ProductListDTO element, string searchString)
+	{
+		if (string.IsNullOrWhiteSpace(searchString))
+			return true;
+		if (element.childName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		if (element.sku.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		if (element.productCode.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		return false;
+	}
+
+	// Create Document
+	private async Task CreateDocument()
+	{
+		using (ExcelEngine excelEngine = new ExcelEngine())
+		{
+			IApplication application = excelEngine.Excel;
+			application.DefaultVersion = ExcelVersion.Xlsx;
+
+			//Create a workbook.
+			IWorkbook workbook = application.Workbooks.Create(1);
+			IWorksheet worksheet = workbook.Worksheets[0];
+
+			//Initialize DataTable and data get from SampleDataTable method.
+			DataTable table = ProductDataTable();
+
+			//Export data from DataTable to Excel worksheet.
+			worksheet.ImportDataTable(table, true, 1, 1);
+
+			worksheet.UsedRange.AutofitColumns();
+
+			//Save the document as a stream and return the stream.
+			using (MemoryStream stream = new MemoryStream())
+			{
+				//Save the created Excel document to MemoryStream
+				workbook.SaveAs(stream);
+
+				//Download the excel file.
+				await JS.SaveAs("Products.xlsx", stream.ToArray());
+			}
+		}
+	}
+
+	private DataTable ProductDataTable()
+	{
+		DataTable reports = new DataTable();
+		reports.Columns.Add("ProductName");
+		reports.Columns.Add("ProductSKU");
+		reports.Columns.Add("ProductCode");
+		reports.Columns.Add("IsPublish", typeof(bool));
+		reports.Columns.Add("BrandName");
+		reports.Columns.Add("Origin");
+		reports.Columns.Add("ProductType");
+
+		foreach (var item in Elements)
+		{
+			reports.Rows.Add(item.childName, item.sku, item.productCode, item.isPublish, item.brandName, item.origin, item.pproductType);
+		}
+		return reports;
+	}
 }

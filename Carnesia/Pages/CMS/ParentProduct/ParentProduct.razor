@@ -16,11 +16,11 @@
 		<div class="mb-5 d-flex justify-end">
 			<MudButton StartIcon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenParentModal">Add Parent Product</MudButton>
 		</div>
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ParentProductDTO,bool>(FilterFuncInitial)">
 			<ToolBarContent>
 				<MudSpacer />
 				<MudSpacer />
-				<MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+				<MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
 			</ToolBarContent>
 			<HeaderContent>
 				<MudTh>Product Name</MudTh>
@@ -184,6 +184,20 @@
 			reports.Rows.Add(item.id, item.name, item.productType, item.brandID, item.brand, item.originId);
 		}
 		return reports;
+	}
+
+	// Table Search
+	private bool FilterFuncInitial(ParentProductDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+	private bool FilterFunc(ParentProductDTO element, string searchString)
+	{
+		if (string.IsNullOrWhiteSpace(searchString))
+			return true;
+		if (element.name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		if (element.brand.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		return false;
 	}
 
 }

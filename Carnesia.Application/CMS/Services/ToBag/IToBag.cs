@@ -18,5 +18,6 @@ namespace Carnesia.Application.CMS.Services.ToBag
         Task PublishToggleSection(int id);
         Task PublishToggleToBag(int id);
         Task UpdateSection(ToBagListSectionDTO Section);
+        Task<bool> ToggleHomePlacement(int id);
     }
 }

@@ -22,5 +22,17 @@ namespace Carnesia.Domain.CRM.Vouchers.UserVoucher.VoucherList
         public string approvedBy { get; set; }
         public object approvelDate { get; set; }
         public string approvalNote { get; set; }
+        public bool ShowDetails { get; set; }
+        public List<CustomersDTO> customers { get; set; }
+    }
+
+    public class CustomersDTO
+    {
+        public string id { get; set; }
+        public string name { get; set; }
+        public string email { get; set; }
+        public string phoneNumber { get; set; }
+        public int? customerId { get; set; }
+        public bool isUsed { get; set; }
     }
 }

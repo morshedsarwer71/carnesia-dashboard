@@ -79,10 +79,10 @@
                         <MudItem sm="6">
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudTextField @bind-Value="ChildProductInfoData.sizeOrQty" Label="Size" Required="true" RequiredError="Size is required!"/>
+                                    <MudTextField @bind-Value="ChildProductInfoData.sizeOrQty" Label="Text Variant" Required="true" RequiredError="Text Variant is required!"/>
                                 </MudItem>
                                 <MudItem xs="6">
-                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Size" Color="Color.Primary" />
+                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Text Variant" Color="Color.Primary" />
                                 </MudItem>
                             </MudGrid>
                         </MudItem>
@@ -94,8 +94,8 @@
                                 <MudItem xs="6">
                                     <MudColorPicker Label="Color Code" @bind-Text="ChildProductInfoData.colorCode" Style="@($"color: {ChildProductInfoData.colorCode};")" ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
                                 </MudItem>
-                                <MudItem xs="6">
-                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Size" Color="Color.Primary" />
+                                <MudItem xs="6"> 
+                                    <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Text Variant" Color="Color.Primary" />
                                 </MudItem>
                             </MudGrid>
                         </MudItem>                        

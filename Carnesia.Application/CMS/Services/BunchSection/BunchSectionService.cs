@@ -62,5 +62,52 @@ namespace Carnesia.Application.CMS.Services.BunchSection
                 throw;
             }
         }
+
+        public async Task<BunchThumDTO> GetBunchThumb(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<BunchThumDTO>($"HomeBunch/getbunchthums/{id}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> ToggleHomePlacement(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"HomeBunch/togglehomepagehomebunch/{id}");
+
+                if (result == "Toggled") return true;
+                else return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateThumb(BunchThumDTO thumb)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"HomeBunch/updatebunchthums/{thumb.id}", thumb);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

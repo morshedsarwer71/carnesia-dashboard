@@ -27,6 +27,7 @@
                 <MudTh>End Date</MudTh>
                 <MudTh>Image</MudTh>
                 <MudTh>Publish</MudTh>
+                <MudTh>Home</MudTh>
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -39,6 +40,9 @@
                 </MudTd>
                 <MudTd DataLabel="Publish">
                     <MudSwitch @bind-Checked="@context.isPublish" Color="Color.Primary" @onclick="(() => TogglePublish(context.id))"/>
+                </MudTd>
+                <MudTd DataLabel="Home">
+                    <MudSwitch @bind-Checked="@context.isHome" Color="Color.Primary" @onclick="(() => ToggleHome(context.id))"/>
                 </MudTd>
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => NavigateToUpdate(context.id)">Edit</MudButton>
@@ -59,23 +63,23 @@
 </MudPaper>
 
 @code {
-	// Page On Load
-	protected override async Task OnInitializedAsync()
-	{
-		await GetCampaigns();
-	}
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCampaigns();
+    }
 
-	// Table Customaization
-	private TableCommon tableCommon = new TableCommon();
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
 
-	// Table Content
-	private IEnumerable<CampaignDTO> Elements = new List<CampaignDTO>();
+    // Table Content
+    private IEnumerable<CampaignDTO> Elements = new List<CampaignDTO>();
 
-	// Get Campaigns
-	private async Task GetCampaigns()
-	{
-		Elements = await _campaign.GetCampaigns();
-	}
+    // Get Campaigns
+    private async Task GetCampaigns()
+    {
+        Elements = await _campaign.GetCampaigns();
+    }
 
     // Toggle Publish
     private async Task TogglePublish(int id)
@@ -85,6 +89,28 @@
 
             await _campaign.Publishtoggle(id);
             Snackbar.Add("Published Changed!", Severity.Success);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
+        }
+    }
+
+    // Toggle Home
+    private async Task ToggleHome(int id)
+    {
+        try
+        {
+            var result = await _campaign.ToggleHomePlacement(id);
+
+            if (result)
+            {
+                Snackbar.Add("Campaign Toggled Successfully!", Severity.Success);
+                await GetCampaigns();
+                return;
+            }
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
         }
         catch (Exception)
         {

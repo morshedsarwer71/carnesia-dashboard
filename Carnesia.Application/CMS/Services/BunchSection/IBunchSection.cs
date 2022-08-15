@@ -12,5 +12,8 @@ namespace Carnesia.Application.CMS.Services.BunchSection
         Task<bool> CreateNewBunchSection(NewBunchSectionDTO bunch);
         Task<List<BunchSectionListDTO>> GetAllBunchSections();
         Task<bool> DeleteBunchSection(int id);
+        Task<BunchThumDTO> GetBunchThumb(int id);
+        Task<bool> UpdateThumb(BunchThumDTO thumb);
+        Task<bool> ToggleHomePlacement(int id);
     }
 }

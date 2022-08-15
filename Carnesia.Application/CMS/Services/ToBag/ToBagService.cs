@@ -113,6 +113,22 @@ namespace Carnesia.Application.CMS.Services.ToBag
             }
         }
 
+        public async Task<bool> ToggleHomePlacement(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"ToBag/toggleHomepagetobag/{id}");
+
+                if (result == "Toggled") return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task UpdateSection(ToBagListSectionDTO Section)
         {
             try

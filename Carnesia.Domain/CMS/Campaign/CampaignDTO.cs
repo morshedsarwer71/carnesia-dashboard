@@ -19,6 +19,7 @@ namespace Carnesia.Domain.CMS.Campaign
         public string platformType { get; set; }
         public object imagePath { get; set; }
         public bool isPublish { get; set; }
+        public bool isHome { get; set; }
         public string imageFileUrl { get; set; }
         public string imageWebUrl { get; set; }
         public string base64Attch { get; set; }

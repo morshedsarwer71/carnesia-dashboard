@@ -12,6 +12,7 @@ namespace Carnesia.Domain.CMS.BunchSection
         public string sectionName { get; set; }
         public string sectionCode { get; set; }
         public bool isPublished { get; set; }
+        public bool isHome { get; set; }
         public string allignment { get; set; }
         public bool ShowDetails { get; set; }
         public IList<BunchThumListDTO> bunchThums { get; set; }
