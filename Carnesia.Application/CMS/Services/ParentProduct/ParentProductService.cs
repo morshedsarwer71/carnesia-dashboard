@@ -173,14 +173,14 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
 
                     var pop = new CreateParentProductDTO()
                     {
-                        name = name,
+                        name = name == "NULL" ? null : name,
                         originId = originId,
                         productType = productType,
                         brandId = brandId
                     };
                     Products.Add(pop);
                 }
-                return Products.Where(x => x.name != null).ToList();
+                return Products.ToList();
             }
             catch (Exception)
             {

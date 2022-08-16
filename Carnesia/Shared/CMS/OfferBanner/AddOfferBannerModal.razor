@@ -11,7 +11,7 @@
                 <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5">
                     Upload Offer Image
                 </MudButton>
-                <MudText>475 * 280(Max 50Kb)</MudText>
+                <MudText>@Width * @Height (.webp only. Max  @(TSize)Kb)</MudText>
 
                 <br/>
                 <MudText Color="Color.Error">@ImageError</MudText>
@@ -29,6 +29,12 @@
 
     [Parameter]
     public AddOfferBannerDTO FormData{get;set;} = new AddOfferBannerDTO();
+    [Parameter]
+    public int Width{get;set;}
+    [Parameter]
+    public int Height{get;set;}
+    [Parameter]
+    public int TSize{get;set;}
 
     // Form Ref
     bool success;
@@ -44,7 +50,7 @@
         ImageError = String.Empty;
         try
         {
-            FormData.base64Attch = await _base64.ConvertToBase64(153600, 100, 100, ImageFile);
+            FormData.base64Attch = await _base64.ConvertToBase64(TSize * 1020, Width, Height, ImageFile);
         }
         catch(Exception e)
         {

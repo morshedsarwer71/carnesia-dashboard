@@ -12,7 +12,18 @@
                     <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5" Required="true">
                         Upload Banner Images
                     </MudButton>
-                    <MudText>100 * 100(Max 50Kb)</MudText>
+                    @if (Allignment == "12*1")
+			{
+				<MudText>100 * 100(.webp only. Max 50Kb.)</MudText>
+			}
+			else if (Allignment == "8*1")
+			{
+				<MudText>100 * 100(.webp only. Max 50Kb.)</MudText>
+			}
+			else
+			{
+				<MudText>600 * 420(.webp only. Max 100Kb.)</MudText>
+			}
 
                     <br/>
                     <MudText Color="Color.Error">@ImageError</MudText>
@@ -36,6 +47,8 @@
 
     [Parameter]
     public BunchThumDTO FormData{get;set;} = new BunchThumDTO();
+    [Parameter]
+	public string Allignment { get; set; }
 
     // Get Bunch
     private async Task GetThumb()
@@ -57,7 +70,18 @@
         ImageError = String.Empty;
         try
         {
-            FormData.base64Attch = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
+            if (Allignment == "12*1")
+			{
+				FormData.base64Attch = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
+			}
+			else if (Allignment == "8*1")
+			{
+				FormData.base64Attch = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
+			}
+			else
+			{
+				FormData.base64Attch = await _base64.ConvertToBase64(102400, 600, 420, ImageFile);
+			}
         }
         catch(Exception e)
         {
@@ -73,7 +97,7 @@
     {
         if (String.IsNullOrEmpty(FormData.base64Attch))
         {
-            ImageError = "Please upload a image!";
+            ImageError = "Please upload an image!";
             return;
         }
 

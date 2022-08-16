@@ -16,7 +16,7 @@
                     <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5" Required="true">
                         Upload Banner Images
                     </MudButton>
-                    <MudText Class="mt-1">950 * 200(Max 150Kb)</MudText>
+                    <MudText Class="mt-1">950 * 240(.webp only. Max 200Kb)</MudText>
 
                     <br/>
                     <MudText Color="Color.Error">@ImageError</MudText>
@@ -52,8 +52,8 @@
         ImageError = String.Empty;
         try
         {
-            ImageSRC = await _base64.ConvertToBase64(153600, 950, 200, ImageFile);
-            FormData.base64Attch = await _base64.ConvertToBase64(153600, 950, 200, ImageFile);
+            ImageSRC = await _base64.ConvertToBase64(204000, 950, 240, ImageFile);
+            FormData.base64Attch = await _base64.ConvertToBase64(204000, 950, 240, ImageFile);
         }
         catch(Exception e)
         {

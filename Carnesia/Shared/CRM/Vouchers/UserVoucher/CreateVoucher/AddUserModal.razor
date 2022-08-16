@@ -2,7 +2,7 @@
 @inject IUser _user
 <MudDialog>
 	<DialogContent>
-		<MudAutocomplete T="string" ValueChanged="(string s) => GetUser(s)" Label="Parent Product" SearchFunc="@UserSearch" ResetValueOnEmptyText="true" Required="true" />
+		<MudAutocomplete T="string" ValueChanged="(string s) => GetUser(s)" Label="User" SearchFunc="@UserSearch" ResetValueOnEmptyText="true" Required="true" />
 		<div Class="mt-5 d-flex justify-end">
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Disabled="String.IsNullOrEmpty(FormData.id)">Add</MudButton>
 		</div>

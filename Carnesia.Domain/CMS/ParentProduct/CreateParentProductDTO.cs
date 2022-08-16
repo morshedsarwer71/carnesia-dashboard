@@ -8,7 +8,7 @@ namespace Carnesia.Domain.CMS.ParentProduct
 {
     public class CreateParentProductDTO
     {
-        public string name { get; set; }
+        public string? name { get; set; }
         public int brandId { get; set; }
         public string brandName { get; set; }
         public string originId { get; set; }

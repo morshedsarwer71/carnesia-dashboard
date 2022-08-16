@@ -90,6 +90,9 @@
     {
         var parameters = new DialogParameters();
         parameters.Add("FormData", new AddOfferBannerDTO());
+        parameters.Add("Width", 1280);
+        parameters.Add("Height", 320);
+        parameters.Add("TSize", 200);
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
         var dialog = await DialogService.Show<AddOfferBannerModal>("Add New Banner", parameters, options).Result;
