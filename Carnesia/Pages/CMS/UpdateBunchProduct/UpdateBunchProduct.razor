@@ -38,11 +38,13 @@
 
                 <MudTable Items="@FormData.bunchProductTags" Hover="true" Dense="true">
                     <HeaderContent>
+                        <MudTh>Product</MudTh>
                         <MudTh>SKU</MudTh>
                         <MudTh>Code</MudTh>
                         <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
+                        <MudTd DataLabel="Product">@context.product</MudTd>
                         <MudTd DataLabel="SKU">@context.sku</MudTd>
                         <MudTd DataLabel="Code">@context.productCode</MudTd>
                         <MudTd DataLabel="Action">

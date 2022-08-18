@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carnesia.Domain.CMS.BunchProduct
+namespace Carnesia.Domain.CMS.BunchSection
 {
-    public class SingleBunchProductDTO
+    public class BunchUpdateGetDTO
     {
         public int id { get; set; }
         public string name { get; set; }
@@ -17,6 +17,14 @@ namespace Carnesia.Domain.CMS.BunchProduct
         public string code { get; set; }
         public string description { get; set; }
         public string base64Attch { get; set; }
-        public List<SingleBunchProductProductsDTO> bunchProductTags { get; set; }
+        public List<BunchUpdateProductTag> bunchProductTags { get; set; }
+    }
+    public class BunchUpdateProductTag
+    {
+        public int id { get; set; }
+        public int productId { get; set; }
+        public string sku { get; set; }
+        public string product { get; set; }
+        public string productCode { get; set; }
     }
 }

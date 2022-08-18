@@ -29,20 +29,6 @@ namespace Carnesia.Application.Common.Service.Base64
                 await file.OpenReadStream().ReadAsync(buffer);
                 ImageBase = Convert.ToBase64String(buffer);
 
-                //byte[] image = Convert.FromBase64String(ImageBase);
-
-                //using (var ms = new MemoryStream(image))
-                //{
-                //    Image img = Image.FromStream(ms);
-
-                //    Console.WriteLine(img.Width);
-
-                //    if (img.Width != ImageWidth || img.Height != ImageHeight)
-                //    {
-                //        throw new Exception($"Image height & width must be {ImageHeight} & {ImageWidth}!");
-                //    }
-                //}
-
                 return ImageBase;
             }
             catch (Exception)

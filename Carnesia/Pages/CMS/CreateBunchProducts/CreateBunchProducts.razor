@@ -16,13 +16,13 @@
 					<MudTextField @bind-Value="FormData.name" Label="Bunch Name" Required="true" RequiredError="Bunch name is required!" />
 				</MudItem>
 				<MudItem sm="6">
-					<MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
+					<MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" MinDate="minDate" />
 				</MudItem>
 				<MudItem sm="6">
 					<MudTimePicker Label="Start Time" @bind-Time="StartTime" />
 				</MudItem>
 				<MudItem sm="6">
-					<MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
+					<MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" MinDate="minDate" />
 				</MudItem>
 				<MudItem sm="6">
 					<MudTimePicker Label="End Time" @bind-Time="EndTime" />
@@ -33,10 +33,26 @@
 			</MudGrid>
 
 			<div class="my-5 d-flex justify-end">
+				<a href="./BulkBunchProduct.xlsx" download target="_top">
+					<MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
+						Download CSV Template
+					</MudButton>
+				</a>
+
+				<InputFile id="fileInput-excel" hidden accept=".xlsx" OnChange="UploadFile" />
+				<MudButton HtmlTag="label"
+						   Class="me-3"
+						   Variant="Variant.Filled"
+						   Color="Color.Primary"
+						   StartIcon="@Icons.Filled.CloudUpload"
+						   for="fileInput-excel">
+					Upload File
+				</MudButton>
+
 				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenProductModal">Add Product</MudButton>
 			</div>
 
-			<MudTable Items="@Products" Hover="true" Dense="true">
+			<MudTable Items="@Products" Hover="true" Dense="true" Loading="loading" LoadingProgressColor="Color.Info">
 				<HeaderContent>
 					<MudTh>SKU</MudTh>
 					<MudTh>Action</MudTh>
@@ -75,15 +91,19 @@
 
 @code {
 	// New Date Time
-	public static string TodayDate = DateTime.Now.ToString("yyyy-MM-dd");
+	private static string TodayDate = DateTime.Now.ToString("yyyy-MM-dd");
+	private DateTime minDate = DateTime.Now;
 
 	// Form Ref
 	bool success;
 	string[] errors = { };
 	MudForm form;
 
+	// Loading
+	private bool loading { get; set; }
+
 	// Start End Date Time
-    private string StartDate { get; set; } = TodayDate;
+	private string StartDate { get; set; } = TodayDate;
 	private string EndDate { get; set; } = TodayDate;
 	private TimeSpan? StartTime = new TimeSpan();
 	private TimeSpan? EndTime = new TimeSpan();
@@ -183,6 +203,23 @@
 		}
 		catch (Exception)
 		{
+			throw;
+		}
+	}
+
+	// Upload .xlsx
+	private async Task UploadFile(InputFileChangeEventArgs e)
+	{
+		loading = true;
+		try
+		{
+			Products.Clear();
+			Products = await _bunchProduct.UploadXLSXFile(e);
+			loading = false;
+		}
+		catch (Exception)
+		{
+			Console.WriteLine("Error!");
 			throw;
 		}
 	}

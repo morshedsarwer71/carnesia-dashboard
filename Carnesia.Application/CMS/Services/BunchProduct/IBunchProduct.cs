@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Carnesia.Domain.CMS.BunchProduct;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Carnesia.Application.CMS.Services.BunchProduct
 {
@@ -16,5 +17,6 @@ namespace Carnesia.Application.CMS.Services.BunchProduct
         Task<bool> DeleteProduct(int id);
         Task<bool> UpdateBunch(SingleBunchProductDTO bunch);
         Task<bool> DeleteBunch(int id);
+        Task<List<AddBunchProductProductsDTO>> UploadXLSXFile(InputFileChangeEventArgs e);
     }
 }

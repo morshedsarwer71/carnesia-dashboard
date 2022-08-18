@@ -2,229 +2,376 @@
 @using Carnesia.Domain.Common.POCO
 @inject IJSRuntime JSRuntime
 @inject IDialogService DialogService
+@inject IGenerateBill _generateBill
+@inject ISnackbar Snackbar
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
-       <div @ref="generateBill" tabindex="0" onkeydown="@KeyCombo">
-        <div class="d-flex justify-end mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCustomerModal" >Create Customer</MudButton>
-        </div>
-        <MudGrid Class="justify-space-between mb-5">
-            <MudItem sm="4">
-                <MudTextField @bind-Value="uid" Placeholder="Scan UID" onchan Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
-            </MudItem>
-            <MudItem sm="4">
-                <MudTextField @bind-Value="customerPhoneNumber" Placeholder="Customer Phone Number" Immediate="true" Variant="Variant.Text" OnKeyPress="GetCustomer" />
-            </MudItem>
-        </MudGrid>
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
-            <HeaderContent>
-                <MudTh>Product Name & SKU</MudTh>
-                <MudTh>MRP</MudTh>
-                <MudTh>Selling Price</MudTh>
-                <MudTh>Quantity</MudTh>
-                <MudTh>Subtotal Value</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="BrandProduct Name & SKU">@context.productName - @context.productSKU</MudTd>
-                <MudTd DataLabel="MRP">@context.mrp</MudTd>
-                <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
-                <MudTd DataLabel="Quantity">@context.qty</MudTd>
-                <MudTd DataLabel="Subtotal Value">@(context.qty * context.sellingPrice)</MudTd>
-            </RowTemplate>
-            <FooterContent>
-                <MudTFootRow>
-                    <MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
-                    <MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.qty * e.sellingPrice))</MudTd>
-                </MudTFootRow>
-                <MudTFootRow>
-                    <MudTd colspan="4" Style="text-align: end;">Item:</MudTd>
-                    <MudTd colspan="1" Style="text-align: end;">@(Elements.Count)</MudTd>
-                </MudTFootRow>
-                <MudTFootRow>
-                    <MudTd colspan="4" Style="text-align: end;">Quantity:</MudTd>
-                    <MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.qty))</MudTd>
-                </MudTFootRow>
-                <MudTFootRow>
-                    <MudTd colspan="4" Style="text-align: end;">Discount Value:</MudTd>
-                    <MudTd colspan="1" Style="text-align: end;">600</MudTd>
-                </MudTFootRow>
-                <MudTFootRow>
-                    <MudTd colspan="4" Style="text-align: end;">Reward Value:</MudTd>
-                    <MudTd colspan="1" Style="text-align: end;">0</MudTd>
-                </MudTFootRow>
-                <MudTFootRow>
-                    <MudTd colspan="4" Style="text-align: end;">Vat:</MudTd>
-                    <MudTd colspan="1" Style="text-align: end;">5%</MudTd>
-                </MudTFootRow>
-                <MudTFootRow>
-                    <MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-                    <MudTd colspan="1" Style="text-align: end; font-weight: 600;">1200</MudTd>
-                </MudTFootRow>
-            </FooterContent>
-        </MudTable>
+		@*onkeydown="@KeyCombo"*@
+		<div @ref="generateBill" tabindex="0">
+			<div class="d-flex justify-end mt-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCustomerModal">Create Customer</MudButton>
+			</div>
+			<MudGrid Class="justify-space-between mb-5">
+				<MudItem sm="4">
+					<MudTextField T="string" Value="uid" Placeholder="Scan UID" ValueChanged="(e) => ScanUid(e)" Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
+				</MudItem>
+				<MudItem sm="4">
+					<MudTextField @bind-Value="customerPhoneNumber" Placeholder="Customer Phone Number" Immediate="true" Variant="Variant.Text" OnKeyPress="GetCustomer" />
+				</MudItem>
+			</MudGrid>
+			<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
+				<HeaderContent>
+					<MudTh>Product Name & SKU</MudTh>
+					<MudTh>MRP</MudTh>
+					<MudTh>Selling Price</MudTh>
+					<MudTh>Quantity</MudTh>
+					<MudTh>Subtotal Value</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="BrandProduct Name & SKU">@context.nameAndSKU</MudTd>
+					<MudTd DataLabel="MRP">@context.mrp</MudTd>
+					<MudTd DataLabel="Selling Price">@Math.Round(context.price, 2)</MudTd>
+					<MudTd DataLabel="Quantity">@context.quantity</MudTd>
+					<MudTd DataLabel="Subtotal Value">@Math.Round(context.totalPrice, 2)</MudTd>
+				</RowTemplate>
+				<FooterContent>
+					<MudTFootRow>
+						<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
+						<MudTd colspan="1" Style="text-align: end;">@subTotal</MudTd>
+					</MudTFootRow>
+					<MudTFootRow>
+						<MudTd colspan="4" Style="text-align: end;">Item:</MudTd>
+						<MudTd colspan="1" Style="text-align: end;">@TableItems</MudTd>
+					</MudTFootRow>
+					<MudTFootRow>
+						<MudTd colspan="4" Style="text-align: end;">Quantity:</MudTd>
+						<MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.quantity))</MudTd>
+					</MudTFootRow>
+					<MudTFootRow>
+						<MudTd colspan="4" Style="text-align: end;">Discount Value:</MudTd>
+						<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
+					</MudTFootRow>
+					<MudTFootRow>
+						<MudTd colspan="4" Style="text-align: end;">Reward Value:</MudTd>
+						<MudTd colspan="1" Style="text-align: end;">0</MudTd>
+					</MudTFootRow>
+					<MudTFootRow>
+						<MudTd colspan="4" Style="text-align: end;">Vat(5%):</MudTd>
+						<MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
+					</MudTFootRow>
+					<MudTFootRow>
+						<MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+						<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal - discount + vatAmount), 2)</MudTd>
+					</MudTFootRow>
+				</FooterContent>
+			</MudTable>
 
-        <MudGrid>
-            <MudItem sm="6">
-                <MudGrid Class="align-baseline">
-                    <MudItem sm="9">
-                        <MudTextField T="string" Placeholder="Creadit Value" Immediate="true" Variant="Variant.Text" />
-                    </MudItem>
-                    <MudItem sm="3">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Use</MudButton>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-            <MudItem sm="6">
-                <MudGrid Class="align-baseline">
-                    <MudItem sm="9">
-                        <MudTextField T="string" Placeholder="Reward Points" Immediate="true" Variant="Variant.Text" />
-                    </MudItem>
-                    <MudItem sm="3">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Use</MudButton>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-            <MudItem sm="6">
-                <MudGrid Class="align-baseline">
-                    <MudItem sm="9">
-                        <MudTextField T="string" Placeholder="Membership ID" Immediate="true" Variant="Variant.Text" />
-                    </MudItem>
-                    <MudItem sm="3">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Apply</MudButton>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-            <MudItem sm="6">
-                <MudGrid Class="align-baseline">
-                    <MudItem sm="9">
-                        <MudTextField T="string" Placeholder="Coupon Code" Immediate="true" Variant="Variant.Text" />
-                    </MudItem>
-                    <MudItem sm="3">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Apply</MudButton>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-        </MudGrid>
+			<MudGrid>
+				<MudItem sm="6">
+					<MudGrid Class="align-baseline">
+						<MudItem sm="9">
+							<MudNumericField @bind-Value="Customer.creditValue" Placeholder="Creadit Value" Immediate="true" Variant="Variant.Text" />
+						</MudItem>
+						<MudItem sm="3">
+							<MudButton Variant="Variant.Filled" Color="Color.Primary">Use</MudButton>
+						</MudItem>
+					</MudGrid>
+				</MudItem>
+				<MudItem sm="6">
+					<MudGrid Class="align-baseline">
+						<MudItem sm="9">
+							<MudTextField T="string" Placeholder="Reward Points" Immediate="true" Variant="Variant.Text" />
+						</MudItem>
+						<MudItem sm="3">
+							<MudButton Variant="Variant.Filled" Color="Color.Primary">Use</MudButton>
+						</MudItem>
+					</MudGrid>
+				</MudItem>
+				<MudItem sm="6">
+					<MudGrid Class="align-baseline">
+						<MudItem sm="9">
+							<MudTextField T="string" Placeholder="Membership ID" Immediate="true" Variant="Variant.Text" />
+						</MudItem>
+						<MudItem sm="3">
+							<MudButton Variant="Variant.Filled" Color="Color.Primary">Apply</MudButton>
+						</MudItem>
+					</MudGrid>
+				</MudItem>
+				<MudItem sm="6">
+					<MudGrid Class="align-baseline">
+						<MudItem sm="9">
+							<MudTextField @bind-Value="Coupon" Placeholder="Coupon Code" Immediate="true" Variant="Variant.Text" />
+						</MudItem>
+						<MudItem sm="3">
+							<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetDiscount">Apply</MudButton>
+						</MudItem>
+					</MudGrid>
+				</MudItem>
+			</MudGrid>
 
-        <div class="mt-5">
-            <MudText>Name: Rohan Rahi</MudText>
-            <MudText>Phone Number: 01436740923</MudText>
-            <MudText>Address: Port High School Colony</MudText>
-        </div>
+			<div class="mt-5">
+				<MudText>Name: @Customer.name</MudText>
+				<MudText>Phone Number: @Customer.phone</MudText>
+				<MudText>Address: @Customer.address</MudText>
+			</div>
 
-        <div class="mt-5 mx-auto" style="width: fit-content;">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Add Comment</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePOS" >Generate Bill</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintInvoice" >Print Invoice</MudButton>
-        </div>
-       </div>
+			<div class="mt-5 mx-auto" style="width: fit-content;">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add Comment</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePOS">Generate Bill</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintInvoice">Print Invoice</MudButton>
+			</div>
+		</div>
 	</MudContainer>
 </MudPaper>
 
 @code {
-    // Div Ref
-    protected ElementReference generateBill;
+	// Div Ref
+	protected ElementReference generateBill;
 
-    // Invoke Focus
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender) 
-        {
-            await JSRuntime.InvokeVoidAsync("SetFocusToElement", generateBill);
-        }            
-    }
+	// Invoke Focus
+	protected async override Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await JSRuntime.InvokeVoidAsync("SetFocusToElement", generateBill);
+		}
+	}
 
-    // On Page Load
-    protected override async Task OnInitializedAsync()
-    {
-        var tempData = new GenerateBillProductTableDTO()
-            {
-                productName = "Hello",
-                productSKU = "sku-1",
-                mrp = 150,
-                sellingPrice = 120,
-                qty = 15
-            };
+	// New Pos
+	private GenerateBillPOSDTO POSData = new GenerateBillPOSDTO();
 
-        Elements.Add(tempData);
+	// Reward Section
+	private string Coupon { get; set; }
+	private string MembershipID { get; set; }
 
-        var tempDataTwo = new GenerateBillProductTableDTO()
-            {
-                productName = "Hi",
-                productSKU = "sku-2",
-                mrp = 299,
-                sellingPrice = 279,
-                qty = 25
-            };
+	// Comment
+	private string Comment { get; set; }
 
-        Elements.Add(tempDataTwo);
-    }
-    // Table Customaization
-    private TableCommon tableCommon = new TableCommon();
+	// For Value Calculation
+	private decimal subTotal { get; set; }
+	private decimal vatAmount { get; set; }
+	private decimal discount { get; set; }
 
-    // Table Content
-    private List<GenerateBillProductTableDTO> Elements = new List<GenerateBillProductTableDTO>();
+	// Table Items
+	private int TableItems { get; set; }
 
-    // Scan UID
-    private string uid { get; set; }
+	//Customer Data
+	private GenerateBillCustomerInfoDTO Customer = new GenerateBillCustomerInfoDTO();
 
-    private async Task AddProduct(KeyboardEventArgs e)
-    {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
-        {
-            if (!String.IsNullOrEmpty(uid))
-            {
-                Console.WriteLine(uid);
-                uid = String.Empty;
-            }
-        }
-    }
+	private string customerPhoneNumber { get; set; }
 
-    // Get Customer
-    private string customerPhoneNumber { get; set; }
+	private async Task GetCustomer(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(customerPhoneNumber))
+			{
+				try
+				{
+					var result = await _generateBill.GetCustomerInfo(customerPhoneNumber);
 
-    private async Task GetCustomer(KeyboardEventArgs e)
-    {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
-        {
-            if (!String.IsNullOrEmpty(customerPhoneNumber))
-            {
-                Console.WriteLine(customerPhoneNumber);
-            }
-        }
-    }
+					if (!String.IsNullOrEmpty(result.error))
+					{
+						Snackbar.Add(result.error, Severity.Error);
+						return;
+					}
 
-    // Get Key Combo
-    protected async Task KeyCombo(KeyboardEventArgs e)
-    {
-        if (e.CtrlKey && e.Key == "F1")
-        {
-            await GeneratePOS();
-        }
+					Customer = result;
+				}
+				catch (Exception)
+				{
+					throw;
+				}
+			}
+		}
+	}
 
-        if (e.CtrlKey && e.Key == "F2")
-        {
-            await PrintInvoice();
-        }
-    }
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
 
-    // Generate POS
-    private async Task GeneratePOS()
-    {
-        Console.WriteLine("Bill Generated");
-    }
+	// Table Content
+	private List<GenerateBillUIDDataDTO> Elements = new List<GenerateBillUIDDataDTO>();
 
-    // Print Invoice
-    private async Task PrintInvoice()
-    {
-        Console.WriteLine("Print Invoice");
-    }
+	// UID Collection
+	private List<GenerateBillUIDCollectionDTO> UIDCollection = new List<GenerateBillUIDCollectionDTO>();
 
-    // Create Customer
-    private async Task OpenCustomerModal()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<CreateCustomerModal>("Add New Customer", options).Result;
-    }
+	// Scan UID
+	private string uid { get; set; }
+
+	private async Task AddProduct(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(uid))
+			{
+				Console.WriteLine(uid);
+				uid = String.Empty;
+			}
+		}
+	}
+
+	// Get Key Combo
+	//protected async Task KeyCombo(KeyboardEventArgs e)
+	//{
+	//	if (e.CtrlKey && e.Key == "F1")
+	//	{
+	//		await GeneratePOS();
+	//	}
+
+	//	if (e.CtrlKey && e.Key == "F2")
+	//	{
+	//		await PrintInvoice();
+	//	}
+	//}
+
+	// Generate POS
+	//private async Task GeneratePOS()
+	//{
+	//	Console.WriteLine("Bill Generated");
+	//}
+
+	// Print Invoice
+	private async Task PrintInvoice()
+	{
+		Console.WriteLine("Print Invoice");
+	}
+
+	// Create Customer
+	private async Task OpenCustomerModal()
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<CreateCustomerModal>("Add New Customer", options).Result;
+	}
+
+	// UID Scan
+	private async Task ScanUid(string s)
+	{
+		uid = s;
+		if (s.Length == 15)
+		{
+
+			try
+			{
+				bool isThere = UIDCollection.Any(x => x.uid == s);
+
+				if (isThere)
+				{
+					Snackbar.Add("UID already in cart", Severity.Error);
+					return;
+				}
+
+				await CheckInList(s);
+
+				subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
+				var tempUID = new GenerateBillUIDCollectionDTO() { uid = s };
+				UIDCollection.Add(tempUID);
+				TableItems = Elements.Count();
+				GetVat();
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		}
+	}
+
+	// Check if Already in List
+	private async Task CheckInList(string s)
+	{
+		try
+		{
+			var result = await _generateBill.GetProductByUid(s);
+			if (!String.IsNullOrEmpty(result.error))
+			{
+				Snackbar.Add(result.error, Severity.Error);
+				return;
+			}
+			bool isThere = Elements.Any(x => x.productCode == result.productCode);
+			if (isThere)
+			{
+				var productIndex = Elements.FindIndex(x => x.productCode == result.productCode);
+
+				Elements[productIndex].quantity += 1;
+				Elements[productIndex].totalPrice = Elements[productIndex].quantity * Elements[productIndex].price;
+				uid = String.Empty;
+				return;
+			}
+			result.quantity = 1;
+			result.totalPrice = result.quantity * result.price;
+
+			Elements.Add(result);
+			uid = String.Empty;
+		}
+		catch (Exception)
+		{
+			throw;
+		}
+	}
+
+	// Get Discount
+	private async Task GetDiscount()
+	{
+		try
+		{
+			var result = await _generateBill.GetDiscount(Coupon, subTotal);
+			if (result == 0)
+			{
+				Snackbar.Add("Coupon not applicable", Severity.Error);
+				return;
+			}
+			discount = result;
+			GetVat();
+		}
+		catch (Exception)
+		{
+			throw;
+		}
+	}
+
+	// Get Vat
+	private void GetVat()
+	{
+		vatAmount = ((subTotal - discount) / 100) * 5;
+	}
+
+	// Generate POS
+	private async Task AssignData()
+	{
+		POSData.pos.items = 2;
+		POSData.pos.quantities = Elements.Sum(e => e.quantity);
+		POSData.pos.customerId = Customer.customerId;
+		POSData.pos.discount = discount;
+		POSData.pos.vatAmount = vatAmount;
+		POSData.pos.total = subTotal;
+		POSData.pos.grandTotal = subTotal - discount + vatAmount;
+		POSData.pos.creditValue = Customer.creditValue;
+		POSData.pos.membershipId = MembershipID;
+		POSData.pos.couponCode = Coupon;
+		POSData.pos.comment = Comment;
+		POSData.items = Elements;
+		POSData.posUID = UIDCollection;
+	}
+
+	private async Task GeneratePOS()
+	{
+		try
+		{
+			await AssignData();
+			var result = await _generateBill.NewPOS(POSData);
+
+			if (result)
+			{
+				Snackbar.Add("New Bill Generated!", Severity.Success);
+				return;
+			}
+			Snackbar.Add("Something went wrong!", Severity.Error);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Something went wrong!", Severity.Error);
+			throw;
+		}
+	}
 }
