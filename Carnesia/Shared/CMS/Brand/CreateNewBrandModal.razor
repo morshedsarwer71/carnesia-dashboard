@@ -3,88 +3,119 @@
 @inject IBrand _brand
 
 <MudDialog>
-    <DialogContent>
-        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudTextField @bind-Value="FormData.name" Label="Brand Name" Immediate="true" Required="true" RequiredError="Brand Name is required!"/>
-                <MudTextField @bind-Value="FormData.description" Lines="5" Label="Description" Immediate="true" Required="true" RequiredError="Description is required!"/>
+	<DialogContent>
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudTextField @bind-Value="FormData.name" Label="Brand Name" Immediate="true" Required="true" RequiredError="Brand Name is required!" />
+			<MudTextField @bind-Value="FormData.description" Lines="5" Label="Description" Immediate="true" Required="true" RequiredError="Description is required!" />
 
-                <InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
-                <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5">
-                    Upload Brand Image
-                </MudButton>
-                <MudText>475 * 280(.webp only. Max 200Kb)</MudText>
+			<InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
+			<MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5">
+				Upload Brand Image
+			</MudButton>
+			<MudText>475 * 280(.webp only. Max 200Kb)</MudText>
 
-                <br/>
-                <MudText Color="Color.Error">@ImageError</MudText>
-                <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+			<br />
+			<MudText Color="Color.Error">@ImageError</MudText>
+			<MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
 
-                <div class="d-flex justify-end my-5">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateBrand">Submit</MudButton>
-                </div>
-        </MudForm>
-    </DialogContent>
+			<InputFile id="logo-image" OnChange="@ValidateLogo" hidden accept=".webp" />
+			<MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="logo-image" Class="mt-5">
+				Upload Brand Logo
+			</MudButton>
+			<MudText>475 * 280(.webp only. Max 200Kb)</MudText>
+
+			<br />
+			<MudText Color="Color.Error">@LogoError</MudText>
+			<MudImage Src="@($"data:image/webp;base64,{FormData.logoBase64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+
+			<div class="d-flex justify-end my-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateBrand">Submit</MudButton>
+			</div>
+		</MudForm>
+	</DialogContent>
 </MudDialog>
 
 @code {
-    // On Page Load
-    protected override async Task OnInitializedAsync()
-    {
-        if (FormData.brandId > 0)
-        {
-            await GetBrand();
-        }
-    }
+	// On Page Load
+	protected override async Task OnInitializedAsync()
+	{
+		if (FormData.brandId > 0)
+		{
+			await GetBrand();
+		}
+	}
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    [Parameter]
-    public CreateBrandDTO FormData{get;set;} = new CreateBrandDTO();
+	[Parameter]
+	public CreateBrandDTO FormData { get; set; } = new CreateBrandDTO();
 
-    // Get Brand
-    private async Task GetBrand()
-    {
-        var result = await _brand.GetBrandById(FormData.brandId);
+	// Get Brand
+	private async Task GetBrand()
+	{
+		var result = await _brand.GetBrandById(FormData.brandId);
 
-        if (result != null)
-        {
-            FormData = result;
-        }
-    }
+		if (result != null)
+		{
+			FormData = result;
+		}
+	}
 
-    // Submit Close
-    void Submit() => MudDialog.Close(DialogResult.Ok<CreateBrandDTO>(FormData));
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<CreateBrandDTO>(FormData));
 
-    // Form Ref
-    bool success;
-    string[] errors = { };
-    MudForm form;
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
 
-    // Image Error
-    private string ImageError { get; set; }
+	// Image Error
+	private string ImageError { get; set; }
+	private string LogoError { get; set; }
 
-    // Image Validation
-    private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
-    {
-        ImageError = String.Empty;
-        try
-        {
-            FormData.base64Attch = await _base64.ConvertToBase64(204000, 475, 280, ImageFile);
-        }
-        catch(Exception e)
-        {
-            ImageError = e.Message;
-        }
-    }
+	// Image Validation
+	private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
+	{
+		ImageError = String.Empty;
+		try
+		{
+			FormData.base64Attch = await _base64.ConvertToBase64(204000, 475, 280, ImageFile);
+		}
+		catch (Exception e)
+		{
+			ImageError = e.Message;
+		}
+	}
 
-    // Create Brand
-    private void CreateBrand()
-    {
-        if (String.IsNullOrEmpty(FormData.base64Attch))
-        {
-            ImageError = "Please upload an image!";
-            return;
-        }
+	// Logo Validation
+	private async Task ValidateLogo(InputFileChangeEventArgs ImageFile)
+	{
+		LogoError = String.Empty;
+		try
+		{
+			FormData.logoBase64Attch = await _base64.ConvertToBase64(204000, 475, 280, ImageFile);
+		}
+		catch (Exception e)
+		{
+			LogoError = e.Message;
+		}
+	}
 
-        Submit();
-    }
+	// Create Brand
+	private void CreateBrand()
+	{
+		if (String.IsNullOrEmpty(FormData.base64Attch))
+		{
+			ImageError = "Please upload an image!";
+			return;
+		}
+
+		if (String.IsNullOrEmpty(FormData.logoBase64Attch))
+		{
+			LogoError = "Please upload a logo!";
+			return;
+		}
+
+		Submit();
+	}
 }

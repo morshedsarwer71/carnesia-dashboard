@@ -14,5 +14,6 @@ namespace Carnesia.Domain.CMS.Brand
         public bool isPublished { get; set; } = true;
         public string imageUrl { get; set; }
         public string base64Attch { get; set; }
+        public string logoBase64Attch { get; set; }
     }
 }
