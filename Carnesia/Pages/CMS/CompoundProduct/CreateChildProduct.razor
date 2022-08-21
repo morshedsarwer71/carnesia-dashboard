@@ -92,7 +92,7 @@
                         <MudItem sm="6">
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudColorPicker Label="Color Code" @bind-Text="ChildProductInfoData.colorCode" Style="@($"color: {ChildProductInfoData.colorCode};")" ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
+                                    <MudColorPicker Label="Color Code" @bind-Text="ChildProductInfoData.colorCode" Style="@($"color: {ChildProductInfoData.colorCode};")" ColorPickerMode="ColorPickerMode.HEX" DisableAlpha="true" DisableModeSwitch="true" />
                                 </MudItem>
                                 <MudItem xs="6"> 
                                     <MudSwitch Class="mt-5" @bind-Checked="@ChildProductInfoData.isSize" Label="Is Text Variant" Color="Color.Primary" />

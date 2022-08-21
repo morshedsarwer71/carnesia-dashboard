@@ -93,7 +93,7 @@
                         <MudItem sm="6">
                             <MudGrid>
                                 <MudItem xs="6">
-                                    <MudColorPicker Label="Color Code" @bind-Text="FormData.colorCode" Style="@($"color: {FormData.colorCode};")" ColorPickerMode="ColorPickerMode.HEX" DisableModeSwitch="true" />
+                                    <MudColorPicker Label="Color Code" @bind-Text="FormData.colorCode" Style="@($"color: {FormData.colorCode};")" ColorPickerMode="ColorPickerMode.HEX" DisableAlpha="true" DisableModeSwitch="true" />
                                 </MudItem>
                                 <MudItem xs="6">
                                     <MudSwitch Class="mt-5" @bind-Checked="@FormData.isSize" Label="Is Text Variant" Color="Color.Primary" />
@@ -253,7 +253,7 @@
     // Get Child And Grand As String
     private async Task GetChildAndGrandCatsString()
     {
-        if (FormData.prodCategories.Count() > 0) 
+        if (FormData.prodCategories.Count > 0) 
         {
             CategoryData.parentCatId = FormData.prodCategories[0].parentCatId;
             CategoryData.parentCatName = FormData.prodCategories[0].parentCatName;

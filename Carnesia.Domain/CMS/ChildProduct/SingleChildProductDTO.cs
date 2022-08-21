@@ -40,7 +40,7 @@ namespace Carnesia.Domain.CMS.ChildProduct
         public string upSells { get; set; }
         public string crossSells { get; set; }
         public List<FreeProductDTO> freeProducts { get; set; }
-        public List<ProductCategoryDTO>? prodCategories { get; set; }
+        public List<ProductCategoryDTO> prodCategories { get; set; }
         public List<ProductImageDTO> images { get; set; }
     }
 }

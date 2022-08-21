@@ -10,10 +10,6 @@ namespace Carnesia.Domain.CMS.BunchProduct
     {
         public int id { get; set; }
         public string name { get; set; }
-        public string endDate { get; set; }
-        public string endTime { get; set; }
-        public string startDate { get; set; }
-        public string startTime { get; set; }
         public string code { get; set; }
         public string description { get; set; }
         public string base64Attch { get; set; }

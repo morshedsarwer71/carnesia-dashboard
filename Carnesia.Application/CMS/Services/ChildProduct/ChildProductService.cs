@@ -123,8 +123,9 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return null;
                 throw;
             }

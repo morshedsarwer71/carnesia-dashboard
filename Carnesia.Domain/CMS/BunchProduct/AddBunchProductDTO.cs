@@ -9,8 +9,6 @@ namespace Carnesia.Domain.CMS.BunchProduct
     public class AddBunchProductDTO
     {
         public string name { get; set; }
-        public string startDate { get; set; }
-        public string endDate { get; set; }
         public string description { get; set; }
         public string base64Attch { get; set; }
         public bool isPublished { get; set; } = true;

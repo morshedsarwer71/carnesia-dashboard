@@ -1,19 +1,17 @@
 ﻿@using Carnesia.Domain.Dashboard.CustomerProfile
 @using Carnesia.Domain.Common.POCO
+@inject ICustomerProfile _customer
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudGrid Class="justify-center">
-			<MudItem sm="3">
-				<MudTextField @bind-Value="phoneNumber" Label="Phone Number" Variant="Variant.Text" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="customerId" Label="Phone Number" Variant="Variant.Text" />
+			<MudItem sm="6">
+				<MudTextField @bind-Value="phoneNumberOrID" Label="Phone Number or ID" Variant="Variant.Text" />
 			</MudItem>
 		</MudGrid>
 		<MudGrid Class="justify-center mb-5">
 			<MudItem sm="6" Class="d-flex justify-end">
-				<MudButton Color="Color.Primary" Variant="Variant.Filled">Filter</MudButton>
+				<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="GetCustomersBySearch">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -27,11 +25,11 @@
                 <MudTh>Adress</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Registration Date">@context.registerDate</MudTd>
+                <MudTd DataLabel="Registration Date">@context.regDate</MudTd>
                 <MudTd DataLabel="Customer ID">@context.customerId</MudTd>
-                <MudTd DataLabel="Membership ID">@context.membershipId</MudTd>
+                <MudTd DataLabel="Membership ID">@context.memberId</MudTd>
                 <MudTd DataLabel="Customer Name">@context.customerName</MudTd>
-                <MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+                <MudTd DataLabel="Phone Number">@context.customerPhone</MudTd>
                 <MudTd DataLabel="Adress">@context.address</MudTd>
             </RowTemplate>
             <PagerContent>
@@ -49,13 +47,30 @@
 </MudPaper>
 
 @code {
+    // Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetCustomers();
+	}
+
 	// Filter Ref
-	private string phoneNumber { get; set; }
-	private string customerId { get; set; }
+	private string phoneNumberOrID { get; set; }
 
 	// Table Customaization
     private TableCommon tableCommon = new TableCommon();
 
     // Table Content
-    private IEnumerable<CustomerProfileDTO> Elements = new List<CustomerProfileDTO>(); 
+    private List<CustomerProfileDTO> Elements = new List<CustomerProfileDTO>(); 
+
+    // Get Customers
+	private async Task GetCustomers()
+	{
+		Elements = await _customer.GetCustomers();
+	}
+
+	// Get Customers By Search
+	private async Task GetCustomersBySearch()
+	{
+		Elements = await _customer.GetCustomersBySearch(phoneNumberOrID);
+	}
 }

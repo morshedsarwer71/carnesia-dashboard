@@ -11,7 +11,7 @@ namespace Carnesia.Application.CMS.Services.CampaignList
     {
         Task<List<CampaignDTO>> GetCampaigns();
         Task<CampaignDTO> GetCampaignByID(int id);
-        Task Publishtoggle(int CampaignId);
+        Task<bool> Publishtoggle(int CampaignId);
         Task<List<CampaignBannerDTO>> GetCampaignBanners();
         Task<bool> AddCampaignBanner(AddCampaignBannerDTO banner);
         Task<bool> ToggleBannerPublish(int id);

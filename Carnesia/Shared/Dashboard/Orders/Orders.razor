@@ -1,29 +1,25 @@
 ﻿@using Carnesia.Domain.Dashboard.Orders
 @using Carnesia.Domain.Common.POCO
+@inject IOrders _orders
+@inject IJSRuntime IJS
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudGrid Class="justify-center">
-			<MudItem sm="3">
-				<MudTextField T="string" Placeholder="Customer Phone Number" Variant="Variant.Text" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField T="string" Placeholder="Customer ID" Variant="Variant.Text" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField T="string" Placeholder="Order ID" Variant="Variant.Text" />
+			<MudItem sm="6">
+				<MudTextField @bind-Value="searchValue" Placeholder="Customer Phone Number, Id or Order Id" Variant="Variant.Text" />
 			</MudItem>
 		</MudGrid>
 
 		<MudGrid Class="justify-center">
-			<MudItem sm="9" Class="d-flex justify-end">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			<MudItem sm="6" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetOrdersBySearch">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
 
 		<MudTable Items="Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
 			<HeaderContent>
-                <MudTh></MudTh>
+                @*<MudTh></MudTh>*@
                 <MudTh>Order Date</MudTh>
                 <MudTh>Order ID</MudTh>
                 <MudTh>Customer ID</MudTh>
@@ -34,7 +30,7 @@
                 <MudTh>Re-Print</MudTh>
             </HeaderContent>
 			<RowTemplate>
-                <MudTd DataLabel="">
+@*                <MudTd DataLabel="">
                     @if (!context.showDetails)
 					{
 						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowDetails(context.orderID)" />
@@ -43,19 +39,19 @@
 					{
 						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowDetails(context.orderID)" />
 					}
-                </MudTd>
+                </MudTd>*@
                 <MudTd DataLabel="Order Date">@context.orderDate</MudTd>
-                <MudTd DataLabel="Order ID">@context.orderID</MudTd>
-                <MudTd DataLabel="Customer ID">@context.customerID</MudTd>
+                <MudTd DataLabel="Order ID">@context.orderId</MudTd>
+                <MudTd DataLabel="Customer ID">@context.customerId</MudTd>
                 <MudTd DataLabel="Customer Name">@context.customerName</MudTd>
                 <MudTd DataLabel="Address">@context.address</MudTd>
                 <MudTd DataLabel="Order Value(SP)">@context.orderValue</MudTd>
                 <MudTd DataLabel="Status">@context.status</MudTd>
                 <MudTd DataLabel="Re-Print">
-					<MudButton Variant="Variant.Filled" Color="Color.Info">Re-Print Invoice</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.orderId)">Re-Print Invoice</MudButton>
 				</MudTd>
             </RowTemplate>
-			<ChildRowContent>
+@*			<ChildRowContent>
 				@if (context.showDetails)
 				{
 					<td colspan="9">
@@ -85,22 +81,55 @@
 						</MudCard>
 					</td>
 				}
-			</ChildRowContent>
+			</ChildRowContent>*@
 		</MudTable>
+		<div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
 	</MudContainer>
 </MudPaper>
 
 @code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetOrders();
+	}
+
 	// Table Customaization
 	private TableCommon tableCommon = new TableCommon();
 
 	// Table Content
-	private IEnumerable<OrderDTO> Elements = new List<OrderDTO>();
+	private List<OrderDTO> Elements = new List<OrderDTO>();
+
+	// Search Value
+	private string searchValue { get; set; }
+
+	// Get Orders
+	private async Task GetOrders()
+	{
+		Elements = await _orders.GetOrders();
+	}
+
+	// Get Orders By Search
+	private async Task GetOrdersBySearch()
+	{
+		Elements = await _orders.GetOrdersBySearch(searchValue);
+	}
+
+	// Goto Print
+	private async Task GotoPrint(string trncode)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print/{trncode}", "_blank" });
+	}
 
 	// Show Details
-	private void ShowDetails(string id)
-	{
-		OrderDTO tmpElements = Elements.First(f => f.orderID == id);
-		tmpElements.showDetails = !tmpElements.showDetails;
-	}
+	//private void ShowDetails(string id)
+	//{
+	//	OrderDTO tmpElements = Elements.First(f => f.orderID == id);
+	//	tmpElements.showDetails = !tmpElements.showDetails;
+	//}
 }

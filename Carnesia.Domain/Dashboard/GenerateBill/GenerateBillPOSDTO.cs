@@ -29,5 +29,6 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
         public string? membershipId { get; set; }
         public string? couponCode { get; set; }
         public string? comment { get; set; }
+        public string paymentType { get; set; }
     }
 }

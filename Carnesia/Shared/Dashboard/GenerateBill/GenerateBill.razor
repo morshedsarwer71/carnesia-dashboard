@@ -4,6 +4,7 @@
 @inject IDialogService DialogService
 @inject IGenerateBill _generateBill
 @inject ISnackbar Snackbar
+@inject IJSRuntime IJS
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
@@ -27,6 +28,7 @@
 					<MudTh>Selling Price</MudTh>
 					<MudTh>Quantity</MudTh>
 					<MudTh>Subtotal Value</MudTh>
+					<MudTh>Remove</MudTh>
 				</HeaderContent>
 				<RowTemplate>
 					<MudTd DataLabel="BrandProduct Name & SKU">@context.nameAndSKU</MudTd>
@@ -34,34 +36,39 @@
 					<MudTd DataLabel="Selling Price">@Math.Round(context.price, 2)</MudTd>
 					<MudTd DataLabel="Quantity">@context.quantity</MudTd>
 					<MudTd DataLabel="Subtotal Value">@Math.Round(context.totalPrice, 2)</MudTd>
+					<MudTd DataLabel="Remove">
+						<MudButton OnClick="() => RemoveProduct(context)">
+							<MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+						</MudButton>
+					</MudTd>
 				</RowTemplate>
 				<FooterContent>
 					<MudTFootRow>
-						<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
+						<MudTd colspan="5" Style="text-align: end;">Total:</MudTd>
 						<MudTd colspan="1" Style="text-align: end;">@subTotal</MudTd>
 					</MudTFootRow>
 					<MudTFootRow>
-						<MudTd colspan="4" Style="text-align: end;">Item:</MudTd>
+						<MudTd colspan="5" Style="text-align: end;">Item:</MudTd>
 						<MudTd colspan="1" Style="text-align: end;">@TableItems</MudTd>
 					</MudTFootRow>
 					<MudTFootRow>
-						<MudTd colspan="4" Style="text-align: end;">Quantity:</MudTd>
+						<MudTd colspan="5" Style="text-align: end;">Quantity:</MudTd>
 						<MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.quantity))</MudTd>
 					</MudTFootRow>
 					<MudTFootRow>
-						<MudTd colspan="4" Style="text-align: end;">Discount Value:</MudTd>
+						<MudTd colspan="5" Style="text-align: end;">Discount Value:</MudTd>
 						<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
 					</MudTFootRow>
 					<MudTFootRow>
-						<MudTd colspan="4" Style="text-align: end;">Reward Value:</MudTd>
+						<MudTd colspan="5" Style="text-align: end;">Reward Value:</MudTd>
 						<MudTd colspan="1" Style="text-align: end;">0</MudTd>
 					</MudTFootRow>
 					<MudTFootRow>
-						<MudTd colspan="4" Style="text-align: end;">Vat(5%):</MudTd>
+						<MudTd colspan="5" Style="text-align: end;">Vat(5%):</MudTd>
 						<MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
 					</MudTFootRow>
 					<MudTFootRow>
-						<MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+						<MudTd colspan="5" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
 						<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal - discount + vatAmount), 2)</MudTd>
 					</MudTFootRow>
 				</FooterContent>
@@ -108,6 +115,13 @@
 						</MudItem>
 					</MudGrid>
 				</MudItem>
+				<MudItem sm="6">
+					<MudSelect @bind-Value="POSDetails.paymentType" Label="Payment Type" AnchorOrigin="Origin.BottomCenter">
+						<MudSelectItem Value="@("Cash")" />
+						<MudSelectItem Value="@("Card")" />
+						<MudSelectItem Value="@("Digital Payment")" />
+					</MudSelect>
+				</MudItem>
 			</MudGrid>
 
 			<div class="mt-5">
@@ -117,9 +131,9 @@
 			</div>
 
 			<div class="mt-5 mx-auto" style="width: fit-content;">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add Comment</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCommentModal">Add Comment</MudButton>
 				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePOS">Generate Bill</MudButton>
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PrintInvoice">Print Invoice</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GotoPrint" Disabled="String.IsNullOrEmpty(trnCode)">Print Invoice</MudButton>
 			</div>
 		</div>
 	</MudContainer>
@@ -137,6 +151,9 @@
 			await JSRuntime.InvokeVoidAsync("SetFocusToElement", generateBill);
 		}
 	}
+
+	// TRN Code
+	private string trnCode { get; set; }
 
 	// New Pos
 	private GenerateBillPOSDTO POSData = new GenerateBillPOSDTO();
@@ -240,8 +257,48 @@
 	// Create Customer
 	private async Task OpenCustomerModal()
 	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new GenerateBillCreateCustomerDTO());
+
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<CreateCustomerModal>("Add New Customer", options).Result;
+		var dialog = await DialogService.Show<CreateCustomerModal>("Create New Customer", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			GenerateBillCreateCustomerDTO newCustomer = dialog.Data as GenerateBillCreateCustomerDTO;
+
+			try
+			{
+				var result = await _generateBill.CreateCustomer(newCustomer);
+
+				if (result)
+				{
+					Snackbar.Add("New Customer Created Successfully!", Severity.Success);
+					return;
+				}
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
+	}
+
+	// Add Comment
+	private async Task OpenCommentModal()
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("comment", Comment);
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<GenerateBillAddCommentModal>("Add Comment Customer", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			Comment = dialog.Data as string;
+		}
 	}
 
 	// UID Scan
@@ -264,8 +321,6 @@
 				await CheckInList(s);
 
 				subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
-				var tempUID = new GenerateBillUIDCollectionDTO() { uid = s };
-				UIDCollection.Add(tempUID);
 				TableItems = Elements.Count();
 				GetVat();
 			}
@@ -294,6 +349,8 @@
 
 				Elements[productIndex].quantity += 1;
 				Elements[productIndex].totalPrice = Elements[productIndex].quantity * Elements[productIndex].price;
+				var tempUIDIn = new GenerateBillUIDCollectionDTO() { uid = s, productCode = result.productCode };
+				UIDCollection.Add(tempUIDIn);
 				uid = String.Empty;
 				return;
 			}
@@ -301,6 +358,8 @@
 			result.totalPrice = result.quantity * result.price;
 
 			Elements.Add(result);
+			var tempUID = new GenerateBillUIDCollectionDTO() { uid = s, productCode = result.productCode };
+			UIDCollection.Add(tempUID);
 			uid = String.Empty;
 		}
 		catch (Exception)
@@ -336,19 +395,28 @@
 	}
 
 	// Generate POS
+	private GenerateBillPOSTDetailsDTO POSDetails = new GenerateBillPOSTDetailsDTO();
+
 	private async Task AssignData()
 	{
-		POSData.pos.items = 2;
-		POSData.pos.quantities = Elements.Sum(e => e.quantity);
-		POSData.pos.customerId = Customer.customerId;
-		POSData.pos.discount = discount;
-		POSData.pos.vatAmount = vatAmount;
-		POSData.pos.total = subTotal;
-		POSData.pos.grandTotal = subTotal - discount + vatAmount;
-		POSData.pos.creditValue = Customer.creditValue;
-		POSData.pos.membershipId = MembershipID;
-		POSData.pos.couponCode = Coupon;
-		POSData.pos.comment = Comment;
+		if (String.IsNullOrEmpty(POSDetails.paymentType))
+		{
+			Snackbar.Add("Please add payment type!", Severity.Error);
+			return;
+		}
+		POSDetails.items = 2;
+		POSDetails.quantities = Elements.Sum(e => e.quantity);
+		POSDetails.customerId = Customer.customerId;
+		POSDetails.discount = discount;
+		POSDetails.vatAmount = vatAmount;
+		POSDetails.total = subTotal;
+		POSDetails.grandTotal = subTotal - discount + vatAmount;
+		POSDetails.creditValue = Customer.creditValue;
+		POSDetails.membershipId = MembershipID;
+		POSDetails.couponCode = Coupon;
+		POSDetails.comment = Comment;
+
+		POSData.pos = POSDetails;
 		POSData.items = Elements;
 		POSData.posUID = UIDCollection;
 	}
@@ -360,8 +428,9 @@
 			await AssignData();
 			var result = await _generateBill.NewPOS(POSData);
 
-			if (result)
+			if (!String.IsNullOrEmpty(result))
 			{
+				trnCode = result;
 				Snackbar.Add("New Bill Generated!", Severity.Success);
 				return;
 			}
@@ -373,5 +442,23 @@
 			Snackbar.Add("Something went wrong!", Severity.Error);
 			throw;
 		}
+	}
+
+	// Remove Product
+	private void RemoveProduct(GenerateBillUIDDataDTO product)
+	{
+		UIDCollection.RemoveAll(x => x.productCode == product.productCode);
+
+		Elements.Remove(product);
+
+		subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
+		TableItems = Elements.Count();
+		GetVat();
+	}
+
+	// Goto Print
+	private async Task GotoPrint()
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print/{trnCode}", "_blank" });
 	}
 }

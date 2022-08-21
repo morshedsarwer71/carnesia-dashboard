@@ -94,11 +94,14 @@ namespace Carnesia.Application.CMS.Services.CampaignList
             }
         }
 
-        public async Task Publishtoggle(int CampaignId)
+        public async Task<bool> Publishtoggle(int CampaignId)
         {
             try
             {
-                await _httpClient.PostAsync($"Campaign/togglepublish/{CampaignId}", null);
+                var result = await _httpClient.GetStringAsync($"Campaign/togglepublish/{CampaignId}");
+
+                if (result == "Togglesd") return true;
+                return false;
             }
             catch (Exception)
             {

@@ -128,6 +128,22 @@ namespace Carnesia.Application.CMS.Services.BunchProduct
             }
         }
 
+        public async Task<bool> ToggleBunchProduct(int id)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsync($"BunchProducts/togglepublish/{id}", null);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<bool> UpdateBunch(SingleBunchProductDTO bunch)
         {
             try

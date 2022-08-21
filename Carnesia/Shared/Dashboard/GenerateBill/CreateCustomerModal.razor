@@ -1,16 +1,16 @@
-﻿
+﻿@using Carnesia.Domain.Dashboard.GenerateBill
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudTextField T="string" Label="Name" Immediate="true" Required="true" RequiredError="Name is required!"/>
-                <MudTextField T="string" Label="Phone Number" Immediate="true" Required="true" RequiredError="Phone Number is required!"/>
-                <MudTextField T="string" Label="Address" Immediate="true" Required="true" RequiredError="Address is required!"/>
-                <MudTextField T="string" Label="Zone" Immediate="true" Required="true" RequiredError="Zone is required!"/>
-                <MudTextField T="string" Label="City" Immediate="true" Required="true" RequiredError="City is required!"/>
-                <MudTextField T="string" Label="Enter Membership Card (if any)" Immediate="true"/>
+                <MudTextField @bind-Value="FormData.firstName" Label="First Name" Immediate="true" Required="true" RequiredError="First Name is required!"/>
+                <MudTextField @bind-Value="FormData.lastName" Label="Last Name" Immediate="true"/>
+                <MudTextField @bind-Value="FormData.phoneNumber" Label="Phone Number" Immediate="true" Required="true" RequiredError="Phone Number is required!"/>
+                <MudTextField @bind-Value="FormData.email" Label="Email" Immediate="true"/>
+                <MudTextField @bind-Value="FormData.address" Label="Address" Immediate="true"/>
+                <MudTextField @bind-Value="FormData.memebershipId" Label="Membership ID (if any)" Immediate="true"/>
 
                 <div class="d-flex justify-end my-5">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
                 </div>
         </MudForm>
     </DialogContent>
@@ -19,8 +19,14 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
+    [Parameter]
+    public GenerateBillCreateCustomerDTO FormData { get; set; } = new GenerateBillCreateCustomerDTO();
+
     // Form Ref
     bool success;
     string[] errors = { };
     MudForm form;
+
+    // Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<GenerateBillCreateCustomerDTO>(FormData));
 }

@@ -15,18 +15,6 @@
                     <MudItem xs="12">
                         <MudTextField @bind-Value="FormData.name" Label="Bunch Name" Required="true" RequiredError="Bunch name is required!"/>
                     </MudItem>
-                    <MudItem sm="6">
-                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.startDate" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.endDate" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudTimePicker Label="End Time" @bind-Time="EndTime" />
-                    </MudItem>
                     <MudItem xs="12">
                         <MudTextField @bind-Value="FormData.description" Label="Description" Lines="5" Required="true" RequiredError="Description is required!"/>
                     </MudItem>
@@ -83,7 +71,6 @@
     protected override async Task OnInitializedAsync()
     {
         await GetBunchById();
-        await SetTime();
     }
 
     // Form Ref
@@ -98,17 +85,6 @@
     private async Task GetBunchById()
     {
         FormData = await _bunchProduct.GetBunchById(id);
-    }
-
-    //Time
-    private TimeSpan? StartTime = new TimeSpan();
-    private TimeSpan? EndTime = new TimeSpan();
-
-    // Set Time
-    private async Task SetTime()
-    {
-        StartTime = TimeSpan.Parse(FormData.startTime.Remove(FormData.startTime.Length - 5));
-        EndTime = TimeSpan.Parse(FormData.endTime.Remove(FormData.endTime.Length - 5));
     }
 
     // Upload Image
@@ -189,8 +165,6 @@
     // Update Bunch
     private async Task UpdateBunch()
     {
-        FormData.startDate = $"{FormData.startDate}T{StartTime}.000Z";
-        FormData.endDate = $"{FormData.endDate}T{EndTime}.000Z";
         try
         {
             var result = await _bunchProduct.UpdateBunch(FormData);
@@ -199,7 +173,6 @@
             {
                 Snackbar.Add("Bunch Updated Successfully!", Severity.Success);
                 await GetBunchById();
-                await SetTime();
                 return;
             }
             Snackbar.Add("Something Went Wrong!", Severity.Error);

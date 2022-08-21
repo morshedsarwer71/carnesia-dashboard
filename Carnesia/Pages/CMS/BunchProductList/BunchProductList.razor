@@ -20,8 +20,7 @@
 			<HeaderContent>
 				<MudTh>Bunch Name</MudTh>
 				<MudTh>Image</MudTh>
-				<MudTh>Start Date</MudTh>
-				<MudTh>End Date</MudTh>
+				<MudTh>Publish</MudTh>
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
@@ -29,8 +28,9 @@
 				<MudTd DataLabel="Image">
 					<MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
 				</MudTd>
-				<MudTd DataLabel="Start Date">@context.startDate</MudTd>
-				<MudTd DataLabel="End Date">@context.endDate</MudTd>
+				<MudTd DataLabel="Publish">
+					<MudSwitch @bind-Checked="@context.isPublish" Color="Color.Primary" @onclick="(() => TogglePublish(context.id))"/>
+				</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => NavigateToUpdate(context.id)">Edit</MudButton>
 					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteProduct(context.id)">Delete</MudButton>
@@ -121,6 +121,28 @@
 				Snackbar.Add("Something Went Wrong!", Severity.Error);
                 throw;
             }
+        }
+    }
+
+	// Toggle Publish
+    private async Task TogglePublish(int id)
+    {
+        try
+        {
+            var result = await _bunchProduct.ToggleBunchProduct(id);
+            Snackbar.Add("Published Changed!", Severity.Success);
+            if (result)
+            {
+                Snackbar.Add("Published Changed!", Severity.Success);
+                await GetBunchs();
+                return;
+            }
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
         }
     }
 }

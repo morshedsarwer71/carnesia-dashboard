@@ -86,9 +86,15 @@
     {
         try
         {
-
-            await _campaign.Publishtoggle(id);
+            var result = await _campaign.Publishtoggle(id);
             Snackbar.Add("Published Changed!", Severity.Success);
+            if (result)
+            {
+                Snackbar.Add("Published Changed!", Severity.Success);
+                await GetCampaigns();
+                return;
+            }
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
         }
         catch (Exception)
         {

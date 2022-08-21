@@ -20,5 +20,6 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
     public class GenerateBillUIDCollectionDTO
     {
         public string uid { get; set; }
+        public string productCode { get; set; }
     }
 }
