@@ -39,10 +39,10 @@
             <RowTemplate>
                 <MudTd DataLabel="Brand Name">@context.name</MudTd>
                 <MudTd DataLabel="Logo">
-                    <MudImage @onclick="() => ShowImage(context.logoUrl)" Src="@($"https://testapi.bespokeit.io/{context.logoUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.logoUrl)" Src="@($"https://localhost:7090/{context.logoUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://testapi.bespokeit.io/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://localhost:7090/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Description">@context.description</MudTd>
                 <MudTd DataLabel="Publish">

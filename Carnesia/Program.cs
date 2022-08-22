@@ -44,8 +44,7 @@ using MudBlazor.Services;
 using Carnesia.Application.WMS.Bin.Services;
 using Carnesia.Application.WMS.PutAway.Services;
 using Syncfusion.Blazor;
-
-
+using Blazored.LocalStorage;
 
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjY3OTMzQDMxMzgyZTM0MmUzMEtBS0dyOEpaTnpmSXZvaHNsT0doNW5HZ1l5L2J5cmRtRmtkQU5GamlQejg9");
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -54,7 +53,21 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://testapi.bespokeit.io/api/") });
+//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://carnesiaapi.bespokeit.io/api/") });
+
+//meesagehandler
+
+builder.Services.AddHttpClient("RetailSuite", client =>
+{
+    client.BaseAddress = new Uri("https://carnesiaapi.bespokeit.io/api/");
+}).AddHttpMessageHandler<AuthorizationMessageHandler>();
+
+builder.Services.AddTransient<AuthorizationMessageHandler>();
+builder.Services.AddScoped(sp => sp.GetService<IHttpClientFactory>().CreateClient("RetailSuite"));
+
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<JwtAuthenticationStateProvider, JwtAuthenticationStateProvider>();
 builder.Services.AddScoped<IPurchaseOrder, PurchaseOrderService>();
 builder.Services.AddScoped<IVendor, VendorServices>();
 builder.Services.AddScoped<IStore, StoreService>();
