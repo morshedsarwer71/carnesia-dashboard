@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Carnesia.Domain\Carnesia.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Login\Service\" />
+  </ItemGroup>
+
 </Project>

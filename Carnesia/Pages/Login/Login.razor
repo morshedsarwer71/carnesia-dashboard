@@ -1,27 +1,76 @@
 ﻿@layout LoginLayout
 @page "/"
+
+@using Carnesia.Domain.Login
 @inject NavigationManager NavigationManager
+@inject HttpClient _httpclient
+@inject ILocalStorageService _storage
+@inject ISnackbar Snackbar
 
 <MudPaper Class="pa-16">
 	<MudText>Login To Carneshia Dashboard</MudText>
-	<MudForm>
+	<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
 		<MudGrid>
 			<MudItem md="12">
-				<MudTextField T="string" Label="Username" Required="true" RequiredError="Username is required!"/>
+				<MudTextField @bind-Value="FormData.username" Label="Username" Required="true" RequiredError="Username is required!" />
 			</MudItem>
 			<MudItem md="12">
-				<MudTextField T="string" Label="Password" Required="true" RequiredError="Password is required!"/>
+				<MudTextField @bind-Value="FormData.password" Label="Password" Required="true" RequiredError="Password is required!" />
 			</MudItem>
 		</MudGrid>
 		<div class="d-flex justify-end mt-5">
-			<MudButton OnClick="LoginUser" Color="Color.Primary" Variant="Variant.Filled">Login</MudButton>
+			<MudButton OnClick="LoginUser" Disabled="@(!success || DisableButton)" Color="Color.Primary" Variant="Variant.Filled">Login</MudButton>
 		</div>
 	</MudForm>
 </MudPaper>
 
 @code {
-	private void LoginUser()
+	// Button Disable
+	private bool DisableButton { get; set; }
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+
+	// Login State
+	private LoginDTO FormData = new LoginDTO();
+
+	// Login
+	private async Task LoginUser()
 	{
-		NavigationManager.NavigateTo("/po-management");
+		try
+		{
+			DisableButton = true;
+			var result = await _httpclient.PostAsJsonAsync("Authentication/userlogin", FormData);
+
+			if (result.IsSuccessStatusCode)
+			{
+				var data = await result.Content.ReadFromJsonAsync<SuccessResult>();
+
+				await _storage.SetItemAsStringAsync("access_token", data.token);
+				await _storage.SetItemAsync<DateTime>("expiry_date", data.expiration);
+
+				Snackbar.Add("Login Successfully!", Severity.Success);
+
+				DisableButton = false;
+
+				NavigationManager.NavigateTo("/dashboard");
+				return;
+			}
+
+			Snackbar.Add("Wrong Username or Password!", Severity.Error);
+			DisableButton = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	// Success Object
+	private class SuccessResult
+	{
+		public string token { get; set; }
+		public DateTime expiration { get; set; }
 	}
 }

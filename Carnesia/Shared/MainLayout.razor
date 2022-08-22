@@ -1,30 +1,52 @@
 ﻿@inherits LayoutComponentBase
+@inject ILocalStorageService _storage
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 
-<MudThemeProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
 
-<MudLayout>
-    <MudAppBar Class="no-print" Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="ml-3">Carnesia</MudText>
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
-    </MudAppBar>
-    <MudDrawer Class="no-print" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavMenu />
-    </MudDrawer>
-    <MudMainContent>
-        @Body
-    </MudMainContent>
-</MudLayout>
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+@*<AuthorizeView>*@
+	@*<Authorized>*@
+		<MudThemeProvider />
+		<MudLayout>
+			<MudAppBar Class="no-print" Elevation="1">
+				<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+				<MudText Typo="Typo.h5" Class="ml-3">Carnesia</MudText>
+				<MudSpacer />
+				<MudIconButton Icon="@Icons.Filled.Logout" Color="Color.Inherit" Edge="Edge.End" OnClick="Logout" />
+			</MudAppBar>
+			<MudDrawer Class="no-print" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+				<NavMenu />
+			</MudDrawer>
+			<MudMainContent>
+				@Body
+			</MudMainContent>
+		</MudLayout>
+	@*</Authorized>*@
+	@*<NotAuthorized>
+
+	</NotAuthorized>*@
+@*</AuthorizeView>*@
 
 
 @code {
-    bool _drawerOpen = true;
+	bool _drawerOpen = true;
 
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
+	void DrawerToggle()
+	{
+		_drawerOpen = !_drawerOpen;
+	}
+
+	// Logout
+	private async Task Logout()
+	{
+		await _storage.RemoveItemAsync("access_token");
+		await _storage.RemoveItemAsync("expiry_date");
+
+		Snackbar.Add("Successfully Loged Out!", Severity.Success);
+
+		NavigationManager.NavigateTo("/");
+	}
 }
