@@ -1,4 +1,6 @@
 ﻿@using Carnesia.Domain.CRM.Vouchers.AutoApply.CreateVoucher
+@inject IAutoApply _autoApply
+@inject ISnackbar Snackbar
 
 <MudPaper Class="pa-16 pt-16 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -8,7 +10,11 @@
 					<MudTextField @bind-Value="FormData.name" Label="Name" Required="true" RequiredError="Name is required!" />
 				</MudItem>
 				<MudItem sm="6">
-					<MudNumericField @bind-Value="FormData.numOfVoucher" Label="Number of Voucher" Required="true" RequiredError="Number of Voucher is required!" />
+					<MudSelect @bind-Value="FormData.voucherDiscType" Label="Discount Type" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Discount Type is required!">
+						<MudSelectItem Value="@("Cash")" />
+						<MudSelectItem Value="@("Percent")" />
+						<MudSelectItem Value="@("Free Delivery")" />
+					</MudSelect>
 				</MudItem>
 				<MudItem sm="6">
 					<MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
@@ -25,20 +31,6 @@
 				<MudItem sm="6">
 					<MudNumericField @bind-Value="FormData.minCartAmount" Label="Minimum Cart Amount" Required="true" RequiredError="Minimum Cart Amount is required!" />
 				</MudItem>
-				<MudItem sm="6">
-					<MudSelect @bind-Value="FormData.platformType" Label="Voucher Platform" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Voucher Platform is required!">
-						<MudSelectItem Value="@("App")" />
-						<MudSelectItem Value="@("General")" />
-						<MudSelectItem Value="@("Web")" />
-					</MudSelect>
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect @bind-Value="FormData.voucherDiscType" Label="Discount Type" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Discount Type is required!">
-						<MudSelectItem Value="@("Cash")" />
-						<MudSelectItem Value="@("Percent")" />
-						<MudSelectItem Value="@("Free Delivery")" />
-					</MudSelect>
-				</MudItem>
 				@if (FormData.voucherDiscType != "Free Delivery")
 				{
 					<MudItem sm="6">
@@ -48,7 +40,7 @@
 				@if (FormData.voucherDiscType == "Percent")
 				{
 					<MudItem sm="6">
-						<MudNumericField @bind-Value="FormData.upToDiscAmnt" Label="Up to Discount Amount" Max="100" Required="true" RequiredError="Up to Discount Amount is required!" />
+						<MudNumericField @bind-Value="FormData.uptoDiscAmnt" Label="Up to Discount Amount" Max="100" Required="true" RequiredError="Up to Discount Amount is required!" />
 					</MudItem>
 				}
 				<MudItem sm="6">
@@ -57,7 +49,7 @@
 			</MudGrid>
 
 			<div class="d-flex align-center justify-space-between mt-6">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateNewVoucher">Submit</MudButton>
 			</div>
 		</MudForm>
 	</MudContainer>
@@ -80,4 +72,47 @@
 
 	// Form Data
 	private AddAutoApplyDTO FormData = new AddAutoApplyDTO();
+
+	// Create Voucher
+	private async Task CreateNewVoucher()
+	{
+		if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
+		{
+			Snackbar.Add("Start & End Date is required!", Severity.Error);
+			return;
+		}
+
+		FormData.startDate = $"{StartDate}T{StartTime}.000Z";
+		FormData.endDate = $"{EndDate}T{EndTime}.000Z";
+
+		if (FormData.voucherDiscType == "Free Delivery")
+		{
+			FormData.isDeliveryCharge = true;
+		}
+		else
+		{
+			FormData.isDeliveryCharge = false;
+		}
+
+		try
+		{
+			var result = await _autoApply.NewAutoApply(FormData);
+			if (result)
+			{
+				Snackbar.Add("New Voucher Created Successfully!", Severity.Success);
+				form.Reset();
+				StartDate = TodayDate;
+				EndDate = TodayDate;
+				StartTime = new TimeSpan();
+				EndTime = new TimeSpan();
+				return;
+			}
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			throw;
+		}
+	}
 }

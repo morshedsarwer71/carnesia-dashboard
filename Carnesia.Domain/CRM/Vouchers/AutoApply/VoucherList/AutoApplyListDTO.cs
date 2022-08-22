@@ -4,18 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carnesia.Domain.CRM.Vouchers.AutoApply.CreateVoucher
+namespace Carnesia.Domain.CRM.Vouchers.AutoApply.VoucherList
 {
-	public class AddAutoApplyDTO
+	public class AutoApplyListDTO
 	{
+        public int id { get; set; }
         public string name { get; set; }
-        public string startDate { get; set; }
-        public string endDate { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
         public decimal minCartAmount { get; set; }
         public string voucherDiscType { get; set; }
         public decimal discAmntOrPercent { get; set; }
         public decimal uptoDiscAmnt { get; set; }
         public string description { get; set; }
+        public bool isEnabled { get; set; }
         public bool isDeliveryCharge { get; set; }
     }
 }
