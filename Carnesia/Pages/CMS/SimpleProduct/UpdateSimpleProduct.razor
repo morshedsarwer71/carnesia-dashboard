@@ -111,7 +111,14 @@
                     </MudItem>
                 }
                 <MudItem xs="12">
-					<MudTextField @bind-Value="Product.metaDescription" Label="Meta Description" Lines="5" Required="true" RequiredError="Meta Description required!" />
+					<MudGrid>
+						<MudItem sm="6">
+							<MudTextField @bind-Value="Product.metaDescription" Label="Meta Description" Lines="5" Required="true" RequiredError="Meta Description required!" />
+						</MudItem>
+						<MudItem sm="6">
+							<MudTextField @bind-Value="Product.description" Label="Description" Lines="5" Required="true" RequiredError="Description required!" />
+						</MudItem>
+					</MudGrid>
 				</MudItem>
                 <MudItem xs="12">
 					<BlazoredTextEditor @ref="@QuillNative" Placeholder="Product Description...">
@@ -233,7 +240,7 @@
                     {
                         
                         <MudBadge Icon="@Icons.Filled.DeleteOutline" OnClick="() =>RemoveImage(image.id)" Color="Color.Error" Overlap="true" Class="mx-6 my-4" Style="cursor:pointer">
-                            <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{image.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
+                            <MudImage Src="@($"https://testapi.bespokeit.io/{image.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;"/>
                         </MudBadge>
                     }
                 }
@@ -321,7 +328,7 @@
     // Decode Rich Text
     private async Task DecodeRich()
     {
-        var DecodedDescription = await _encodeDecode.DecodeBase64ToString(Product.description); 
+        var DecodedDescription = await _encodeDecode.DecodeBase64ToString(Product.richDescription); 
         await this.QuillNative.LoadHTMLContent(DecodedDescription);
     }
 

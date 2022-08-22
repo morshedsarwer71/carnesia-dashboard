@@ -135,11 +135,13 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
         {
             try
             {
-                await _httpClient.PutAsJsonAsync($"Products/{childProduct.updateProductDTO.id}", childProduct);
-            }
-            catch (Exception)
-            {
+                var result = await _httpClient.PutAsJsonAsync($"Products/{childProduct.updateProductDTO.id}", childProduct);
 
+                if (result.IsSuccessStatusCode) Console.WriteLine("Working");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
                 throw;
             }
         }

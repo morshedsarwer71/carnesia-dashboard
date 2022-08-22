@@ -24,6 +24,7 @@ namespace Carnesia.Domain.CMS.ChildProduct
         public bool isNewArrival { get; set; }
         public int productPoints { get; set; }
         public string description { get; set; }
+        public string richDescription { get; set; }
         public bool isSize { get; set; }
         public string colorCode { get; set; }
         public string sizeOrQty { get; set; }
