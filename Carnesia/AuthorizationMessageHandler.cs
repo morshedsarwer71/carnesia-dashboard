@@ -18,7 +18,7 @@ namespace Carnesia
             if(await _storage.ContainKeyAsync("access_token"))
             {
                 var token = await _storage.GetItemAsStringAsync("access_token");
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", token);
             }
             //Console.WriteLine("auth test data find ");
             return await base.SendAsync(request, cancellationToken);

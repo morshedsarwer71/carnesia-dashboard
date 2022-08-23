@@ -31,7 +31,7 @@
                 <MudTd DataLabel="Name">@context.name</MudTd>
                 <MudTd DataLabel="URL">@context.url</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imagePath)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imagePath}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.imagePath)" Src="@($"https://localhost:7090/{context.imagePath}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Publish">
                     <MudSwitch @bind-Checked="context.isPublish" Color="Color.Primary" @onclick="(() => PublishUnpublish(context.id)) " />

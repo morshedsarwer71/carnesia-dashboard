@@ -10,5 +10,6 @@ namespace Carnesia.Application.WMS.PutAway.BinInscan
     public interface IBinInscan
     {
         Task<BinInscanDTO> GetSingleBinInscan(string uid, string bin);
+        Task<BinDetailsPoco> GetBinDetails(string bin);
     }
 }

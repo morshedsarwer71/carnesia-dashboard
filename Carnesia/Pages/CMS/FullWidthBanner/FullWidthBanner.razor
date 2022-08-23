@@ -30,7 +30,7 @@
             <RowTemplate>
                 <MudTd DataLabel="Name">@context.bannerName</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imageWebUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageWebUrl}")" Alt="@context.bannerName" Elevation="25" Class="rounded-lg" Style="width:50px" />
+                    <MudImage @onclick="() => ShowImage(context.imageWebUrl)" Src="@($"https://localhost:7090/{context.imageWebUrl}")" Alt="@context.bannerName" Elevation="25" Class="rounded-lg" Style="width:50px" />
                 </MudTd>
                 <MudTd DataLabel="URL">@context.url</MudTd>
                 <MudTd DataLabel="Publish">

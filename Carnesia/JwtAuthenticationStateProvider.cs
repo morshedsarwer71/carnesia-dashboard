@@ -22,7 +22,7 @@ namespace Carnesia
                 var tokenHandler = new JwtSecurityTokenHandler();
 
                 var token = tokenHandler.ReadJwtToken(tokenAsString);
-                var identity = new ClaimsIdentity(token.Claims, "Bearer");
+                var identity = new ClaimsIdentity(token.Claims, "bearer");
                 var user = new ClaimsPrincipal(identity);
                 var authState = new AuthenticationState(user);
 
