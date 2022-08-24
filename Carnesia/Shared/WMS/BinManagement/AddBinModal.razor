@@ -1,40 +1,76 @@
 ﻿@using Carnesia.Domain.WMS.Bin.Models
+@using Carnesia.Domain.WMS.Store.Models
+@inject IStore _store
+@inject IBin _bin
 
 <MudDialog>
-    <DialogContent>
-        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudNumericField @bind-Value="FormData.capacity" Label="Capacity" Required="true" RequiredError="Capacity is required!"/>
-                <MudNumericField @bind-Value="FormData.floor" Label="Floor" Required="true" RequiredError="Floor is required!"/>
-                <MudNumericField @bind-Value="FormData.room" Label="Room" Required="true" RequiredError="Room is required!"/>
-                <MudNumericField @bind-Value="FormData.column" Label="Column" Required="true" RequiredError="Column is required!"/>
-                <MudNumericField @bind-Value="FormData.rack" Label="Rack" Required="true" RequiredError="Rack is required!"/>
-                <MudNumericField @bind-Value="FormData.shelf" Label="Shelf" Required="true" RequiredError="Shelf is required!"/>
-                <MudNumericField @bind-Value="FormData.bin" Label="Bin" Required="true" RequiredError="Bin is required!"/>
-                <div class="d-flex justify-end my-5">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateBinName" >Submit</MudButton>
-                </div>
-        </MudForm>
-    </DialogContent>
+	<DialogContent>
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudSelect T="int" Label="Store" @bind-Value="FormData.storeId" AnchorOrigin="Origin.BottomCenter" Required="true">
+				<MudSelectItem Value="0">Select Store</MudSelectItem>
+				@foreach (var item in Stores)
+				{
+					<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+				}
+			</MudSelect>
+			<MudNumericField @bind-Value="FormData.capacity" Label="Capacity" Required="true" RequiredError="Capacity is required!" />
+			<MudNumericField @bind-Value="FormData.floor" Label="Floor" Required="true" RequiredError="Floor is required!" />
+			<MudNumericField @bind-Value="FormData.room" Label="Room" Required="true" RequiredError="Room is required!" />
+			<MudNumericField @bind-Value="FormData.column" Label="Column" Required="true" RequiredError="Column is required!" />
+			<MudNumericField @bind-Value="FormData.rack" Label="Rack" Required="true" RequiredError="Rack is required!" />
+			<MudNumericField @bind-Value="FormData.shelf" Label="Shelf" Required="true" RequiredError="Shelf is required!" />
+			<MudNumericField @bind-Value="FormData.bin" Label="Bin" Required="true" RequiredError="Bin is required!" />
+			<div class="d-flex justify-end my-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success || FormData.storeId == 0)" Class="ml-auto" OnClick="CreateBinName">Submit</MudButton>
+			</div>
+		</MudForm>
+	</DialogContent>
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    [Parameter]
-    public BinDTO FormData{get;set;} = new BinDTO();
+	[Parameter]
+	public BinDTO FormData { get; set; } = new BinDTO();
 
-    // Form Ref
-    bool success;
-    string[] errors = { };
-    MudForm form;
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetStores();
 
-    // Bin Name
-    private void CreateBinName()
-    {
-        FormData.binName = $"F{FormData.floor}R{FormData.room}C{FormData.column}RA{FormData.rack}S{FormData.shelf}B{FormData.bin}";
-        Submit();
-    }
+		if (FormData.id > 0)
+		{
+			await GetBin();
+		}
+	}
 
-    // Submit Close
-    void Submit() => MudDialog.Close(DialogResult.Ok<BinDTO>(FormData));
+	// Get Bin
+	private async Task GetBin()
+	{
+		FormData = await _bin.GetSingleBin(FormData.id);
+	}
+
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+
+	// Stores
+	private List<StoreDTO> Stores = new List<StoreDTO>();
+
+	// Get Stores
+	private async Task GetStores()
+	{
+		Stores = await _store.GetStoresAsync();
+	}
+
+	// Bin Name
+	private void CreateBinName()
+	{
+		FormData.binName = $"F{FormData.floor}R{FormData.room}C{FormData.column}RA{FormData.rack}S{FormData.shelf}B{FormData.bin}";
+		Submit();
+	}
+
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<BinDTO>(FormData));
 }

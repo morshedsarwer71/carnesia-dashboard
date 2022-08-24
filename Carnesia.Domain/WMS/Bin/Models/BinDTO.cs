@@ -8,6 +8,8 @@ namespace Carnesia.Domain.WMS.Bin.Models
 {
     public class BinDTO
     {
+        public int storeId { get; set; }
+        public int id { get; set; }
         public string binName { get; set; }
         public bool isActive { get; set; } = true;
         public int capacity { get; set; }

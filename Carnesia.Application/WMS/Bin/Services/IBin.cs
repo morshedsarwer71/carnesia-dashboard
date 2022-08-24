@@ -14,5 +14,7 @@ namespace Carnesia.Application.WMS.Bin.Services
         Task<List<GetBinDTO>> GetBins();
         Task<List<GetBinDTO>> GetBinSearch(string bin,int storeId,bool status);
         Task<Response> ChangeStatus(int binId);
+        Task<BinDTO> GetSingleBin(int id);
+        Task<bool> UpdateBin(BinDTO bin);
     }
 }

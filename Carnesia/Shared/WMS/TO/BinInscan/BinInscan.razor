@@ -9,12 +9,13 @@
 		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
 			<MudText Class="px-15 py-2" Typo="Typo.h6">Bin Inscan</MudText>
 		</div>
+		<MudText Class="my-3" Typo="Typo.h3">Bin: @BinNumberUse</MudText>
 		<MudGrid Class="justify-center">
 			<MudItem sm="3">
-				<MudTextField Label="Bin Number" @bind-Value="BinNumber" Variant="Variant.Text" />
+				<MudTextField Label="Bin Number" @bind-Value="BinNumber" Immediate="true" Variant="Variant.Text" OnKeyPress="BinEnter" />
 			</MudItem>
 			<MudItem sm="3">
-				<MudTextField Label="UID" Value="UID" ValueChanged="(string s) => ScanUID(s)" Variant="Variant.Text" />
+				<MudTextField Label="UID" @bind-Value="UID" Immediate="true" Variant="Variant.Text" OnKeyPress="UidEnter" />
 			</MudItem>
 		</MudGrid>
 
@@ -26,20 +27,24 @@
 
 		<MudTable Items="@SingleBin" Hover="true">
 			<HeaderContent>
-				<MudTh>Item Code</MudTh>
+				<MudTh>#</MudTh>
+				<MudTh>Product Code</MudTh>
 				<MudTh>Product Name</MudTh>
+				<MudTh>Product SKU</MudTh>
 				<MudTh>Input QTY</MudTh>
 				<MudTh>BIN</MudTh>
-				<MudTh>Image</MudTh>
+				@*<MudTh>Image</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Item Code">@context.sku</MudTd>
+				<MudTd DataLabel="#">@SetSerial(context)</MudTd>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Product SKU">@context.sku</MudTd>
 				<MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
 				<MudTd DataLabel="BIN">@context.binName</MudTd>
-				<MudTd DataLabel="Image">
-					<MudImage Src="@($"https://localhost:7090/{context.url}")" Width="50" Height="50" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg" />
-				</MudTd>
+				@*<MudTd DataLabel="Image">
+					<MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.url}")" Width="50" Height="50" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg" />
+					</MudTd>*@
 			</RowTemplate>
 		</MudTable>
 	</MudContainer>
@@ -65,20 +70,22 @@
 
 		<MudTable Items="@BulkBinProduct" Hover="true">
 			<HeaderContent>
-				<MudTh>Item Code</MudTh>
+				<MudTh>Product Code</MudTh>
 				<MudTh>Product Name</MudTh>
+				<MudTh>Product SKU</MudTh>
 				<MudTh>Input QTY</MudTh>
 				<MudTh>BIN</MudTh>
-				<MudTh>Image</MudTh>
+				@*<MudTh>Image</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Item Code">@context.sku</MudTd>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Product SKU">@context.sku</MudTd>
 				<MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
 				<MudTd DataLabel="BIN">@context.binName</MudTd>
-				<MudTd DataLabel="Image">
+				@*<MudTd DataLabel="Image">
 					<MudImage Src="@context.url" Width="50" Height="50" Alt="Product Image" Elevation="25" Class="rounded-lg" />
-				</MudTd>
+					</MudTd>*@
 			</RowTemplate>
 		</MudTable>
 
@@ -90,53 +97,72 @@
 
 @code {
 	public string BinNumber { get; set; }
+	public string BinNumberUse { get; set; }
 	public string PoCode { get; set; }
 	public string UID { get; set; }
-	// Table Content
 
+	// Table Content
 	private List<BinInscanProductDTO> SingleBin = new List<BinInscanProductDTO>();
 	private List<BinInscanProductDTO> BulkBinProduct = new List<BinInscanProductDTO>();
-
-	// Scan UID
-	private async Task ScanUID(string s)
-	{
-		UID = s;
-		if (s.Length == 15 && !String.IsNullOrEmpty(BinNumber))
-		{
-			await GetSingleBinInscan();
-		}
-	}
 
 	// Get Single Bin
 	private async Task GetSingleBinInscan()
 	{
 		try
 		{
-			var result = await _binInscan.GetSingleBinInscan(UID, BinNumber);
+			var result = await _binInscan.GetSingleBinInscan(UID, BinNumberUse);
 
 			if (result.message == "UID inserted in bin")
 			{
-				bool isThere = SingleBin.Any(x => x.productCode == result.Product.productCode);
+				bool isThere = SingleBin.Any(x => x.productCode == result.Product.productCode && x.binName == result.Product.binName);
 
 				if (isThere)
 				{
-					int binIndex = SingleBin.FindIndex(x => x.productCode == result.Product.productCode);
-
-					SingleBin[binIndex].inputQty += result.Product.inputQty;
+					int ProductIndex = SingleBin.FindIndex(x => x.productCode == result.Product.productCode && x.binName == result.Product.binName);
+					SingleBin[ProductIndex].inputQty += 1;
 					_snackbar.Add(result.message, Severity.Success);
+					UID = String.Empty;
 					return;
 				}
 
+				result.Product.inputQty = 1;
+
 				SingleBin.Add(result.Product);
 				_snackbar.Add(result.message, Severity.Success);
+				UID = String.Empty;
 				return;
 			}
+
 			_snackbar.Add(result.message, Severity.Error);
 
 		}
 		catch (Exception)
 		{
 			_snackbar.Add("Something went wrong!", Severity.Error);
+		}
+	}
+
+	// Press Enter
+	private async Task BinEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(BinNumber))
+			{
+				BinNumberUse = BinNumber;
+				BinNumber = String.Empty;
+			}
+		}
+	}
+
+	private async Task UidEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(BinNumberUse))
+			{
+				await GetSingleBinInscan();
+			}
 		}
 	}
 
@@ -167,6 +193,12 @@
 		}
 	}
 
-}
+	// Serial
+	private int SetSerial(BinInscanProductDTO Item)
+	{
+		int ItemIndex = SingleBin.FindIndex(x => x.productCode == Item.productCode && x.binName == Item.binName);
+
+		return ItemIndex + 1;
+	}
 
 }

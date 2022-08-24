@@ -10,7 +10,7 @@
         <MudText>Total: @Elements.totalQty</MudText>
         <MudGrid Class="justify-center align-baseline mb-5">
             <MudItem md="3">
-                <MudTextField T="string" @bind-Value="Bin" Label="Bin Number" Variant="Variant.Text" />
+                <MudTextField @bind-Value="Bin" Label="Bin Number" Immediate="true" Variant="Variant.Text" OnKeyPress="BinEnter" />
             </MudItem>
             <MudItem md="3">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetBinDetails">Filter</MudButton>
@@ -49,5 +49,18 @@
     private async Task GetBinDetails()
     {
         Elements = await _binInscan.GetBinDetails(Bin);
+        Bin = String.Empty;
+    }
+
+    // Enter Bin
+    private async Task BinEnter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(Bin))
+            {
+                await GetBinDetails();
+            }
+        }
     }
 }

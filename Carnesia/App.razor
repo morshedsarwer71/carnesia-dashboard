@@ -1,8 +1,10 @@
-﻿<CascadingAuthenticationState>
+﻿@inject ILocalStorageService _storage
+@inject NavigationManager NavigationManager
+<CascadingAuthenticationState>
 	<Router AppAssembly="@typeof(App).Assembly">
 		<Found Context="routeData">
 			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" >
-				<NotAuthorized>
+				<NotAuthorized >
 					<h1>You are not logged in</h1>
 				</NotAuthorized>
 			</AuthorizeRouteView>

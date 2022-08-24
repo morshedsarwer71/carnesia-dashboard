@@ -1,43 +1,147 @@
-﻿<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+﻿@using Carnesia.Domain.HRM.HR
+@using Carnesia.Domain.HRM.PanelUser
+@using Carnesia.Domain.WMS.Store.Models
+@inject ISnackbar Snackbar
+@inject IPanelUser _panelUser
+@inject IStore _store
+@inject IHR _hr
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
 			<MudGrid>
 				<MudItem md="6">
-					<MudTextField T="string" Label="First Name" Required="true" RequiredError="First name is required!"/>
+					<MudTextField @bind-Value="FormData.firstName" Label="First Name" Required="true" RequiredError="First name is required!" />
 				</MudItem>
 				<MudItem md="6">
-					<MudTextField T="string" Label="Last Name" Required="true" RequiredError="Last name is required!"/>
+					<MudTextField @bind-Value="FormData.lastName" Label="Last Name" Required="true" RequiredError="Last name is required!" />
 				</MudItem>
 				<MudItem md="6">
-					<MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"/>
+					<MudTextField @bind-Value="FormData.email" Label="Email" Required="true" RequiredError="Email is required!" />
 				</MudItem>
 				<MudItem md="6">
-					<MudTextField T="string" Label="Username" Required="true" RequiredError="Username is required!"/>
+					<MudTextField @bind-Value="FormData.username" Label="Username" Required="true" RequiredError="Username is required!" />
 				</MudItem>
 				<MudItem md="6">
-					<MudTextField T="string" Label="Phone Number" Required="true" RequiredError="Phone number is required!"/>
+					<MudTextField @bind-Value="FormData.phoneNumber" Label="Phone Number" Required="true" RequiredError="Phone number is required!" />
 				</MudItem>
 				<MudItem md="6">
-					<MudAutocomplete T="string" Label="Hub" ResetValueOnEmptyText="@true" />
+					<MudTextField @bind-Value="FormData.team" Label="Team" Required="true" RequiredError="Team is required!" />
 				</MudItem>
 				<MudItem md="6">
-					<MudAutocomplete T="string" Label="Department" ResetValueOnEmptyText="@true" />
+					<MudSelect Label="Department" @bind-Value="FormData.departmentId" AnchorOrigin="Origin.BottomCenter" Required="true">
+						<MudSelectItem Value="0">Select Department</MudSelectItem>
+						@foreach (var item in Department)
+						{
+							<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+						}
+					</MudSelect>
 				</MudItem>
 				<MudItem md="6">
-					<MudAutocomplete T="string" Label="Designation" ResetValueOnEmptyText="@true" />
+					<MudSelect Label="Designation" @bind-Value="FormData.designationId" AnchorOrigin="Origin.BottomCenter" Required="true">
+						<MudSelectItem Value="0">Select Designation</MudSelectItem>
+						@foreach (var item in Designation)
+						{
+							<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+						}
+					</MudSelect>
+				</MudItem>
+				<MudItem md="6">
+					<MudSelect Label="Store" @bind-Value="FormData.storeId" AnchorOrigin="Origin.BottomCenter" Required="true">
+						<MudSelectItem Value="0">Select Store</MudSelectItem>
+						@foreach (var item in Stores)
+						{
+							<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+						}
+					</MudSelect>
+				</MudItem>
+				<MudItem md="6">
+					<MudSelect Label="Role" @bind-Value="FormData.roleType" AnchorOrigin="Origin.BottomCenter" Required="true">
+						@foreach (var item in Roles)
+						{
+							<MudSelectItem Value="item"/>
+						}
+					</MudSelect>
+				</MudItem>
+				<MudItem xs="12">
+					<MudTextField Lines="5" @bind-Value="FormData.jobDescription" Label="Job Description" Required="true" RequiredError="Job Description is required!" />
 				</MudItem>
 			</MudGrid>
 
 			<div class="d-flex align-center justify-end mt-6">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
-            </div>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success || FormData.departmentId == 0 || FormData.designationId == 0 || FormData.storeId == 0)" Class="ml-auto" OnClick="CreateNewUser">Submit</MudButton>
+			</div>
 		</MudForm>
 	</MudContainer>
 </MudPaper>
 
 @code {
+	// On Page Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetDepartment();
+		await GetDesignation();
+		await GetStores();
+		await GetRoles();
+	}
+
 	// Form ref
-    private MudForm? form;
-    private bool success;
-    private string[] errors = {};
+	private MudForm? form;
+	private bool success;
+	private string[] errors = { };
+
+	// User Data
+	private PanelUserDTO FormData = new PanelUserDTO();
+
+	// Department, Designation, Store & Role
+	private List<HRDepartmentsDTO> Department = new List<HRDepartmentsDTO>();
+	private List<HRDesignationsDTO> Designation = new List<HRDesignationsDTO>();
+	private List<StoreDTO> Stores = new List<StoreDTO>();
+	private string[] Roles = new string[] { };
+
+	// Get Department
+	private async Task GetDepartment()
+	{
+		Department = await _hr.GetDepartments();
+	}
+
+	// Get Designation
+	private async Task GetDesignation()
+	{
+		Designation = await _hr.GetDesignations();
+	}
+
+	// Get Stores
+	private async Task GetStores()
+	{
+		Stores = await _store.GetStoresAsync();
+	}
+
+
+	// Get Roles
+	private async Task GetRoles()
+	{
+		Roles = await _panelUser.GetRoles();
+	}
+
+	// New User
+	private async Task CreateNewUser()
+	{
+		try
+		{
+			var result = await _panelUser.NewPanelUser(FormData);
+
+			if (result)
+			{
+				Snackbar.Add("New User Created Successfully!", Severity.Success);
+				return;
+			}
+			Snackbar.Add("Something went wrong!", Severity.Success);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something went wrong!", Severity.Success);
+		}
+	}
+
 }

@@ -9,6 +9,8 @@
 @inject ISnackbar Snackbar
 @inject IStore _store
 
+@attribute [Authorize]
+
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
     <MudContainer Fixed="true">
         <MudGrid Class="justify-center align-baseline mb-5">
@@ -56,10 +58,12 @@
                     @if (context.status == "Active")
                     {
                         <MudButton Variant="Variant.Filled" Color=Color.Success @onclick="() => ChangeStatus(context.id)">Deactivate</MudButton>
+                        <MudButton Variant="Variant.Filled" Color=Color.Warning @onclick="() => OpenUpdateBinModal(context.id)">Edit</MudButton>
                     }
                     else if (context.status == "Deactive")
                     {
                         <MudButton Variant="Variant.Filled" Color=Color.Secondary @onclick="() => ChangeStatus(context.id)">Active</MudButton>
+                        <MudButton Variant="Variant.Filled" Color=Color.Warning @onclick="() => OpenUpdateBinModal(context.id)">Edit</MudButton>
                     }
                 </MudTd>
             </RowTemplate>
@@ -106,7 +110,6 @@
             var store = await _store.GetStore(warehouse);
             storeId = store.storeId;
             Elements.Clear();
-            //StateHasChanged();
             Elements = await _bin.GetBinSearch(binName, storeId, status);
             return Elements;
         }
@@ -121,15 +124,17 @@
         try
         {
             var res = await _bin.ChangeStatus(binId);
-            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-            _snackbar.Add(res.Message, Severity.Success);
-            StateHasChanged();
+            if (res.Message == "Bin deactivated" || res.Message == "Bin activatd")
+            {
+                _snackbar.Add(res.Message, Severity.Success);
+                Elements = await _bin.GetBins();
+                return;
+            }
+            _snackbar.Add(res.Message, Severity.Error);
         }
         catch (Exception e)
         {
-            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-            _snackbar.Add("Error", Severity.Success);
-            throw;
+            _snackbar.Add("Error", Severity.Error);
         }
     }
 
@@ -152,6 +157,38 @@
                 if (result != null)
                 {
                     Snackbar.Add("New Bin Created Successfully!", Severity.Success);
+                    await OnInitializedAsync();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
+
+    // Update Bin Modal
+    private async Task OpenUpdateBinModal(int id)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new BinDTO(){id = id});
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddBinModal>("Update Bin", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            BinDTO newBin = dialog.Data as BinDTO;
+
+            try
+            {
+                var result = await _bin.UpdateBin(newBin);
+                if (result)
+                {
+                    Snackbar.Add("Bin Updated Successfully!", Severity.Success);
                     await OnInitializedAsync();
                     return;
                 }

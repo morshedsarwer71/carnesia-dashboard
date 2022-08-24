@@ -37,6 +37,8 @@ using Carnesia.Application.WMS.PutAway.BinInscan;
 using Carnesia.Application.OMS.Services.Zones;
 using Carnesia.Application.OMS.Services.PendingOrder;
 using Carnesia.Application.HRM.User;
+using Carnesia.Application.HRM.HR;
+using Carnesia.Application.HRM.PanelUser;
 using Carnesia.Application.Dashboard.GenerateBill;
 using Carnesia.Application.Dashboard.Orders;
 using Carnesia.Application.Dashboard.CustomerProfile;
@@ -56,13 +58,13 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7090/api/") });
+//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://carnesiaapi.bespokeit.io/api/") });
 
 //meesagehandler
 
 builder.Services.AddHttpClient("RetailSuite", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7090/api/");
+    client.BaseAddress = new Uri("https://carnesiaapi.bespokeit.io/api/");
 }).AddHttpMessageHandler<AuthorizationMessageHandler>();
 
 builder.Services.AddTransient<AuthorizationMessageHandler>();
@@ -104,6 +106,8 @@ builder.Services.AddScoped<IUserVoucher, UserVoucherService>();
 builder.Services.AddScoped<IProductVoucher, ProductVoucherService>();
 builder.Services.AddScoped<IAutoApply, AutoApplyService>();
 builder.Services.AddScoped<IUser, UserService>();
+builder.Services.AddScoped<IHR, HRService>();
+builder.Services.AddScoped<IPanelUser, PanelUserService>();
 builder.Services.AddScoped<IBase64, Base64Service>();
 builder.Services.AddScoped<IEncodeDecode, EncodeDecodeService>();
 builder.Services.AddScoped<IZones, ZonesService>();

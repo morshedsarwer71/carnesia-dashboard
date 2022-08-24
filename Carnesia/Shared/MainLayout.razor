@@ -34,6 +34,17 @@
 
 
 @code {
+	[CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        if(!await _storage.ContainKeyAsync("access_token"))
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
 	bool _drawerOpen = true;
 
 	void DrawerToggle()
@@ -47,8 +58,10 @@
 		await _storage.RemoveItemAsync("access_token");
 		await _storage.RemoveItemAsync("expiry_date");
 
-		Snackbar.Add("Successfully Loged Out!", Severity.Success);
+		Snackbar.Add("Successfully Logged Out!", Severity.Success);
 
 		NavigationManager.NavigateTo("/");
 	}
+
+	
 }

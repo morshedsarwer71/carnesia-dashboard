@@ -89,9 +89,14 @@
 
 			try
 			{
-				await _parentProduct.CreateParentProduct(newParentProduct);
-				Snackbar.Add("New Parent Product Created Successfully!", Severity.Success);
-				await GetParentProducts();
+				var result = await _parentProduct.CreateParentProduct(newParentProduct);
+
+				if (result)
+				{
+					Snackbar.Add("New Parent Product Created Successfully!", Severity.Success);
+					await GetParentProducts();
+				}
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
 			}
 			catch (Exception)
 			{

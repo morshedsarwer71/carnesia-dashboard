@@ -7,7 +7,7 @@
 	<MudContainer Fixed="true">
 		<MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="3">
-				<MudTextField T="string" Label="UID" @bind-Value="UID" Variant="Variant.Text"/>
+				<MudTextField Label="UID" @bind-Value="UID" Variant="Variant.Text" Immediate="true" OnKeyPress="UidEnter" />
 			</MudItem>
 			<MudItem md="3">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="TrackUIDHistory">Filter</MudButton>
@@ -78,6 +78,7 @@
 			if(result!=null)
 			{
 				Elements = result;
+				UID = String.Empty;
 			}
 			else
 			{
@@ -88,4 +89,16 @@
 			_snackbar.Add("UID not found");
 		}
 	}
+
+	// Enter Bin
+    private async Task UidEnter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(UID) && UID.Length == 15)
+            {
+                await TrackUIDHistory();
+            }
+        }
+    }
 }

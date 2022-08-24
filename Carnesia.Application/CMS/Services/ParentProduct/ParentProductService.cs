@@ -46,11 +46,14 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
             }
         }
 
-        public async Task CreateParentProduct(CreateParentProductDTO ParentProduct)
+        public async Task<bool> CreateParentProduct(CreateParentProductDTO ParentProduct)
         {
             try
             {
-                await _httpClient.PostAsJsonAsync("ProductParent", ParentProduct);
+                var result = await _httpClient.PostAsJsonAsync("ProductParent", ParentProduct);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

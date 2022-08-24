@@ -13,7 +13,7 @@ namespace Carnesia.Application.CMS.Services.ParentProduct
     {
         Task<List<ParentProductDTO>> GetParentProducts();
 
-        Task CreateParentProduct(CreateParentProductDTO ParentProduct);
+        Task<bool> CreateParentProduct(CreateParentProductDTO ParentProduct);
         Task<string> CreateParentProductReturnID(SimpleProductParentDTO ParentProduct);
 
         Task<string[]> GetParentProductAsString();
