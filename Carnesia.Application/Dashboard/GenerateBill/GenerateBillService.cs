@@ -18,23 +18,24 @@ namespace Carnesia.Application.Dashboard.GenerateBill
             _httpClient = httpClient;
         }
 
-		public async Task<bool> CreateCustomer(GenerateBillCreateCustomerDTO customer)
-		{
-			try
-			{
+        public async Task<GenerateBillCustomerCreateResponseDTO> CreateCustomer(GenerateBillCreateCustomerDTO customer)
+        {
+            try
+            {
                 var result = await _httpClient.PostAsJsonAsync("Authentication/pos-customer-register", customer);
 
-                if (result.IsSuccessStatusCode) return true;
-                return false;
-			}
-			catch (Exception)
-			{
+                var json = await result.Content.ReadAsStringAsync();
+                var deserialized = JsonConvert.DeserializeObject<GenerateBillCustomerCreateResponseDTO>(json);
+                return deserialized;
+            }
+            catch (Exception)
+            {
 
-				throw;
-			}
-		}
+                throw;
+            }
+        }
 
-		public async Task<GenerateBillCustomerInfoDTO> GetCustomerInfo(string phoneOrId)
+        public async Task<GenerateBillCustomerInfoDTO> GetCustomerInfo(string phoneOrId)
         {
             try
             {
@@ -92,19 +93,15 @@ namespace Carnesia.Application.Dashboard.GenerateBill
             }
         }
 
-        public async Task<string> NewPOS(GenerateBillPOSDTO pos)
+        public async Task<GenerateBillPosResponseDTO> NewPOS(GenerateBillPOSDTO pos)
         {
             try
             {
                 var result = await _httpClient.PostAsJsonAsync("Pos", pos);
 
-                if (result.IsSuccessStatusCode)
-                {
-                    var json = await result.Content.ReadAsStringAsync();
-                    //var deserialized = JsonConvert.DeserializeObject<string>(json);
-                    return json;
-                }
-                return String.Empty;
+                var json = await result.Content.ReadAsStringAsync();
+                var deserialized = JsonConvert.DeserializeObject<GenerateBillPosResponseDTO>(json);
+                return deserialized;
             }
             catch (Exception)
             {

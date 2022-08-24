@@ -1,57 +1,218 @@
 ﻿@using Carnesia.Domain.Dashboard.ReturnRefund
 @using Carnesia.Domain.Common.POCO
+@inject ISnackbar Snackbar
+@inject IReturnRefund _returnRefund
 
 <MudPaper Class="pa-16 ma-2">
 	<MudContainer Fixed="true">
-		<div class="d-flex justify-end">
+		@*<div class="d-flex justify-end">
 			<MudButton Variant="Variant.Filled" Color="Color.Primary">Receive Return</MudButton>
-		</div>
+			</div>*@
+		<MudText Class="my-3" Typo="Typo.h3">Order ID: @TRNCodeShow</MudText>
 		<MudGrid Class="justify-center">
 			<MudItem sm="4">
-				<MudTextField T="string" Variant="Variant.Text" Placeholder="Order ID" />
+				<MudTextField @bind-Value="TRNCode" Variant="Variant.Text" Immediate="true" Placeholder="Order ID" OnKeyPress="TrnEnter" />
 			</MudItem>
 			<MudItem sm="4">
-				<MudTextField T="string" Variant="Variant.Text" Placeholder="UID" />
+				<MudTextField @bind-Value="UID" Variant="Variant.Text" Immediate="true" Placeholder="UID" OnKeyPress="UidEnter" />
 			</MudItem>
 		</MudGrid>
-		<div class="d-flex justify-center my-5">
+		<MudGrid Class="justify-center mb-3">
+			<MudItem sm="8" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetPRoduct">Get</MudButton>
+			</MudItem>
+		</MudGrid>
+		@*<div class="d-flex justify-center my-5">
 			<MudImage Src="https://cdn.pixabay.com/photo/2022/06/29/10/58/fox-7291456_960_720.jpg" Alt="Fox" Style="width: 30%;" />
-		</div>
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
-            <HeaderContent>
-                <MudTh>Product Code</MudTh>
-                <MudTh>Product SKU</MudTh>
-                <MudTh>Product Name</MudTh>
-                <MudTh>Sold Quantity</MudTh>
-                <MudTh>Image</MudTh>
-                <MudTh>Received</MudTh>
-                <MudTh>Selling Price</MudTh>
-                <MudTh>Received Amount</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
-                <MudTd DataLabel="Product SKU">@context.sku</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="Sold Quantity">@context.soldQTY</MudTd>
-                <MudTd DataLabel="Image">
-                    <MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageURL}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
-                </MudTd>
-                <MudTd DataLabel="Received">@context.received</MudTd>
-                <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
-                <MudTd DataLabel="Received Amount">@context.receivedAmount</MudTd>
-            </RowTemplate>
-        </MudTable>
-        <div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit & Return</MudButton>
+			</div>*@
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
+			<HeaderContent>
+				<MudTh>Product Code</MudTh>
+				<MudTh>Product SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Sold Quantity</MudTh>
+				@*<MudTh>Image</MudTh>*@
+				<MudTh>Received</MudTh>
+				<MudTh>Selling Price</MudTh>
+				<MudTh>Received Amount</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Product SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Sold Quantity">@context.soldQty</MudTd>
+				@*<MudTd DataLabel="Image">
+					<MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageURL}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+					</MudTd>*@
+				<MudTd DataLabel="Received">@context.soldQty</MudTd>
+				<MudTd DataLabel="Selling Price">@context.returnPrice</MudTd>
+				<MudTd DataLabel="Received Amount">@(context.soldQty * context.returnPrice)</MudTd>
+			</RowTemplate>
+			<FooterContent>
+				<MudTFootRow>
+					<MudTd colspan="6" Style="text-align: end;">Total:</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@subTotal</MudTd>
+				</MudTFootRow>
+				<MudTFootRow>
+					<MudTd colspan="6" Style="text-align: end;">Item:</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@TableItems</MudTd>
+				</MudTFootRow>
+				<MudTFootRow>
+					<MudTd colspan="6" Style="text-align: end;">Quantity:</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.soldQty))</MudTd>
+				</MudTFootRow>
+				@*<MudTFootRow>
+					<MudTd colspan="6" Style="text-align: end;">Discount Value:</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
+					</MudTFootRow>*@
+				@*<MudTFootRow>
+					<MudTd colspan="6" Style="text-align: end;">Reward Value:</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">0</MudTd>
+					</MudTFootRow>*@
+				<MudTFootRow>
+					<MudTd colspan="6" Style="text-align: end;">Vat(5%):</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
+				</MudTFootRow>
+				<MudTFootRow>
+					<MudTd colspan="6" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + vatAmount), 2)</MudTd>
+				</MudTFootRow>
+			</FooterContent>
+		</MudTable>
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ReturnProducts">Submit & Return</MudButton>
 		</div>
 	</MudContainer>
 </MudPaper>
 
 @code {
-    
-    // Table Customaization
-    private TableCommon tableCommon = new TableCommon();
 
-    // Table Content
-    private IEnumerable<ReturnRefundDTO> Elements = new List<ReturnRefundDTO>();
+	// Filter Value
+	private string TRNCode { get; set; }
+	private string TRNCodeShow { get; set; }
+	private string UID { get; set; }
+
+	// For Value Calculation
+	private decimal subTotal { get; set; }
+	private decimal vatAmount { get; set; }
+	private int TableItems { get; set; }
+
+	// Return
+	private CreateReturnRefundDTO Return = new CreateReturnRefundDTO();
+
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private List<ReturnRefundDTO> Elements = new List<ReturnRefundDTO>();
+
+	// Product List
+	private List<PosItem> ProductList = new List<PosItem>();
+
+	// Return UIDS
+	private List<PosUID> UIDS = new List<PosUID>();
+
+	// Press Enter
+	private async Task TrnEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(TRNCode))
+			{
+				TRNCodeShow = TRNCode;
+				TRNCode = String.Empty;
+			}
+		}
+	}
+
+	private async Task UidEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(TRNCodeShow))
+			{
+				await GetPRoduct();
+			}
+		}
+	}
+
+	// Get Product
+	private async Task GetPRoduct()
+	{
+		if (String.IsNullOrEmpty(TRNCodeShow) || String.IsNullOrEmpty(UID))
+		{
+			Snackbar.Add("Add Both UID & Order ID!", Severity.Error);
+			return;
+		}
+
+		try
+		{
+			var result = await _returnRefund.GetItem(TRNCodeShow, UID);
+
+			var isThere = Elements.Any(x => x.productCode == result.productCode);
+
+			if (isThere)
+			{
+				var itemIndex = Elements.FindIndex(x => x.productCode == result.productCode);
+				var productIndex = ProductList.FindIndex(x => x.productCode == result.productCode);
+				Elements[itemIndex].soldQty += result.soldQty;
+				ProductList[productIndex].quantity += result.soldQty;
+				Snackbar.Add("Product Added To List!", Severity.Success);
+				UIDS.Add(new PosUID { uid = UID });
+				return;
+			}
+			else
+			{
+				Elements.Add(result);
+				ProductList.Add(new PosItem { productCode = result.productCode, price = result.returnPrice, quantity = result.soldQty, totalPrice = result.returnPrice });
+				UIDS.Add(new PosUID { uid = UID });
+				Snackbar.Add("Product Added To List!", Severity.Success);
+			}
+
+			subTotal = Math.Round(Elements.Sum(e => e.soldQty * e.returnPrice), 2);
+			TableItems = Elements.Count();
+			vatAmount = (subTotal / 100) * 5;
+
+			UID = String.Empty;
+
+
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+	}
+
+	// Return Products
+	private PosDetails posDetails = new PosDetails();
+
+	private async Task ReturnProducts()
+	{
+		posDetails.total = subTotal;
+		posDetails.items = TableItems;
+		posDetails.quantities = Elements.Sum(e => e.soldQty);
+		posDetails.vat = 5;
+		posDetails.vatAmount = vatAmount;
+		posDetails.grandTotal = subTotal + vatAmount;
+		posDetails.trnCode = TRNCodeShow;
+		posDetails.customerId = 1;
+
+		Return.pos = posDetails;
+		Return.items = ProductList;
+		Return.posUID = UIDS;
+
+		try
+		{
+			var result = await _returnRefund.IssueReturnRefund(Return);
+			Snackbar.Add("Success!", Severity.Success);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+
+
+	}
+
 }

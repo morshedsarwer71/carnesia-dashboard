@@ -1,45 +1,127 @@
 ﻿@using Carnesia.Domain.WMS.BinTransfer
+@inject IStockRelocation _stock
+@inject ISnackbar Snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
-		<MudGrid Class="justify-center align-baseline mb-5">
-			<MudItem md="3">
-				<MudTextField T="string" Label="Destination Bin" Variant="Variant.Text"/>
+		<MudText Class="my-3" Typo="Typo.h3">Bin: @BinNumberShow</MudText>
+		<MudGrid Class="justify-center">
+			<MudItem sm="3">
+				<MudTextField @bind-Value="BinNumber" Label="Destination Bin" Immediate="true" Variant="Variant.Text" OnKeyPress="BinEnter" />
 			</MudItem>
-			<MudItem md="3">
-				<MudTextField T="string" Label="UID" Variant="Variant.Text"/>
-			</MudItem>
-			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+			<MudItem sm="3">
+				<MudTextField @bind-Value="UID" Label="UID" Variant="Variant.Text" Immediate="true" OnKeyPress="UidEnter" />
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" Hover="true">
+		<MudGrid Class="justify-center mb-3">
+			<MudItem sm="6" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RelocateProduct">Add</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Hover="true" Dense="true" Striped="true">
 			<HeaderContent>
+				<MudTh>#</MudTh>
 				<MudTh>Item Code</MudTh>
+				<MudTh>SKU</MudTh>
 				<MudTh>Product Name</MudTh>
 				<MudTh>Input QTY.</MudTh>
 				<MudTh>BIN</MudTh>
-				<MudTh>Image</MudTh>
+				@*<MudTh>Image</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
-				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-				<MudTd DataLabel="Input QTY.">@context.QTY</MudTd>
-				<MudTd DataLabel="BIN">@context.BIN</MudTd>
-				<MudTd DataLabel="Image">
-					<MudImage Src="@context.Image" Alt="" Elevation="25" Class="rounded-lg"/>
-				</MudTd>
+				<MudTd DataLabel="#">@SetSerial(context)</MudTd>
+				<MudTd DataLabel="Item Code">@context.productCode</MudTd>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Input QTY.">@context.inputQty</MudTd>
+				<MudTd DataLabel="BIN">@context.binName</MudTd>
+			  @*<MudTd DataLabel="Image">
+					<MudImage Src="@context.Image" Alt="" Elevation="25" Class="rounded-lg" />
+				</MudTd>*@
 			</RowTemplate>
 		</MudTable>
-
-	<div class="d-flex justify-end mt-5">
-		<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
-	</div>
 	</MudContainer>
 </MudPaper>
 
 @code {
+	// Uid & Bin
+	private string BinNumber { get; set; }
+	private string BinNumberShow { get; set; }
+	private string UID { get; set; }
+
 	// Table Content
-	private IEnumerable<BinTransferDTO> Elements = new List<BinTransferDTO>();
+	private List<BinTransferProductDTO> Elements = new List<BinTransferProductDTO>();
+
+	// Press Enter
+	private async Task BinEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(BinNumber))
+			{
+				BinNumberShow = BinNumber;
+				BinNumber = String.Empty;
+			}
+		}
+	}
+
+	private async Task UidEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(BinNumberShow))
+			{
+				await RelocateProduct();
+			}
+		}
+	}
+
+	// Relocate Product
+	private async Task RelocateProduct()
+	{
+		if (String.IsNullOrEmpty(UID) || String.IsNullOrEmpty(BinNumberShow))
+		{
+			Snackbar.Add("Please add both UID & Bin Number!", Severity.Error);
+			return;
+		}
+
+		try
+		{
+			var result = await _stock.RelocateProduct(BinNumberShow, UID);
+
+			if (result.message == "Success")
+			{
+				bool isThere = Elements.Any(x => x.productCode == result.product.productCode && x.binName == result.product.binName);
+
+				if (isThere)
+				{
+					int ProductIndex = Elements.FindIndex(x => x.productCode == result.product.productCode && x.binName == result.product.binName);
+					Elements[ProductIndex].inputQty += 1;
+					Snackbar.Add(result.message, Severity.Success);
+					UID = String.Empty;
+					return;
+				}
+
+				Elements.Add(result.product);
+				Snackbar.Add(result.message, Severity.Success);
+				UID = String.Empty;
+				return;
+			}
+			Snackbar.Add(result.message, Severity.Error);
+			return;
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Server Error", Severity.Error);
+		}
+	}
+
+	// Serial
+	private int SetSerial(BinTransferProductDTO Item)
+	{
+		int ItemIndex = Elements.FindIndex(x => x.productCode == Item.productCode && x.binName == Item.binName);
+		return ItemIndex + 1;
+	}
 }

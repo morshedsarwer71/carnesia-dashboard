@@ -8,10 +8,16 @@ namespace Carnesia.Domain.WMS.BinTransfer
 {
     public class BinTransferDTO
     {
-        public string ItemCode { get; set; }
-        public string ProductName { get; set; }
-        public string BIN { get; set; }
-        public string Image { get; set; }
-        public int QTY { get; set; }
+        public string message { get; set; }
+        public BinTransferProductDTO? product { get; set; }
+    }
+    public class BinTransferProductDTO
+    {
+        public string sku { get; set; }
+        public string productName { get; set; }
+        public string? url { get; set; }
+        public string binName { get; set; }
+        public string productCode { get; set; }
+        public int inputQty { get; set; }
     }
 }

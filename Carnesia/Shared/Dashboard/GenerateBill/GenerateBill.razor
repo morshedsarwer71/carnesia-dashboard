@@ -271,12 +271,12 @@
 			{
 				var result = await _generateBill.CreateCustomer(newCustomer);
 
-				if (result)
+				if (result.customerId != null)
 				{
-					Snackbar.Add("New Customer Created Successfully!", Severity.Success);
+					Snackbar.Add(result.message, Severity.Success);
 					return;
 				}
-				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				Snackbar.Add(result.message, Severity.Error);
 			}
 			catch (Exception)
 			{
@@ -428,18 +428,19 @@
 			await AssignData();
 			var result = await _generateBill.NewPOS(POSData);
 
-			if (!String.IsNullOrEmpty(result))
+			if (result.trnCode != null)
 			{
-				trnCode = result;
-				Snackbar.Add("New Bill Generated!", Severity.Success);
+				trnCode = result.trnCode;
+				Snackbar.Add(result.message, Severity.Success);
 				return;
 			}
-			Snackbar.Add("Something went wrong!", Severity.Error);
+			Snackbar.Add(result.message, Severity.Error);
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine(e.Message);
-			Snackbar.Add("Something went wrong!", Severity.Error);
+			
+			Snackbar.Add(e.Message, Severity.Error);
+			//Snackbar.Add("Something went wrong!", Severity.Error);
 			throw;
 		}
 	}

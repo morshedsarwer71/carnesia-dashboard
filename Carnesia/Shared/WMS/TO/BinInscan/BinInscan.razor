@@ -145,7 +145,7 @@
 	// Press Enter
 	private async Task BinEnter(KeyboardEventArgs e)
 	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		if (e.Code == "Enter" || e.Code == "NumpadEnter" || e.Code == "13")
 		{
 			if (!String.IsNullOrEmpty(BinNumber))
 			{

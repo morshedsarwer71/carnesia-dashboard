@@ -12,8 +12,8 @@ namespace Carnesia.Application.Dashboard.GenerateBill
         Task<GenerateBillUIDDataDTO> GetProductByUid(string uid);
         Task<GenerateBillCustomerInfoDTO> GetCustomerInfo(string phoneOrId);
         Task<decimal> GetDiscount(string code, decimal subTotal);
-        Task<string> NewPOS(GenerateBillPOSDTO pos);
-        Task<bool> CreateCustomer(GenerateBillCreateCustomerDTO customer);
+        Task<GenerateBillPosResponseDTO> NewPOS(GenerateBillPOSDTO pos);
+        Task<GenerateBillCustomerCreateResponseDTO> CreateCustomer(GenerateBillCreateCustomerDTO customer);
         Task<GenerateBillInvoiceDTO> GetInvoiceData(string trnCode);
     }
 }
