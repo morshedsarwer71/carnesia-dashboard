@@ -43,7 +43,7 @@
                 </MudTd>
                 <MudTd DataLabel="Category Name">@context.parentCat</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://localhost:7090/{context.imageUrl}")" Alt="@context.parentCat" Elevation="25" Class="rounded-lg" Style="width:50px" />
+                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="@context.parentCat" Elevation="25" Class="rounded-lg" Style="width:50px" />
                 </MudTd>
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateParentCategoryModal(context.id)">Edit</MudButton>

@@ -12,5 +12,6 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 	{
 		Task<List<ManageToDTO>> GetAllManageTo();
 		Task<OutScanDTO> GetOutScan(string picklistID, string uid);
+		Task GeneratePicklistID(string trnCode);
 	}
 }

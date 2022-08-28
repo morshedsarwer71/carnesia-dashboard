@@ -8,13 +8,18 @@ namespace Carnesia.Domain.WMS.OutScan
 {
     public class OutScanDTO
     {
-        public string PickListID { get; set; }
-        public string ItemCode { get; set; }
-        public string ProductName { get; set; }
-        public string Image { get; set; }
-        public string BinCode { get; set; }
-        public int QTY { get; set; }
-        public int PickedQTY { get; set; }
-        public int ToBeScanned { get; set; }
+        public string message { get; set; }
+        public OutScanProductDTO? data { get; set; }
+    }
+    public class OutScanProductDTO
+    {
+        public string sku { get; set; }
+        public string? picCode { get; set; }
+        public string? binName { get; set; }
+        public string productCode { get; set; }
+        public string productName { get; set; }
+        public int sourceStock { get; set; }
+        public int destinationStock { get; set; }
+        public int qty { get; set; }
     }
 }

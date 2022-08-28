@@ -16,6 +16,20 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 		{
 			_httpClient = httpClient;
 		}
+
+		public async Task GeneratePicklistID(string trnCode)
+		{
+			try
+			{
+				var result = await _httpClient.GetAsync($"StockTransfers/generatepicklist/{trnCode}");
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
 		public async Task<List<ManageToDTO>> GetAllManageTo()
 		{
 			try
@@ -35,7 +49,7 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 		{
 			try
 			{
-				var result = await _httpClient.GetFromJsonAsync<OutScanDTO>("");
+				var result = await _httpClient.GetFromJsonAsync<OutScanDTO>($"StockTransfers/outscan/{picklistID}/{uid}");
 				return result;
 			}
 			catch (Exception)

@@ -1,5 +1,7 @@
 ﻿@using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.WMS.OutScan
+@inject IManageTo _manageTo
+@inject ISnackbar Snackbar
 
 <MudPaper Class="px-3 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -15,34 +17,33 @@
 		</MudGrid>
 
         <MudGrid Class="justify-center">
-            
 			<MudItem md="6" Class="d-flex justify-end">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(PickListShow) || String.IsNullOrEmpty(UID)" OnClick="AddProducts">Add</MudButton>
 			</MudItem>
         </MudGrid>
 
 		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
             <HeaderContent>
                 <MudTh>Picklist ID</MudTh>
-                <MudTh>Item Code</MudTh>
+                <MudTh>Product Code</MudTh>
                 <MudTh>Product Name</MudTh>
-                <MudTh>Image</MudTh>
+                @*<MudTh>Image</MudTh>*@
                 <MudTh>QTY.</MudTh>
-                <MudTh>BIN Code</MudTh>
+                <MudTh>BIN Name</MudTh>
                 <MudTh>Picked QTY</MudTh>
                 <MudTh>To Be Scanned</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Picklist ID">@context.PickListID</MudTd>
-                <MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="Image">
+                <MudTd DataLabel="Picklist ID">@context.picCode</MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                @*<MudTd DataLabel="Image">
                     <MudImage Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
-                </MudTd>
-                <MudTd DataLabel="QTY.">@context.QTY</MudTd>
-                <MudTd DataLabel="BIN Code">@context.BinCode</MudTd>
-                <MudTd DataLabel="Picked QTY">@context.PickedQTY</MudTd>
-                <MudTd DataLabel="To Be Scanned">@context.ToBeScanned</MudTd>
+                </MudTd>*@
+                <MudTd DataLabel="QTY.">@context.qty</MudTd>
+                <MudTd DataLabel="BIN Name">@context.binName</MudTd>
+                @*<MudTd DataLabel="Picked QTY">@context.PickedQTY</MudTd>
+                <MudTd DataLabel="To Be Scanned">@context.ToBeScanned</MudTd>*@
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />
@@ -67,7 +68,7 @@
     private TableCommon tableCommon = new TableCommon();
 
     // Table Content
-    private List<OutScanDTO> Elements = new List<OutScanDTO>();
+    private List<OutScanProductDTO> Elements = new List<OutScanProductDTO>();
 
     // Picklist & UID
     private string PickList { get; set; }
@@ -76,25 +77,48 @@
 
     // Enter Press
     private async Task PickEnter(KeyboardEventArgs e)
-	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
-		{
-			if (!String.IsNullOrEmpty(PickList))
-			{
-				PickListShow = PickList;
-				PickList = String.Empty;
-			}
-		}
-	}
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(PickList))
+            {
+                PickListShow = PickList;
+                PickList = String.Empty;
+            }
+        }
+    }
 
     private async Task UIDEnter(KeyboardEventArgs e)
-	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
-		{
-			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(PickListShow))
-			{
-				//await RelocateProduct();
-			}
-		}
-	}
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(PickListShow))
+            {
+                await AddProducts();
+            }
+        }
+    }
+
+    // Add Products
+    private async Task AddProducts()
+    {
+        try
+        {
+            var result = await _manageTo.GetOutScan(PickListShow, UID);
+
+            if (result.data != null)
+            {
+                Elements.Add(result.data);
+                Snackbar.Add(result.message, Severity.Success);
+                UID = String.Empty;
+                return;
+            }
+            Snackbar.Add(result.message, Severity.Error);
+        }
+        catch(Exception e)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            Console.WriteLine(e.Message);
+        }
+    }
 }

@@ -1,24 +1,30 @@
 ﻿@layout PrintLayout
-@page "/picklist-print"
+@page "/picklist-print/{pickCode}"
 
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.BarcodeGenerator
+@inject IManageTo _manageTo
+@inject HttpClient _httpClient
+
 
 <div style="width: 210mm; margin: 0 auto;">
 	<div>
-		<p>Piclist ID: 12345678</p>
-		<p>Created on: 06-Jun-22 12:00:00 PM</p>
-		<p>Created by: Sakib Al Hasan</p>
-		<p>Picklist Type: Transfer Order</p>
-		<p>TO ID: 34564</p>
-		<p>Total Quantity: 50</p>
+		<p>Piclist ID: @Picklist.pickListCode</p>
+		<p>Created on: @Picklist.createdAt</p>
+		<p>Created by: @Picklist.createdBy</p>
+		<p>Picklist Type: @Picklist.pickListType</p>
+		<p>TO ID: @Picklist.toCode</p>
+		<p>Total Quantity: @Picklist.totalQty</p>
 	</div>
 
 	<div style="width: 35%; margin: 10px auto;">
-		<SfBarcodeGenerator Value="12345678" Height="60px">
-			<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
-			</BarcodeGeneratorDisplayText>
-		</SfBarcodeGenerator>
+		@if (!String.IsNullOrEmpty(Picklist.pickListCode))
+		{
+			<SfBarcodeGenerator Value="@Picklist.pickListCode" Height="60px">
+				<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
+				</BarcodeGeneratorDisplayText>
+			</SfBarcodeGenerator>
+		}
 	</div>
 
 	<table style="width: 100%; border-collapse: collapse;">
@@ -31,123 +37,23 @@
 			<th class="table-cell">Bin Number</th>
 			<th class="table-cell">Remarks</th>
 		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
-		<tr style="font-size: 12px;">
-			<td class="table-cell">9999</td>
-			<td class="table-cell">1002998</td>
-			<td class="table-cell">10181053351</td>
-			<td class="table-cell">Palmer's Shea Formula With Vitamin E Raw Shea Hand Cream 60G</td>
-			<td class="table-cell">1000</td>
-			<td class="table-cell">F1R1C1RA1S1B1</td>
-			<td class="table-cell">1000</td>
-		</tr>
+		@if (Items.Count > 0)
+		{
+			foreach (var item in Picklist.bins)
+			{
+				sl++;
+				<tr style="font-size: 12px;">
+					<td class="table-cell">@sl</td>
+					<td class="table-cell">@item.productCode</td>
+					<td class="table-cell">@item.sku</td>
+					<td class="table-cell">@item.productName</td>
+					<td class="table-cell">@item.quantity</td>
+					<td class="table-cell">@item.binName</td>
+					<td class="table-cell"></td>
+				</tr>
+			}
+		}
+
 	</table>
 
 	<MudGrid Class="mt-5">
@@ -164,5 +70,46 @@
 </div>
 
 @code {
+	[Parameter]
+	public string pickCode { get; set; }
 
+	// SL
+	private int sl = 0;
+
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetPicklists();
+	}
+
+	// Picklist
+	private PicklistDTO Picklist = new PicklistDTO();
+	private List<PicklistProductsDTO> Items = new List<PicklistProductsDTO>();
+
+	// Get Picklists
+	private async Task GetPicklists()
+	{
+		Picklist = await _httpClient.GetFromJsonAsync<PicklistDTO>($"StockTransfers/getpicklist/{pickCode}");
+		Items = Picklist.bins;
+	}
+
+	private class PicklistDTO
+	{
+		public string pickListCode { get; set; }
+		public string createdAt { get; set; }
+		public string createdBy { get; set; }
+		public string pickListType { get; set; }
+		public string toCode { get; set; }
+		public int totalQty { get; set; }
+		public List<PicklistProductsDTO> bins { get; set; }
+	}
+
+	private class PicklistProductsDTO
+	{
+		public string productCode { get; set; }
+		public string sku { get; set; }
+		public string productName { get; set; }
+		public int quantity { get; set; }
+		public string binName { get; set; }
+	}
 }

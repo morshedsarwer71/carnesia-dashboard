@@ -1,6 +1,8 @@
 ﻿@using Carnesia.Domain.WMS.ManageTO
 @using Carnesia.Domain.Common.POCO
 @inject IManageTo _manageTo
+@inject ISnackbar Snackbar
+@inject IJSRuntime IJS
 
 <MudPaper Class="px-3 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -50,9 +52,9 @@
 				<MudTd DataLabel="Status">@context.status</MudTd>
 				<MudTd DataLabel="Last Updated on">@context.lastUpdate</MudTd>
 				<MudTd DataLabel="TO Product Quantity">@context.toQuantity</MudTd>
-				<MudTd DataLabel="Picklist ID">@context.pickListId</MudTd>
-				<MudTd DataLabel="Action">
-					<MudButton Variant="Variant.Filled" Color="Color.Primary">Generate Picklist</MudButton>
+				<MudTd DataLabel="Picklist ID" Style="text-decoration: underline; cursor: pointer; color: blue;" @onclick="() => printPicklist(context.pickListId)">@context.pickListId</MudTd>
+				<MudTd DataLabel="Action"> 
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="context.pickListId != null" OnClick="() => GeneratePicklistId(context.toCode)">Generate Picklist</MudButton>
 					@*<MudButton Variant="Variant.Filled" Color="Color.Primary">Out Scan</MudButton>
 					<MudButton Variant="Variant.Filled" Color="Color.Primary">View</MudButton>*@
 				</MudTd>
@@ -88,5 +90,27 @@
 	private async Task GetTos()
 	{
 		Elements = await _manageTo.GetAllManageTo();
+	}
+
+	// Generate Picklist ID
+	private async Task GeneratePicklistId(string trnCode)
+	{
+		try
+		{
+			await _manageTo.GeneratePicklistID(trnCode);
+			Snackbar.Add("Picklist ID Generated Successfully!", Severity.Success);
+			await GetTos();
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+	} 
+
+	// Print Picklist
+	private async Task printPicklist(string pickCode)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/picklist-print/{pickCode}", "_blank" });
 	}
 }
