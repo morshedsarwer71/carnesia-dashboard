@@ -87,6 +87,21 @@ namespace Carnesia.Application.CMS.Services.ToBag
             }
         }
 
+        public async Task<UpdateHomeSectionThumbDTO> GetSingleThumb(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<UpdateHomeSectionThumbDTO>($"ToBag/gettobagthumbyid/{id}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task PublishToggleSection(int id)
         {
             try
@@ -134,6 +149,22 @@ namespace Carnesia.Application.CMS.Services.ToBag
             try
             {
                 await _httpClient.PutAsJsonAsync($"ToBag/updatetobagSection/{Section.id}", Section);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateThumb(UpdateHomeSectionThumbDTO thumb)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"ToBag/updatetobag/{thumb.id}", thumb);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

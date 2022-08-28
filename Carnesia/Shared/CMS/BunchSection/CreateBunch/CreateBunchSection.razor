@@ -11,7 +11,7 @@
                         <MudTextField @bind-Value="FormData.sectionName" Label="Section Name" Required="true" RequiredError="Section name is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudSelect @bind-Value="FormData.allignment" @onblur="() => ClearToBags()" Label="Allignment" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Allignment is required!">
+                        <MudSelect @bind-Value="FormData.allignment" @onblur="() => ClearToBags()" Label="Allignment" ReadOnly="!String.IsNullOrEmpty(FormData.allignment)" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Allignment is required!">
                             <MudSelectItem Value="@("8*1")" />
                             <MudSelectItem Value="@("12*1")" />
                             <MudSelectItem Value="@("3*2")" />

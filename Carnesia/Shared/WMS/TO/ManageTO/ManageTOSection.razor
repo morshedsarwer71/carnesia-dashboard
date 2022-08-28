@@ -1,6 +1,8 @@
 ﻿@using Carnesia.Domain.WMS.ManageTO
 @using Carnesia.Domain.Common.POCO
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+@inject IManageTo _manageTo
+
+<MudPaper Class="px-3 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
 		<MudGrid Class="align-baseline justify-center">
 			<MudItem lg="2" md="4">
@@ -40,19 +42,19 @@
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Created on">@context.CreationDate</MudTd>
-				<MudTd DataLabel="TO ID">@context.TOID</MudTd>
-				<MudTd DataLabel="Source Warehouse">@context.SourceWH</MudTd>
-				<MudTd DataLabel="Destination Warehouse">@context.DestinationWH</MudTd>
-				<MudTd DataLabel="TO Type">@context.ToType</MudTd>
-				<MudTd DataLabel="Status">@context.Status</MudTd>
-				<MudTd DataLabel="Last Updated on">@context.UpadetDate</MudTd>
-				<MudTd DataLabel="TO Product Quantity">@context.ToProductQuantity</MudTd>
-				<MudTd DataLabel="Picklist ID">@context.PickListID</MudTd>
+				<MudTd DataLabel="Created on">@context.createdDate</MudTd>
+				<MudTd DataLabel="TO ID">@context.toId</MudTd>
+				<MudTd DataLabel="Source Warehouse">@context.sourchWh</MudTd>
+				<MudTd DataLabel="Destination Warehouse">@context.destinationWh</MudTd>
+				<MudTd DataLabel="TO Type">@context.poType</MudTd>
+				<MudTd DataLabel="Status">@context.status</MudTd>
+				<MudTd DataLabel="Last Updated on">@context.lastUpdate</MudTd>
+				<MudTd DataLabel="TO Product Quantity">@context.toQuantity</MudTd>
+				<MudTd DataLabel="Picklist ID">@context.pickListId</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Primary">Generate Picklist</MudButton>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary">Out Scan</MudButton>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary">View</MudButton>
+					@*<MudButton Variant="Variant.Filled" Color="Color.Primary">Out Scan</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">View</MudButton>*@
 				</MudTd>
 			</RowTemplate>
 			<PagerContent>
@@ -70,9 +72,21 @@
 </MudPaper>
 
 @code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetTos();
+	}
+
 	// Table Customaization
 	private TableCommon tableCommon = new TableCommon();
 
 	// Table Content
-	private IEnumerable<ManageToDTO> Elements = new List<ManageToDTO>(); 
+	private List<ManageToDTO> Elements = new List<ManageToDTO>(); 
+
+	// Get Manage To
+	private async Task GetTos()
+	{
+		Elements = await _manageTo.GetAllManageTo();
+	}
 }

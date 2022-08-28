@@ -14,6 +14,7 @@ namespace Carnesia.Domain.CMS.Products
         public string productCode { get; set; }
         public string weight { get; set; }
         public int productParentId { get; set; }
+        public decimal mrp { get; set; }
         public string productDimension { get; set; }
         public int brandId { get; set; }
         public bool isPreOrder { get; set; }

@@ -1,231 +1,254 @@
 ﻿@using Carnesia.Domain.WMS.TO.POCO
+@using Carnesia.Domain.WMS.Store.Models
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@inject IStore _store
+@inject ICreateTo _createTo
 
 <MudPaper Class="pa-16 ma-2" Elevation="1">
-    <MudContainer Fixed="true">
-        <MudGrid Class="justify-center">
-		    <MudItem xs="12" sm="6" md="3">
-			    <MudAutocomplete T="string" Label="Source Warehouse" @bind-Value="createToInput.SourceWarehouse" SearchFunc="@SupplierSearch"
-                            ResetValueOnEmptyText="@true" />
-		    </MudItem>
-            <MudItem xs="12" sm="6" md="3">
-			    <MudAutocomplete T="string" Label="Destination Warehouse" @bind-Value="createToInput.DestinationWarehouse" SearchFunc="@SupplierSearch"
-                            ResetValueOnEmptyText="@true" />
-		    </MudItem>
-	    </MudGrid>
-    </MudContainer>
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center">
+			<MudItem xs="12" sm="6" md="3">
+				<MudSelect @bind-Value="SourceID" Label="Source Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Store</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			<MudItem xs="12" sm="6" md="3">
+				<MudSelect @bind-Value="DestinationID" Label="Destination Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Store</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+		</MudGrid>
+	</MudContainer>
 </MudPaper>
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
-    <MudContainer Fixed="true">
-        <div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
-            <MudText Class="px-15 py-2" Typo="Typo.h6">Transfer Order</MudText>
-        </div>
+	<MudContainer Fixed="true">
+		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
+			<MudText Class="px-15 py-2" Typo="Typo.h6">Transfer Order</MudText>
+		</div>
 
-        <MudForm @ref="form" @bind-IsValid="@Success">
-            <MudGrid>
-                <MudItem  md="6">
-                    <MudTextField Immediate="true" @bind-Value="createToInput.SKU" Label="SKU" Variant="Variant.Text" Required="true" RequiredError="SKU is required!" />
-                </MudItem>
+		<MudGrid>
+			<MudItem md="6">
+				<MudTextField Immediate="true" @bind-Value="createToInput.sku" Label="SKU" Variant="Variant.Text" Required="true" RequiredError="SKU is required!" />
+			</MudItem>
 
-                <MudItem md="6">
-                    <MudNumericField Immediate="true" @bind-Value="createToInput.QTY" Label="Quantity" Variant="Variant.Text" Min="1" Required="true" RequiredError="Quantity is required!" />
-                </MudItem>
-            </MudGrid>
-            <div class="mt-5 d-flex justify-end">
-                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Disabled="@(!Success)">Add</MudButton>
-            </div>
-        </MudForm>
+			<MudItem md="6">
+				<MudNumericField Immediate="true" @bind-Value="createToInput.quantity" Label="Quantity" Variant="Variant.Text" Required="true" RequiredError="Quantity is required!" />
+			</MudItem>
+		</MudGrid>
+		<div class="mt-5 d-flex justify-end">
+			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Disabled="String.IsNullOrEmpty(createToInput.sku) || createToInput.quantity <= 0 || SourceID == 0 || DestinationID == 0" OnClick="GetProduct">
+				Add
+			</MudButton>
+		</div>
 
-        <MudTable Items="@manualAddProducts" CanCancelEdit="@true" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated"))"                                            RowEditPreview="ManualBackupItem" RowEditCancel="ManualResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true" Class="mt-5">
-            <HeaderContent>
-                <MudTh>SKU</MudTh>
-                <MudTh>Product Name</MudTh>
-                <MudTh>Destination WH Stock</MudTh>
-                <MudTh>Source WH stock</MudTh>
-                <MudTh>Transfer Qty</MudTh>
-                <MudTh>Action</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="SKU">@context.SKU</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="Destination WH Stock">@context.DestinationWhStock</MudTd>
-                <MudTd DataLabel="Source WH stock">@context.SourceWhStock</MudTd>
-                <MudTd DataLabel="Transfer Qty">@context.TransferQTY</MudTd>
-                <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete"/></MudTd>
-            </RowTemplate>
-            <RowEditingTemplate>
-                <MudTd DataLabel="SKU Code">@context.SKU</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="Destination WH Stock">@context.DestinationWhStock</MudTd>
-                <MudTd DataLabel="Source WH Stock">@context.SourceWhStock</MudTd>
-                <MudTd DataLabel="Transfer Qty">
-                    <MudNumericField @bind-Value="@context.TransferQTY" Required Min="1" />
-                </MudTd>
-                <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete"/></MudTd>
-            </RowEditingTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
+		<MudTable Items="@manualAddProducts" Class="mt-5">
+			<HeaderContent>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Product Code</MudTh>
+				<MudTh>Destination WH Stock</MudTh>
+				<MudTh>Source WH stock</MudTh>
+				<MudTh>Transfer Qty</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Destination WH Stock">@context.destinationStock</MudTd>
+				<MudTd DataLabel="Source WH stock">@context.sourceStock</MudTd>
+				<MudTd DataLabel="Transfer Qty">@context.qty</MudTd>
+				<MudTd DataLabel="Action"><MudIconButton OnClick="() => DeleteManual(context)" Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" /></MudTd>
+			</RowTemplate>
+		</MudTable>
 
-        <div class="mt-5 d-flex justify-end">
-            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")">
-                Submit
-            </MudButton>
-        </div>
-    </MudContainer>
+		<div class="mt-5 d-flex justify-end">
+			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="() => CreateNewTo(manualAddProducts)" >
+				Submit
+			</MudButton>
+		</div>
+	</MudContainer>
 </MudPaper>
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
-    <MudContainer Fixed="true">
-        <div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
-            <MudText Class="px-15 py-2" Typo="Typo.h6">Bulk Transfer Order</MudText>
-        </div>
+	<MudContainer Fixed="true">
+		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
+			<MudText Class="px-15 py-2" Typo="Typo.h6">Bulk Transfer Order</MudText>
+		</div>
 
-        <div class="d-flex justify-center">
-           <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
-               Download CSV Template
-           </MudButton>
+		<div class="d-flex justify-center">
+			<a href="./BulkStockTransfer.xlsx" download target="_top">
+				<MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
+					Download CSV Template
+				</MudButton>
+			</a>
 
-           <InputFile id="fileInput" hidden />
-           <MudButton HtmlTag="label"
-           Variant="Variant.Filled"
-           Color="Color.Primary"
-           StartIcon="@Icons.Filled.CloudUpload"
-           for="fileInput">
-            Upload Files
-           </MudButton>
-        </div>
+			<InputFile id="fileInput" OnChange="UploadBulk" hidden />
+			<MudButton HtmlTag="label"
+					   Variant="Variant.Filled"
+					   Color="Color.Primary"
+					   StartIcon="@Icons.Filled.CloudUpload"
+					   Disabled="SourceID == 0 || DestinationID == 0"
+					   for="fileInput">
+				Upload Files
+			</MudButton>
+		</div>
 
-        <MudTable Items="@bulkAddProducts" CanCancelEdit="@true" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated"))"                                            RowEditPreview="BulkBackupItem" RowEditCancel="BulkResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true" Class="mt-5">
-            <HeaderContent>
-                <MudTh>SKU</MudTh>
-                <MudTh>Product Name</MudTh>
-                <MudTh>Destination WH Stock</MudTh>
-                <MudTh>Source WH stock</MudTh>
-                <MudTh>Transfer Qty</MudTh>
-                <MudTh>Action</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="SKU">@context.SKU</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="Destination WH Stock">@context.DestinationWhStock</MudTd>
-                <MudTd DataLabel="Source WH stock">@context.SourceWhStock</MudTd>
-                <MudTd DataLabel="Transfer Qty">@context.TransferQTY</MudTd>
-                <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete"/></MudTd>
-            </RowTemplate>
-            <RowEditingTemplate>
-                <MudTd DataLabel="SKU Code">@context.SKU</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="Destination WH Stock">@context.DestinationWhStock</MudTd>
-                <MudTd DataLabel="Source WH Stock">@context.SourceWhStock</MudTd>
-                <MudTd DataLabel="Transfer Qty">
-                    <MudNumericField @bind-Value="@context.TransferQTY" Required Min="1" />
-                </MudTd>
-                <MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete"/></MudTd>
-            </RowEditingTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
+		<MudTable Items="@bulkAddProducts" Class="mt-5" Loading="BulkLoading" LoadingProgressColor="Color.Info">
+			<HeaderContent>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Product Code</MudTh>
+				<MudTh>Destination WH Stock</MudTh>
+				<MudTh>Source WH stock</MudTh>
+				<MudTh>Transfer Qty</MudTh>
+				@*<MudTh>Action</MudTh>*@
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Destination WH Stock">@context.destinationStock</MudTd>
+				<MudTd DataLabel="Source WH stock">@context.sourceStock</MudTd>
+				<MudTd DataLabel="Transfer Qty">@context.quantity</MudTd>
+				@*<MudTd DataLabel="Action"><MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" aria-label="delete" /></MudTd>*@
+			</RowTemplate>
+		</MudTable>
 
-        <div class="mt-5 d-flex justify-end">
-            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")">
-                Bulk Submit
-            </MudButton>
-        </div>
-    </MudContainer>
+		<div class="mt-5 d-flex justify-end">
+			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="() => CreateNewTo(bulkAddProducts)">
+				Bulk Submit
+			</MudButton>
+		</div>
+	</MudContainer>
 </MudPaper>
 
 @code {
-    // Input Class
-    public CreateToInputPoco createToInput = new CreateToInputPoco();
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetStores();
+	}
 
-    // Manual Add
-    private IEnumerable<CreateToTablePoco> manualAddProducts = new List<CreateToTablePoco>();
+	// Bulk Loading
+	private bool BulkLoading { get; set; }
 
-    // Manual Before Edit
-    private CreateToTablePoco manualBeforeEdit;
-    
-    // Bulk Add
-    private IEnumerable<CreateToTablePoco> bulkAddProducts = new List<CreateToTablePoco>();
+	// Stores ID
+	private int DestinationID { get; set; }
+	private int SourceID { get; set; }
 
-    // Bulk Before Edit
-    private CreateToTablePoco bulkBeforeEdit;
+	// Input Class
+	public CreateToInputPoco createToInput = new CreateToInputPoco();
 
-    // Form Ref
-    private MudForm form;
-    private bool Success;
+	// Manual Add
+	private List<CreateToProductPoco> manualAddProducts = new List<CreateToProductPoco>();
 
-    // Autocomplite Options
-    private string[] states =
-    {
-        "Alabama", "Alaska", "American Samoa", "Arizona",
-        "Arkansas", "California", "Colorado", "Connecticut",
-        "Delaware", "District of Columbia", "Federated States of Micronesia",
-        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
-        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
-        "Louisiana", "Maine", "Marshall Islands", "Maryland",
-        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
-        "Missouri", "Montana", "Nebraska", "Nevada",
-        "New Hampshire", "New Jersey", "New Mexico", "New York",
-        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
-        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
-        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
-        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
-        "Washington", "West Virginia", "Wisconsin", "Wyoming",
-    };
+	// Bulk Add
+	private List<CreateToProductPoco> bulkAddProducts = new List<CreateToProductPoco>();
 
-    // Autocomplite Search Func
-    private async Task<IEnumerable<string>> SupplierSearch(string value)
-    {
-        // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
+	// Stores
+	private List<StoreDTO> Stores = new List<StoreDTO>();
 
-        // if text is null or empty, show complete list
-        if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
+	// Get Stores
+	private async Task GetStores()
+	{
+		Stores = await _store.GetStoresAsync();
+	}
 
-    // Manual Backup Item 
-    private void ManualBackupItem(object element)
-    {
-        manualBeforeEdit = new()
-        {
-            
-            TransferQTY = ((CreateToTablePoco)element).TransferQTY,
-        };
-    }
+	// Get Product For Manual Incert
+	private async Task GetProduct()
+	{
+		try
+		{
+			var result = await _createTo.GetProduct(SourceID, DestinationID, createToInput.sku);
 
-    // Manaual Reset Items If Edit Cancel
-    private void ManualResetItemToOriginalValues(object element)
-    {
-        ((CreateToTablePoco)element).TransferQTY = manualBeforeEdit.TransferQTY;
-    }
+			if (result.data != null)
+			{
+				bool isThere = manualAddProducts.Any(x => x.productCode == result.data.productCode);
 
-    // Bulk Backup Item 
-    private void BulkBackupItem(object element)
-    {
-        manualBeforeEdit = new()
-        {
-            
-            TransferQTY = ((CreateToTablePoco)element).TransferQTY,
-        };
-    }
+				if (isThere)
+				{
+					int pIndex = manualAddProducts.FindIndex(x => x.productCode == result.data.productCode);
 
-    // Bulk Reset Items If Edit Cancel
-    private void BulkResetItemToOriginalValues(object element)
-    {
-        ((CreateToTablePoco)element).TransferQTY = manualBeforeEdit.TransferQTY;
-    }
+					manualAddProducts[pIndex].quantity += createToInput.quantity;
+					Snackbar.Add(result.message, Severity.Success);
+					createToInput.sku = String.Empty;
+					createToInput.quantity = 0;
+					return;
+				}
 
-    // Delete Item Modal
-    private void OpenDeleteDialog()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        DialogService.Show<CreateToManualDeleteModal>("Delete Item?", options);
-    }
+				result.data.quantity = createToInput.quantity;
+				manualAddProducts.Add(result.data);
+				Snackbar.Add(result.message, Severity.Success);
+				createToInput.sku = String.Empty;
+				createToInput.quantity = 0;
+				return;
+			}
+			Snackbar.Add(result.message, Severity.Error);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+	}
+
+	// Upload XLSX
+	private async Task UploadBulk(InputFileChangeEventArgs e)
+	{
+		BulkLoading = true;
+		try
+		{
+			bulkAddProducts = await _createTo.GetBulkProducts(SourceID, DestinationID, e);
+			BulkLoading = false;
+		}
+		catch (Exception err)
+		{
+			Console.WriteLine(err.Message);
+			BulkLoading = false;
+			Snackbar.Add("Error!", Severity.Error);
+		}
+	}
+
+	// New To
+	private NewToPoco newTo = new NewToPoco();
+	private async Task CreateNewTo(List<CreateToProductPoco> products)
+	{
+		var toDetails = new CreateStockTransferPoco { fromStoreId = SourceID, toStoreId = DestinationID, totalSKUQty = products.Count };
+		newTo.createStockTransferDTO = toDetails;
+		newTo.transferProductDTOs = products;
+		try
+		{
+			var result = await _createTo.NewTo(newTo);
+
+			if (result.message == "Stock Transfer is created")
+			{
+				Snackbar.Add(result.message, Severity.Success);
+				newTo = new NewToPoco();
+				return;
+			}
+			Snackbar.Add(result.message, Severity.Error);
+		}
+		catch(Exception e)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	// Delete Item Modal
+	private void DeleteManual(CreateToProductPoco product)
+	{
+		manualAddProducts.Remove(product);
+		Snackbar.Add("Product Removed Successfully!", Severity.Success);
+	}
 }

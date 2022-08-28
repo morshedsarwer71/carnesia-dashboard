@@ -8,8 +8,9 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime _jsRunTime
 
-<MudPaper Class="ma-2 pa-16">
+<MudPaper Class="ma-2 px-3 py-16">
 	<MudContainer Fixed="true">
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<BunchProductDTO,bool>(FilterFuncInitial)">
 			<ToolBarContent>
@@ -26,12 +27,13 @@
 			<RowTemplate>
 				<MudTd DataLabel="Bunch Name">@context.name</MudTd>
 				<MudTd DataLabel="Image">
-					<MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+					<MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://localhost:7090/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
 				</MudTd>
 				<MudTd DataLabel="Publish">
 					<MudSwitch @bind-Checked="@context.isPublish" Color="Color.Primary" @onclick="(() => TogglePublish(context.id))"/>
 				</MudTd>
 				<MudTd DataLabel="Action">
+					<MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="() => CopyText(context.url)">Copy URL</MudButton>
 					<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => NavigateToUpdate(context.id)">Edit</MudButton>
 					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteProduct(context.id)">Delete</MudButton>
 				</MudTd>
@@ -98,51 +100,59 @@
 	}
 
 	// Delete Product
-    private async Task DeleteProduct(int id)
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
+	private async Task DeleteProduct(int id)
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
 
-        if (!dialog.Cancelled)
-        {
-            try
-            {
-                var result = await _bunchProduct.DeleteBunch(id);
-                if (result)
-                {
-                    Snackbar.Add("Bunch Deleted Successfully!", Severity.Success);
-                    await GetBunchs();
-                    return;
-                }
-                Snackbar.Add("Something Went Wrong!", Severity.Error);
-            }
-            catch (Exception)
-            {
+		if (!dialog.Cancelled)
+		{
+			try
+			{
+				var result = await _bunchProduct.DeleteBunch(id);
+				if (result)
+				{
+					Snackbar.Add("Bunch Deleted Successfully!", Severity.Success);
+					await GetBunchs();
+					return;
+				}
 				Snackbar.Add("Something Went Wrong!", Severity.Error);
-                throw;
-            }
-        }
-    }
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
+	}
 
 	// Toggle Publish
-    private async Task TogglePublish(int id)
-    {
-        try
-        {
-            var result = await _bunchProduct.ToggleBunchProduct(id);
-            Snackbar.Add("Published Changed!", Severity.Success);
-            if (result)
-            {
-                Snackbar.Add("Published Changed!", Severity.Success);
-                await GetBunchs();
-                return;
-            }
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-        }
-        catch (Exception)
-        {
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-            throw;
-        }
-    }
+	private async Task TogglePublish(int id)
+	{
+		try
+		{
+			var result = await _bunchProduct.ToggleBunchProduct(id);
+			Snackbar.Add("Published Changed!", Severity.Success);
+			if (result)
+			{
+				Snackbar.Add("Published Changed!", Severity.Success);
+				await GetBunchs();
+				return;
+			}
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			throw;
+		}
+	}
+
+	// Copy Text
+	private async Task CopyText(string url)
+	{
+		await _jsRunTime.InvokeVoidAsync("navigator.clipboard.writeText", $"https://ecommerce.bespokeit.io/{url}");
+		Snackbar.Add("URL Copied Successfully!", Severity.Success);
+	}
+
 }

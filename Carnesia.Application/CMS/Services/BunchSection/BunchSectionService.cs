@@ -94,6 +94,22 @@ namespace Carnesia.Application.CMS.Services.BunchSection
             }
         }
 
+        public async Task<bool> TogglePublish(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"HomeBunch/togglepublishhomebunch/{id}");
+
+                if (result == "Toggled") return true;
+                else return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<bool> UpdateThumb(BunchThumDTO thumb)
         {
             try

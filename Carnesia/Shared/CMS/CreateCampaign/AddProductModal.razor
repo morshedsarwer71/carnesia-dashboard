@@ -2,55 +2,69 @@
 @inject IProducts _products
 
 <MudDialog>
-    <DialogContent>
-        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudAutocomplete T="string" Label="Product SKU" SearchFunc="@ProductSKUSearch" Value="FormData.sku" ValueChanged="(string s) => GetProductData(s)" Required="true" ResetValueOnEmptyText="true" />
-                <MudNumericField @bind-Value="FormData.stock" Label="Stock" Variant="Variant.Text" Required="true" RequiredError="Stock is required!" />
-                <MudNumericField @bind-Value="FormData.regularPrice" Label="Regular Price" Variant="Variant.Text" Required="true" RequiredError="Regular Price is required!" />
-                <MudSelect @bind-Value="FormData.discType" Label="Discount Type" Required="true" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Cash")" />
-                    <MudSelectItem Value="@("Percent")" />
-                </MudSelect>
-                <MudNumericField @bind-Value="FormData.discAmount" Max="@(FormData.discType == "Percent" ? 100 : FormData.regularPrice)" Label="Discount Amount" Variant="Variant.Text" Required="true" RequiredError="Discount Amount is required!" />
-                <div class="d-flex justify-end my-5">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
-                </div>
-        </MudForm>
-    </DialogContent>
+	<DialogContent>
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudAutocomplete T="string" Label="Product SKU" SearchFunc="@ProductSKUSearch" Value="FormData.sku" ValueChanged="(string s) => GetProductData(s)" Required="true" ResetValueOnEmptyText="true" />
+			<MudNumericField @bind-Value="FormData.stock" Label="Stock" Variant="Variant.Text" Required="true" RequiredError="Stock is required!" />
+			<MudNumericField @bind-Value="FormData.regularPrice" Label="Regular Price" Variant="Variant.Text" ReadOnly="true" />
+			<MudSelect @bind-Value="FormData.discType" Label="Discount Type" Required="true" AnchorOrigin="Origin.BottomCenter">
+				<MudSelectItem Value="@("Cash")" />
+				<MudSelectItem Value="@("Percent")" />
+			</MudSelect>
+			<MudNumericField @bind-Value="FormData.discAmount" Max="@(FormData.discType == "Percent" ? 99 : FormData.regularPrice)" Disabled="String.IsNullOrEmpty(FormData.sku) || String.IsNullOrEmpty(FormData.discType)" Label="Discount Amount" Variant="Variant.Text" Required="true" RequiredError="Discount Amount is required!" />
+			<div class="d-flex justify-end my-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+			</div>
+		</MudForm>
+	</DialogContent>
 </MudDialog>
 
 @code {
-    // Modal On Load
-    protected override async Task OnInitializedAsync()
-    {
-        ProductSKU = await _products.GetProductsAsSKU();
-    }
+	// Modal On Load
+	protected override async Task OnInitializedAsync()
+	{
+		ProductSKU = await _products.GetProductsAsSKU();
+	}
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    [Parameter]
-    public AddCampaignProductDTO FormData{get;set;} = new AddCampaignProductDTO();
+	[Parameter]
+	public AddCampaignProductDTO FormData { get; set; } = new AddCampaignProductDTO();
 
-    // Submit Close
-    void Submit() => MudDialog.Close(DialogResult.Ok<AddCampaignProductDTO>(FormData));
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<AddCampaignProductDTO>(FormData));
 
-    // Form Ref
-    bool success;
-    string[] errors = { };
-    MudForm form;
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
 
-    // Product SKU List
-    private string[] ProductSKU = new string[]{};
+	// Product SKU List
+	private string[] ProductSKU = new string[] { };
 
-    // Get Product Data
-    private async Task GetProductData(string s)
-    {
+	// Get Product Data
+	private async Task GetProductData(string s)
+	{
+		FormData.sku = s;
+		if (!String.IsNullOrEmpty(s))
+		{
+			try
+			{
+				var result = await _products.GetProductBySku(s);
 
-    }
+				FormData.regularPrice = result.mrp;
+				FormData.productName = result.productName;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+			}
+		}
+	}
 
-    // Autocomplite Search Func for ParentCat
-    private async Task<IEnumerable<string>> ProductSKUSearch(string value)
-    {
-        return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
+	// Autocomplite Search Func for ParentCat
+	private async Task<IEnumerable<string>> ProductSKUSearch(string value)
+	{
+		return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+	}
 }

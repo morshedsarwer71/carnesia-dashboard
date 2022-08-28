@@ -43,11 +43,11 @@ namespace Carnesia.Application.CMS.Services.BlogPost
             }
         }
 
-        public async Task<BlogPostDTO> GetBlogPostsById(int id)
+        public async Task<BlogPostUpdateDTO> GetBlogPostsById(int id)
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<BlogPostDTO>($"BlogPost/getblogbyId/{id}");
+                var result = await _httpClient.GetFromJsonAsync<BlogPostUpdateDTO>($"BlogPost/getblogbyId/{id}");
                 return result;
             }
             catch (Exception)
@@ -62,6 +62,22 @@ namespace Carnesia.Application.CMS.Services.BlogPost
             try
             {
                 await _httpClient.PostAsync($"BlogPost/Toggle/{id}", null);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateBlogPost(BlogPostUpdateDTO blog)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"BlogPost/updateblog/{blog.id}", blog);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

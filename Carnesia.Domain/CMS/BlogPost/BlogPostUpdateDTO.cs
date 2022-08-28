@@ -8,9 +8,11 @@ namespace Carnesia.Domain.CMS.BlogPost
 {
     public class BlogPostUpdateDTO
     {
+        public int id { get; set; }
         public string title { get; set; }
         public string description { get; set; }
         public bool isPublish { get; set; }
         public string base64Attch { get; set; }
+        public string imageWebUrl { get; set; }
     }
 }

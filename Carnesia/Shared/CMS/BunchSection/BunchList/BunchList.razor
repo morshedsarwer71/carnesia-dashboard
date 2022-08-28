@@ -19,6 +19,7 @@
 				<MudTh>Section Name</MudTh>
 				<MudTh>Allignment</MudTh>
 				<MudTh>Home</MudTh>
+				<MudTh>Publish</MudTh>
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
@@ -37,6 +38,9 @@
 				<MudTd DataLabel="Home">
 					<MudSwitch @bind-Checked="@context.isHome" Color="Color.Primary" @onclick="() => ToggleHome(context.id)" />
 				</MudTd>
+				<MudTd DataLabel="Home">
+					<MudSwitch @bind-Checked="@context.isPublished" Color="Color.Primary" @onclick="() => TogglePublish(context.id)" />
+				</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteSection(context.id)">Delete</MudButton>
 				</MudTd>
@@ -44,7 +48,7 @@
 			<ChildRowContent>
 				@if (context.ShowDetails)
 				{
-					<td colspan="4">
+					<td colspan="6">
 						<MudCard Elevation="0">
 							<MudCardContent Class="pa-0">
 								<MudTable Items="@context.bunchThums" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
@@ -57,7 +61,7 @@
 									<RowTemplate>
 										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
 										<MudTd DataLabel="Image">
-											<MudImage @onclick="() => ShowImage(DetailsContext.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
+											<MudImage @onclick="() => ShowImage(DetailsContext.imageUrl)" Src="@($"https://localhost:7090/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
 										</MudTd>
 										<MudTd DataLabel="Link">@DetailsContext.link</MudTd>
 										<MudTd DataLabel="Link">
@@ -206,6 +210,28 @@
 			if (result)
 			{
 				Snackbar.Add("Section Toggled Successfully!", Severity.Success);
+				await GetAllBunchSections();
+				return;
+			}
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			throw;
+		}
+	}
+
+	// Toggle Publish
+	private async Task TogglePublish(int id)
+	{
+		try
+		{
+			var result = await _bunchSection.TogglePublish(id);
+
+			if (result)
+			{
+				Snackbar.Add("Publish Toggled Successfully!", Severity.Success);
 				await GetAllBunchSections();
 				return;
 			}

@@ -8,14 +8,16 @@ namespace Carnesia.Domain.WMS.ManageTO
 {
     public class ManageToDTO
     {
-        public string CreationDate { get; set; }
-        public string TOID { get; set; }
-        public string SourceWH { get; set; }
-        public string DestinationWH { get; set; }
-        public string ToType { get; set; }
-        public string Status { get; set; }
-        public string UpadetDate { get; set; }
-        public string PickListID { get; set; }
-        public int ToProductQuantity { get; set; }
+        public int toId { get; set; }
+        public string createdDate { get; set; }
+        public string toCode { get; set; }
+        public string sourchWh { get; set; }
+        public string destinationWh { get; set; }
+        public string poType { get; set; }
+        public string status { get; set; }
+        public int statusId { get; set; }
+        public string lastUpdate { get; set; }
+        public int toQuantity { get; set; }
+        public string? pickListId { get; set; }
     }
 }

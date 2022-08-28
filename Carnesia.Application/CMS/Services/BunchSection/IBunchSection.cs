@@ -15,5 +15,6 @@ namespace Carnesia.Application.CMS.Services.BunchSection
         Task<BunchThumDTO> GetBunchThumb(int id);
         Task<bool> UpdateThumb(BunchThumDTO thumb);
         Task<bool> ToggleHomePlacement(int id);
+        Task<bool> TogglePublish(int id);
     }
 }

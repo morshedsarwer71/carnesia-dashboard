@@ -12,7 +12,7 @@
 					<MudTextField @bind-Value="ToBagSection.sectionName" Label="Section Name" Required="true" RequiredError="Section name is required!" />
 				</MudItem>
 				<MudItem sm="6">
-					<MudSelect @bind-Value="ToBagSection.allignment" @onblur="() =>ClearToBags()" Label="Allignment" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Allignment is required!">
+					<MudSelect @bind-Value="ToBagSection.allignment" @onblur="() =>ClearToBags()" ReadOnly="!String.IsNullOrEmpty(ToBagSection.allignment)" Label="Allignment" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Allignment is required!">
 						<MudSelectItem Value="@("8*1")" />
 						<MudSelectItem Value="@("12*1")" />
 						<MudSelectItem Value="@("3*2")" />

@@ -10,7 +10,9 @@ namespace Carnesia.Domain.WMS.TO.POCO
     {
         public string SourceWarehouse { get; set; }
         public string DestinationWarehouse { get; set; }
-        public string SKU { get; set; }
-        public int QTY { get; set; } = 1;
+        public string productCode { get; set; }
+        public string productName { get; set; }
+        public string sku { get; set; }
+        public int quantity { get; set; }
     }
 }

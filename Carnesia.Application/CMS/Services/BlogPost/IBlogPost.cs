@@ -11,7 +11,8 @@ namespace Carnesia.Application.CMS.Services.BlogPost
     {
         Task CreateBlogPost(CreateBlogPostDTO BlogPost);
         Task<List<BlogPostDTO>> GetAllBlogPosts();
-        Task<BlogPostDTO> GetBlogPostsById(int id);
+        Task<BlogPostUpdateDTO> GetBlogPostsById(int id);
         Task PublishToggle(int id);
+        Task<bool> UpdateBlogPost(BlogPostUpdateDTO blog);
     }
 }

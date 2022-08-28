@@ -34,7 +34,7 @@
                     <MudItem sm="6">
                         <MudTimePicker Label="End Time" @bind-Time="EndTime" />
                     </MudItem>
-                    <MudItem sm="11">
+                    <MudItem sm="12">
                         <MudTextField Lines="5" @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!"/>
                     </MudItem>
                 </MudGrid>
@@ -60,6 +60,7 @@
 
                 <MudTable Items="@Products" Hover="true" Dense="true">
                     <HeaderContent>
+                        <MudTh>Product Name</MudTh>
                         <MudTh>SKU</MudTh>
                         <MudTh>Stock</MudTh>
                         <MudTh>Regular Price</MudTh>
@@ -69,6 +70,7 @@
                         <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
+                        <MudTd DataLabel="Product Name">@context.productName</MudTd>
                         <MudTd DataLabel="SKU">@context.sku</MudTd>
                         <MudTd DataLabel="Stock">@context.stock</MudTd>
                         <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>

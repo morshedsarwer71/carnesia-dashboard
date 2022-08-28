@@ -12,6 +12,7 @@ namespace Carnesia.Domain.CMS.Campaign
         public int stock { get; set; }
         public string campaignCode { get; set; }
         public string sku { get; set; }
+        public string productName { get; set; }
         public string discType { get; set; }
         public decimal discAmount { get; set; }
         public decimal regularPrice { get; set; }

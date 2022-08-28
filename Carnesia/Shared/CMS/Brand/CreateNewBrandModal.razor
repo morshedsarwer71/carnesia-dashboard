@@ -18,6 +18,7 @@
 			<MudText Color="Color.Error">@ImageError</MudText>
 			<MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
 
+			<br/>
 			<InputFile id="logo-image" OnChange="@ValidateLogo" hidden accept=".webp" />
 			<MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="logo-image" Class="mt-5">
 				Upload Brand Logo

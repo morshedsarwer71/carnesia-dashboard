@@ -26,7 +26,7 @@
             </MudButton>
 		</div>
 
-        <MudTable Items="@Images" Dense="true" >
+        <MudTable Items="@Images" Dense="true" Loading="Loading" LoadingProgressColor="Color.Info" >
             <HeaderContent>
                 <MudTh>Image URL</MudTh>
                 <MudTh>Image Name</MudTh>
@@ -72,6 +72,9 @@
 </MudPaper>
 
 @code {
+    // Loading
+    private bool Loading { get; set; }
+
     // Image List
     private List<BulkImageUploadDTO> Images = new List<BulkImageUploadDTO>();
     private List<BulkImageUploadDTO> RejectedImages = new List<BulkImageUploadDTO>();
@@ -79,30 +82,34 @@
     // Upload .xlsx
     private async Task UploadFile (InputFileChangeEventArgs e)
     {
+        Loading = true;
         try
         {
             Images.Clear();
             Images =  await _childProduct.UploadXLSXFileForImage(e);
+            Loading = false;
         }
         catch (Exception)
         {
-            Console.WriteLine("Error!");
-            throw;
+            Snackbar.Add("Error", Severity.Error);
+            Loading = false;
         }
     }
 
     // Create Bulk Images
     private async Task CreateBulkImages()
     {
+        Loading = true;
         try
         {
             RejectedImages = await _childProduct.CreateBulkImages(Images);
             Snackbar.Add("Images Created Successfully!", Severity.Success);
+            Loading = false;
         }
         catch (Exception)
         {
             Snackbar.Add("Error", Severity.Error);
-            throw;
+            Loading = false;
         }
     }
 

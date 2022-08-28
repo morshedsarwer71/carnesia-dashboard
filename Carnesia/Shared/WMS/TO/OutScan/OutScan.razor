@@ -1,21 +1,25 @@
 ﻿@using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.WMS.OutScan
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
+        <MudText Class="my-3" Typo="Typo.h3">Picklist: @PickListShow</MudText>
 		<MudGrid Class="justify-center align-baseline">
 			<MudItem md="3">
-				<MudTextField T="string" Label="Picklist ID" Variant="Variant.Text" />
+				<MudTextField @bind-Value="PickList" Immediate="true" OnKeyPress="PickEnter" Label="Picklist ID" Variant="Variant.Text" />
 			</MudItem>
 
 			<MudItem md="3">
-				<MudTextField T="string" Label="Scan UID" Variant="Variant.Text" />
-			</MudItem>
-
-			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+				<MudTextField @bind-Value="UID" Immediate="true" OnKeyPress="UIDEnter" Label="Scan UID" Variant="Variant.Text" />
 			</MudItem>
 		</MudGrid>
+
+        <MudGrid Class="justify-center">
+            
+			<MudItem md="6" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+			</MudItem>
+        </MudGrid>
 
 		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
             <HeaderContent>
@@ -63,5 +67,34 @@
     private TableCommon tableCommon = new TableCommon();
 
     // Table Content
-    private IEnumerable<OutScanDTO> Elements = new List<OutScanDTO>();
+    private List<OutScanDTO> Elements = new List<OutScanDTO>();
+
+    // Picklist & UID
+    private string PickList { get; set; }
+    private string PickListShow { get; set; }
+    private string UID { get; set; }
+
+    // Enter Press
+    private async Task PickEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(PickList))
+			{
+				PickListShow = PickList;
+				PickList = String.Empty;
+			}
+		}
+	}
+
+    private async Task UIDEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(PickListShow))
+			{
+				//await RelocateProduct();
+			}
+		}
+	}
 }
