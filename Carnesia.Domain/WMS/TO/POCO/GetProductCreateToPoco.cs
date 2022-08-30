@@ -22,4 +22,10 @@ namespace Carnesia.Domain.WMS.TO.POCO
         public int qty { get; set; }
         public int quantity { get; set; }
     }
+
+    public class BulkCreateToResponse
+    {
+        public List<CreateToProductPoco> accepted { get; set; }
+        public List<CreateToProductPoco> rejected { get; set; }
+    }
 }

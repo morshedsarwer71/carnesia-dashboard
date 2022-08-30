@@ -5,7 +5,7 @@
 
 <MudPaper Class="px-3 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
-        <MudText Class="my-3" Typo="Typo.h3">Picklist: @PickListShow</MudText>
+		<MudText Class="my-3" Typo="Typo.h3">Picklist: @PickListShow</MudText>
 		<MudGrid Class="justify-center align-baseline">
 			<MudItem md="3">
 				<MudTextField @bind-Value="PickList" Immediate="true" OnKeyPress="PickEnter" Label="Picklist ID" Variant="Variant.Text" />
@@ -16,109 +16,120 @@
 			</MudItem>
 		</MudGrid>
 
-        <MudGrid Class="justify-center">
+		<MudGrid Class="justify-center">
 			<MudItem md="6" Class="d-flex justify-end">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(PickListShow) || String.IsNullOrEmpty(UID)" OnClick="AddProducts">Add</MudButton>
 			</MudItem>
-        </MudGrid>
+		</MudGrid>
 
 		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
-            <HeaderContent>
-                <MudTh>Picklist ID</MudTh>
-                <MudTh>Product Code</MudTh>
-                <MudTh>Product Name</MudTh>
-                @*<MudTh>Image</MudTh>*@
-                <MudTh>QTY.</MudTh>
-                <MudTh>BIN Name</MudTh>
-                <MudTh>Picked QTY</MudTh>
-                <MudTh>To Be Scanned</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Picklist ID">@context.picCode</MudTd>
-                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
-                <MudTd DataLabel="Product Name">@context.productName</MudTd>
-                @*<MudTd DataLabel="Image">
-                    <MudImage Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
-                </MudTd>*@
-                <MudTd DataLabel="QTY.">@context.qty</MudTd>
-                <MudTd DataLabel="BIN Name">@context.binName</MudTd>
-                @*<MudTd DataLabel="Picked QTY">@context.PickedQTY</MudTd>
-                <MudTd DataLabel="To Be Scanned">@context.ToBeScanned</MudTd>*@
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
+			<HeaderContent>
+				<MudTh>Picklist ID</MudTh>
+				<MudTh>Product Code</MudTh>
+				<MudTh>Product Name</MudTh>
+				@*<MudTh>Image</MudTh>*@
+				<MudTh>QTY.</MudTh>
+				<MudTh>BIN Name</MudTh>
+				<MudTh>Picked QTY</MudTh>
+				<MudTh>To Be Scanned</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Picklist ID">@context.picCode</MudTd>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				@*<MudTd DataLabel="Image">
+					<MudImage Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+					</MudTd>*@
+				<MudTd DataLabel="QTY.">@context.Rqty</MudTd>
+				<MudTd DataLabel="BIN Name">@context.binName</MudTd>
+				<MudTd DataLabel="Picked QTY">@context.qty</MudTd>
+				<MudTd DataLabel="To Be Scanned">@(context.qty - context.Rqty)</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
 
-        <div class="d-flex flex-wrap mt-4">
-            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
-        </div>
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
 
-        <div class="mt-5 d-flex justify-end">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
-        </div>
+		<div class="mt-5 d-flex justify-end">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+		</div>
 	</MudContainer>
 </MudPaper>
 
 @code {
-    // Table Customization
-    private TableCommon tableCommon = new TableCommon();
+	// Table Customization
+	private TableCommon tableCommon = new TableCommon();
 
-    // Table Content
-    private List<OutScanProductDTO> Elements = new List<OutScanProductDTO>();
+	// Table Content
+	private List<OutScanProductDTO> Elements = new List<OutScanProductDTO>();
 
-    // Picklist & UID
-    private string PickList { get; set; }
-    private string PickListShow { get; set; }
-    private string UID { get; set; }
+	// Picklist & UID
+	private string PickList { get; set; }
+	private string PickListShow { get; set; }
+	private string UID { get; set; }
 
-    // Enter Press
-    private async Task PickEnter(KeyboardEventArgs e)
-    {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
-        {
-            if (!String.IsNullOrEmpty(PickList))
-            {
-                PickListShow = PickList;
-                PickList = String.Empty;
-            }
-        }
-    }
+	// Enter Press
+	private async Task PickEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(PickList))
+			{
+				PickListShow = PickList;
+				PickList = String.Empty;
+			}
+		}
+	}
 
-    private async Task UIDEnter(KeyboardEventArgs e)
-    {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
-        {
-            if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(PickListShow))
-            {
-                await AddProducts();
-            }
-        }
-    }
+	private async Task UIDEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(PickListShow))
+			{
+				await AddProducts();
+			}
+		}
+	}
 
-    // Add Products
-    private async Task AddProducts()
-    {
-        try
-        {
-            var result = await _manageTo.GetOutScan(PickListShow, UID);
+	// Add Products
+	private async Task AddProducts()
+	{
+		try
+		{
+			var result = await _manageTo.GetOutScan(PickListShow, UID);
 
-            if (result.data != null)
-            {
-                Elements.Add(result.data);
-                Snackbar.Add(result.message, Severity.Success);
-                UID = String.Empty;
-                return;
-            }
-            Snackbar.Add(result.message, Severity.Error);
-        }
-        catch(Exception e)
-        {
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-            Console.WriteLine(e.Message);
-        }
-    }
+			if (result.data != null)
+			{
+				bool isThere = Elements.Any(x => x.productCode == result.data.productCode);
+
+				if (isThere)
+				{
+					int PIndex = Elements.FindIndex(x => x.productCode == result.data.productCode);
+					Elements[PIndex].Rqty += 1;
+					Snackbar.Add(result.message, Severity.Success);
+					UID = String.Empty;
+					return;
+				}
+				result.data.Rqty = 1;
+				Elements.Add(result.data);
+				Snackbar.Add(result.message, Severity.Success);
+				UID = String.Empty;
+				return;
+			}
+			Snackbar.Add(result.message, Severity.Error);
+		}
+		catch (Exception e)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			Console.WriteLine(e.Message);
+		}
+	}
 }

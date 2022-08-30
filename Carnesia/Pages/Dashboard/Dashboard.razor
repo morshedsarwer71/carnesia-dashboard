@@ -3,6 +3,7 @@
 @using Carnesia.Shared.Dashboard.GenerateBill
 @using Carnesia.Shared.Dashboard.Orders
 @using Carnesia.Shared.Dashboard.ReturnRefund
+@using Carnesia.Shared.Dashboard.Dashboard
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
@@ -28,6 +29,9 @@
 }else if (CurrentPage == ReturnAndRefund)
 {
     <ReturnRefund />
+}else if (CurrentPage == DashBoard)
+{
+    <DashboardReport />
 }
 
 @code {

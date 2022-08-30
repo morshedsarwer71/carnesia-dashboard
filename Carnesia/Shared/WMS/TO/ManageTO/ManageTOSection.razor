@@ -45,7 +45,7 @@
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="Created on">@context.createdDate</MudTd>
-				<MudTd DataLabel="TO ID">@context.toId</MudTd>
+				<MudTd DataLabel="TO ID">@context.toCode</MudTd>
 				<MudTd DataLabel="Source Warehouse">@context.sourchWh</MudTd>
 				<MudTd DataLabel="Destination Warehouse">@context.destinationWh</MudTd>
 				<MudTd DataLabel="TO Type">@context.poType</MudTd>
@@ -55,6 +55,7 @@
 				<MudTd DataLabel="Picklist ID" Style="text-decoration: underline; cursor: pointer; color: blue;" @onclick="() => printPicklist(context.pickListId)">@context.pickListId</MudTd>
 				<MudTd DataLabel="Action"> 
 					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="context.pickListId != null" OnClick="() => GeneratePicklistId(context.toCode)">Generate Picklist</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="context.pickListId == null" OnClick="() => CancelPicklistId(context.pickListId)">Cancel Picklist</MudButton>
 					@*<MudButton Variant="Variant.Filled" Color="Color.Primary">Out Scan</MudButton>
 					<MudButton Variant="Variant.Filled" Color="Color.Primary">View</MudButton>*@
 				</MudTd>
@@ -107,6 +108,22 @@
 			Snackbar.Add("Something Went Wrong!", Severity.Error);
 		}
 	} 
+
+	// Cancel Picklist ID
+	private async Task CancelPicklistId(string picklist)
+	{
+		try
+		{
+			await _manageTo.CancelPicklist(picklist);
+			Snackbar.Add("Picklist ID Cancelled Successfully!", Severity.Success);
+			await GetTos();
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+	}
 
 	// Print Picklist
 	private async Task printPicklist(string pickCode)

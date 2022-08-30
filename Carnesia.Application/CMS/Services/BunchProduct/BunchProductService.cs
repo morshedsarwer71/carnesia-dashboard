@@ -132,9 +132,9 @@ namespace Carnesia.Application.CMS.Services.BunchProduct
         {
             try
             {
-                var result = await _httpClient.PostAsync($"BunchProducts/togglepublish/{id}", null);
+                var result = await _httpClient.GetStringAsync($"BunchProducts/togglepublish/{id}");
 
-                if (result.IsSuccessStatusCode) return true;
+                if (result == "Toggled") return true;
                 return false;
             }
             catch (Exception)

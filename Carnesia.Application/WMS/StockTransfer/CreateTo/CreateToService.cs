@@ -21,11 +21,13 @@ namespace Carnesia.Application.WMS.StockTransfer.CreateTo
             _httpClient = httpClient;
         }
 
-        public async Task<List<CreateToProductPoco>> GetBulkProducts(int source, int destination, InputFileChangeEventArgs e)
+        public async Task<BulkCreateToResponse> GetBulkProducts(int source, int destination, InputFileChangeEventArgs e)
         {
             try
             {
+                var response = new BulkCreateToResponse();
                 var products = new List<CreateToProductPoco>();
+                var rejected = new List<CreateToProductPoco>();
                 DataTable dt = new DataTable();
                 var fileStream = e.File.OpenReadStream();
                 var ms = new MemoryStream();
@@ -63,7 +65,7 @@ namespace Carnesia.Application.WMS.StockTransfer.CreateTo
 
                     var result = await GetProduct(source, destination, sku);
 
-                    if (result != null)
+                    if (result.data != null)
                     {
                         bool isThere = products.Any(x => x.productCode == result.data.productCode);
                         if (isThere)
@@ -77,13 +79,20 @@ namespace Carnesia.Application.WMS.StockTransfer.CreateTo
                             products.Add(result.data);
                         }
                     }
+                    else
+                    {
+                        rejected.Add(new CreateToProductPoco { sku = sku, quantity = inputQTY });
+                    }
                 }
 
-                return products;
-            }
-            catch (Exception)
-            {
+                response.accepted = products;
+                response.rejected = rejected;
 
+                return response;
+            }
+            catch (Exception er)
+            {
+                Console.WriteLine(er.Message);
                 throw;
             }
         }

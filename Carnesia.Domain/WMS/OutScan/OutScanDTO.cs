@@ -21,5 +21,6 @@ namespace Carnesia.Domain.WMS.OutScan
         public int sourceStock { get; set; }
         public int destinationStock { get; set; }
         public int qty { get; set; }
+        public int Rqty { get; set; }
     }
 }

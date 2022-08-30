@@ -1,62 +1,125 @@
 ﻿@using Carnesia.Domain.Common.POCO
-@using Carnesia.Domain.WMS.ReceiveTo
+@using Carnesia.Domain.WMS.OutScan
+@inject IManageTo _manageTo
+@inject ISnackbar Snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
-        <MudGrid Class="align-baseline justify-center mb-5">
-            <MudItem md="3" xs="6">
-                <MudTextField T="string" Label="Enter TO ID" Variant="Variant.Text" />
-            </MudItem>
-            <MudItem md="3" xs="6">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary">Enter TO ID</MudButton>
-            </MudItem>
-        </MudGrid>
+		<MudText Class="my-3" Typo="Typo.h3">To ID: @ToidShow</MudText>
+		<MudGrid Class="justify-center">
+			<MudItem sm="3">
+				<MudTextField @bind-Value="Toid" Immediate="true" OnKeyPress="ToidEnter" Label="TO ID" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudTextField @bind-Value="UID" Immediate="true" OnKeyPress="UIDEnter" Label="UID" Variant="Variant.Text" />
+			</MudItem>
+		</MudGrid>
 
-        <MudGrid Class="align-baseline justify-center justify-md-start mb-5">
-            <MudItem md="3" xs="6">
-                <MudTextField T="string" Label="Enter UID" Variant="Variant.Text" />
-            </MudItem>
-            <MudItem md="3" xs="6">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary">Enter UID</MudButton>
-            </MudItem>
-        </MudGrid>
+		<MudGrid Class="justify-center mb-3">
+			<MudItem sm="6" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(ToidShow) || String.IsNullOrEmpty(UID)" OnClick="AddProducts">Add</MudButton>
+			</MudItem>
+		</MudGrid>
 
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
-            <HeaderContent>
-                <MudTh>SKU Code</MudTh>
-                <MudTh>Product Name</MudTh>
-                <MudTh>TO Quantity</MudTh>
-                <MudTh>Rcv. QTY</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="SKU Code">@context.SKU</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="TO Quantity">@context.ToQTY</MudTd>
-                <MudTd DataLabel="Rcv. QTY">@context.ReceiveQTY</MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
+			<HeaderContent>
+				<MudTh>SKU Code</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>TO Quantity</MudTh>
+				<MudTh>Rcv. QTY</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="SKU Code">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="TO Quantity">@context.qty</MudTd>
+				<MudTd DataLabel="Rcv. QTY">@context.Rqty</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
 
-        <div class="d-flex flex-wrap mt-4">
-            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
-        </div>
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
 
-        <div class="d-flex align-end flex-column">
-            <MudText Typo="Typo.h6">Total QTY: 123</MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Submit Print Acknowledgement</MudButton>
-        </div>
+		@*<div class="d-flex align-end flex-column">
+			<MudText Typo="Typo.h6">Total QTY: 123</MudText>
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit Print Acknowledgement</MudButton>
+		</div>*@
 	</MudContainer>
 </MudPaper>
 
 @code {
+	// Toid & Uid
+	private string Toid { get; set; }
+	private string ToidShow { get; set; }
+	private string UID { get; set; }
+
 	// Table Customization
 	private TableCommon tableCommon = new TableCommon();
 
 	// Table Content
-	private IEnumerable<ReceiveToDTO> Elements = new List<ReceiveToDTO>();
+	private List<OutScanProductDTO> Elements = new List<OutScanProductDTO>();
+
+	// Enter Press
+	private async Task ToidEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(Toid))
+			{
+				ToidShow = Toid;
+				Toid = String.Empty;
+			}
+		}
+	}
+
+	private async Task UIDEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(ToidShow))
+			{
+				await AddProducts();
+			}
+		}
+	}
+
+	// Add Products
+	private async Task AddProducts()
+	{
+		try
+		{
+			var result = await _manageTo.ReceiveTo(ToidShow, UID);
+
+			if (result.data != null)
+			{
+				bool isThere = Elements.Any(x => x.productCode == result.data.productCode);
+
+				if (isThere)
+				{
+					int PIndex = Elements.FindIndex(x => x.productCode == result.data.productCode);
+					Elements[PIndex].Rqty += 1;
+					Snackbar.Add(result.message, Severity.Success);
+					UID = String.Empty;
+					return;
+				}
+				result.data.Rqty = 1;
+				Elements.Add(result.data);
+				Snackbar.Add(result.message, Severity.Success);
+				UID = String.Empty;
+				return;
+			}
+			Snackbar.Add(result.message, Severity.Error);
+		}
+		catch (Exception e)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			Console.WriteLine(e.Message);
+		}
+	}
 }

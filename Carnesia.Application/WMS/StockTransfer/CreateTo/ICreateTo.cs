@@ -11,7 +11,7 @@ namespace Carnesia.Application.WMS.StockTransfer.CreateTo
 	public interface ICreateTo
 	{
 		Task<GetProductCreateToPoco> GetProduct(int source, int destination, string sku);
-		Task<List<CreateToProductPoco>> GetBulkProducts(int source, int destination, InputFileChangeEventArgs e);
+		Task<BulkCreateToResponse> GetBulkProducts(int source, int destination, InputFileChangeEventArgs e);
 		Task<GetProductCreateToPoco> NewTo(NewToPoco to);
 	}
 }

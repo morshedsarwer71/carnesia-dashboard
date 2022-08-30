@@ -130,6 +130,23 @@
 				Bulk Submit
 			</MudButton>
 		</div>
+
+		@if(bulkRejectedProducts.Count > 0)
+		{
+			<h4 class="mt-3">Rejected SKU</h4>
+			<MudTable Items="@bulkRejectedProducts" Class="mt-5" Loading="BulkLoading" LoadingProgressColor="Color.Info">
+			<HeaderContent>
+				<MudTh>SKU</MudTh>
+				<MudTh>Quantity</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Quantity">@context.quantity</MudTd>
+			</RowTemplate>
+		</MudTable>
+		}
+
+		
 	</MudContainer>
 </MudPaper>
 
@@ -155,6 +172,7 @@
 
 	// Bulk Add
 	private List<CreateToProductPoco> bulkAddProducts = new List<CreateToProductPoco>();
+	private List<CreateToProductPoco> bulkRejectedProducts = new List<CreateToProductPoco>();
 
 	// Stores
 	private List<StoreDTO> Stores = new List<StoreDTO>();
@@ -206,9 +224,13 @@
 	private async Task UploadBulk(InputFileChangeEventArgs e)
 	{
 		BulkLoading = true;
+		bulkAddProducts.Clear();
+		bulkRejectedProducts.Clear();
 		try
 		{
-			bulkAddProducts = await _createTo.GetBulkProducts(SourceID, DestinationID, e);
+			var result = await _createTo.GetBulkProducts(SourceID, DestinationID, e);
+			bulkAddProducts = result.accepted;
+			bulkRejectedProducts = result.rejected;
 			BulkLoading = false;
 		}
 		catch (Exception err)

@@ -51,7 +51,7 @@
                                for="fileInput">
                         Upload Images
                     </MudButton>
-                    <MudText Class="mt-1">600 * 600(Max 50Kb)</MudText>
+                    <MudText Class="mt-1">1080 * 420(Max 100Kb)</MudText>
                 </div>
 
                 <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
@@ -92,7 +92,7 @@
     {
         try
         {
-            FormData.base64Attch = await _base64.ConvertToBase64(153600, 1080, 420, e);
+            FormData.base64Attch = await _base64.ConvertToBase64(102400, 1080, 420, e);
         }
         catch(Exception error)
         {
