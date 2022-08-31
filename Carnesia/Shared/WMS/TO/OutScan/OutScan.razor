@@ -34,16 +34,16 @@
 				<MudTh>To Be Scanned</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Picklist ID">@context.picCode</MudTd>
+				<MudTd DataLabel="Picklist ID">@context.pickCode</MudTd>
 				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
 				@*<MudTd DataLabel="Image">
 					<MudImage Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
 					</MudTd>*@
-				<MudTd DataLabel="QTY.">@context.Rqty</MudTd>
+				<MudTd DataLabel="QTY.">@context.quantity</MudTd>
 				<MudTd DataLabel="BIN Name">@context.binName</MudTd>
-				<MudTd DataLabel="Picked QTY">@context.qty</MudTd>
-				<MudTd DataLabel="To Be Scanned">@(context.qty - context.Rqty)</MudTd>
+				<MudTd DataLabel="Picked QTY">@context.pickedQty</MudTd>
+				<MudTd DataLabel="To Be Scanned">@context.toBeScanned</MudTd>
 			</RowTemplate>
 			<PagerContent>
 				<MudTablePager />
@@ -58,7 +58,7 @@
 		</div>
 
 		<div class="mt-5 d-flex justify-end">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(PickListShow)" OnClick="ConfirmPicklist">Submit</MudButton>
 		</div>
 	</MudContainer>
 </MudPaper>
@@ -68,7 +68,7 @@
 	private TableCommon tableCommon = new TableCommon();
 
 	// Table Content
-	private List<OutScanProductDTO> Elements = new List<OutScanProductDTO>();
+	private List<NewOutScanProductDTO> Elements = new List<NewOutScanProductDTO>();
 
 	// Picklist & UID
 	private string PickList { get; set; }
@@ -84,6 +84,7 @@
 			{
 				PickListShow = PickList;
 				PickList = String.Empty;
+				await GetProductsByPickList();
 			}
 		}
 	}
@@ -106,20 +107,9 @@
 		{
 			var result = await _manageTo.GetOutScan(PickListShow, UID);
 
-			if (result.data != null)
+			if (result.message == "Success")
 			{
-				bool isThere = Elements.Any(x => x.productCode == result.data.productCode);
-
-				if (isThere)
-				{
-					int PIndex = Elements.FindIndex(x => x.productCode == result.data.productCode);
-					Elements[PIndex].Rqty += 1;
-					Snackbar.Add(result.message, Severity.Success);
-					UID = String.Empty;
-					return;
-				}
-				result.data.Rqty = 1;
-				Elements.Add(result.data);
+				Elements = result.data;
 				Snackbar.Add(result.message, Severity.Success);
 				UID = String.Empty;
 				return;
@@ -128,7 +118,50 @@
 		}
 		catch (Exception e)
 		{
-			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			Snackbar.Add("Internal server error!", Severity.Error);
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	// Get Products By Picklist
+	private async Task GetProductsByPickList()
+	{
+		try
+		{
+			var result = await _manageTo.GetProductsByPickList(PickListShow);
+
+			if (result.Count > 0)
+			{
+				Elements = result;
+				Snackbar.Add("Products found by picklist!", Severity.Success);
+				return;
+			}
+			Snackbar.Add("Picklist id is wrong!", Severity.Error);
+		}
+		catch (Exception e)
+		{
+			Snackbar.Add("Internal server error!", Severity.Success);
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	// Confirm Picklist
+	private async Task ConfirmPicklist()
+	{
+		try
+		{
+			var result = await _manageTo.ConfirmPickList(PickListShow);
+
+			if (result)
+			{
+				Snackbar.Add("Picklist Confirmed!", Severity.Success);
+				return;
+			}
+			Snackbar.Add("Something went wrong!", Severity.Error);
+		}
+		catch(Exception e)
+		{
+			Snackbar.Add("Internal server error!", Severity.Success);
 			Console.WriteLine(e.Message);
 		}
 	}

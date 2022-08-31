@@ -1,0 +1,60 @@
+﻿@page "/remove-uid";
+
+@inject ISnackbar Snackbar
+@inject HttpClient _httpClient
+
+<MudPaper Class="pa-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center">
+			<MudItem sm="6">
+				<MudTextField @bind-Value="UID" Label="Scan UID" Immediate="true" OnKeyPress="UidEnter" />
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center">
+			<MudItem sm="6" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteUID">Remove</MudButton>
+			</MudItem>
+		</MudGrid>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// UID
+	private string UID { get; set; }
+
+	// Press Enter
+	private async Task UidEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(UID) && UID.Length == 15)
+			{
+				await DeleteUID();
+			}
+		}
+	}
+
+	// Remove UID
+	private async Task DeleteUID()
+	{
+		try
+		{
+			var result = await _httpClient.GetAsync($"PurchaseOrders/removeuidfromscan/{UID}");
+
+			if (result.IsSuccessStatusCode)
+			{
+				Snackbar.Add("UID Removed!", Severity.Success);
+				UID = String.Empty;
+				return;
+			}
+
+			Snackbar.Add("UID Removed Failed!", Severity.Success);
+		}
+		catch(Exception e)
+		{
+			Snackbar.Add("UID Removed Failed!", Severity.Success);
+			Console.WriteLine(e.Message);
+		}
+	}
+}

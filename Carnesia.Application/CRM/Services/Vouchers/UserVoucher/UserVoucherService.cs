@@ -59,5 +59,21 @@ namespace Carnesia.Application.CRM.Services.Vouchers.UserVoucher
                 throw;
             }
         }
+
+        public async Task<bool> ToggleUse(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetAsync($"Voucher/toggleuser/{id}");
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

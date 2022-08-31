@@ -13,5 +13,6 @@ namespace Carnesia.Application.CRM.Services.Vouchers.AutoApply
 		Task<bool> NewAutoApply(AddAutoApplyDTO autoApply);
 		Task<List<AutoApplyListDTO>> GetAllAutoApplies();
 		Task<bool> DeleteVoucher(int id);
+		Task<bool> ToggleUse(int id);
 	}
 }

@@ -19,5 +19,6 @@ namespace Carnesia.Domain.CRM.Vouchers.InstantVoucher.VoucherList
         public object approvalDate { get; set; }
         public string approvedBy { get; set; }
         public string description { get; set; }
+        public bool isEnabled { get; set; }
     }
 }

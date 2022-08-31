@@ -23,4 +23,21 @@ namespace Carnesia.Domain.WMS.OutScan
         public int qty { get; set; }
         public int Rqty { get; set; }
     }
+
+    public class OutUIDScanDTO
+    {
+        public string message { get; set; }
+        public List<NewOutScanProductDTO>? data { get; set; }
+    }
+
+    public class NewOutScanProductDTO
+    {
+        public string pickCode { get; set; }
+        public string productCode { get; set; }
+        public string productName { get; set; }
+        public int quantity { get; set; }
+        public string binName { get; set; }
+        public int pickedQty { get; set; }
+        public int toBeScanned { get; set; }
+    }
 }

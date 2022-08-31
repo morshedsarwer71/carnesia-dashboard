@@ -18,6 +18,7 @@ namespace Carnesia.Domain.CRM.Vouchers.StoreVoucher.VoucherList
         public decimal discAmntOrPercent { get; set; }
         public decimal upToDiscAmnt { get; set; }
         public string description { get; set; }
+        public bool isEnabled { get; set; }
         public List<VoucherListStoreDTO> voucherStores { get; set; }
     }
 }

@@ -11,10 +11,9 @@ namespace Carnesia.Application.CRM.Services.Vouchers.GeneralVoucher
     public interface IGeneralVoucher
     {
         Task<bool> CreateNewVoucher(AddGeneralVoucherDTO VoucherData);
-
         Task<List<VoucherListDTO>> GetVouchers();
         Task<VoucherListDTO> GetVoucherById(int id);
-
         Task DeleteVoucher(int id);
+        Task<bool> ToggleUse(int id);
     }
 }

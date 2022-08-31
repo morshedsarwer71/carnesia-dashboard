@@ -9,7 +9,7 @@ using Carnesia.Domain.WMS.OutScan;
 
 namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 {
-	public class ManageToService : IManageTo
+    public class ManageToService : IManageTo
 	{
 		private readonly HttpClient _httpClient;
 		public ManageToService(HttpClient httpClient)
@@ -22,6 +22,22 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
             try
             {
 				var result = await _httpClient.GetAsync($"StockTransfers/cancelgeneratepicklist/{pickList}");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> ConfirmPickList(string picklistID)
+        {
+            try
+            {
+				var result = await _httpClient.GetAsync($"StockTransfers/confirmpicklist/{picklistID}");
+
+				if (result.IsSuccessStatusCode) return true;
+				return false;
             }
             catch (Exception)
             {
@@ -58,11 +74,11 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 			}
 		}
 
-		public async Task<OutScanDTO> GetOutScan(string picklistID, string uid)
+		public async Task<OutUIDScanDTO> GetOutScan(string picklistID, string uid)
 		{
 			try
 			{
-				var result = await _httpClient.GetFromJsonAsync<OutScanDTO>($"StockTransfers/outscan/{picklistID}/{uid}");
+				var result = await _httpClient.GetFromJsonAsync<OutUIDScanDTO>($"StockTransfers/outscan/{picklistID}/{uid}");
 				return result;
 			}
 			catch (Exception)
@@ -71,6 +87,21 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 				throw;
 			}
 		}
+
+        public async Task<List<NewOutScanProductDTO>> GetProductsByPickList(string picklistID)
+        {
+            try
+            {
+				var result = await _httpClient.GetFromJsonAsync<List<NewOutScanProductDTO>>($"StockTransfers/getpicklistbycode/{picklistID}");
+
+				return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
         public async Task<OutScanDTO> ReceiveTo(string toid, string uid)
         {

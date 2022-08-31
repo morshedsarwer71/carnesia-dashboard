@@ -235,11 +235,18 @@
 	// Get Product
 	private async Task GetChild()
 	{
-		var result = await _childProduct.GetChildById(id);
-
-		if (result != null)
+		try
 		{
-			FormData = result;
+			var result = await _childProduct.GetChildById(id);
+
+			if (result != null)
+			{
+				FormData = result;
+			}
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
 		}
 	}
 

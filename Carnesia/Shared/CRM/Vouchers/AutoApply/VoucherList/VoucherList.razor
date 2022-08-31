@@ -4,7 +4,7 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-<MudPaper Class="pa-16 pt-10 ma-2 mt-10">
+<MudPaper Class="py-16 px-3 ma-2 mt-10">
 	<MudContainer Fixed="true">
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<AutoApplyListDTO,bool>(FilterFuncInitial)">
 			<ToolBarContent>
@@ -21,6 +21,7 @@
 				<MudTh>Discount Amount</MudTh>
 				<MudTh>Up To</MudTh>
 				<MudTh>Description</MudTh>
+				<MudTh>Enable</MudTh>
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
@@ -32,6 +33,9 @@
 				<MudTd DataLabel="Discount Amount">@context.discAmntOrPercent</MudTd>
 				<MudTd DataLabel="Up To">@context.uptoDiscAmnt</MudTd>
 				<MudTd DataLabel="Description">@context.description</MudTd>
+				<MudTd DataLabel="Enable">
+					<MudSwitch @bind-Checked="@context.isEnabled" Color="Color.Primary" @onclick="(() => ToggleEnable(context.id))"/>
+				</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.id)">Delete</MudButton>
 				</MudTd>
@@ -103,5 +107,26 @@
 			return true;
 		return false;
 	}
+
+	// Toggle Publish
+    private async Task ToggleEnable(int id)
+    {
+        try
+        {
+            var result = await _autoApply.ToggleUse(id);
+            if (result)
+            {
+                Snackbar.Add("Published Changed!", Severity.Success);
+                await GetVouchers();
+                return;
+            }
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            throw;
+        }
+    }
 
 }

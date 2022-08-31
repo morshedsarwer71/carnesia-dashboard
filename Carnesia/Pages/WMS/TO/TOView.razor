@@ -1,0 +1,85 @@
+﻿@page "/view-to"
+
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.BarcodeGenerator
+@using Carnesia.Domain.WMS.UpdateTO
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudText Typo="Typo.h4">TO ID: 123456</MudText>
+		<p>Created On: 22-Jan-2022</p>
+		<p>Source Warehouse: Arham Trade International</p>
+		<p>Destination Warehouse: Dhanmondi-W102</p>
+
+		<div style="width: 25%; margin: 10px auto">
+			<SfBarcodeGenerator Value="123456" Height="60px">
+				<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
+				</BarcodeGeneratorDisplayText>
+			</SfBarcodeGenerator>
+		</div>
+
+		<MudTable Items="Elements" Hover="true" Striped="true" MultiSelection="true" @bind-SelectedItems="SelectedTO" CommitEditTooltip="Save Edit" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" RowEditPreview="BackupItem" RowEditCancel="ResetItem">
+			<HeaderContent>
+				<MudTh>Product Code</MudTh>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>TO Quantity</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="TO Quantity">@context.toQuantity</MudTd>
+			</RowTemplate>
+			<RowEditingTemplate>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="TO Quantity">
+					<MudTextField @bind-Value="@context.toQuantity" Required />
+				</MudTd>
+			</RowEditingTemplate>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		AddTo();
+	}
+	// Table Content
+	private List<UpdateTODTO> Elements = new List<UpdateTODTO>();
+
+	// MultiSelect
+	private HashSet<UpdateTODTO> SelectedTO = new HashSet<UpdateTODTO>();
+
+	private UpdateTODTO BeforeEdit;
+
+	// Backup
+	private void BackupItem(object element)
+	{
+		BeforeEdit = new()
+			{
+				sku = ((UpdateTODTO)element).sku,
+				productName = ((UpdateTODTO)element).productName,
+				productCode = ((UpdateTODTO)element).productCode,
+				toQuantity = ((UpdateTODTO)element).toQuantity
+			};
+	}
+
+	// Reset Item
+	private void ResetItem(object element)
+	{
+		((UpdateTODTO)element).sku = BeforeEdit.sku;
+		((UpdateTODTO)element).productName = BeforeEdit.productName;
+		((UpdateTODTO)element).productCode = BeforeEdit.productCode;
+		((UpdateTODTO)element).toQuantity = BeforeEdit.toQuantity;
+	}
+
+	private void AddTo()
+	{
+		Elements.Add(new UpdateTODTO { sku = "123456789", productCode = "100005", productName = "Lakme 9 to 5.", toQuantity = 10 });
+	}
+}

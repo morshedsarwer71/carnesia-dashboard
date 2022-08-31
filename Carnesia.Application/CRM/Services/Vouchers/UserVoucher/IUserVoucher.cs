@@ -13,5 +13,6 @@ namespace Carnesia.Application.CRM.Services.Vouchers.UserVoucher
         Task<List<UserVoucherListDTO>> GetAllVouchers();
         Task<bool> CreateUserVoucher(CreateUserVoucherDTO Voucher);
         Task RemoveVoucher(int id);
+        Task<bool> ToggleUse(int id);
     }
 }
