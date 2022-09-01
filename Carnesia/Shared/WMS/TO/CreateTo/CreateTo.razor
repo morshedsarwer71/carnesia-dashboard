@@ -73,7 +73,7 @@
 		</MudTable>
 
 		<div class="mt-5 d-flex justify-end">
-			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="() => CreateNewTo(manualAddProducts)" >
+			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="() => CreateNewTo(manualAddProducts)" Disabled="DisableSubmit">
 				Submit
 			</MudButton>
 		</div>
@@ -126,7 +126,7 @@
 		</MudTable>
 
 		<div class="mt-5 d-flex justify-end">
-			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="() => CreateNewTo(bulkAddProducts)">
+			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="@($"color:{Colors.Grey.Lighten5}; background:{Colors.BlueGrey.Darken4};")" OnClick="() => CreateNewTo(bulkAddProducts)" Disabled="DisableSubmit">
 				Bulk Submit
 			</MudButton>
 		</div>
@@ -156,6 +156,9 @@
 	{
 		await GetStores();
 	}
+
+	// Disable Submit
+	private bool DisableSubmit { get; set; }
 
 	// Bulk Loading
 	private bool BulkLoading { get; set; }
@@ -245,6 +248,7 @@
 	private NewToPoco newTo = new NewToPoco();
 	private async Task CreateNewTo(List<CreateToProductPoco> products)
 	{
+		DisableSubmit = true;
 		var toDetails = new CreateStockTransferPoco { fromStoreId = SourceID, toStoreId = DestinationID, totalSKUQty = products.Count };
 		newTo.createStockTransferDTO = toDetails;
 		newTo.transferProductDTOs = products;
@@ -256,12 +260,15 @@
 			{
 				Snackbar.Add(result.message, Severity.Success);
 				newTo = new NewToPoco();
+				DisableSubmit = false;
 				return;
 			}
 			Snackbar.Add(result.message, Severity.Error);
+			DisableSubmit = false;
 		}
 		catch(Exception e)
 		{
+			DisableSubmit = false;
 			Snackbar.Add("Something Went Wrong!", Severity.Error);
 			Console.WriteLine(e.Message);
 		}

@@ -57,11 +57,14 @@ namespace Carnesia.Application.CMS.Services.BlogPost
             }
         }
 
-        public async Task PublishToggle(int id)
+        public async Task<bool> PublishToggle(int id)
         {
             try
             {
-                await _httpClient.PostAsync($"BlogPost/Toggle/{id}", null);
+                var result = await _httpClient.GetAsync($"BlogPost/Toggle/{id}");
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

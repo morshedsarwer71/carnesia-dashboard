@@ -120,9 +120,14 @@
 	{
 		try
 		{
-			await _toBag.PublishToggleSection(id);
-			Snackbar.Add("Publish Toggled Successfully!", Severity.Success);
-			await GetAllToBags();
+			var result = await _toBag.PublishToggleSection(id);
+			if (result)
+			{
+				Snackbar.Add("Publish Toggled Successfully!", Severity.Success);
+				await GetAllToBags();
+				return;
+			}
+			Snackbar.Add("Something Went Wrong!", Severity.Success);
 		}
 		catch (Exception)
 		{

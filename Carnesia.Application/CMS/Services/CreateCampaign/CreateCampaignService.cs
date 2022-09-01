@@ -28,7 +28,7 @@ namespace Carnesia.Application.CMS.Services.CreateCampaign
         {
             try
             {
-                var result = await _httpClient.PostAsJsonAsync("Campaign​/AddCampaignProduct", Product);
+                var result = await _httpClient.PostAsJsonAsync("Campaign/AddCampaignProduct", Product);
 
                 if (result.IsSuccessStatusCode)
                 {
@@ -36,9 +36,9 @@ namespace Carnesia.Application.CMS.Services.CreateCampaign
                 }
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
                 throw;
             }
         }

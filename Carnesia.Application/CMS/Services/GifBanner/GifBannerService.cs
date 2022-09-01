@@ -61,7 +61,7 @@ namespace Carnesia.Application.CMS.Services.GifBanner
         {
             try
             {
-                var result = await _httpClient.PostAsync($"HomePage/Togglepublishgifbanner/{id}", null);
+                var result = await _httpClient.GetAsync($"HomePage/Togglepublishgifbanner/{id}");
                 if(result.IsSuccessStatusCode) return true;
                 return false;
             }

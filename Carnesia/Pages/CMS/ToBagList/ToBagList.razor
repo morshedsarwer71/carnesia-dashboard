@@ -11,7 +11,7 @@
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh></MudTh>
@@ -55,7 +55,7 @@
 								   <RowTemplate>
 										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
 										<MudTd DataLabel="Image">
-											<MudImage Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg"												 Style="width:50px" />
+											<MudImage Src="@($"https://carnesiaapi.bespokeit.io/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
 										</MudTd>
 										<MudTd DataLabel="Link">@DetailsContext.link</MudTd>
 										<MudTd DataLabel="Link">

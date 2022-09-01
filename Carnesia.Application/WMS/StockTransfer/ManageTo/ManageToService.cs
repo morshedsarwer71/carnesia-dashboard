@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
 using Carnesia.Domain.WMS.OutScan;
+using Carnesia.Domain.WMS.UpdateTO;
 
 namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 {
@@ -35,6 +36,22 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
             try
             {
 				var result = await _httpClient.GetAsync($"StockTransfers/confirmpicklist/{picklistID}");
+
+				if (result.IsSuccessStatusCode) return true;
+				return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteToProducts(DeleteToProductsDTO products)
+        {
+            try
+            {
+				var result = await _httpClient.PostAsJsonAsync("StockTransfers/removetoproduct", products);
 
 				if (result.IsSuccessStatusCode) return true;
 				return false;
@@ -103,6 +120,21 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
             }
         }
 
+        public async Task<UpdateTODTO> GetToDetails(string toid)
+        {
+            try
+            {
+				var result = await _httpClient.GetFromJsonAsync<UpdateTODTO>($"StockTransfers/getstocktransfer/{toid}");
+
+				return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<OutScanDTO> ReceiveTo(string toid, string uid)
         {
 			try
@@ -116,5 +148,21 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 				throw;
 			}
 		}
+
+        public async Task<bool> UpdateToProductQuantity(string toid, int qty, int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"StockTransfers/updatetoproduct/{toid}/{qty}/{id}");
+
+                if (result == "Success") return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

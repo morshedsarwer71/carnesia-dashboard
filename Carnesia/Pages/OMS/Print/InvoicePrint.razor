@@ -8,7 +8,7 @@
 @using Syncfusion.Blazor.BarcodeGenerator
 
 <div style="width: 3.5in; margin: 0 auto; padding: 3px">
-	<h1>Logo</h1>
+	<MudImage Width="150" Src="@("./carneisa logo (white outlined).png")" Alt="logo" />
 	<hr />
 	<h1 style="text-align:center; font-weight: 600;">Invoice</h1>
 	<hr />
@@ -16,13 +16,13 @@
 	<h4>Phone #@Invoice.outletPhone</h4>
 	<br />
 	<h4 style="font-weight: 600;">Cutomer Copy</h4>
-	@if (!String.IsNullOrEmpty(Invoice.trnCode))
+	@*@if (!String.IsNullOrEmpty(Invoice.trnCode))
 	{
 		<SfBarcodeGenerator Value="@(Invoice.trnCode)" Height="50px">
 			<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
 			</BarcodeGeneratorDisplayText>
 		</SfBarcodeGenerator>
-	}
+	}*@
 	<h4>Order Date: @Invoice.orderDate</h4>
 	<h4>Customer Name: @Invoice.customerName</h4>
 	<h4>Phone #@Invoice.customerPhone</h4>
@@ -84,8 +84,8 @@
 	// Page On Load
 	protected override async Task OnInitializedAsync()
 	{
-		await GetInvoice();
-		Items = Invoice.items;
+		//await GetInvoice();
+		//Items = Invoice.items;
 	}
 
 	// Invoice Data

@@ -14,6 +14,6 @@ namespace Carnesia.Domain.CMS.BunchProduct
         public string description { get; set; }
         public string imageUrl { get; set; }
         public string url { get; set; }
-        public bool isPublish { get; set; }
+        public bool isPublished { get; set; }
     }
 }

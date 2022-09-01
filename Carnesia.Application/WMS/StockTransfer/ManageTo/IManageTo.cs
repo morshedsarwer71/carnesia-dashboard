@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Carnesia.Domain.WMS.ManageTO;
 using Carnesia.Domain.WMS.OutScan;
+using Carnesia.Domain.WMS.UpdateTO;
 
 namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 {
@@ -17,5 +18,8 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 		Task CancelPicklist(string pickList);
 		Task<List<NewOutScanProductDTO>> GetProductsByPickList(string picklistID);
 		Task<bool> ConfirmPickList(string picklistID);
+		Task<UpdateTODTO> GetToDetails(string toid);
+		Task<bool> DeleteToProducts(DeleteToProductsDTO products);
+		Task<bool> UpdateToProductQuantity(string toid, int qty, int id);
 	}
 }

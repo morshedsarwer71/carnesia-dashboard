@@ -30,7 +30,7 @@
 					<MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://carnesiaapi.bespokeit.io/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
 				</MudTd>
 				<MudTd DataLabel="Publish">
-					<MudSwitch @bind-Checked="@context.isPublish" Color="Color.Primary" @onclick="(() => TogglePublish(context.id))"/>
+					<MudSwitch @bind-Checked="@context.isPublished" Color="Color.Primary" @onclick="(() => TogglePublish(context.id))"/>
 				</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="() => CopyText(context.url)">Copy URL</MudButton>
@@ -132,7 +132,6 @@
 		try
 		{
 			var result = await _bunchProduct.ToggleBunchProduct(id);
-			Snackbar.Add("Published Changed!", Severity.Success);
 			if (result)
 			{
 				Snackbar.Add("Published Changed!", Severity.Success);

@@ -42,10 +42,11 @@
 				<MudTh>TO Product Quantity</MudTh>
 				<MudTh>Picklist ID</MudTh>
 				<MudTh>Action</MudTh>
+				<MudTh>Print</MudTh>
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="Created on">@context.createdDate</MudTd>
-				<MudTd DataLabel="TO ID">@context.toCode</MudTd>
+				<MudTd DataLabel="TO ID" Style="text-decoration: underline; cursor: pointer; color: blue;" @onclick="() => ToDetails(context.toCode)">@context.toCode</MudTd>
 				<MudTd DataLabel="Source Warehouse">@context.sourchWh</MudTd>
 				<MudTd DataLabel="Destination Warehouse">@context.destinationWh</MudTd>
 				<MudTd DataLabel="TO Type">@context.poType</MudTd>
@@ -60,10 +61,11 @@
 					}
 					@if (context.pickListId != null)
 					{
-						<MudButton Variant="Variant.Filled" Color="Color.Error" Disabled="context.pickListId == null" OnClick="() => CancelPicklistId(context.pickListId)">Cancel Picklist</MudButton>
+						<MudButton Variant="Variant.Filled" Color="Color.Error" Disabled="context.pickListId == null" OnClick="() => CancelPicklistId(context.pickListId)">Cancel</MudButton>
 					}
-					@*<MudButton Variant="Variant.Filled" Color="Color.Primary">Out Scan</MudButton>
-						<MudButton Variant="Variant.Filled" Color="Color.Primary">View</MudButton>*@
+				</MudTd>
+				<MudTd DataLabel="Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="context.pickListId == null" OnClick="() => ToPrints(context.toCode)">Print</MudButton>
 				</MudTd>
 			</RowTemplate>
 			<PagerContent>
@@ -135,5 +137,17 @@
 	private async Task printPicklist(string pickCode)
 	{
 		await IJS.InvokeAsync<object>("open", new object[] { $"/picklist-print/{pickCode}", "_blank" });
+	}
+
+	// To Details
+	private async Task ToDetails(string toid)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/view-to/{toid}", "_blank" });
+	}
+
+	// To Print
+	private async Task ToPrints(string toid)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/scanned-product/{toid}", "_blank" });
 	}
 }

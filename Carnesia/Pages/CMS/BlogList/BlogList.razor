@@ -73,8 +73,14 @@
         try
         {
 
-            await _blogPost.PublishToggle(id);
-            Snackbar.Add("Published Changed!", Severity.Success);
+            var result = await _blogPost.PublishToggle(id);
+            if (result)
+            {
+                Snackbar.Add("Published Changed!", Severity.Success);
+                await GetAllPost();
+                return;
+            }
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
         }
         catch (Exception)
         {

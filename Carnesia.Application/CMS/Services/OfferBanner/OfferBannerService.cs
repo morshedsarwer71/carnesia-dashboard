@@ -50,7 +50,7 @@ namespace Carnesia.Application.CMS.Services.OfferBanner
         {
             try
             {
-                var result = await _httpClient.PostAsync(url+id, null);
+                var result = await _httpClient.GetAsync(url+id);
 
                 if (result.IsSuccessStatusCode) return true;
                 return false;

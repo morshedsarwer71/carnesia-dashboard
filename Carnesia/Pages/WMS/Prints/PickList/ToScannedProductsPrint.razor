@@ -1,0 +1,72 @@
+﻿@layout PrintLayout
+@page "/scanned-product/{ToID}"
+
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.BarcodeGenerator
+@using Carnesia.Domain.WMS.UpdateTO
+@inject HttpClient _httpClient
+
+
+<div style="width: 210mm; margin: 0 auto;">
+	<MudText Typo="Typo.h4">TO ID: @ToID</MudText>
+	<p>Created On: @ToDetails.createdDate</p>
+	<p>Created By: @ToDetails.createdBy</p>
+	<p>Picklist: @ToDetails.pickCode</p>
+	<p>Source Warehouse: @ToDetails.sourceWh</p>
+	<p>Destination Warehouse: @ToDetails.destinationWh</p>
+
+	<div style="width: 25%; margin: 10px auto">
+		<SfBarcodeGenerator Value="@(ToID)" Height="60px">
+			<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
+			</BarcodeGeneratorDisplayText>
+		</SfBarcodeGenerator>
+	</div>
+
+	<table style="width: 100%; border-collapse: collapse;">
+		<tr style="font-size: 14px;">
+			<th class="table-cell">Product Code</th>
+			<th class="table-cell">SKU</th>
+			<th class="table-cell">Product Name</th>
+			<th class="table-cell">Transfer Quantity</th>
+		</tr>
+		@if (Products.Count > 0)
+		{
+			foreach (var item in Products)
+			{
+				<tr style="font-size: 12px;">
+					<td class="table-cell">@item.prodcutCode</td>
+					<td class="table-cell">@item.sku</td>
+					<td class="table-cell">@item.productName</td>
+					<td class="table-cell">@item.quantity</td>
+				</tr>
+			}
+		}
+
+	</table>
+</div>
+
+@code {
+	[Parameter]
+	public string ToID { get; set; }
+
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetProducts();
+	}
+
+
+	// To Details
+	private UpdateTODTO ToDetails = new UpdateTODTO();
+
+	// Products
+	private List<UpdateToProductsDTO> Products = new List<UpdateToProductsDTO>();
+
+	// Get Products
+	private async Task GetProducts()
+	{
+		ToDetails = await _httpClient.GetFromJsonAsync<UpdateTODTO>($"StockTransfers/getscannedproduct/{ToID}");
+		Products = ToDetails.products;
+	}
+
+}

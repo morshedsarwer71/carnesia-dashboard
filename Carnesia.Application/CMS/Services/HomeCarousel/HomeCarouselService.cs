@@ -57,11 +57,14 @@ namespace Carnesia.Application.CMS.Services.HomeCarousel
             }
         }
 
-        public async Task ToggleCarousel(int carouselID)
+        public async Task<bool> ToggleCarousel(int carouselID)
         {
             try
             {
-                await _httpClient.PostAsync($"HomePage/togglepublishcarousalimage/{carouselID}", null);
+                var result = await _httpClient.GetAsync($"HomePage/togglepublishcarousalimage/{carouselID}");
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

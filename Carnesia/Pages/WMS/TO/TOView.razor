@@ -1,24 +1,26 @@
-﻿@page "/view-to"
+﻿@page "/view-to/{ToID}"
 
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.BarcodeGenerator
 @using Carnesia.Domain.WMS.UpdateTO
+@inject IManageTo _manageTo
+@inject ISnackbar Snackbar
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
-		<MudText Typo="Typo.h4">TO ID: 123456</MudText>
-		<p>Created On: 22-Jan-2022</p>
-		<p>Source Warehouse: Arham Trade International</p>
-		<p>Destination Warehouse: Dhanmondi-W102</p>
+		<MudText Typo="Typo.h4">TO ID: @ToID</MudText>
+		<p>Created On: @Details.createdDate</p>
+		<p>Source Warehouse: @Details.sourceWh</p>
+		<p>Destination Warehouse: @Details.destinationWh</p>
 
 		<div style="width: 25%; margin: 10px auto">
-			<SfBarcodeGenerator Value="123456" Height="60px">
+			<SfBarcodeGenerator Value="@(ToID)" Height="60px">
 				<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
 				</BarcodeGeneratorDisplayText>
 			</SfBarcodeGenerator>
 		</div>
 
-		<MudTable Items="Elements" Hover="true" Striped="true" MultiSelection="true" @bind-SelectedItems="SelectedTO" CommitEditTooltip="Save Edit" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" RowEditPreview="BackupItem" RowEditCancel="ResetItem">
+		<MudTable Items="Elements"  Hover="true" Striped="true" MultiSelection="String.IsNullOrEmpty(Details.pickCode)" ReadOnly="!String.IsNullOrEmpty(Details.pickCode)" @bind-SelectedItems="SelectedTO" CommitEditTooltip="Save Edit" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" RowEditPreview="BackupItem" RowEditCancel="ResetItem" RowEditCommit="ItemHasBeenCommitted">
 			<HeaderContent>
 				<MudTh>Product Code</MudTh>
 				<MudTh>SKU</MudTh>
@@ -26,20 +28,24 @@
 				<MudTh>TO Quantity</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Product Code">@context.prodcutCode</MudTd>
 				<MudTd DataLabel="SKU">@context.sku</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
-				<MudTd DataLabel="TO Quantity">@context.toQuantity</MudTd>
+				<MudTd DataLabel="TO Quantity">@context.quantity</MudTd>
 			</RowTemplate>
 			<RowEditingTemplate>
-				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Product Code">@context.prodcutCode</MudTd>
 				<MudTd DataLabel="SKU">@context.sku</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
 				<MudTd DataLabel="TO Quantity">
-					<MudTextField @bind-Value="@context.toQuantity" Required />
+					<MudTextField @bind-Value="@context.quantity" Required />
 				</MudTd>
 			</RowEditingTemplate>
 		</MudTable>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Disabled="SelectedTO.Count <= 0" Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteProducts">Delete Products</MudButton>
+		</div>
 	</MudContainer>
 </MudPaper>
 
@@ -47,39 +53,108 @@
 	// Page On Load
 	protected override async Task OnInitializedAsync()
 	{
-		AddTo();
+		await GetProducts();
 	}
+
+	// To ID
+	[Parameter]
+	public string ToID { get; set; }
+
 	// Table Content
-	private List<UpdateTODTO> Elements = new List<UpdateTODTO>();
+	private List<UpdateToProductsDTO> Elements = new List<UpdateToProductsDTO>();
+
+	// Details
+	private UpdateTODTO Details = new UpdateTODTO();
+
+	// Get Products
+	private async Task GetProducts()
+	{
+		Details = await _manageTo.GetToDetails(ToID);
+
+		Elements = Details.products;
+	}
 
 	// MultiSelect
-	private HashSet<UpdateTODTO> SelectedTO = new HashSet<UpdateTODTO>();
+	private HashSet<UpdateToProductsDTO> SelectedTO = new HashSet<UpdateToProductsDTO>();
 
-	private UpdateTODTO BeforeEdit;
+	private UpdateToProductsDTO BeforeEdit;
 
 	// Backup
 	private void BackupItem(object element)
 	{
 		BeforeEdit = new()
 			{
-				sku = ((UpdateTODTO)element).sku,
-				productName = ((UpdateTODTO)element).productName,
-				productCode = ((UpdateTODTO)element).productCode,
-				toQuantity = ((UpdateTODTO)element).toQuantity
+				sku = ((UpdateToProductsDTO)element).sku,
+				productName = ((UpdateToProductsDTO)element).productName,
+				prodcutCode = ((UpdateToProductsDTO)element).prodcutCode,
+				quantity = ((UpdateToProductsDTO)element).quantity
 			};
 	}
 
 	// Reset Item
 	private void ResetItem(object element)
 	{
-		((UpdateTODTO)element).sku = BeforeEdit.sku;
-		((UpdateTODTO)element).productName = BeforeEdit.productName;
-		((UpdateTODTO)element).productCode = BeforeEdit.productCode;
-		((UpdateTODTO)element).toQuantity = BeforeEdit.toQuantity;
+		((UpdateToProductsDTO)element).sku = BeforeEdit.sku;
+		((UpdateToProductsDTO)element).productName = BeforeEdit.productName;
+		((UpdateToProductsDTO)element).prodcutCode = BeforeEdit.prodcutCode;
+		((UpdateToProductsDTO)element).quantity = BeforeEdit.quantity;
 	}
 
-	private void AddTo()
+	// Delete Products
+	private DeleteToProductsDTO DeleteList = new DeleteToProductsDTO();
+	private async Task DeleteProducts()
 	{
-		Elements.Add(new UpdateTODTO { sku = "123456789", productCode = "100005", productName = "Lakme 9 to 5.", toQuantity = 10 });
+		var TempIds = new List<int>();
+		foreach (var item in SelectedTO)
+		{
+			TempIds.Add(item.id);
+		}
+
+		DeleteList.productId = TempIds;
+		DeleteList.poCode = ToID;
+
+		try
+		{
+			var result = await _manageTo.DeleteToProducts(DeleteList);
+
+			if (result)
+			{
+				Snackbar.Add("Products Deleted Successfully!", Severity.Success);
+				await GetProducts();
+				return;
+			}
+			Snackbar.Add("Products Delete Failed!", Severity.Error);
+		}
+		catch(Exception e)
+		{
+			Snackbar.Add("Products Delete Failed!", Severity.Error);
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	// Update Product
+	private async void ItemHasBeenCommitted(object element)
+	{
+		int qty = ((UpdateToProductsDTO)element).quantity;
+		int pID = ((UpdateToProductsDTO)element).id;
+
+		try
+		{
+			var result = await _manageTo.UpdateToProductQuantity(ToID, qty, pID);
+
+			if (result)
+			{
+				Snackbar.Add("Product Updated Successfully!", Severity.Success);
+				await GetProducts();
+				return;
+			}
+			((UpdateToProductsDTO)element).quantity = BeforeEdit.quantity;
+			Snackbar.Add("Product Update Failed!", Severity.Error);
+		}
+		catch(Exception e)
+		{
+			Snackbar.Add("Product Update Failed!", Severity.Error);
+			Console.WriteLine(e.Message);
+		}
 	}
 }

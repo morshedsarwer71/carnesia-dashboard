@@ -12,7 +12,7 @@ namespace Carnesia.Application.CMS.Services.BlogPost
         Task CreateBlogPost(CreateBlogPostDTO BlogPost);
         Task<List<BlogPostDTO>> GetAllBlogPosts();
         Task<BlogPostUpdateDTO> GetBlogPostsById(int id);
-        Task PublishToggle(int id);
+        Task<bool> PublishToggle(int id);
         Task<bool> UpdateBlogPost(BlogPostUpdateDTO blog);
     }
 }

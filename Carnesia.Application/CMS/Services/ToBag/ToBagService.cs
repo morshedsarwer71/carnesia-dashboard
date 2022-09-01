@@ -102,11 +102,14 @@ namespace Carnesia.Application.CMS.Services.ToBag
             }
         }
 
-        public async Task PublishToggleSection(int id)
+        public async Task<bool> PublishToggleSection(int id)
         {
             try
             {
-                await _httpClient.PostAsync($"ToBag/toggletobagSection/{id}", null);
+               var result = await _httpClient.GetAsync($"ToBag/toggletobagSection/{id}");
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

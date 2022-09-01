@@ -193,15 +193,16 @@
                 var result = await _createCampaign.AddProductToCampaign(newProduct);
                 if (result)
                 {
-                    Snackbar.Add("Campaign Details Updated Successfully!", Severity.Success);
+                    Snackbar.Add("New Product Added Successfully!", Severity.Success);
                     await GetCampaign();
                     return;
                 }
                 Snackbar.Add("Something Went Wrong!", Severity.Error);
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 throw;
             }
         }

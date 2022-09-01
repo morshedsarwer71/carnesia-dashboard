@@ -78,8 +78,14 @@
     {
         try
         {
-            await _homeCarousel.ToggleCarousel(carouselId);
-            Snackbar.Add("Carousel Successfully Toggled!", Severity.Success);
+            var result = await _homeCarousel.ToggleCarousel(carouselId);
+            if (result)
+            {
+                Snackbar.Add("Carousel Successfully Toggled!", Severity.Success);
+                await GetCarousel();
+                return;
+            }
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
         }
         catch (Exception)
         {

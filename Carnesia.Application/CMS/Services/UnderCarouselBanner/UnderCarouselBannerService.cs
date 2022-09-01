@@ -35,7 +35,7 @@ namespace Carnesia.Application.CMS.Services.UnderCarouselBanner
         {
             try
             {
-                var result = await _httpClient.PostAsync($"HomePage/ToggleBannerPublish/{id}", null);
+                var result = await _httpClient.GetAsync($"HomePage/ToggleBannerPublish/{id}");
 
                 if (result.IsSuccessStatusCode) return true;
                 return false;

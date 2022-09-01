@@ -58,11 +58,14 @@ namespace Carnesia.Application.CMS.Services.FullWidthBanner
             }
         }
 
-        public async Task PublishToggle(int id)
+        public async Task<bool> PublishToggle(int id)
         {
             try
             {
-                await _httpClient.PostAsync($"FullWidthBanner/togglepublish/{id}", null);
+                var result = await _httpClient.GetAsync($"FullWidthBanner/togglepublish/{id}");
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {
