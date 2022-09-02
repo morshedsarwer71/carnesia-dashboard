@@ -10,6 +10,8 @@ namespace Carnesia.Domain.CMS.BunchProduct
     {
         public int productId { get; set; }
         public string sku { get; set; }
+        public string productName { get; set; }
+        public string productCode { get; set; }
         public string bunchProductCode { get; set; }
     }
 }

@@ -23,16 +23,20 @@
 
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
 			<HeaderContent>
+				<MudTh>Product Code</MudTh>
 				<MudTh>SKU Code</MudTh>
 				<MudTh>Product Name</MudTh>
 				<MudTh>TO Quantity</MudTh>
 				<MudTh>Rcv. QTY</MudTh>
+				<MudTh>To Be Scanned</MudTh>
 			</HeaderContent>
 			<RowTemplate>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
 				<MudTd DataLabel="SKU Code">@context.sku</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
 				<MudTd DataLabel="TO Quantity">@context.qty</MudTd>
 				<MudTd DataLabel="Rcv. QTY">@context.Rqty</MudTd>
+				<MudTd DataLabel="To Be Scanned">@(context.qty - context.Rqty)</MudTd>
 			</RowTemplate>
 			<PagerContent>
 				<MudTablePager />
@@ -46,10 +50,9 @@
 			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
 		</div>
 
-		@*<div class="d-flex align-end flex-column">
-			<MudText Typo="Typo.h6">Total QTY: 123</MudText>
-			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit Print Acknowledgement</MudButton>
-		</div>*@
+		<div class="d-flex align-end flex-column">
+			<MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="true">Acknowledgement</MudButton>
+		</div>
 	</MudContainer>
 </MudPaper>
 

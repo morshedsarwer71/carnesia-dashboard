@@ -50,7 +50,7 @@
 				</MudTd>
 				<MudTd DataLabel="Description">@context.description</MudTd>
 				<MudTd DataLabel="Enable">
-					<MudSwitch @bind-Checked="@context.isEnabled" Color="Color.Primary" @onclick="(() => ToggleEnable(context.id))"/>
+					<MudSwitch @bind-Checked="@context.isEnable" Color="Color.Primary" @onclick="(() => ToggleEnable(context.id))"/>
 				</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.id)">Delete</MudButton>

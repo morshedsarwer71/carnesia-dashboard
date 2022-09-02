@@ -30,7 +30,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" HorizontalScrollbar="true" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
 			<HeaderContent>
 				<MudTh>Created on</MudTh>
 				<MudTh>TO ID</MudTh>
@@ -40,6 +40,9 @@
 				<MudTh>Status</MudTh>
 				<MudTh>Last Updated on</MudTh>
 				<MudTh>TO Product Quantity</MudTh>
+				<MudTh>Picked QTY.</MudTh>
+				<MudTh>Received QTY.</MudTh>
+				<MudTh>Not Received QTY.</MudTh>
 				<MudTh>Picklist ID</MudTh>
 				<MudTh>Action</MudTh>
 				<MudTh>Print</MudTh>
@@ -53,6 +56,9 @@
 				<MudTd DataLabel="Status">@context.status</MudTd>
 				<MudTd DataLabel="Last Updated on">@context.lastUpdate</MudTd>
 				<MudTd DataLabel="TO Product Quantity">@context.toQuantity</MudTd>
+				<MudTd DataLabel="Picked QTY.">@context.toQuantity</MudTd>
+				<MudTd DataLabel="Received QTY.">@context.toQuantity</MudTd>
+				<MudTd DataLabel="Not Received QTY.">@context.toQuantity</MudTd>
 				<MudTd DataLabel="Picklist ID" Style="text-decoration: underline; cursor: pointer; color: blue;" @onclick="() => printPicklist(context.pickListId)">@context.pickListId</MudTd>
 				<MudTd DataLabel="Action">
 					@if (context.pickListId == null)

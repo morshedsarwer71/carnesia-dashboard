@@ -23,6 +23,6 @@ namespace Carnesia.Domain.CRM.Vouchers.GeneralVoucher.VoucherList
         public object approvalDate { get; set; }
         public string approvedBy { get; set; }
         public string description { get; set; }
-        public bool isEnabled { get; set; }
+        public bool isEnable { get; set; }
     }
 }

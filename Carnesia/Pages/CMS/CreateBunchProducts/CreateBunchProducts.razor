@@ -43,10 +43,14 @@
 			<MudTable Items="@Products" Hover="true" Dense="true" Loading="loading" LoadingProgressColor="Color.Info">
 				<HeaderContent>
 					<MudTh>SKU</MudTh>
+					<MudTh>Product Name</MudTh>
+					<MudTh>Product Code</MudTh>
 					<MudTh>Action</MudTh>
 				</HeaderContent>
 				<RowTemplate>
 					<MudTd DataLabel="SKU">@context.sku</MudTd>
+					<MudTd DataLabel="Product Name">@context.productName</MudTd>
+					<MudTd DataLabel="Product Code">@context.productCode</MudTd>
 					<MudTd DataLabel="Action">
 						<MudButton OnClick="() => RemoveProduct(context)">
 							<MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
@@ -65,7 +69,7 @@
 						   for="fileInput">
 					Upload Images
 				</MudButton>
-				<MudText Class="mt-1">1080 * 420(Max 100Kb)</MudText>
+				<MudText Class="mt-1">1280 * 320(Max 200Kb)</MudText>
 			</div>
 
 			<MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;" />
@@ -95,7 +99,7 @@
 	{
 		try
 		{
-			FormData.base64Attch = await _base64.ConvertToBase64(102400, 1080, 420, e);
+			FormData.base64Attch = await _base64.ConvertToBase64(204800, 1280, 320, e);
 		}
 		catch (Exception error)
 		{
@@ -130,9 +134,18 @@
 				return;
 			}
 
-			newProduct.productId = await _products.GetProductIdBySku(newProduct.sku);
+			var result = await _products.GetProductBySku(newProduct.sku);
 
-			Products.Add(newProduct);
+			if (result != null)
+			{
+				newProduct.productId = result.productId;
+				newProduct.productName = result.productName;
+				newProduct.productCode = result.productCode;
+				Products.Add(newProduct);
+				return;
+			}
+
+			Snackbar.Add("Product Not Found!", Severity.Error);
 		}
 	}
 
@@ -182,9 +195,10 @@
 			Products = await _bunchProduct.UploadXLSXFile(e);
 			loading = false;
 		}
-		catch (Exception)
+		catch (Exception er)
 		{
-			Console.WriteLine("Error!");
+			Console.WriteLine(er.Message);
+			loading = false;
 			throw;
 		}
 	}

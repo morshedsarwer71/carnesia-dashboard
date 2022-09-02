@@ -15,7 +15,7 @@
 			</div>
 			<MudGrid Class="justify-space-between mb-5">
 				<MudItem sm="4">
-					<MudTextField T="string" Value="uid" Placeholder="Scan UID" ValueChanged="(e) => ScanUid(e)" Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
+					<MudTextField  @bind-Value="uid" Placeholder="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
 				</MudItem>
 				<MudItem sm="4">
 					<MudTextField @bind-Value="customerPhoneNumber" Placeholder="Customer Phone Number" Immediate="true" Variant="Variant.Text" OnKeyPress="GetCustomer" />
@@ -63,10 +63,10 @@
 						<MudTd colspan="5" Style="text-align: end;">Reward Value:</MudTd>
 						<MudTd colspan="1" Style="text-align: end;">0</MudTd>
 					</MudTFootRow>
-					<MudTFootRow>
+					@*<MudTFootRow>
 						<MudTd colspan="5" Style="text-align: end;">Vat(5%):</MudTd>
 						<MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
-					</MudTFootRow>
+					</MudTFootRow>*@
 					<MudTFootRow>
 						<MudTd colspan="5" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
 						<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal - discount + vatAmount), 2)</MudTd>
@@ -222,8 +222,16 @@
 		{
 			if (!String.IsNullOrEmpty(uid))
 			{
-				Console.WriteLine(uid);
-				uid = String.Empty;
+				bool isThere = UIDCollection.Any(x => x.uid == uid);
+
+				if (isThere)
+				{
+					Snackbar.Add("UID already in cart", Severity.Error);
+					return;
+				}
+				await CheckInList(uid);
+				subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
+				TableItems = Elements.Count();
 			}
 		}
 	}
@@ -274,13 +282,14 @@
 				if (result.customerId != null)
 				{
 					Snackbar.Add(result.message, Severity.Success);
+					customerPhoneNumber = result.customerId.ToString();
 					return;
 				}
 				Snackbar.Add(result.message, Severity.Error);
 			}
 			catch (Exception)
 			{
-				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				Snackbar.Add("Internal Server Error!", Severity.Error);
 				throw;
 			}
 		}
@@ -293,7 +302,7 @@
 		parameters.Add("comment", Comment);
 
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<GenerateBillAddCommentModal>("Add Comment Customer", parameters, options).Result;
+		var dialog = await DialogService.Show<GenerateBillAddCommentModal>("Add Comment", parameters, options).Result;
 
 		if (dialog.Data != null)
 		{
@@ -302,34 +311,34 @@
 	}
 
 	// UID Scan
-	private async Task ScanUid(string s)
-	{
-		uid = s;
-		if (s.Length == 15)
-		{
+	//private async Task ScanUid(KeyboardEventArgs e)
+	//{
+	//	uid = s;
+	//	if (s.Length == 15)
+	//	{
 
-			try
-			{
-				bool isThere = UIDCollection.Any(x => x.uid == s);
+	//		try
+	//		{
+	//			bool isThere = UIDCollection.Any(x => x.uid == s);
 
-				if (isThere)
-				{
-					Snackbar.Add("UID already in cart", Severity.Error);
-					return;
-				}
+	//			if (isThere)
+	//			{
+	//				Snackbar.Add("UID already in cart", Severity.Error);
+	//				return;
+	//			}
 
-				await CheckInList(s);
+	//			await CheckInList(s);
 
-				subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
-				TableItems = Elements.Count();
-				GetVat();
-			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
-	}
+	//			subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
+	//			TableItems = Elements.Count();
+	//			//GetVat();
+	//		}
+	//		catch (Exception)
+	//		{
+	//			throw;
+	//		}
+	//	}
+	//}
 
 	// Check if Already in List
 	private async Task CheckInList(string s)
@@ -380,7 +389,7 @@
 				return;
 			}
 			discount = result;
-			GetVat();
+			//GetVat();
 		}
 		catch (Exception)
 		{
@@ -404,7 +413,7 @@
 			Snackbar.Add("Please add payment type!", Severity.Error);
 			return;
 		}
-		POSDetails.items = 2;
+		POSDetails.items = TableItems;
 		POSDetails.quantities = Elements.Sum(e => e.quantity);
 		POSDetails.customerId = Customer.customerId;
 		POSDetails.discount = discount;
@@ -454,7 +463,7 @@
 
 		subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
 		TableItems = Elements.Count();
-		GetVat();
+		//GetVat();
 	}
 
 	// Goto Print

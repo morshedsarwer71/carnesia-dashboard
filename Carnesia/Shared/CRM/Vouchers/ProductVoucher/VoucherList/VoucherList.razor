@@ -13,6 +13,7 @@
 				<MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
 			</ToolBarContent>
 			<HeaderContent>
+				<MudTh></MudTh>
 				<MudTh>Code</MudTh>
 				<MudTh>Start Date</MudTh>
 				<MudTh>End Date</MudTh>
@@ -27,6 +28,16 @@
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowDetails(context.productVId)" />
+					}
+					else if (context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowDetails(context.productVId)" />
+					}
+				</MudTd>
 				<MudTd DataLabel="Code">@context.pvCode</MudTd>
 				<MudTd DataLabel="Start Date">@context.startDate</MudTd>
 				<MudTd DataLabel="End Date">@context.endDate</MudTd>
@@ -38,12 +49,35 @@
 				<MudTd DataLabel="Up To">@context.upToDiscAmnt</MudTd>
 				<MudTd DataLabel="Description">@context.description</MudTd>
 				<MudTd DataLabel="Enable">
-					<MudSwitch @bind-Checked="@context.isEnabled" Color="Color.Primary" @onclick="(() => ToggleEnable(context.productVId))"/>
+					<MudSwitch @bind-Checked="@context.isEnable" Color="Color.Primary" @onclick="(() => ToggleEnable(context.productVId))" />
 				</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.productVId)">Delete</MudButton>
 				</MudTd>
 			</RowTemplate>
+			<ChildRowContent>
+				@if (context.showDetails)
+				{
+					<td colspan="15">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.products" Bordered="true" Striped="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+									<HeaderContent>
+										<MudTh>Product Name</MudTh>
+										<MudTh>Product Code</MudTh>
+										<MudTh>MRP</MudTh>
+									</HeaderContent>
+									<RowTemplate>
+										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
+										<MudTd DataLabel="Product Code">@DetailsContext.productCode</MudTd>
+										<MudTd DataLabel="MRP">@DetailsContext.mrp</MudTd>
+									</RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
 			<PagerContent>
 				<MudTablePager />
 			</PagerContent>
@@ -110,24 +144,32 @@
 		return false;
 	}
 
-		// Toggle Publish
-    private async Task ToggleEnable(int id)
-    {
-        try
-        {
-            var result = await _productVoucher.ToggleUse(id);
-            if (result)
-            {
-                Snackbar.Add("Published Changed!", Severity.Success);
-                await GetVouchers();
-                return;
-            }
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-        }
-        catch (Exception)
-        {
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-            throw;
-        }
-    }
+	// Toggle Publish
+	private async Task ToggleEnable(int id)
+	{
+		try
+		{
+			var result = await _productVoucher.ToggleUse(id);
+			if (result)
+			{
+				Snackbar.Add("Published Changed!", Severity.Success);
+				await GetVouchers();
+				return;
+			}
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			throw;
+		}
+	}
+
+	// Show Details
+	private void ShowDetails(int id)
+	{
+		ProductVoucherListDTO tmpElements = Elements.First(f => f.productVId == id);
+		tmpElements.showDetails = !tmpElements.showDetails;
+	}
+
 }

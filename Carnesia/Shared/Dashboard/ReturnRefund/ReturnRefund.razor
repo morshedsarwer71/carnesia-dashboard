@@ -34,6 +34,7 @@
 				@*<MudTh>Image</MudTh>*@
 				<MudTh>Received</MudTh>
 				<MudTh>Selling Price</MudTh>
+				<MudTh>Return Price</MudTh>
 				<MudTh>Received Amount</MudTh>
 			</HeaderContent>
 			<RowTemplate>
@@ -45,20 +46,21 @@
 					<MudImage Src="@($"https://carnesiaapi.bespokeit.io/{context.imageURL}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
 					</MudTd>*@
 				<MudTd DataLabel="Received">@context.soldQty</MudTd>
-				<MudTd DataLabel="Selling Price">@context.returnPrice</MudTd>
-				<MudTd DataLabel="Received Amount">@(context.soldQty * context.returnPrice)</MudTd>
+				<MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+				<MudTd DataLabel="Return Price">@Math.Round(context.returnPrice, 2)</MudTd>
+				<MudTd DataLabel="Received Amount">@Math.Round((context.soldQty * context.returnPrice), 2)</MudTd>
 			</RowTemplate>
 			<FooterContent>
 				<MudTFootRow>
-					<MudTd colspan="6" Style="text-align: end;">Total:</MudTd>
+					<MudTd colspan="7" Style="text-align: end;">Total:</MudTd>
 					<MudTd colspan="1" Style="text-align: end;">@subTotal</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
-					<MudTd colspan="6" Style="text-align: end;">Item:</MudTd>
+					<MudTd colspan="7" Style="text-align: end;">Item:</MudTd>
 					<MudTd colspan="1" Style="text-align: end;">@TableItems</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
-					<MudTd colspan="6" Style="text-align: end;">Quantity:</MudTd>
+					<MudTd colspan="7" Style="text-align: end;">Quantity:</MudTd>
 					<MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.soldQty))</MudTd>
 				</MudTFootRow>
 				@*<MudTFootRow>
@@ -69,13 +71,13 @@
 					<MudTd colspan="6" Style="text-align: end;">Reward Value:</MudTd>
 					<MudTd colspan="1" Style="text-align: end;">0</MudTd>
 					</MudTFootRow>*@
-				<MudTFootRow>
-					<MudTd colspan="6" Style="text-align: end;">Vat(5%):</MudTd>
+				@*<MudTFootRow>
+					<MudTd colspan="7" Style="text-align: end;">Vat(5%):</MudTd>
 					<MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
-				</MudTFootRow>
+				</MudTFootRow>*@
 				<MudTFootRow>
-					<MudTd colspan="6" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + vatAmount), 2)</MudTd>
+					<MudTd colspan="7" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round(subTotal, 2)</MudTd>
 				</MudTFootRow>
 			</FooterContent>
 		</MudTable>
@@ -158,14 +160,20 @@
 				var productIndex = ProductList.FindIndex(x => x.productCode == result.productCode);
 				Elements[itemIndex].soldQty += result.soldQty;
 				ProductList[productIndex].quantity += result.soldQty;
+				//var newQty = ProductList[productIndex].quantity + result.soldQty;
 				Snackbar.Add("Product Added To List!", Severity.Success);
 				UIDS.Add(new PosUID { uid = UID });
-				return;
 			}
 			else
 			{
 				Elements.Add(result);
-				ProductList.Add(new PosItem { productCode = result.productCode, price = result.returnPrice, quantity = result.soldQty, totalPrice = result.returnPrice });
+				ProductList.Add(new PosItem
+					{
+						productCode = result.productCode,
+						price = result.returnPrice,
+						quantity = result.soldQty
+						//totalPrice = result.returnPrice * result.soldQty
+					});
 				UIDS.Add(new PosUID { uid = UID });
 				Snackbar.Add("Product Added To List!", Severity.Success);
 			}
@@ -192,11 +200,10 @@
 		posDetails.total = subTotal;
 		posDetails.items = TableItems;
 		posDetails.quantities = Elements.Sum(e => e.soldQty);
-		posDetails.vat = 5;
-		posDetails.vatAmount = vatAmount;
-		posDetails.grandTotal = subTotal + vatAmount;
+		posDetails.vat = 0;
+		posDetails.vatAmount = 0;
+		posDetails.grandTotal = subTotal;
 		posDetails.trnCode = TRNCodeShow;
-		posDetails.customerId = 1;
 
 		Return.pos = posDetails;
 		Return.items = ProductList;

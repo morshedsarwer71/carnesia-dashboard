@@ -1,8 +1,20 @@
 ﻿@using Carnesia.Domain.Dashboard.Dashboard
+@using Carnesia.Domain.WMS.Store.Models
+@inject IStore _store
+@inject IDashboard _dashboard
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudGrid Class="justify-center">
+			<MudItem sm="3">
+				<MudSelect @bind-Value="StoreId" Label="Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">All</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
 			<MudItem sm="3">
 				<MudDatePicker Label="From Date" DateFormat="yyyy-MM-dd" @bind-Text="FormDate" />
 			</MudItem>
@@ -12,38 +24,62 @@
 		</MudGrid>
 
 		<MudGrid Class="justify-center mb-3">
-			<MudItem sm="6" Class="d-flex justify-end">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			<MudItem sm="9" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReports">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
 
 		<MudTable Items="@Elements" Hover="true" Striped="true" Dense="true">
 			<HeaderContent>
-				@*<MudTh>SL</MudTh>*@
 				<MudTh>Store Name</MudTh>
 				<MudTh>Total Items</MudTh>
 				<MudTh>Total Sales</MudTh>
+				<MudTh>Grand Total Sales</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				@*<MudTd DataLabel="SL">@context.Number</MudTd>*@
 				<MudTd DataLabel="Store Name">@context.storeName</MudTd>
 				<MudTd DataLabel="Total Items">@context.totalItems</MudTd>
-				<MudTd DataLabel="Total Sales">@context.totalSales</MudTd>
+				<MudTd DataLabel="Total Sales">@context.totalSale</MudTd>
+				<MudTd DataLabel="Grand Total Sales">@context.grandTotal</MudTd>
 			</RowTemplate>
 		</MudTable>
 
 	</MudContainer>
 </MudPaper>
 
+
 @code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetStores();
+		await GetReports();
+	}
+
 	// New Date Time
 	public static string TodayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-	// Start End Date
+	// Start End Date, Store ID
 	private string FormDate { get; set; } = TodayDate;
 	private string ToDate { get; set; } = TodayDate;
+	private int StoreId { get; set; } = 0;
+
+	// Stores
+	private List<StoreDTO> Stores = new List<StoreDTO>();
+
+	// Get Stores
+	private async Task GetStores()
+	{
+		Stores = await _store.GetStoresAsync();
+	}
+
 
 	// Table Element
 	private List<DashboardDTO> Elements = new List<DashboardDTO>();
 
+	// Get Report
+	private async Task GetReports()
+	{
+		Elements = await _dashboard.GetSalesReport(FormDate, ToDate, StoreId);
+	}
 }

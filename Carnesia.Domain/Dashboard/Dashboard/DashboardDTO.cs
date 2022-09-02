@@ -9,7 +9,8 @@ namespace Carnesia.Domain.Dashboard.Dashboard
     public class DashboardDTO
     {
         public string storeName { get; set; }
-        public decimal totalSales { get; set; }
-        public int totalItems{ get; set; }
+        public decimal totalSale { get; set; }
+        public decimal grandTotal { get; set; }
+        public int totalItems { get; set; }
     }
 }

@@ -198,14 +198,25 @@ namespace Carnesia.Application.CMS.Services.BunchProduct
                 {
                     var sku = row.Field<string>("sku");
 
-                    int result = await _products.GetProductIdBySku(sku);
+                    var result = await _products.GetProductBySku(sku);
 
-                    var pop = new AddBunchProductProductsDTO()
+                    if (result != null)
                     {
-                        sku = sku,
-                        productId = result
-                    };
-                    Products.Add(pop);
+                        var pop = new AddBunchProductProductsDTO()
+                        {
+                            sku = sku,
+                            productId = result.productId,
+                            productName = result.productName,
+                            productCode = result.productCode,
+                        };
+                        Products.Add(pop);
+                    }
+                    else
+                    {
+                        Console.WriteLine(sku);
+                    }
+
+                    
                 }
                 return Products.ToList();
             }

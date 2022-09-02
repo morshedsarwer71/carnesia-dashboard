@@ -20,17 +20,21 @@ namespace Carnesia.Domain.Dashboard.ReturnRefund
 
     public class PosItem
     {
+		public PosItem()
+		{
+            this.totalPrice = this.quantity * this.price;
+		}
         public string productCode { get; set; }
         public decimal price { get; set; }
         public int quantity { get; set; }
         public decimal totalPrice { get; set; }
     }
 
+
     public class PosDetails
     {
         public decimal total { get; set; }
         public int items { get; set; }
-        public int customerId { get; set; }
         public int quantities { get; set; }
         public decimal vat { get; set; }
         public decimal vatAmount { get; set; }

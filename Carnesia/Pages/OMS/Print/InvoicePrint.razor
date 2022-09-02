@@ -16,13 +16,13 @@
 	<h4>Phone #@Invoice.outletPhone</h4>
 	<br />
 	<h4 style="font-weight: 600;">Cutomer Copy</h4>
-	@*@if (!String.IsNullOrEmpty(Invoice.trnCode))
+	@if (!String.IsNullOrEmpty(Invoice.trnCode))
 	{
 		<SfBarcodeGenerator Value="@(Invoice.trnCode)" Height="50px">
 			<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
 			</BarcodeGeneratorDisplayText>
 		</SfBarcodeGenerator>
-	}*@
+	}
 	<h4>Order Date: @Invoice.orderDate</h4>
 	<h4>Customer Name: @Invoice.customerName</h4>
 	<h4>Phone #@Invoice.customerPhone</h4>
@@ -64,7 +64,7 @@
 		<h5>Discount: @Invoice.discount</h5>
 		<h5>Credit Used: @Invoice.creditUsed</h5>
 		<h5>Reward Value: @Invoice.rewardPoints</h5>
-		<h5>Vat(@Invoice.vat %): @Invoice.vatAmount</h5>
+		@*<h5>Vat(@Invoice.vat %): @Invoice.vatAmount</h5>*@
 		<h5>Grand Total: @Invoice.grandTotal</h5>
 	</div>
 	<h5>Instruction: Deliver before 2pm.</h5>
@@ -84,8 +84,8 @@
 	// Page On Load
 	protected override async Task OnInitializedAsync()
 	{
-		//await GetInvoice();
-		//Items = Invoice.items;
+		await GetInvoice();
+		Items = Invoice.items;
 	}
 
 	// Invoice Data

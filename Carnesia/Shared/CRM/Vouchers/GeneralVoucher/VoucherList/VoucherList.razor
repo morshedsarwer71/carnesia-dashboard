@@ -38,7 +38,7 @@
 				<MudTd DataLabel="Up To">@context.upToDiscAmnt</MudTd>
 				<MudTd DataLabel="Description">@context.description</MudTd>
 				<MudTd DataLabel="Enable">
-					<MudSwitch @bind-Checked="@context.isEnabled" Color="Color.Primary" @onclick="(() => ToggleEnable(context.generalVId))"/>
+					<MudSwitch @bind-Checked="@context.isEnable" Color="Color.Primary" @onclick="(() => ToggleEnable(context.generalVId))"/>
 				</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.generalVId)">Delete</MudButton>

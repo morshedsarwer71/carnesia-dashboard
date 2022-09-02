@@ -1,0 +1,64 @@
+﻿@layout PrintLayout
+@page "/receive-to-print"
+
+<div style="width: 210mm; margin: 0 auto;">
+	<div class="mb-5">
+		<p>Source Warehouse: Central Warehouse-W100</p>
+		<p>Destination Warehouse: Dhanmondi-W102</p>
+		<p>TO ID: 123456</p>
+		<p>Received By: Md. Rasel Mia</p>
+		<p>Receiving Time: 12-Jan-2022 12:00 PM</p>
+		<p>Delivered By: Arman Mallik</p>
+		<p>Transfer QTY:</p>
+		<p>Received QTY:</p>
+		<p>To Be Scanned:</p>
+	</div>
+
+	<table style="width: 100%; border-collapse: collapse;">
+		<tr style="font-size: 14px;">
+			<th style="width: 40px" class="table-cell">SL</th>
+			<th class="table-cell">Product Code</th>
+			<th class="table-cell">SKU</th>
+			<th class="table-cell">Product Name</th>
+			<th class="table-cell">To Quantity</th>
+			<th class="table-cell">Received Quantity</th>
+			<th class="table-cell">To be Scanned</th>
+		</tr>
+@*		@if (Items.Count > 0)
+		{
+			foreach (var item in Picklist.bins)
+			{
+				sl++;*@
+				<tr style="font-size: 12px;">
+					<td class="table-cell">1</td>
+					<td class="table-cell">1234567890</td>
+					<td class="table-cell">1234567890</td>
+					<td class="table-cell">Absolute New York Click Cover Consealer MFCC 02 ac Light Yellow Undertone</td>
+					<td class="table-cell">10</td>
+					<td class="table-cell">5</td>
+					<td class="table-cell">5</td>
+				</tr>
+				<tr style="font-size: 12px;">
+					<td class="table-cell" colspan="4" style="text-align:end; font-weight: 600;">Grand Total:</td>
+					<td class="table-cell">10</td>
+					<td class="table-cell">5</td>
+					<td class="table-cell">5</td>
+				</tr>
+		@*	}
+		}*@
+
+	</table>
+
+	<MudGrid Class="mt-5">
+		<MudItem xs="6">
+			<p style="text-align: center;">Received By</p>
+		</MudItem>
+		<MudItem xs="6">
+			<p style="text-align: center;">Delivered By</p>
+		</MudItem>
+	</MudGrid>
+</div>
+
+@code {
+
+}

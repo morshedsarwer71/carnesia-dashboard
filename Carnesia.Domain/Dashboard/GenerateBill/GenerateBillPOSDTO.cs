@@ -21,7 +21,7 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
         public int quantities { get; set; }
         public decimal discount { get; set; }
         public decimal rewardValue { get; set; }
-        public decimal vat { get; set; } = 5;
+        public decimal vat { get; set; } = 0;
         public decimal vatAmount { get; set; }
         public decimal grandTotal { get; set; }
         public decimal creditValue { get; set; }
@@ -29,6 +29,6 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
         public string? membershipId { get; set; }
         public string? couponCode { get; set; }
         public string? comment { get; set; }
-        public string paymentType { get; set; }
+        public string paymentType { get; set; } = "Cash";
     }
 }
