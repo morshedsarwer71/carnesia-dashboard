@@ -36,6 +36,7 @@
 				<MudTh>Selling Price</MudTh>
 				<MudTh>Return Price</MudTh>
 				<MudTh>Received Amount</MudTh>
+				<MudTh>Remove</MudTh>
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
@@ -49,6 +50,11 @@
 				<MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
 				<MudTd DataLabel="Return Price">@Math.Round(context.returnPrice, 2)</MudTd>
 				<MudTd DataLabel="Received Amount">@Math.Round((context.soldQty * context.returnPrice), 2)</MudTd>
+				<MudTd DataLabel="Remove">
+					<MudButton OnClick="() => RemoveProduct(context.productCode)">
+						<MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+					</MudButton>
+				</MudTd>
 			</RowTemplate>
 			<FooterContent>
 				<MudTFootRow>
@@ -74,7 +80,7 @@
 				@*<MudTFootRow>
 					<MudTd colspan="7" Style="text-align: end;">Vat(5%):</MudTd>
 					<MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
-				</MudTFootRow>*@
+					</MudTFootRow>*@
 				<MudTFootRow>
 					<MudTd colspan="7" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
 					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round(subTotal, 2)</MudTd>
@@ -134,6 +140,12 @@
 		{
 			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(TRNCodeShow))
 			{
+				bool isThere = UIDS.Any(x => x.uid == UID);
+				if (isThere)
+				{
+					Snackbar.Add("UID already in use!", Severity.Error);
+					return;
+				}
 				await GetPRoduct();
 			}
 		}
@@ -162,7 +174,7 @@
 				ProductList[productIndex].quantity += result.soldQty;
 				//var newQty = ProductList[productIndex].quantity + result.soldQty;
 				Snackbar.Add("Product Added To List!", Severity.Success);
-				UIDS.Add(new PosUID { uid = UID });
+				UIDS.Add(new PosUID { uid = UID, productCode = result.productCode });
 			}
 			else
 			{
@@ -174,7 +186,7 @@
 						quantity = result.soldQty
 						//totalPrice = result.returnPrice * result.soldQty
 					});
-				UIDS.Add(new PosUID { uid = UID });
+				UIDS.Add(new PosUID { uid = UID, productCode = result.productCode });
 				Snackbar.Add("Product Added To List!", Severity.Success);
 			}
 
@@ -190,6 +202,18 @@
 		{
 			Snackbar.Add("Something Went Wrong!", Severity.Error);
 		}
+	}
+
+	// Remove PRoduct
+	private void RemoveProduct(string poCode)
+	{
+		ProductList.RemoveAll(x => x.productCode == poCode);
+		UIDS.RemoveAll(x => x.productCode == poCode);
+		Elements.RemoveAll(x => x.productCode == poCode);
+
+		subTotal = Math.Round(Elements.Sum(e => e.soldQty * e.returnPrice), 2);
+		TableItems = Elements.Count();
+		vatAmount = (subTotal / 100) * 5;
 	}
 
 	// Return Products

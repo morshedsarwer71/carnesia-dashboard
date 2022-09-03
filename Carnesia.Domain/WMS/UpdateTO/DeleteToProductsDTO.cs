@@ -8,7 +8,7 @@ namespace Carnesia.Domain.WMS.UpdateTO
 {
     public class DeleteToProductsDTO
     {
-        public string poCode { get; set; }
+        public string toCode { get; set; }
         public List<int> productId { get; set; }
     }
 }

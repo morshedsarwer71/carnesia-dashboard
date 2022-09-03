@@ -111,7 +111,7 @@
 		}
 
 		DeleteList.productId = TempIds;
-		DeleteList.poCode = ToID;
+		DeleteList.toCode = ToID;
 
 		try
 		{
@@ -137,6 +137,7 @@
 	{
 		int qty = ((UpdateToProductsDTO)element).quantity;
 		int pID = ((UpdateToProductsDTO)element).id;
+		int PIndex = Elements.FindIndex(x => x.id == pID);
 
 		try
 		{
@@ -148,12 +149,13 @@
 				await GetProducts();
 				return;
 			}
-			((UpdateToProductsDTO)element).quantity = BeforeEdit.quantity;
+			Elements[PIndex].quantity = BeforeEdit.quantity;
 			Snackbar.Add("Product Update Failed!", Severity.Error);
 		}
 		catch(Exception e)
 		{
 			Snackbar.Add("Product Update Failed!", Severity.Error);
+			Elements[PIndex].quantity = BeforeEdit.quantity;
 			Console.WriteLine(e.Message);
 		}
 	}

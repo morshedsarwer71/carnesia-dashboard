@@ -15,7 +15,7 @@
 			</div>
 			<MudGrid Class="justify-space-between mb-5">
 				<MudItem sm="4">
-					<MudTextField  @bind-Value="uid" Placeholder="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
+					<MudTextField @bind-Value="uid" Placeholder="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
 				</MudItem>
 				<MudItem sm="4">
 					<MudTextField @bind-Value="customerPhoneNumber" Placeholder="Customer Phone Number" Immediate="true" Variant="Variant.Text" OnKeyPress="GetCustomer" />
@@ -60,16 +60,20 @@
 						<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
 					</MudTFootRow>
 					<MudTFootRow>
+						<MudTd colspan="5" Style="text-align: end;">Credit:</MudTd>
+						<MudTd colspan="1" Style="text-align: end;">@Math.Round(usedCredit, 2)</MudTd>
+					</MudTFootRow>
+					<MudTFootRow>
 						<MudTd colspan="5" Style="text-align: end;">Reward Value:</MudTd>
 						<MudTd colspan="1" Style="text-align: end;">0</MudTd>
 					</MudTFootRow>
 					@*<MudTFootRow>
 						<MudTd colspan="5" Style="text-align: end;">Vat(5%):</MudTd>
 						<MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
-					</MudTFootRow>*@
+						</MudTFootRow>*@
 					<MudTFootRow>
 						<MudTd colspan="5" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-						<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal - discount + vatAmount), 2)</MudTd>
+						<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal - usedCredit - discount + vatAmount), 2)</MudTd>
 					</MudTFootRow>
 				</FooterContent>
 			</MudTable>
@@ -81,7 +85,14 @@
 							<MudNumericField @bind-Value="Customer.creditValue" Placeholder="Creadit Value" Immediate="true" Variant="Variant.Text" />
 						</MudItem>
 						<MudItem sm="3">
-							<MudButton Variant="Variant.Filled" Color="Color.Primary">Use</MudButton>
+							@if (usedCredit <= 0)
+							{
+								<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UseCredit">Use</MudButton>
+							}
+							else
+							{
+								<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetCredit">Reset</MudButton>
+							}
 						</MudItem>
 					</MudGrid>
 				</MudItem>
@@ -111,7 +122,15 @@
 							<MudTextField @bind-Value="Coupon" Placeholder="Coupon Code" Immediate="true" Variant="Variant.Text" />
 						</MudItem>
 						<MudItem sm="3">
-							<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetDiscount">Apply</MudButton>
+							@if (discount <= 0)
+							{
+								<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetDiscount">Apply</MudButton>
+							}
+							else
+							{
+								<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetCoupon">Reset</MudButton>
+							}
+
 						</MudItem>
 					</MudGrid>
 				</MudItem>
@@ -132,8 +151,8 @@
 
 			<div class="mt-5 mx-auto" style="width: fit-content;">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCommentModal">Add Comment</MudButton>
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePOS">Generate Bill</MudButton>
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GotoPrint" Disabled="String.IsNullOrEmpty(trnCode)">Print Invoice</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePOS" Disabled="disableGenerate">Generate Bill</MudButton>
+				@*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GotoPrint" Disabled="String.IsNullOrEmpty(trnCode)">Print Invoice</MudButton>*@
 			</div>
 		</div>
 	</MudContainer>
@@ -142,6 +161,9 @@
 @code {
 	// Div Ref
 	protected ElementReference generateBill;
+
+	// Disable Generate
+	private bool disableGenerate { get; set; }
 
 	// Invoke Focus
 	protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -169,6 +191,8 @@
 	private decimal subTotal { get; set; }
 	private decimal vatAmount { get; set; }
 	private decimal discount { get; set; }
+	private decimal backupCredit { get; set; }
+	private decimal usedCredit { get; set; }
 
 	// Table Items
 	private int TableItems { get; set; }
@@ -194,7 +218,10 @@
 						return;
 					}
 
+					Snackbar.Add("Customer added!", Severity.Success);
+
 					Customer = result;
+					backupCredit = Customer.creditValue;
 				}
 				catch (Exception)
 				{
@@ -202,6 +229,25 @@
 				}
 			}
 		}
+	}
+
+	// Use Credit
+	private void UseCredit()
+	{
+		if (Customer.creditValue > subTotal)
+		{
+			Snackbar.Add("Credit value greater than total!", Severity.Error);
+			return;
+		}
+		usedCredit = Customer.creditValue;
+		//GetVat();
+	}
+
+	private void ResetCredit()
+	{
+		Customer.creditValue = backupCredit;
+		usedCredit = 0;
+		//GetVat();
 	}
 
 	// Table Customaization
@@ -361,6 +407,9 @@
 				var tempUIDIn = new GenerateBillUIDCollectionDTO() { uid = s, productCode = result.productCode };
 				UIDCollection.Add(tempUIDIn);
 				uid = String.Empty;
+
+				ResetCoupon();
+				ResetCredit();
 				return;
 			}
 			result.quantity = 1;
@@ -370,6 +419,9 @@
 			var tempUID = new GenerateBillUIDCollectionDTO() { uid = s, productCode = result.productCode };
 			UIDCollection.Add(tempUID);
 			uid = String.Empty;
+
+			ResetCoupon();
+			ResetCredit();
 		}
 		catch (Exception)
 		{
@@ -388,6 +440,7 @@
 				Snackbar.Add("Coupon not applicable", Severity.Error);
 				return;
 			}
+			Snackbar.Add("Coupon applied", Severity.Success);
 			discount = result;
 			//GetVat();
 		}
@@ -397,10 +450,18 @@
 		}
 	}
 
+	// Reset Discount
+	private void ResetCoupon()
+	{
+		Coupon = String.Empty;
+		discount = 0;
+		// GetVat();
+	}
+
 	// Get Vat
 	private void GetVat()
 	{
-		vatAmount = ((subTotal - discount) / 100) * 5;
+		vatAmount = ((subTotal - discount - usedCredit) / 100) * 5;
 	}
 
 	// Generate POS
@@ -420,7 +481,7 @@
 		POSDetails.vatAmount = vatAmount;
 		POSDetails.total = subTotal;
 		POSDetails.grandTotal = subTotal - discount + vatAmount;
-		POSDetails.creditValue = Customer.creditValue;
+		POSDetails.creditValue = usedCredit;
 		POSDetails.membershipId = MembershipID;
 		POSDetails.couponCode = Coupon;
 		POSDetails.comment = Comment;
@@ -434,6 +495,7 @@
 	{
 		try
 		{
+			//disableGenerate = true;
 			await AssignData();
 			var result = await _generateBill.NewPOS(POSData);
 
@@ -441,15 +503,19 @@
 			{
 				trnCode = result.trnCode;
 				Snackbar.Add(result.message, Severity.Success);
+				//ResetFields();
+				disableGenerate = false;
+				await GotoPrint();
 				return;
 			}
 			Snackbar.Add(result.message, Severity.Error);
+			disableGenerate = false;
 		}
 		catch (Exception e)
 		{
-			
-			Snackbar.Add(e.Message, Severity.Error);
-			//Snackbar.Add("Something went wrong!", Severity.Error);
+			disableGenerate = false;
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Error", Severity.Error);
 			throw;
 		}
 	}
@@ -470,5 +536,27 @@
 	private async Task GotoPrint()
 	{
 		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print/{trnCode}", "_blank" });
+	}
+
+	// Reset Fields
+	private void ResetFields()
+	{
+		POSDetails = new GenerateBillPOSTDetailsDTO();
+		POSData = new GenerateBillPOSDTO();
+		Customer = new GenerateBillCustomerInfoDTO();
+		Elements.Clear();
+		UIDCollection.Clear();
+		disableGenerate = false;
+		Coupon = String.Empty;
+		uid = String.Empty;
+		customerPhoneNumber = String.Empty;
+		MembershipID = String.Empty;
+		Comment = String.Empty;
+		subTotal = 0;
+		vatAmount = 0;
+		discount = 0;
+		backupCredit = 0;
+		usedCredit = 0;
+		TableItems = 0;
 	}
 }

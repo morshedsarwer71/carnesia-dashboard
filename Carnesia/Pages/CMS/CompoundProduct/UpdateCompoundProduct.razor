@@ -244,7 +244,7 @@
 				FormData = result;
 			}
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 		}
@@ -471,12 +471,19 @@
 
 		try
 		{
-			await _childProduct.UpdateChildProduct(UpdatedProduct);
-			Snackbar.Add("Product Updated Successfully!", Severity.Success);
+			var result = await _childProduct.UpdateChildProduct(UpdatedProduct);
+
+			if (result == "Product Updated Successfully")
+	{
+				Snackbar.Add(result, Severity.Success);
+				return;
+			}
+			Snackbar.Add(result, Severity.Error);
+
 		}
 		catch (Exception)
 		{
-			Snackbar.Add("Something went Wrong!", Severity.Error);
+			Snackbar.Add("Internal Server Error!", Severity.Error);
 			throw;
 		}
 	}

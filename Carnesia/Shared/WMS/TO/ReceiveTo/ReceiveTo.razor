@@ -1,5 +1,6 @@
 ﻿@using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.WMS.OutScan
+@using Carnesia.Domain.WMS.ReceiveTo
 @inject IManageTo _manageTo
 @inject ISnackbar Snackbar
 
@@ -17,7 +18,7 @@
 
 		<MudGrid Class="justify-center mb-3">
 			<MudItem sm="6" Class="d-flex justify-end">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(ToidShow) || String.IsNullOrEmpty(UID)" OnClick="AddProducts">Add</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(ToidShow) || String.IsNullOrEmpty(UID)" OnClick="AddProductsByUID">Add</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -35,8 +36,8 @@
 				<MudTd DataLabel="SKU Code">@context.sku</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
 				<MudTd DataLabel="TO Quantity">@context.qty</MudTd>
-				<MudTd DataLabel="Rcv. QTY">@context.Rqty</MudTd>
-				<MudTd DataLabel="To Be Scanned">@(context.qty - context.Rqty)</MudTd>
+				<MudTd DataLabel="Rcv. QTY">@context.pickedQty</MudTd>
+				<MudTd DataLabel="To Be Scanned">@context.toBeScanned</MudTd>
 			</RowTemplate>
 			<PagerContent>
 				<MudTablePager />
@@ -51,7 +52,7 @@
 		</div>
 
 		<div class="d-flex align-end flex-column">
-			<MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="true">Acknowledgement</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="Elements.Count <= 0" OnClick="CreateAcknowledgement">Acknowledgement</MudButton>
 		</div>
 	</MudContainer>
 </MudPaper>
@@ -66,7 +67,7 @@
 	private TableCommon tableCommon = new TableCommon();
 
 	// Table Content
-	private List<OutScanProductDTO> Elements = new List<OutScanProductDTO>();
+	private List<ReceiveToProductDTO> Elements = new List<ReceiveToProductDTO>();
 
 	// Enter Press
 	private async Task ToidEnter(KeyboardEventArgs e)
@@ -75,8 +76,7 @@
 		{
 			if (!String.IsNullOrEmpty(Toid))
 			{
-				ToidShow = Toid;
-				Toid = String.Empty;
+				await AddProductsByToid();
 			}
 		}
 	}
@@ -87,32 +87,43 @@
 		{
 			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(ToidShow))
 			{
-				await AddProducts();
+				await AddProductsByUID();
 			}
 		}
 	}
 
 	// Add Products
-	private async Task AddProducts()
+	private async Task AddProductsByToid()
 	{
 		try
 		{
-			var result = await _manageTo.ReceiveTo(ToidShow, UID);
+			var result = await _manageTo.ReceiveToByToid(Toid);
 
 			if (result.data != null)
 			{
-				bool isThere = Elements.Any(x => x.productCode == result.data.productCode);
+				Elements = result.data;
+				Snackbar.Add(result.message, Severity.Success);
+				ToidShow = Toid;
+				Toid = String.Empty;
+				return;
+			}
+			Snackbar.Add(result.message, Severity.Error);
+		}
+		catch (Exception e)
+		{
+			Snackbar.Add("Toid not found!", Severity.Error);
+			Console.WriteLine(e.Message);
+		}
+	}
 
-				if (isThere)
-				{
-					int PIndex = Elements.FindIndex(x => x.productCode == result.data.productCode);
-					Elements[PIndex].Rqty += 1;
-					Snackbar.Add(result.message, Severity.Success);
-					UID = String.Empty;
-					return;
-				}
-				result.data.Rqty = 1;
-				Elements.Add(result.data);
+	private async Task AddProductsByUID()
+	{
+		try
+		{
+			var result = await _manageTo.ReceiveToByUID(ToidShow, UID);
+			if (result.data != null)
+			{
+				Elements = result.data;
 				Snackbar.Add(result.message, Severity.Success);
 				UID = String.Empty;
 				return;
@@ -121,7 +132,27 @@
 		}
 		catch (Exception e)
 		{
-			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			Snackbar.Add("UID not found!", Severity.Error);
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	private async Task CreateAcknowledgement()
+	{
+		try
+		{
+			var result = await _manageTo.Acknowledgement(ToidShow);
+
+			if (result == "Success")
+			{
+				Snackbar.Add(result, Severity.Success);
+				return;
+			}
+			Snackbar.Add(result, Severity.Error);
+		}
+		catch(Exception e)
+		{
+			Snackbar.Add("Failed", Severity.Error);
 			Console.WriteLine(e.Message);
 		}
 	}

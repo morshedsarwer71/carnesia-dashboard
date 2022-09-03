@@ -103,9 +103,9 @@ namespace Carnesia.Application.Dashboard.GenerateBill
                 var deserialized = JsonConvert.DeserializeObject<GenerateBillPosResponseDTO>(json);
                 return deserialized;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
                 throw;
             }
         }

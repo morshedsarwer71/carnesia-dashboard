@@ -10,9 +10,9 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
 {
     public interface IChildProduct
     {
-        Task CreateChildProduct(ChildProductDTO ProductData);
+        Task<string> CreateChildProduct(ChildProductDTO ProductData);
         Task<SingleChildProductDTO> GetChildById(int id);
-        Task UpdateChildProduct(ChildProductUpdateDTO childProduct);
+        Task<string> UpdateChildProduct(ChildProductUpdateDTO childProduct);
         Task DeleteImage(int id);
         Task UpdateImage(UpdateProductImageDTO Images, int id);
         Task<List<ChildProductDetailsDTO>> UploadBulkProducts(InputFileChangeEventArgs e);

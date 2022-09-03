@@ -549,22 +549,28 @@
 
 		try
 		{
-			await _childProduct.CreateChildProduct(NewProduct);
-			Snackbar.Add("Success!", Severity.Success);
+			var result = await _childProduct.CreateChildProduct(NewProduct);
 
-			SimpleParent = new SimpleProductParentDTO();
-			ChildProductInfoData = new ChildProductDetailsDTO();
-			FreeProducts.Clear();
-			CategoryData = new ProductCategoryDTO();
-			ProductCategories.Clear();
-			ProductImages.Clear();
-			NewProduct = new ChildProductDTO();
-			await this.QuillNative.LoadHTMLContent("<p><br></p>");
-			StateHasChanged();
+			if (result == "Product Created Successfully")
+			{
+				Snackbar.Add(result, Severity.Success);
+
+				SimpleParent = new SimpleProductParentDTO();
+				ChildProductInfoData = new ChildProductDetailsDTO();
+				FreeProducts.Clear();
+				CategoryData = new ProductCategoryDTO();
+				ProductCategories.Clear();
+				ProductImages.Clear();
+				NewProduct = new ChildProductDTO();
+				await this.QuillNative.LoadHTMLContent("<p><br></p>");
+				StateHasChanged();
+				return;
+			}
+			Snackbar.Add(result, Severity.Error);
 		}
 		catch (Exception)
 		{
-			Snackbar.Add("Something went Wrong!", Severity.Error);
+			Snackbar.Add("Internal Server Error!", Severity.Error);
 			throw;
 		}
 

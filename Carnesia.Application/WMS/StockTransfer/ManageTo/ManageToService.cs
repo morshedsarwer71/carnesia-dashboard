@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
 using Carnesia.Domain.WMS.OutScan;
+using Carnesia.Domain.WMS.ReceiveTo;
 using Carnesia.Domain.WMS.UpdateTO;
 
 namespace Carnesia.Application.WMS.StockTransfer.ManageTo
@@ -18,7 +19,22 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 			_httpClient = httpClient;
 		}
 
-        public async Task CancelPicklist(string pickList)
+		public async Task<string> Acknowledgement(string toid)
+		{
+			try
+			{
+				var result = await _httpClient.GetStringAsync($"StockTransfers/confirmreceiveto/{toid}");
+
+				return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task CancelPicklist(string pickList)
         {
             try
             {
@@ -135,11 +151,11 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
             }
         }
 
-        public async Task<OutScanDTO> ReceiveTo(string toid, string uid)
+        public async Task<ReceiveToDTO> ReceiveToByToid(string toid)
         {
 			try
 			{
-				var result = await _httpClient.GetFromJsonAsync<OutScanDTO>($"StockTransfers/receiveto/{toid}/{uid}");
+				var result = await _httpClient.GetFromJsonAsync<ReceiveToDTO>($"StockTransfers/receivetobytocode/{toid}");
 				return result;
 			}
 			catch (Exception)
@@ -149,18 +165,33 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 			}
 		}
 
-        public async Task<bool> UpdateToProductQuantity(string toid, int qty, int id)
+		public async Task<ReceiveToDTO> ReceiveToByUID(string toid, string uid)
+		{
+			try
+			{
+				var result = await _httpClient.GetFromJsonAsync<ReceiveToDTO>($"StockTransfers/receiveto/{toid}/{uid}");
+
+				return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<bool> UpdateToProductQuantity(string toid, int qty, int id)
         {
             try
             {
                 var result = await _httpClient.GetStringAsync($"StockTransfers/updatetoproduct/{toid}/{qty}/{id}");
 
-                if (result == "Success") return true;
+                if (result == "Product Updated") return true;
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+				Console.WriteLine(e.Message);
                 throw;
             }
         }

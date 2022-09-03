@@ -56,16 +56,18 @@
 				<MudTd DataLabel="Status">@context.status</MudTd>
 				<MudTd DataLabel="Last Updated on">@context.lastUpdate</MudTd>
 				<MudTd DataLabel="TO Product Quantity">@context.toQuantity</MudTd>
-				<MudTd DataLabel="Picked QTY.">@context.toQuantity</MudTd>
-				<MudTd DataLabel="Received QTY.">@context.toQuantity</MudTd>
-				<MudTd DataLabel="Not Received QTY.">@context.toQuantity</MudTd>
-				<MudTd DataLabel="Picklist ID" Style="text-decoration: underline; cursor: pointer; color: blue;" @onclick="() => printPicklist(context.pickListId)">@context.pickListId</MudTd>
+				<MudTd DataLabel="Picked QTY.">@context.tototalPickedQty</MudTd>
+				<MudTd DataLabel="Received QTY.">@context.tototalRcvdQty</MudTd>
+				<MudTd DataLabel="Not Received QTY.">@(context.tototalPickedQty - context.tototalRcvdQty)</MudTd>
+				<MudTd DataLabel="Picklist ID">
+					<p style="text-decoration: underline; cursor: pointer; color: blue;" @onclick="() => printPicklist(context.pickListId)">@context.pickListId</p>
+				</MudTd>
 				<MudTd DataLabel="Action">
-					@if (context.pickListId == null)
+					@if (context.pickListId == null && context.isPickList)
 					{
 						<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="context.pickListId != null" OnClick="() => GeneratePicklistId(context.toCode)">Generate Picklist</MudButton>
 					}
-					@if (context.pickListId != null)
+					@if (context.pickListId != null && context.isPickList)
 					{
 						<MudButton Variant="Variant.Filled" Color="Color.Error" Disabled="context.pickListId == null" OnClick="() => CancelPicklistId(context.pickListId)">Cancel</MudButton>
 					}

@@ -16,6 +16,7 @@ namespace Carnesia.Domain.Dashboard.ReturnRefund
     public class PosUID
     {
         public string uid { get; set; }
+        public string productCode { get; set; }
     }
 
     public class PosItem

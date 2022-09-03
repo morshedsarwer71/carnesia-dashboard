@@ -18,6 +18,9 @@ namespace Carnesia.Domain.WMS.ManageTO
         public int statusId { get; set; }
         public string lastUpdate { get; set; }
         public int toQuantity { get; set; }
+        public int tototalPickedQty { get; set; }
+        public int tototalRcvdQty { get; set; }
+        public bool isPickList { get; set; }
         public string? pickListId { get; set; }
     }
 }

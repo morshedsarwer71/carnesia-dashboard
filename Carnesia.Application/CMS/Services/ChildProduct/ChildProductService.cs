@@ -85,11 +85,15 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
             }
         }
 
-        public async Task CreateChildProduct(ChildProductDTO ProductData)
+        public async Task<string> CreateChildProduct(ChildProductDTO ProductData)
         {
             try
             {
-                await _httpClient.PostAsJsonAsync("Products", ProductData);
+                var result = await _httpClient.PostAsJsonAsync("Products", ProductData);
+
+                string json = await result.Content.ReadAsStringAsync();
+
+                return json;
             }
             catch (Exception)
             {
@@ -131,13 +135,15 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
             }
         }
 
-        public async Task UpdateChildProduct(ChildProductUpdateDTO childProduct)
+        public async Task<string> UpdateChildProduct(ChildProductUpdateDTO childProduct)
         {
             try
             {
                 var result = await _httpClient.PutAsJsonAsync($"Products/{childProduct.updateProductDTO.id}", childProduct);
 
-                if (result.IsSuccessStatusCode) Console.WriteLine("Working");
+                string json = await result.Content.ReadAsStringAsync();
+
+                return json;
             }
             catch (Exception e)
             {
