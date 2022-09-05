@@ -21,10 +21,41 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
         {
             try
             {
-                var result = await _httpClient.PostAsJsonAsync("Order/assignagent", agent);
+                var result = await _httpClient.PostAsJsonAsync("Oms/assignagent", agent);
 
                 if (result.IsSuccessStatusCode) return true;
                 return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> CancelOrder(int orderId)
+        {
+            try
+            {
+                var result = await _httpClient.GetAsync($"Oms/cancelorder/{orderId}");
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<AgentDTO>> GetAgents()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<AgentDTO>>("Oms/agent");
+
+                return result;
             }
             catch (Exception)
             {
@@ -37,9 +68,25 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<List<PendingOrderDTO>>("Order/pendingorders");
+                var result = await _httpClient.GetFromJsonAsync<List<PendingOrderDTO>>("Oms/pendingorders");
 
                 return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> VerifyOrder(int orderId)
+        {
+            try
+            {
+                var result = await _httpClient.GetAsync($"Oms/verifyorder/{orderId}");
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
             }
             catch (Exception)
             {

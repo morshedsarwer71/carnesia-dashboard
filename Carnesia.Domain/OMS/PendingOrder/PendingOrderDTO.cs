@@ -10,6 +10,7 @@ namespace Carnesia.Domain.OMS.PendingOrder
     {
         public int orderId { get; set; }
         public string orderDate { get; set; }
+        public string trnCode { get; set; }
         public string address { get; set; }
         public decimal orderValue { get; set; }
         public string paymentMethod { get; set; }

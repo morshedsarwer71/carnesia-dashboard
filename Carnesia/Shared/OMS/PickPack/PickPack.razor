@@ -1,0 +1,114 @@
+﻿@using Carnesia.Domain.OMS.PickPack
+@inject ISnackbar Snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudText Typo="Typo.h3">Order ID: @orderIdShow</MudText>
+
+		<MudGrid Class="justify-center">
+			<MudItem sm="3">
+				<MudTextField @bind-Value="orderId" Immediate="true" Label="Order ID" OnKeyPress="orderEnter" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudTextField @bind-Value="uid" Immediate="true" Label="UID" OnKeyPress="UidEnter" />
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center mb-3">
+			<MudItem sm="6" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudText Typo="Typo.h6">Customer Instruction:</MudText>
+		<MudText Typo="Typo.h6">Expiry Date: 12-03-2026</MudText>
+		<MudText Typo="Typo.h6">Expiry Status: In Date</MudText>
+
+		<MudTable Class="mt-5" Items="Elements" Hover="true" Striped="true" Dense="true">
+			<HeaderContent>
+				<MudTh>Picklist ID</MudTh>
+				<MudTh>Product Code</MudTh>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>QTY</MudTh>
+				<MudTh>Packed QTY</MudTh>
+				<MudTh>To Be Scanned</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Picklist ID">@context.picklistId</MudTd>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="QTY">@context.qty</MudTd>
+				<MudTd DataLabel="Packed QTY">@context.packedQty</MudTd>
+				<MudTd DataLabel="To Be Scanned">@context.toBeScanned</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Elements.Count <= 0">Submit</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Table Content
+	private List<PickPackDTO> Elements = new List<PickPackDTO>();
+
+	// Order ID
+	private string orderId { get; set; }
+	private string orderIdShow { get; set; }
+	private string uid { get; set; }
+
+	// Press Enter
+	private async Task orderEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter" || e.Code == "13")
+		{
+			if (!String.IsNullOrEmpty(orderId))
+			{
+				orderIdShow = orderId;
+				orderId = String.Empty;
+			}
+		}
+	}
+
+	private async Task UidEnter(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(uid) && uid.Length == 15 && !String.IsNullOrEmpty(orderIdShow))
+			{
+				await CheckUid();
+			}
+		}
+	}
+
+	// UID Collection
+	private class UIDCollectionDTO
+	{
+		public string uid { get; set; }
+		public string productCode { get; set; }
+	}
+
+	private List<UIDCollectionDTO> uidCollection = new List<UIDCollectionDTO>();
+
+	// Check UID
+	private async Task CheckUid()
+	{
+		var isThere = uidCollection.Any(x => x.uid == uid);
+
+		if (isThere)
+		{
+			Snackbar.Add("UID already used!", Severity.Error);
+			return;
+		}
+		// Else Do Something
+	}
+
+	// Scan Product
+	private async Task ScanProduct()
+	{
+		
+	}
+}

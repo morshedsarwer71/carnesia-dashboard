@@ -21,6 +21,7 @@ namespace Carnesia.Domain.WMS.ManageTO
         public int tototalPickedQty { get; set; }
         public int tototalRcvdQty { get; set; }
         public bool isPickList { get; set; }
+        public bool isPrint { get; set; }
         public string? pickListId { get; set; }
     }
 }

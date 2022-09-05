@@ -2,9 +2,10 @@
 @using Carnesia.Domain.OMS.PendingOrder
 @using Carnesia.Shared.OMS.PendingOrder
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 @inject IPendingOrder _pendingOrder
 
-<MudPaper Class="pa-16 pb-16 pt-10 ma-10">
+<MudPaper Class="py-16 px-3 ma-10">
 	<MudContainer Fixed="true">
 		<MudGrid Class="align-baseline mb-5">
 			<MudItem md="4">
@@ -33,14 +34,19 @@
 
 		<MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="3">
-				<MudAutocomplete T="string" Label="Select Agent" ResetValueOnEmptyText="true" />
+				<MudSelect @bind-Value="AssignAgent.agentId" Label="Select Agent" AnchorOrigin="Origin.BottomCenter">
+					@foreach (var item in Agents)
+					{
+						<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+					}
+				</MudSelect>
 			</MudItem>
 			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Assign</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(AssignAgent.agentId) || SelectedItems.Count <= 0" OnClick="AssignagentSubmit">Assign</MudButton>
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true">
+		<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true" Loading="tableLoading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh></MudTh>
 				<MudTh>Order Id</MudTh>
@@ -67,7 +73,7 @@
 						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.orderId)" />
 					}
 				</MudTd>
-				<MudTd DataLabel="Order Id">@context.orderId</MudTd>
+				<MudTd DataLabel="Order Id">@context.trnCode</MudTd>
 				<MudTd DataLabel="Order Date">@context.orderDate</MudTd>
 				<MudTd DataLabel="Order Value">@context.orderValue</MudTd>
 				<MudTd DataLabel="Payment Method">@context.paymentMethod</MudTd>
@@ -79,9 +85,9 @@
 				<MudTd DataLabel="Source">@context.source</MudTd>
 				<MudTd DataLabel="Assign To">@context.assignto</MudTd>
 				<MudTd DataLabel="Action" Class="d-flex flex-column align-center">
-					<MudButton Variant="Variant.Text" Color="Color.Primary">Edit</MudButton>
-					<MudButton Variant="Variant.Text" Color="Color.Success">Verify</MudButton>
-					<MudButton Variant="Variant.Text" Color="Color.Secondary">Cancel</MudButton>
+					@*<MudButton Variant="Variant.Text" Color="Color.Primary">Edit</MudButton>*@
+					<MudButton Variant="Variant.Text" Color="Color.Success" OnClick="() => OpenVerifyDialog(context.orderId)">Verify</MudButton>
+					<MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => OpenCancelDialog(context.orderId)">Cancel</MudButton>
 				</MudTd>
 			</RowTemplate>
 			<ChildRowContent>
@@ -146,10 +152,14 @@
 </MudPaper>
 
 @code {
+	// Table Loading
+	private bool tableLoading { get; set; }
+
 	// Page On Load
 	protected override async Task OnInitializedAsync()
 	{
 		await GetOrders();
+		await GetAgents();
 	}
 
 	// Table Content
@@ -159,7 +169,47 @@
 	// Get Orders
 	private async Task GetOrders()
 	{
+		tableLoading = true;
 		Elements = await _pendingOrder.GetAllPendingOrders();
+		tableLoading = false;
+	}
+
+	// Assign Agent
+	private AssignAgentDTO AssignAgent = new AssignAgentDTO();
+
+	private async Task AssignagentSubmit()
+	{
+		var tempOrder = new List<OrderIdsDTO>();
+		foreach (var item in SelectedItems)
+		{
+			tempOrder.Add(new OrderIdsDTO { orderId = item.orderId });
+		}
+		AssignAgent.orders = tempOrder;
+		try
+		{
+			var result = await _pendingOrder.AssignAgent(AssignAgent);
+
+			if (result)
+			{
+				Snackbar.Add("Agent Assigned Successfully!", Severity.Success);
+				await GetOrders();
+				return;
+			}
+			Snackbar.Add("Agent Assigned Failed!", Severity.Error);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Agent Assigned Failed!", Severity.Error);
+		}
+	}
+
+	// Agents
+	private List<AgentDTO> Agents = new List<AgentDTO>();
+
+	// Get Agents
+	private async Task GetAgents()
+	{
+		Agents = await _pendingOrder.GetAgents();
 	}
 
 	// Details Table Edit States
@@ -188,10 +238,59 @@
 	}
 
 	// Cancel Modal
-	private void OpenCancelDialog()
+	private async Task OpenCancelDialog(int orderId)
 	{
 		var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
-		DialogService.Show<CancelModal>("Cancel Item?", options);
+		var dialog = await DialogService.Show<CancelModal>("Cancel Item?", options).Result;
+
+		if (!dialog.Cancelled)
+		{
+			try
+			{
+				var result = await _pendingOrder.CancelOrder(orderId);
+
+				if (result)
+				{
+					Snackbar.Add("Order Cancelled Successfully!", Severity.Success);
+					await GetOrders();
+					return;
+				}
+				Snackbar.Add("Order Cancelled Failed!", Severity.Error);
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
+	}
+
+	// Verify Modal
+	private async Task OpenVerifyDialog(int orderId)
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
+		var dialog = await DialogService.Show<VerifyOrder>("Verify Item?", options).Result;
+
+		if (!dialog.Cancelled)
+		{
+			try
+			{
+				var result = await _pendingOrder.VerifyOrder(orderId);
+
+				if (result)
+				{
+					Snackbar.Add("Order verified Successfully!", Severity.Success);
+					await GetOrders();
+					return;
+				}
+				Snackbar.Add("Order verified Failed!", Severity.Error);
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Something Went Wrong!", Severity.Error);
+				throw;
+			}
+		}
 	}
 
 	// Edit Order Modal

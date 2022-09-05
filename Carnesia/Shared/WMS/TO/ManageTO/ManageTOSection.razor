@@ -73,7 +73,7 @@
 					}
 				</MudTd>
 				<MudTd DataLabel="Print">
-					<MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="context.pickListId == null" OnClick="() => ToPrints(context.toCode)">Print</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="!context.isPrint" OnClick="() => ToPrints(context.toCode)">Print</MudButton>
 				</MudTd>
 			</RowTemplate>
 			<PagerContent>

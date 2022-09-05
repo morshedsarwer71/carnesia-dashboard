@@ -11,5 +11,8 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
     {
         Task<List<PendingOrderDTO>> GetAllPendingOrders();
         Task<bool> AssignAgent(AssignAgentDTO agent);
+        Task<bool> CancelOrder(int orderId);
+        Task<bool> VerifyOrder(int orderId);
+        Task<List<AgentDTO>> GetAgents();
     }
 }
