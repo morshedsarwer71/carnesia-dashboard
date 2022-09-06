@@ -1,0 +1,122 @@
+﻿@page "/order-edit/{trnCode}"
+
+@using Carnesia.Domain.OMS.PendingOrder
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudGrid Class="justify-center">
+				<MudItem sm="6">
+					<MudTextField T="string" Label="Customer Name" Disabled="true" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField T="string" Label="Contact Numver" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField T="string" Label="Address" Disabled="true" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudSelect T="string" Label="Division" AnchorOrigin="Origin.BottomCenter">
+						<MudSelectItem Value="@("Cappuccino")" />
+						<MudSelectItem Value="@("Cafe Latte")" />
+						<MudSelectItem Value="@("Espresso")" />
+					</MudSelect>
+				</MudItem>
+				<MudItem sm="6">
+					<MudSelect T="string" Label="District" AnchorOrigin="Origin.BottomCenter">
+						<MudSelectItem Value="@("Cappuccino")" />
+						<MudSelectItem Value="@("Cafe Latte")" />
+						<MudSelectItem Value="@("Espresso")" />
+					</MudSelect>
+				</MudItem>
+				<MudItem sm="6">
+					<MudSelect T="string" Label="Zone" AnchorOrigin="Origin.BottomCenter">
+						<MudSelectItem Value="@("Cappuccino")" />
+						<MudSelectItem Value="@("Cafe Latte")" />
+						<MudSelectItem Value="@("Espresso")" />
+					</MudSelect>
+				</MudItem>
+			</MudGrid>
+		</MudForm>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Dense="true" Striped="true" Hover="true" Elevation="0" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CustomFooter="true">
+			<HeaderContent>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Quantity</MudTh>
+				<MudTh>Price</MudTh>
+				<MudTh>Amount</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Quantity">@context.quantity</MudTd>
+				<MudTd DataLabel="Price">@context.mrp</MudTd>
+				<MudTd DataLabel="Amount">@context.totalMrp</MudTd>
+			</RowTemplate>
+			<RowEditingTemplate>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Quantity">
+					<MudNumericField @bind-Value="@context.quantity" Required />
+				</MudTd>
+				<MudTd DataLabel="Price">@context.mrp</MudTd>
+				<MudTd DataLabel="Amount">@context.totalMrp</MudTd>
+			</RowEditingTemplate>
+			<FooterContent>
+				<MudTFootRow>
+					<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
+					@*<MudTd colspan="1" Style="text-align: end;">@FormData.products.total</MudTd>*@
+					<MudTd colspan="1" Style="text-align: end;">0</MudTd>
+				</MudTFootRow>
+				<MudTFootRow>
+					<MudTd colspan="4" Style="text-align: end;">Discount:</MudTd>
+					@*<MudTd colspan="1" Style="text-align: end;">@FormData.products.discount</MudTd>*@
+					<MudTd colspan="1" Style="text-align: end;">0</MudTd>
+				</MudTFootRow>
+				<MudTFootRow>
+					<MudTd colspan="4" Style="text-align: end;">Shipping Price:</MudTd>
+					@*<MudTd colspan="1" Style="text-align: end;">@FormData.products.shippingPrice</MudTd>*@
+					<MudTd colspan="1" Style="text-align: end;">0</MudTd>
+				</MudTFootRow>
+				<MudTFootRow>
+					<MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+					@*<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@FormData.products.grandTotal</MudTd>*@
+					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">0</MudTd>
+				</MudTFootRow>
+			</FooterContent>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+@code {
+	[Parameter]
+	public string trnCode { get; set; }
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+
+	// Form Data
+	private PendingOrderDTO FormData = new PendingOrderDTO();
+	private List<PendingOrderProductsDTO> Elements = new List<PendingOrderProductsDTO>();
+
+	// Table Edit Backup
+	private PendingOrderProductsDTO BeforeEdit;
+	private void BackupItem(object element)
+	{
+		BeforeEdit = new()
+			{
+				quantity = ((PendingOrderProductsDTO)element).quantity
+			};
+	}
+
+	// Details Table Edit Cancel
+	private void ResetItemToOriginalValues(object element)
+	{
+		((PendingOrderProductsDTO)element).quantity = BeforeEdit.quantity;
+	}
+}
