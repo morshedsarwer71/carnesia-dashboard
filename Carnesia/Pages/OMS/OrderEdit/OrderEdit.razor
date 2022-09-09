@@ -1,122 +1,459 @@
 ﻿@page "/order-edit/{trnCode}"
 
-@using Carnesia.Domain.OMS.PendingOrder
+@using Carnesia.Domain.OMS.PlaceOrder
+@using Carnesia.Domain.Dashboard.GenerateBill
+@using Carnesia.Domain.OMS.Zones
+@using Carnesia.Shared.Dashboard.GenerateBill
+@inject IZones _zones
+@inject IPlaceOrder _placeOrder
+@inject IGenerateBill _generateBill
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
-		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-			<MudGrid Class="justify-center">
-				<MudItem sm="6">
-					<MudTextField T="string" Label="Customer Name" Disabled="true" />
-				</MudItem>
-				<MudItem sm="6">
-					<MudTextField T="string" Label="Contact Numver" />
-				</MudItem>
-				<MudItem sm="6">
-					<MudTextField T="string" Label="Address" Disabled="true" />
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect T="string" Label="Division" AnchorOrigin="Origin.BottomCenter">
-						<MudSelectItem Value="@("Cappuccino")" />
-						<MudSelectItem Value="@("Cafe Latte")" />
-						<MudSelectItem Value="@("Espresso")" />
-					</MudSelect>
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect T="string" Label="District" AnchorOrigin="Origin.BottomCenter">
-						<MudSelectItem Value="@("Cappuccino")" />
-						<MudSelectItem Value="@("Cafe Latte")" />
-						<MudSelectItem Value="@("Espresso")" />
-					</MudSelect>
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect T="string" Label="Zone" AnchorOrigin="Origin.BottomCenter">
-						<MudSelectItem Value="@("Cappuccino")" />
-						<MudSelectItem Value="@("Cafe Latte")" />
-						<MudSelectItem Value="@("Espresso")" />
-					</MudSelect>
-				</MudItem>
-			</MudGrid>
-		</MudForm>
+		<MudGrid Class="justify-center">
+			<MudItem sm="4">
+				<MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudNumericField @bind-Value="FormData.qty" Min="1" />
+			</MudItem>
+		</MudGrid>
+		<MudGrid Class="justify-center my-5">
+			<MudItem sm="8">
+				<div class="d-flex justify-end">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(FormData.sku)" OnClick="AddProduct">Add Product</MudButton>
+				</div>
+			</MudItem>
+		</MudGrid>
 
-		<div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
-		</div>
-
-		<MudTable Items="@Elements" Dense="true" Striped="true" Hover="true" Elevation="0" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CustomFooter="true">
+		<MudTable Items="@Elements" Dense="true" Hover="true" Striped="true" CustomFooter="true">
 			<HeaderContent>
 				<MudTh>SKU</MudTh>
 				<MudTh>Product Name</MudTh>
 				<MudTh>Quantity</MudTh>
 				<MudTh>Price</MudTh>
 				<MudTh>Amount</MudTh>
+				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="SKU">@context.sku</MudTd>
-				<MudTd DataLabel="Product Name">@context.productName</MudTd>
-				<MudTd DataLabel="Quantity">@context.quantity</MudTd>
-				<MudTd DataLabel="Price">@context.mrp</MudTd>
-				<MudTd DataLabel="Amount">@context.totalMrp</MudTd>
-			</RowTemplate>
-			<RowEditingTemplate>
-				<MudTd DataLabel="SKU">@context.sku</MudTd>
-				<MudTd DataLabel="Product Name">@context.productName</MudTd>
-				<MudTd DataLabel="Quantity">
-					<MudNumericField @bind-Value="@context.quantity" Required />
+				<MudTd DataLabel="Product Name">@context.name</MudTd>
+				<MudTd DataLabel="Quantity">@context.productQuantity</MudTd>
+				<MudTd DataLabel="Price">@Math.Round(context.salesPrice, 2)</MudTd>
+				<MudTd DataLabel="Amount">@Math.Round(context.salesPrice * context.productQuantity, 2)</MudTd>
+				<MudTd DataLabel="Action">
+					<MudButton OnClick="() => RemoveProduct(context)">
+						<MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+					</MudButton>
 				</MudTd>
-				<MudTd DataLabel="Price">@context.mrp</MudTd>
-				<MudTd DataLabel="Amount">@context.totalMrp</MudTd>
-			</RowEditingTemplate>
+			</RowTemplate>
 			<FooterContent>
 				<MudTFootRow>
-					<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
-					@*<MudTd colspan="1" Style="text-align: end;">@FormData.products.total</MudTd>*@
-					<MudTd colspan="1" Style="text-align: end;">0</MudTd>
+					<MudTd colspan="5" Style="text-align: end;">Total:</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@subTotal</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
-					<MudTd colspan="4" Style="text-align: end;">Discount:</MudTd>
-					@*<MudTd colspan="1" Style="text-align: end;">@FormData.products.discount</MudTd>*@
-					<MudTd colspan="1" Style="text-align: end;">0</MudTd>
+					<MudTd colspan="5" Style="text-align: end;">Shipping:</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@shipping</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
-					<MudTd colspan="4" Style="text-align: end;">Shipping Price:</MudTd>
-					@*<MudTd colspan="1" Style="text-align: end;">@FormData.products.shippingPrice</MudTd>*@
-					<MudTd colspan="1" Style="text-align: end;">0</MudTd>
+					<MudTd colspan="5" Style="text-align: end;">Coupon Used:</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
-					<MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-					@*<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@FormData.products.grandTotal</MudTd>*@
-					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">0</MudTd>
+					<MudTd colspan="5" Style="text-align: end;">Auto Apply:</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@Math.Round(autoDiscount, 2)</MudTd>
+				</MudTFootRow>
+				<MudTFootRow>
+					<MudTd colspan="5" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + shipping - discount - autoDiscount), 2)</MudTd>
 				</MudTFootRow>
 			</FooterContent>
 		</MudTable>
+
+		<MudGrid Class="justify-center">
+			<MudItem sm="4">
+				<MudTextField @bind-Value="Coupon.coupon" Label="Coupon" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudSelect @bind-Value="Coupon.platform" Label="Coupon Platform" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("App")" />
+					<MudSelectItem Value="@("General")" />
+					<MudSelectItem Value="@("Web")" />
+				</MudSelect>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center">
+			<MudItem sm="8">
+				<div class="d-flex justify-end">
+					@if (discount <= 0)
+					{
+
+						<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Coupon.coupon) || String.IsNullOrEmpty(Coupon.platform)" OnClick="ApplyCoupon">Add Coupon</MudButton>
+					}
+					else
+					{
+
+						<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetCoupon">Reset</MudButton>
+					}
+				</div>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="align-baseline">
+			<MudItem sm="6">
+				<MudTextField @bind-Value="customerPhoneNumber" Label="Phone or Id" Immediate="true" Disabled="true"/>
+			</MudItem>
+		</MudGrid>
+		<br />
+		<MudDivider />
+
+		@*<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudGrid>
+				<MudItem sm="6">
+					<MudTextField @bind-Value="Customer.name" Label="Customer Name" Disabled="true" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField @bind-Value="Customer.address" Label="Address" Immediate="true" Required="true" RequiredError="Address is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudSelect Value="SelectedDivision" Label="Division" Immediate="true" AnchorOrigin="Origin.BottomCenter" ValueChanged="(Int32 s) => ChangeDivision(s)">
+						<MudSelectItem Value="0">Select Division</MudSelectItem>
+						@foreach (var item in Divisions)
+						{
+							<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+						}
+					</MudSelect>
+				</MudItem>
+				<MudItem sm="6">
+					<MudSelect Value="SelectedDistrict" T="int" Label="District" Immediate="true" AnchorOrigin="Origin.BottomCenter" ValueChanged="(Int32 s) => ChangeDistrict(s)">
+						<MudSelectItem Value="0">Select District</MudSelectItem>
+						@foreach (var item in Districts)
+						{
+							<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+						}
+					</MudSelect>
+				</MudItem>
+				<MudItem sm="6">
+					<MudSelect Value="SelectedZone" Label="Zone" Immediate="true" ValueChanged="(Int32 s) => ChangeZone(s)" AnchorOrigin="Origin.BottomCenter">
+						<MudSelectItem Value="0">Select Zone</MudSelectItem>
+						@foreach (var item in Zones)
+						{
+							<MudSelectItem Value="item.id">@item.zoneName</MudSelectItem>
+						}
+					</MudSelect>
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField @bind-Value="Customer.comment" Label="Comment" />
+				</MudItem>
+			</MudGrid>
+		</MudForm>*@
+
+		@*<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PlaceNewOrder">Place Order</MudButton>
+		</div>*@
 	</MudContainer>
 </MudPaper>
 @code {
 	[Parameter]
 	public string trnCode { get; set; }
+
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetDivisions();
+		await GetProductAsSKU();
+		await GetOrder();
+	}
+
 	// Form Ref
 	bool success;
 	string[] errors = { };
 	MudForm form;
 
-	// Form Data
-	private PendingOrderDTO FormData = new PendingOrderDTO();
-	private List<PendingOrderProductsDTO> Elements = new List<PendingOrderProductsDTO>();
 
-	// Table Edit Backup
-	private PendingOrderProductsDTO BeforeEdit;
-	private void BackupItem(object element)
+	// Shipping, Subtotal, Discount
+	private decimal subTotal { get; set; }
+	private decimal shipping { get; set; }
+	private decimal discount { get; set; }
+	private decimal autoDiscount { get; set; }
+
+	// Auto Apply Data
+	private PlaceOrderAutoApplyDTO AutoApply = new PlaceOrderAutoApplyDTO();
+
+	// Get Auto Apply
+	private async Task GetAutoApply()
 	{
-		BeforeEdit = new()
+		AutoApply = await _placeOrder.GetAutoApply(trnCode);
+
+		if (AutoApply.isDeliveryCharge)
+		{
+			shipping = shipping - AutoApply.amount;
+			return;
+		}
+		discount -= AutoApply.amount;
+		autoDiscount = AutoApply.amount;
+	}
+
+	// Check Auto Apply
+	private void CheckAutoApply()
+	{
+		if (subTotal < AutoApply.mincartamnt && AutoApply.isDeliveryCharge)
+		{
+			shipping += AutoApply.amount;
+		}
+
+		if (subTotal >= AutoApply.mincartamnt && AutoApply.isDeliveryCharge)
+		{
+			shipping = PlacedOrderDetails.deliveryPrice - AutoApply.amount;
+		}
+
+		if (subTotal < AutoApply.mincartamnt && AutoApply.isDeliveryCharge == false)
+		{
+			autoDiscount = 0;
+		}
+
+		if (subTotal >= AutoApply.mincartamnt && AutoApply.isDeliveryCharge == false)
+		{
+			autoDiscount = AutoApply.amount;
+		}
+	}
+
+	// Table Content
+	private List<ProductTableDTO> Elements = new List<ProductTableDTO>();
+	private PlaceOrderDetailsDTO PlacedOrderDetails = new PlaceOrderDetailsDTO();
+
+	// Get Order
+	private async Task GetOrder()
+	{
+		var result = await _placeOrder.GetOrderByTrnCode(trnCode);
+		PlacedOrderDetails = result;
+		shipping = result.deliveryPrice;
+		subTotal = result.totalPrice;
+		discount = result.promoPrice;
+		Coupon.coupon = result.voucherCode;
+
+		Elements = result.orderProductsDTOs;
+
+		if (result.autoApplyId > 0)
+		{
+			await GetAutoApply();
+		}
+	}
+
+	// Product Search Form
+	private ProductSearchDTO FormData = new ProductSearchDTO();
+
+	// Product Search
+	private string[] ProductSKU = new string[] { };
+
+	// Get Product SKU String
+	private async Task GetProductAsSKU()
+	{
+		ProductSKU = await _placeOrder.GetProductsAsSku();
+	}
+
+	// Autocomplite Search Func for ParentCat
+	private async Task<IEnumerable<string>> ProductSKUSearch(string value)
+	{
+		return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+	}
+
+	// Add Product To List
+	private async Task AddProduct()
+	{
+		try
+		{
+			var result = await _placeOrder.GetProductBySKU(FormData.sku);
+
+			var isThere = Elements.FirstOrDefault(x => x.sku == result.sku);
+
+			if (result.stock < FormData.qty)
 			{
-				quantity = ((PendingOrderProductsDTO)element).quantity
-			};
+				Snackbar.Add($"Stock avaiable {result.stock} pieces only!", Severity.Error);
+				return;
+			}
+
+			if (isThere != null)
+			{
+				if (result.stock < (FormData.qty + isThere.quantity))
+				{
+					Snackbar.Add($"Stock avaiable {result.stock} pieces only!", Severity.Error);
+					return;
+				}
+
+				isThere.quantity += FormData.qty;
+				isThere.productQuantity += FormData.qty;
+				FormData = new ProductSearchDTO();
+				subTotal = Math.Round(Elements.Sum(x => x.productQuantity * x.salesPrice));
+				Snackbar.Add("Product Updated Successfully!", Severity.Success);
+				ResetCoupon();
+				CheckAutoApply();
+				return;
+			}
+			result.quantity = FormData.qty;
+			result.productQuantity = FormData.qty;
+			result.productId = result.id;
+			result.productPrice = result.salesPrice;
+			Elements.Add(result);
+			FormData = new ProductSearchDTO();
+			subTotal = Math.Round(Elements.Sum(x => x.productQuantity * x.salesPrice));
+			Snackbar.Add("Product Added Successfully!", Severity.Success);
+			ResetCoupon();
+			CheckAutoApply();
+			return;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal Server Error!", Severity.Success);
+		}
 	}
 
-	// Details Table Edit Cancel
-	private void ResetItemToOriginalValues(object element)
+	// Remove Product
+	private void RemoveProduct(ProductTableDTO product)
 	{
-		((PendingOrderProductsDTO)element).quantity = BeforeEdit.quantity;
+		Elements.Remove(product);
+		subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
+		ResetCoupon();
+		Snackbar.Add("Product Removed Successfully!", Severity.Success);
 	}
+
+	// Coupon
+	private CouponDTO Coupon = new CouponDTO();
+	private PlaceOrderCouponDTO CouponDetails = new PlaceOrderCouponDTO();
+
+	// Apply Coupon
+	private async Task ApplyCoupon()
+	{
+		try
+		{
+			CouponDetails = await _placeOrder.ApplyCoupon(Coupon.coupon, Coupon.platform);
+
+			if (CouponDetails.message != null)
+			{
+				Snackbar.Add(CouponDetails.message, Severity.Error);
+				return;
+			}
+
+			if (subTotal < CouponDetails.minCartAmmount)
+			{
+				Snackbar.Add($"Minimum cart amount is {CouponDetails.minCartAmmount}tk!", Severity.Error);
+				return;
+			}
+
+			if (CouponDetails.discountType == "Cash")
+			{
+				discount = CouponDetails.percentageOrAmount;
+				Snackbar.Add("Coupon applied successfully!", Severity.Success);
+				return;
+			}
+
+			decimal tempDiscount = (subTotal / 100) * CouponDetails.percentageOrAmount;
+
+			discount = tempDiscount > CouponDetails.uptoDiscountAmount ? CouponDetails.uptoDiscountAmount : tempDiscount;
+			Snackbar.Add("Coupon applied successfully!", Severity.Success);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add($"Internal server error!", Severity.Error);
+		}
+	}
+
+	// Reset Coupon
+	private void ResetCoupon()
+	{
+		CouponDetails = new PlaceOrderCouponDTO();
+		Coupon = new CouponDTO();
+		discount = 0;
+	}
+
+	//Customer Data
+	private GenerateBillCustomerInfoDTO Customer = new GenerateBillCustomerInfoDTO();
+	private string customerPhoneNumber { get; set; }
+
+	// Zones
+	private List<DivisionDTO> Divisions = new List<DivisionDTO>();
+	private IList<DistrictDTO> Districts = new List<DistrictDTO>();
+	private IList<ZoneDTO> Zones = new List<ZoneDTO>();
+
+	private int SelectedDivision { get; set; }
+	private int SelectedDistrict { get; set; }
+	private int SelectedZone { get; set; }
+
+	// Get Divisions
+	private async Task GetDivisions()
+	{
+		Divisions = await _zones.GetDivisions();
+	}
+
+	// Division Change
+	private async Task ChangeDivision(int i)
+	{
+		SelectedDivision = i;
+		SelectedDistrict = 0;
+		SelectedZone = 0;
+		shipping = 0;
+		Zones.Clear();
+		if (i == 0)
+		{
+			Districts.Clear();
+			return;
+		}
+
+		var pIndex = Divisions.FindIndex(x => x.id == i);
+		Districts = Divisions[pIndex].districts;
+	}
+
+	// District Change
+	private async Task ChangeDistrict(int i)
+	{
+		SelectedDistrict = i;
+		SelectedZone = 0;
+		shipping = 0;
+
+		if (i == 0)
+		{
+			Zones.Clear();
+			return;
+		}
+
+		var result = Districts.Where(x => x.id == i).FirstOrDefault();
+		var pIndex = Districts.IndexOf(result);
+		Zones = Districts[pIndex].zones;
+	}
+
+	// Zone Change
+	private async Task ChangeZone(int i)
+	{
+		SelectedZone = i;
+
+		if (i == 0)
+		{
+			shipping = 0;
+			return;
+		}
+
+		var zone = Zones.FirstOrDefault(x => x.id == i);
+		shipping = zone.regulaPrice;
+	}
+
+	// Product Search Class
+	public class ProductSearchDTO
+	{
+		public string sku { get; set; }
+		public int qty { get; set; } = 1;
+	}
+
+	// Coupon Class
+	public class CouponDTO
+	{
+		public string coupon { get; set; }
+		public string platform { get; set; }
+	}
+	
 }

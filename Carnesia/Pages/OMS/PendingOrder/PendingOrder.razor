@@ -4,6 +4,7 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject IPendingOrder _pendingOrder
+@inject NavigationManager NavigationManager
 
 <MudPaper Class="py-16 px-3 ma-10">
 	<MudContainer Fixed="true">
@@ -22,6 +23,8 @@
 					<MudSelectItem Value="@("Inside Dhaka")" />
 					<MudSelectItem Value="@("Dhaka Suburb")" />
 					<MudSelectItem Value="@("Outside Dhaka")" />
+					<MudSelectItem Value="@("Inside CTG City")" />
+					<MudSelectItem Value="@("Outside CTG City")" />
 				</MudSelect>
 			</MudItem>
 			<MudItem md="4">
@@ -85,7 +88,7 @@
 				<MudTd DataLabel="Source">@context.source</MudTd>
 				<MudTd DataLabel="Assign To">@context.assignto</MudTd>
 				<MudTd DataLabel="Action" Class="d-flex flex-column align-center">
-					@*<MudButton Variant="Variant.Text" Color="Color.Primary">Edit</MudButton>*@
+					<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToOrderEdit(context.trnCode)">Edit</MudButton>
 					<MudButton Variant="Variant.Text" Color="Color.Success" OnClick="() => OpenVerifyDialog(context.orderId)">Verify</MudButton>
 					<MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => OpenCancelDialog(context.orderId)">Cancel</MudButton>
 				</MudTd>
@@ -96,7 +99,7 @@
 					<td colspan="14">
 						<MudCard Elevation="0">
 							<MudCardContent Class="pa-0">
-								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Dense="true" Striped="true" Hover="true" Elevation="0" CanCancelEdit="true" IsEditRowSwitchingBlocked="true" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CustomFooter="true">
+								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
 									<HeaderContent>
 										<MudTh>SKU</MudTh>
 										<MudTh>Product Name</MudTh>
@@ -111,15 +114,6 @@
 										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
 										<MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
 									</RowTemplate>
-									<RowEditingTemplate>
-										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
-										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
-										<MudTd DataLabel="Quantity">
-											<MudNumericField @bind-Value="@DetailsContext.quantity" Required />
-										</MudTd>
-										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
-										<MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
-									</RowEditingTemplate>
 									<FooterContent>
 										<MudTFootRow>
 											<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
@@ -212,29 +206,11 @@
 		Agents = await _pendingOrder.GetAgents();
 	}
 
-	// Details Table Edit States
-	private PendingOrderProductsDTO BeforeEdit;
-
 	// Show Details
 	private void ShowBtnPress(int orderId)
 	{
 		PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
-	}
-
-	// Details Table Edit Backup
-	private void BackupItem(object element)
-	{
-		BeforeEdit = new()
-			{
-				quantity = ((PendingOrderProductsDTO)element).quantity
-			};
-	}
-
-	// Details Table Edit Cancel
-	private void ResetItemToOriginalValues(object element)
-	{
-		((PendingOrderProductsDTO)element).quantity = BeforeEdit.quantity;
 	}
 
 	// Cancel Modal
@@ -299,4 +275,11 @@
 		var options = new DialogOptions { CloseOnEscapeKey = false, MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
 		DialogService.Show<CancelModal>("Edit Order", options);
 	}
+
+	// Navigate To Order Edit
+    private void NavigateToOrderEdit(string trncode)
+    {
+        NavigationManager.NavigateTo($"order-edit/{trncode}");
+    }
+
 }

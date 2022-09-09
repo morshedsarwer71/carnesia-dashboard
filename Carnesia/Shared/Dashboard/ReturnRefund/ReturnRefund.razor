@@ -58,15 +58,15 @@
 			</RowTemplate>
 			<FooterContent>
 				<MudTFootRow>
-					<MudTd colspan="7" Style="text-align: end;">Total:</MudTd>
+					<MudTd colspan="8" Style="text-align: end;">Total:</MudTd>
 					<MudTd colspan="1" Style="text-align: end;">@subTotal</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
-					<MudTd colspan="7" Style="text-align: end;">Item:</MudTd>
+					<MudTd colspan="8" Style="text-align: end;">Item:</MudTd>
 					<MudTd colspan="1" Style="text-align: end;">@TableItems</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
-					<MudTd colspan="7" Style="text-align: end;">Quantity:</MudTd>
+					<MudTd colspan="8" Style="text-align: end;">Quantity:</MudTd>
 					<MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.soldQty))</MudTd>
 				</MudTFootRow>
 				@*<MudTFootRow>
@@ -82,7 +82,7 @@
 					<MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
 					</MudTFootRow>*@
 				<MudTFootRow>
-					<MudTd colspan="7" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+					<MudTd colspan="8" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
 					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round(subTotal, 2)</MudTd>
 				</MudTFootRow>
 			</FooterContent>

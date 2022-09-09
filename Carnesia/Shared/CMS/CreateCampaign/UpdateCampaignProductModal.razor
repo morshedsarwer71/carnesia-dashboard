@@ -1,0 +1,33 @@
+﻿@using Carnesia.Domain.CMS.Campaign
+
+<MudDialog>
+	<DialogContent>
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudNumericField @bind-Value="FormData.stock" Label="Stock" Variant="Variant.Text" Required="true" RequiredError="Stock is required!" />
+			<MudNumericField @bind-Value="FormData.regularPrice" Label="Regular Price" Variant="Variant.Text" ReadOnly="true" />
+			<MudSelect @bind-Value="FormData.discType" Label="Discount Type" Required="true" AnchorOrigin="Origin.BottomCenter">
+				<MudSelectItem Value="@("Cash")" />
+				<MudSelectItem Value="@("Percent")" />
+			</MudSelect>
+			<MudNumericField @bind-Value="FormData.discAmount" Max="@(FormData.discType == "Percent" ? 99 : FormData.regularPrice)" Label="Discount Amount" Variant="Variant.Text" Required="true" RequiredError="Discount Amount is required!" />
+			<div class="d-flex justify-end my-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+			</div>
+		</MudForm>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+
+	[Parameter]
+	public CampaignProductDTO FormData { get; set; } = new CampaignProductDTO();
+
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<CampaignProductDTO>(FormData));
+}

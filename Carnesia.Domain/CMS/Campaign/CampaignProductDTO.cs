@@ -19,5 +19,19 @@ namespace Carnesia.Domain.CMS.Campaign
         public decimal atrDiscAmount { get; set; }
         public string discType { get; set; }
         public decimal weight { get; set; }
+        public bool isCombo { get; set; }
+        public int comboId { get; set; }
+    }
+
+    public class CampaignProductUpdateDTO
+    {
+        public int productId { get; set; }
+        public string discType { get; set; }
+        public decimal discAmount { get; set; }
+        public decimal regularPrice { get; set; }
+        public decimal discPrice { get; set; }
+        public int stock { get; set; }
+        public int comboId { get; set; }
+        public bool isCombo { get; set; }
     }
 }

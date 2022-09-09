@@ -79,6 +79,9 @@
                     <MudTd DataLabel="Discount Amount">@context.discAmount</MudTd>
                     <MudTd DataLabel="After Discount">@context.atrDiscAmount</MudTd>
                     <MudTd DataLabel="Action">
+                        <MudButton OnClick="() => OpenUpdateModal(context)" >
+                            <MudIcon Icon="@Icons.Filled.Edit" Color="Color.Warning" />
+                        </MudButton>
                         <MudButton OnClick="() => DeleteProduct(context.id)" >
                             <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
                         </MudButton>
@@ -230,6 +233,59 @@
             catch (Exception)
             {
                 throw;
+            }
+        }
+    }
+
+    // Update Product
+    private async Task OpenUpdateModal(CampaignProductDTO product)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", product);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<UpdateCampaignProductModal>("Update Product", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            CampaignProductDTO newProduct = dialog.Data as CampaignProductDTO;
+
+            if (newProduct.discType == "Cash")
+            {
+                newProduct.atrDiscAmount = newProduct.regularPrice - newProduct.discAmount;
+            }
+            else
+            {
+                newProduct.atrDiscAmount = newProduct.regularPrice - ((newProduct.regularPrice * newProduct.discAmount) / 100);
+            }
+
+            var UpdatedProduct = new CampaignProductUpdateDTO
+            {
+                productId = newProduct.productId,
+                discAmount = newProduct.discAmount,
+                discPrice = newProduct.atrDiscAmount,
+                discType = newProduct.discType,
+                stock = newProduct.stock,
+                regularPrice = newProduct.regularPrice,
+                isCombo = newProduct.isCombo,
+                comboId = newProduct.comboId
+            };
+
+            try
+            {
+                var result = await _createCampaign.UpdateCampaignProduct(UpdatedProduct, newProduct.id);
+                if (result)
+                {
+                    Snackbar.Add("Product Updated Successfully!", Severity.Success);
+                    await GetCampaign();
+                    return;
+                }
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
     }

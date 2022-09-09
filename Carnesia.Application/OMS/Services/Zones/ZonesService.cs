@@ -57,6 +57,20 @@ namespace Carnesia.Application.OMS.Services.Zones
             }
         }
 
+        public async Task<List<ZoneDTO>> GetZones()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<ZoneDTO>>("Oms/zone");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task UpdateDistrict(AddDistrictDTO District, int id)
         {
             try

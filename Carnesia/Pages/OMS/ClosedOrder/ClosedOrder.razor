@@ -21,7 +21,13 @@
 				<MudTextField @bind-Value="OrderFilter.phoneNumber" Label="Phone Number" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem lg="2" md="4">
-				<MudAutocomplete @bind-Value="OrderFilter.area" Label="Shipping Area" ResetValueOnEmptyText="true" />
+				<MudSelect @bind-Value="OrderFilter.area" Label="Shipphing Area" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Inside Dhaka")" />
+					<MudSelectItem Value="@("Dhaka Suburb")" />
+					<MudSelectItem Value="@("Outside Dhaka")" />
+					<MudSelectItem Value="@("Inside CTG City")" />
+					<MudSelectItem Value="@("Outside CTG City")" />
+				</MudSelect>
 			</MudItem>
 			<MudItem lg="2" md="4">
 				<MudSelect @bind-Value="OrderFilter.statusId" Label="Status" AnchorOrigin="Origin.BottomCenter">
@@ -53,7 +59,7 @@
 			<MudButton Variant="Variant.Filled" Color="Color.Success">Download CSV</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" Hover="true" MultiSelection="true" @bind-SelectedItems="@SelectedItems" HorizontalScrollbar="true">
+		<MudTable Items="@Elements" Hover="true" MultiSelection="true" @bind-SelectedItems="@SelectedItems" HorizontalScrollbar="true" Loading="Loading" LoadingProgressColor="Color.Info" >
 			<HeaderContent>
 				<MudTh></MudTh>
 				<MudTh>Tracking</MudTh>
@@ -67,7 +73,7 @@
 				<MudTh>Phone Number</MudTh>
 				<MudTh>Address</MudTh>
 				<MudTh>Status</MudTh>
-				<MudTh>Hub</MudTh>
+				@*<MudTh>Hub</MudTh>*@
 				<MudTh>Assign To</MudTh>
 				<MudTh>Action</MudTh>
 				<MudTh>Rating</MudTh>
@@ -83,28 +89,28 @@
 						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.orderId)" />
 					}
 				</MudTd>
-				<MudTd DataLabel="Tracking">nanana</MudTd>
+				<MudTd DataLabel="Tracking">@context.trackingCode</MudTd>
 				<MudTd DataLabel="Order ID">@context.trnCode</MudTd>
 				<MudTd DataLabel="Order Date">@context.orderDate</MudTd>
-				<MudTd DataLabel="Amount">nanana</MudTd>
+				<MudTd DataLabel="Amount">@context.amount</MudTd>
 				<MudTd DataLabel="Payment Method">@context.paymentMethod</MudTd>
 				<MudTd DataLabel="Payment Status">@context.paymentStatus</MudTd>
 				<MudTd DataLabel="To Be Collected">@context.tobeCollected</MudTd>
 				<MudTd DataLabel="Customer Name">@context.customerName</MudTd>
 				<MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
 				<MudTd DataLabel="Address">@context.address</MudTd>
-				<MudTd DataLabel="Status">nanana</MudTd>
-				<MudTd DataLabel="Hub">nanana</MudTd>
+				<MudTd DataLabel="Status">@context.status</MudTd>
+				@*<MudTd DataLabel="Hub">nanana</MudTd>*@
 				<MudTd DataLabel="Assign To">@context.assignto</MudTd>
 				<MudTd DataLabel="Action">
-					<MudButton Variant="Variant.Outlined" Color="Color.Warning">nanana</MudButton>
+					<MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="OpenFeedbackDialog">Take Rating</MudButton>
 				</MudTd>
-				<MudTd DataLabel="Rating">nanana</MudTd>
+				<MudTd DataLabel="Rating">@context.ratting</MudTd>
 			</RowTemplate>
 			<ChildRowContent>
 				@if (context.ShowDetails)
 				{
-					<td colspan="13">
+					<td colspan="16">
 						<MudCard Elevation="0">
 							<MudCardContent Class="pa-0">
 								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Hover="true" Elevation="0" CustomFooter="true">
@@ -161,6 +167,9 @@
 		await GetAgents();
 	}
 
+	// Loading
+	private bool Loading { get; set; }
+
 	// Table Content
 	private List<PendingOrderDTO> Elements = new List<PendingOrderDTO>();
 	private HashSet<PendingOrderDTO> SelectedItems = new HashSet<PendingOrderDTO>();
@@ -171,12 +180,15 @@
 	// Get Orders
 	private async Task GetOrders()
 	{
+		Loading = true;
 		try
 		{
 			Elements = await _closedOrder.GetClosedOrders(OrderFilter);
+			Loading = false;
 		}
 		catch(Exception e)
 		{
+			Loading = false;
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal Server Error!");
 		}

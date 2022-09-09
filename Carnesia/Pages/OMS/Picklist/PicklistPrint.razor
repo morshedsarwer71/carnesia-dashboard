@@ -1,0 +1,68 @@
+﻿@layout PrintLayout
+@page "/picklist-print"
+
+@using Carnesia.Domain.WMS.UpdateTO
+@using Newtonsoft.Json
+@inject HttpClient _httpClient
+@inject ILocalStorageService _storage
+
+<div style="width: 210mm; margin: 0 auto;">
+	<table style="width: 100%; border-collapse: collapse;">
+		<tr style="font-size: 14px;">
+			<th class="table-cell">Product Code</th>
+			<th class="table-cell">SKU</th>
+			<th class="table-cell">Product Name</th>
+			<th class="table-cell">Transfer Quantity</th>
+			<th class="table-cell">Bin Name</th>
+		</tr>
+		@if (Products.Count > 0)
+		{
+			foreach (var item in Products)
+			{
+				<tr style="font-size: 12px;">
+					<td class="table-cell">@item.prodcutCode</td>
+					<td class="table-cell">@item.sku</td>
+					<td class="table-cell">@item.productName</td>
+					<td class="table-cell">@item.quantity</td>
+					<td class="table-cell">@item.binName</td>
+				</tr>
+			}
+		}
+
+	</table>
+</div>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetProducts();
+	}
+
+	// Products
+	private List<UpdateToProductsDTO> Products = new List<UpdateToProductsDTO>();
+
+	// Get Products
+	private async Task GetProducts()
+	{
+		var PickList = await _storage.GetItemAsync<List<PickListGenerateDTO>>("selected-picklist");
+
+		try
+		{
+			var result = await _httpClient.PostAsJsonAsync("Oms/generatepicklist", PickList);
+
+			var json = await result.Content.ReadAsStringAsync();
+			Products = JsonConvert.DeserializeObject<List<UpdateToProductsDTO>>(json);
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	// Picklist Generate DTO
+	public class PickListGenerateDTO
+	{
+		public string code { get; set; }
+	}
+}

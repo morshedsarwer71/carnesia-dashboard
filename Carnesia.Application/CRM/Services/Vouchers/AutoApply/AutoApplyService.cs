@@ -22,7 +22,7 @@ namespace Carnesia.Application.CRM.Services.Vouchers.AutoApply
 		{
 			try
 			{
-				var result = await _httpClient.DeleteAsync($"");
+				var result = await _httpClient.DeleteAsync($"Voucher/deleteautoapply/{id}");
 
 				if (result.IsSuccessStatusCode) return true;
 				return false;

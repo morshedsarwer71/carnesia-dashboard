@@ -14,5 +14,6 @@ namespace Carnesia.Application.OMS.Services.Zones
         Task CreateZone(AddZoneDTO Zone);
         Task UpdateDistrict(AddDistrictDTO District, int id);
         Task UpdateZone(AddZoneDTO Zone, int id);
+        Task<List<ZoneDTO>> GetZones();
     }
 }

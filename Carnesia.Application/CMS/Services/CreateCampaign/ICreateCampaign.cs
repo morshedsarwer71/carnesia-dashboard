@@ -14,6 +14,7 @@ namespace Carnesia.Application.CMS.Services.CreateCampaign
         Task<bool> UpdateCampaignDetails(AddCampaignDetailsDTO Campaign, int id);
         Task<bool> AddProductToCampaign(AddCampaignProductDTO Product);
         Task<bool> DeleteCampaignProduct (int id);
+        Task<bool> UpdateCampaignProduct (CampaignProductUpdateDTO product, int id);
         Task<List<AddCampaignProductDTO>> UploadXLSXFile(InputFileChangeEventArgs e);
     }
 }

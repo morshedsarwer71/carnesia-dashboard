@@ -96,6 +96,22 @@ namespace Carnesia.Application.CMS.Services.CreateCampaign
             }
         }
 
+        public async Task<bool> UpdateCampaignProduct(CampaignProductUpdateDTO product, int id)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"Campaign/updateCampaignProduct/{id}", product);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
+
         public async Task<List<AddCampaignProductDTO>> UploadXLSXFile(InputFileChangeEventArgs e)
         {
             try

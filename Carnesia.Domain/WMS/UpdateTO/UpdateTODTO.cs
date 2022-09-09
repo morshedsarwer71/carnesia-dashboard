@@ -23,6 +23,7 @@ namespace Carnesia.Domain.WMS.UpdateTO
         public string productName { get; set; }
         public string sku { get; set; }
         public string prodcutCode { get; set; }
+        public string binName { get; set; }
         public int quantity { get; set; }
     }
 }

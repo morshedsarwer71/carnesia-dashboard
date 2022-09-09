@@ -11,10 +11,18 @@ namespace Carnesia.Domain.OMS.PendingOrder
         public int orderId { get; set; }
         public string orderDate { get; set; }
         public string trnCode { get; set; }
+        public string? trackingCode { get; set; }
+        public string? status { get; set; }
         public string address { get; set; }
+        public string area { get; set; }
+        public string zone { get; set; }
+        public string verifiedDate { get; set; }
+        public string instructions { get; set; }
         public decimal orderValue { get; set; }
         public string paymentMethod { get; set; }
         public decimal tobeCollected { get; set; }
+        public decimal ratting { get; set; }
+        public decimal amount { get; set; }
         public string customerName { get; set; }
         public string phoneNumber { get; set; }
         public string paymentStatus { get; set; }

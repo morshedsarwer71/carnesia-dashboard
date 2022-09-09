@@ -1,5 +1,6 @@
 ﻿@using Carnesia.Domain.OMS.PickPack
 @inject ISnackbar Snackbar
+@inject IPickPack _pickPack
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
@@ -20,11 +21,11 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudText Typo="Typo.h6">Customer Instruction:</MudText>
-		<MudText Typo="Typo.h6">Expiry Date: 12-03-2026</MudText>
-		<MudText Typo="Typo.h6">Expiry Status: In Date</MudText>
+		<MudText Typo="Typo.h6">Customer Instruction: @Picklist.instructions</MudText>
+		<MudText Typo="Typo.h6">Expiry Date: @Picklist.expiryDate</MudText>
+		<MudText Typo="Typo.h6">Expiry Status: @Picklist.expStatus</MudText>
 
-		<MudTable Class="mt-5" Items="Elements" Hover="true" Striped="true" Dense="true">
+		<MudTable Class="mt-5" Items="Elements" Hover="true" Striped="true" Dense="true" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>Picklist ID</MudTh>
 				<MudTh>Product Code</MudTh>
@@ -35,25 +36,29 @@
 				<MudTh>To Be Scanned</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="Picklist ID">@context.picklistId</MudTd>
+				<MudTd DataLabel="Picklist ID">@context.pickListId</MudTd>
 				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
 				<MudTd DataLabel="SKU">@context.sku</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
-				<MudTd DataLabel="QTY">@context.qty</MudTd>
-				<MudTd DataLabel="Packed QTY">@context.packedQty</MudTd>
-				<MudTd DataLabel="To Be Scanned">@context.toBeScanned</MudTd>
+				<MudTd DataLabel="QTY">@context.totalQty</MudTd>
+				<MudTd DataLabel="Packed QTY">@context.totalPickedQty</MudTd>
+				<MudTd DataLabel="To Be Scanned">@(context.totalQty - context.totalPickedQty)</MudTd>
 			</RowTemplate>
 		</MudTable>
 
 		<div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Elements.Count <= 0">Submit</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Elements.Count <= 0 || Loading" OnClick="ConfirmPickList">Submit</MudButton>
 		</div>
 	</MudContainer>
 </MudPaper>
 
 @code {
 	// Table Content
-	private List<PickPackDTO> Elements = new List<PickPackDTO>();
+	private PickPackDTO Picklist = new PickPackDTO();
+	private List<pickPackProductsDTO> Elements = new List<pickPackProductsDTO>();
+
+	// Loading
+	private bool Loading { get; set; }
 
 	// Order ID
 	private string orderId { get; set; }
@@ -69,6 +74,7 @@
 			{
 				orderIdShow = orderId;
 				orderId = String.Empty;
+				await GetDataByTRN();
 			}
 		}
 	}
@@ -88,7 +94,6 @@
 	private class UIDCollectionDTO
 	{
 		public string uid { get; set; }
-		public string productCode { get; set; }
 	}
 
 	private List<UIDCollectionDTO> uidCollection = new List<UIDCollectionDTO>();
@@ -104,11 +109,89 @@
 			return;
 		}
 		// Else Do Something
+		await AddUID();
+		uidCollection.Add(new UIDCollectionDTO { uid = uid });
+		uid = String.Empty;
 	}
 
-	// Scan Product
-	private async Task ScanProduct()
+	// Enter TRN
+	private async Task GetDataByTRN()
 	{
-		
+		Loading = true;
+		try
+		{
+			var result = await _pickPack.GetPickPackByTRN(orderIdShow);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				Loading = false;
+				return;
+			}
+
+			Picklist = result;
+			Elements = result.pickPacks;
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Loading = false;
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+		}
+	}
+
+	// Enter UID
+	private async Task AddUID()
+	{
+		Loading = true;
+		try
+		{
+			var result = await _pickPack.AddUID(orderIdShow, uid);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				Loading = false;
+				return;
+			}
+			Picklist = result;
+			Elements = result.pickPacks;
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Loading = false;
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+		}
+
+	}
+
+	// Confirm Picklist
+	private async Task ConfirmPickList()
+	{
+		Loading = true;
+		try
+		{
+			var result = await _pickPack.ConfirmPicklist(orderIdShow);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				Loading = false;
+				return;
+			}
+			Picklist = result;
+			Elements = result.pickPacks;
+			Loading = false;
+			Snackbar.Add(result.message, Severity.Success);
+		}
+		catch (Exception e)
+		{
+			Loading = false;
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+		}
 	}
 }

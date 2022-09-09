@@ -2,7 +2,7 @@
 
 <MudDialog>
     <DialogContent>
-        <MudGrid Class="mb-5">
+        @*<MudGrid Class="mb-5">
             <MudItem>
                 <MudAutocomplete T="string" Label="Search Product" ResetValueOnEmptyText="true" />
             </MudItem>
@@ -13,7 +13,7 @@
             </MudItem>
         </MudGrid>
 
-        <MudTable Items="@Elements" Dense="true" Hover="true" CanCancelEdit="true" CommitEditTooltip="Commit Edit" RowEditPreview="BackupItem"                                                     RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="true">
+        <MudTable Items="@Elements" Dense="true" Hover="true" CanCancelEdit="true" CommitEditTooltip="Commit Edit" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="true">
             <ToolBarContent>
                 <MudText Typo="Typo.h6">Item List</MudText>
             </ToolBarContent>
@@ -95,7 +95,7 @@
             <div class="d-flex justify-end mt-5">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)">Submit</MudButton>
             </div>
-        </MudForm>
+        </MudForm>*@
     </DialogContent>
 </MudDialog>
 
@@ -112,16 +112,16 @@
     private ProductTableDTO BeforeEdit;
 
 
-    private void BackupItem(object element)
-    {
-        BeforeEdit = new()
-        {
-            QTY = ((ProductTableDTO)element).QTY,
-        };
-    }
+    //private void BackupItem(object element)
+    //{
+    //    BeforeEdit = new()
+    //    {
+    //        QTY = ((ProductTableDTO)element).QTY,
+    //    };
+    //}
 
-    private void ResetItemToOriginalValues(object element)
-    {
-        ((ProductTableDTO)element).QTY = BeforeEdit.QTY;
+    //private void ResetItemToOriginalValues(object element)
+    //{
+    //    ((ProductTableDTO)element).QTY = BeforeEdit.QTY;
     }
 }
