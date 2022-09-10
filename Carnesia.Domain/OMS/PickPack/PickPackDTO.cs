@@ -23,5 +23,6 @@ namespace Carnesia.Domain.OMS.PickPack
         public string productName { get; set; }
         public int totalQty { get; set; }
         public int totalPickedQty { get; set; }
+        public int totalReturnQty { get; set; }
     }
 }

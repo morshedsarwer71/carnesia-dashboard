@@ -22,7 +22,7 @@ namespace Carnesia.Application.OMS.Services.Dispatch
         {
             try
             {
-                var result = await _httpClient.PostAsJsonAsync("", dispatchData);
+                var result = await _httpClient.PostAsJsonAsync("Oms/dispatch", dispatchData);
 
                 if (result.IsSuccessStatusCode) return true;
                 return false;

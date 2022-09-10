@@ -1,61 +1,63 @@
 ﻿@using Carnesia.Domain.OMS.ReturnManagement.ReceiveReturn
+@using Carnesia.Domain.OMS.PickPack
 
 @inject IDialogService DialogService
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
+
+		<MudText Typo="Typo.h3">Order ID: @orderIdShow</MudText>
+
 		<MudGrid>
 			<MudItem md="6">
-				<MudGrid>
-					<MudItem md="6">
-						<MudTextField T="string" Label="Scan Order ID" Variant="Variant.Text"/>
-					</MudItem>
-					<MudItem md="6">
-						<MudTextField T="string" Label="Scan UID" Variant="Variant.Text"/>
-					</MudItem>
-				</MudGrid>
-
-				<MudRadioGroup @bind-SelectedOption="ReturnType" Class="mt-3">
-					<MudRadio Option="true" Color="Color.Primary" Dense="true">Received</MudRadio>
-					<MudRadio Option="false" Color="Color.Primary" Dense="true">Damaged</MudRadio>
-				</MudRadioGroup>
-
-				<div class="d-flex justify-end mt-5">
-					<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
-				</div>
+				<MudTextField @bind-Value="orderId" Label="Scan Order ID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddOrder" />
 			</MudItem>
 			<MudItem md="6">
-				<MudImage Style="width: 100%;" Src="https://wallpaperaccess.com/full/1423563.jpg" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
+				<MudTextField @bind-Value="uid" Label="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddUID" />
 			</MudItem>
 		</MudGrid>
 
-		<MudText Typo="Typo.h6" Class="mt-5">Order Info.</MudText>
+		<MudRadioGroup @bind-SelectedOption="ReturnType" Class="mt-3">
+			<MudRadio Option="false" Color="Color.Primary" Dense="true">Received</MudRadio>
+			<MudRadio Option="true" Color="Color.Primary" Dense="true">Damaged</MudRadio>
+		</MudRadioGroup>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+		</div>
+
+
+		@*<MudText Typo="Typo.h6" Class="mt-5">Order Info.</MudText>
 		<MudText>Order ID: 123456</MudText>
 		<MudText>Order Date: 12-Feb-2022 2:00:00 PM</MudText>
 		<MudText>Packing Date: 13-Feb-2022 12:00:00 PM</MudText>
 		<MudText>Dispatched Date: 13-Feb-2022 6:00:00 PM</MudText>
-		<MudText>SLA: Breached</MudText>
+		<MudText>SLA: Breached</MudText>*@
 
 		<MudTable Class="mt-5" Items="@Elements" Hover="true">
 			<HeaderContent>
 				<MudTh>SKU</MudTh>
 				<MudTh>Product Name</MudTh>
 				<MudTh>Quantity</MudTh>
-				<MudTh>Image</MudTh>
-				<MudTh>Received</MudTh>
+				@*<MudTh>Image</MudTh>*@
+				<MudTh>Picked Qty</MudTh>
+				<MudTh>Returned Qty</MudTh>
+				@*<MudTh>Received</MudTh>
 				<MudTh>Damaged</MudTh>
-				<MudTh>Missing</MudTh>
+				<MudTh>Missing</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="SKU">@context.SKU</MudTd>
-				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-				<MudTd DataLabel="Quantity">@context.QTY</MudTd>
-				<MudTd DataLabel="Image">
-					<MudImage Style="width: 150px;" Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
-				</MudTd>
-				<MudTd DataLabel="Received">@context.Received</MudTd>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Quantity">@context.totalQty</MudTd>
+				@*<MudTd DataLabel="Image">
+					<MudImage Style="width: 150px;" Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg" />
+				</MudTd>*@
+				<MudTd DataLabel="Picked Qty">@context.totalPickedQty</MudTd>
+				<MudTd DataLabel="Returned Qty">@context.totalReturnQty</MudTd>
+				@*<MudTd DataLabel="Received">@context.Received</MudTd>
 				<MudTd DataLabel="Damaged">@context.Damaged</MudTd>
-				<MudTd DataLabel="Missing">@context.Missing</MudTd>
+				<MudTd DataLabel="Missing">@context.Missing</MudTd>*@
 			</RowTemplate>
 		</MudTable>
 
@@ -66,16 +68,45 @@
 </MudPaper>
 
 @code {
+	// Order Id, UID
+	private string orderId { get; set; }
+	private string orderIdShow { get; set; }
+	private string uid { get; set; }
+
 	// Return Type
-	private bool ReturnType { get; set; } = true;
+	private bool ReturnType { get; set; } = false;
 
 	// Table Content
-	private IEnumerable<ReceiveReturnDTO> Elements = new List<ReceiveReturnDTO>();
+	private List<pickPackProductsDTO> Elements = new List<pickPackProductsDTO>();
+
+	// Press Enter
+	private async Task AddOrder(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(orderId))
+			{
+				orderIdShow = orderId;
+				orderId = String.Empty;
+			}
+		}
+	}
+
+	private async Task AddUID(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (uid.Length == 15 && !String.IsNullOrEmpty(orderIdShow))
+			{
+				
+			}
+		}
+	}
 
 	// Confirmation Modal
 	private void OpenDialog()
-    {
+	{
 		var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, };
-        DialogService.Show<ConfirmationModal>("Confirmation", options);
-    }
+		DialogService.Show<ConfirmationModal>("Confirmation", options);
+	}
 }

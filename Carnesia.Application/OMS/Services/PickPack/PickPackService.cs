@@ -21,13 +21,13 @@ namespace Carnesia.Application.OMS.Services.PickPack
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"pack/{trnCode}/{uid}");
+                var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/pack/{trnCode}/{uid}");
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
                 throw;
             }
         }
@@ -36,7 +36,7 @@ namespace Carnesia.Application.OMS.Services.PickPack
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"confirmpack/{trnCode}");
+                var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/confirmpack/{trnCode}");
                 return result;
             }
             catch (Exception)
