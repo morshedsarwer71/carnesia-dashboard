@@ -114,6 +114,7 @@
 				@*<MudTh>Location</MudTh>*@
 				@*<MudTh>Run Number</MudTh>*@
 				@*<MudTh>Last Update On</MudTh>*@
+				<MudTh>Print</MudTh>
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="">
@@ -144,6 +145,9 @@
 				@*<MudTd DataLabel="Location">@context.Location</MudTd>*@
 				@*<MudTd DataLabel="Run Number">@context.RunNumber</MudTd>*@
 				@*<MudTd DataLabel="Last Update On">@context.UpdateDate</MudTd>*@
+				<MudTd DataLabel="Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
+				</MudTd>
 			</RowTemplate>
 			<ChildRowContent>
 				@if (context.ShowDetails)

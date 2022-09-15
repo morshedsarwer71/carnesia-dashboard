@@ -5,6 +5,7 @@
 @inject IOrderPicklist _picklist
 @inject ILocalStorageService _storage
 @inject IJSRuntime IJS
+@inject ISnackbar Snackbar
 
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
@@ -75,6 +76,7 @@
 				<MudTh>Varified On</MudTh>
 				<MudTh>Order Type</MudTh>
 				<MudTh>Instructions</MudTh>
+				<MudTh>Print</MudTh>
 				@*<MudTh>CS/Ops Comment</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
@@ -98,6 +100,9 @@
 				<MudTd DataLabel="Varified On">@context.verifiedDate</MudTd>
 				<MudTd DataLabel="Order Type"></MudTd>
 				<MudTd DataLabel="Instructions">@context.instructions</MudTd>
+				<MudTd DataLabel="Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
+				</MudTd>
 				@*<MudTd DataLabel="CS/Ops Comment">@context.Comment</MudTd>*@
 			</RowTemplate>
 			<ChildRowContent>
@@ -133,13 +138,14 @@
 		</MudTable>
 
 		<div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePickList">Generate</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="GeneratePicklist" Class="me-3">Generate Picklist</MudButton>
+			@*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePickList">Generate</MudButton>*@
 		</div>
 	</MudContainer>
 </MudPaper>
 
 @code {
-	protected override async Task  OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{
 		await GetZones();
 		await GetPicklist();
@@ -189,7 +195,20 @@
 	}
 
 	// Generate PickList
-	private async Task GeneratePickList()
+	//private async Task GeneratePickList()
+	//{
+	//	var PickListList = new List<PickListGenerateDTO>();
+
+	//	foreach (var item in SelectedItems)
+	//	{
+	//		PickListList.Add(new PickListGenerateDTO { code = item.trnCode });
+	//	}
+
+	//	await _storage.SetItemAsync<List<PickListGenerateDTO>>("selected-picklist", PickListList);
+	//	await IJS.InvokeAsync<object>("open", new object[] { $"/picklist-print", "_blank" });
+	//}
+
+	private async Task GeneratePicklist()
 	{
 		var PickListList = new List<PickListGenerateDTO>();
 
@@ -198,8 +217,24 @@
 			PickListList.Add(new PickListGenerateDTO { code = item.trnCode });
 		}
 
-		await _storage.SetItemAsync<List<PickListGenerateDTO>>("selected-picklist", PickListList);
-		await IJS.InvokeAsync<object>("open", new object[] { $"/picklist-print", "_blank" });
+		try
+		{
+			var result = await _picklist.GeneratePicklist(PickListList);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				return;
+			}
+
+			Snackbar.Add("Picklist generated successfully!", Severity.Success);
+			await GetPicklist();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+		}
 	}
 
 
@@ -208,12 +243,6 @@
 	{
 		PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
-	}
-
-	// Picklist Generate DTO
-	public class PickListGenerateDTO
-	{
-		public string code { get; set; }
 	}
 
 }

@@ -15,6 +15,8 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
         public decimal price { get; set; }
         public decimal totalPrice { get; set; }
         public int quantity { get; set; }
+        public int campaignId { get; set; }
+        public bool isCampaign { get; set; }
     }
 
     public class GenerateBillUIDCollectionDTO

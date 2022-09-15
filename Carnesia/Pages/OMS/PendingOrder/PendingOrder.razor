@@ -64,6 +64,7 @@
 				<MudTh>Source</MudTh>
 				<MudTh>Assign To</MudTh>
 				<MudTh>Action</MudTh>
+				<MudTh>Print</MudTh>
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="">
@@ -91,6 +92,9 @@
 					<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToOrderEdit(context.trnCode)">Edit</MudButton>
 					<MudButton Variant="Variant.Text" Color="Color.Success" OnClick="() => OpenVerifyDialog(context.orderId)">Verify</MudButton>
 					<MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => OpenCancelDialog(context.orderId)">Cancel</MudButton>
+				</MudTd>
+				<MudTd DataLabel="Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
 				</MudTd>
 			</RowTemplate>
 			<ChildRowContent>

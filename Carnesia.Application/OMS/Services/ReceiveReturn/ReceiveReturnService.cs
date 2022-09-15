@@ -29,5 +29,19 @@ namespace Carnesia.Application.OMS.Services.ReceiveReturn
 				throw;
 			}
 		}
+
+		public async Task<PickPackDTO> ReturnItem(string orderId, string uid, bool returnType)
+		{
+			try
+			{
+				var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/return/{orderId}/{uid}/{returnType}");
+				return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
 	}
 }

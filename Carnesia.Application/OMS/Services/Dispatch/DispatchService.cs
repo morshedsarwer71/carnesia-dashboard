@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
+using Carnesia.Domain.OMS.PickPack;
 
 namespace Carnesia.Application.OMS.Services.Dispatch
 {
@@ -34,7 +35,52 @@ namespace Carnesia.Application.OMS.Services.Dispatch
             }
         }
 
-        public async Task<List<PendingOrderDTO>> GetOrders()
+		public async Task<PickPackDTO> CancelDispatch(int orderId)
+		{
+			try
+			{
+                var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/canceldelivery/{orderId}");
+
+                return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<PickPackDTO> ConfirmDispatch(int orderId)
+		{
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/confirmdelivery/{orderId}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+		public async Task<List<PendingOrderDTO>> GetDispatchedOrders()
+		{
+			try
+			{
+                var result = await _httpClient.GetFromJsonAsync<List<PendingOrderDTO>>("Oms/dispatchedorders");
+
+                return result;
+            }
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<List<PendingOrderDTO>> GetOrders()
         {
             try
             {

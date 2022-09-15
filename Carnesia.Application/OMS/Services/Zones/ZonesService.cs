@@ -17,6 +17,25 @@ namespace Carnesia.Application.OMS.Services.Zones
             _httpClient = httpClient;
         }
 
+        public async Task<int> CreateCustomerAddress(CustomerDeliveryAddressDTO customerAddress)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("DeliveryAddress/addaddress", customerAddress);
+
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<int>(json);
+
+                return data;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
+
         public async Task CreateDistrict(AddDistrictDTO District)
         {
             try
@@ -43,11 +62,39 @@ namespace Carnesia.Application.OMS.Services.Zones
             }
         }
 
+        public async Task<CustomerDeliveryAddressGetDTO> GetCustomerDeliveryAddress(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<CustomerDeliveryAddressGetDTO>($"DeliveryAddress/{id}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<DivisionDTO>> GetDivisions()
         {
             try
             {
                 var result = await _httpClient.GetFromJsonAsync<List<DivisionDTO>>("Oms/deliveryaddress");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<ZoneDTO> GetZoneById(int zoneId)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<ZoneDTO>($"Oms/zone/{zoneId}");
                 return result;
             }
             catch (Exception)

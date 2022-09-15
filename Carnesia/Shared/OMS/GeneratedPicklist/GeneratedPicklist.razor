@@ -1,0 +1,112 @@
+﻿@using Carnesia.Domain.OMS.Picklist.GeneratedPicklist
+@using Carnesia.Domain.Common.POCO
+@inject IOrderPicklist _picklist
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
+			<HeaderContent>
+				<MudTh>Picklist ID</MudTh>
+				<MudTh>Order Ids</MudTh>
+				<MudTh>Number of Orders</MudTh>
+				<MudTh>Created By</MudTh>
+				<MudTh>Created On</MudTh>
+				<MudTh>Action</MudTh>
+				<MudTh>Print</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Picklist Id">@context.pickListCode</MudTd>
+				<MudTd DataLabel="Order Ids">@context.orders</MudTd>
+				<MudTd DataLabel="Number of Orders">@context.numberOfOrders</MudTd>
+				<MudTd DataLabel="Created By">@context.generateBy</MudTd>
+				<MudTd DataLabel="Created On">@context.date</MudTd>
+				<MudTd DataLabel="Action">
+					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveOrderModal(context.pickListCode)">Remove Order</MudButton>
+				</MudTd>
+				<MudTd DataLabel="Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
+				</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
+
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetGeneratedPicklist();
+	}
+
+	// Loading
+	private bool Loading { get; set; } = true;
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private List<GeneratedPicklistDTO> Elements = new List<GeneratedPicklistDTO>();
+
+	// Get Generated Picklist
+	private async Task GetGeneratedPicklist()
+	{
+		try
+		{
+			Elements = await _picklist.GetGeneratedPiclist();
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Loading = false;
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+		}
+	}
+
+	// Remove Order Modal
+	private async Task RemoveOrderModal(string picklist)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new RemoveFromPicklistDTO { pickCode = picklist });
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<RemoveOrderModal>("Remove Order From Picklist", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			RemoveFromPicklistDTO newData = dialog.Data as RemoveFromPicklistDTO;
+
+			try
+			{
+				var result = await _picklist.RemoveOrderFromPicklist(newData);
+
+				if (result.message != "Success")
+				{
+					Snackbar.Add(result.message, Severity.Error);
+					return;
+				}
+
+				Snackbar.Add(result.message, Severity.Success);
+				await GetGeneratedPicklist();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				Snackbar.Add("Internal server error!", Severity.Error);
+			}
+		}
+	}
+}

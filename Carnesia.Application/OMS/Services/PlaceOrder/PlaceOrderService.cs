@@ -108,19 +108,36 @@ namespace Carnesia.Application.OMS.Services.PlaceOrder
             }
         }
 
-        public async Task<bool> PlaceOrder(PlaceOrderDTO order)
+        public async Task<PlaceOrderResponseDTO> PlaceOrder(PlaceOrderDTO order)
         {
             try
             {
                 var result = await _httpClient.PostAsJsonAsync("Order/placeorder", order);
 
-                if (result.IsSuccessStatusCode) return true;
-                return false;
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<PlaceOrderResponseDTO>(json);
+
+                return data;
             }
             catch (Exception)
             {
 
                 throw;
+            }
+        }
+
+        public async Task<string> SendOTP(string phone, string otp)
+        {
+            using(var client = new HttpClient())
+            {
+                string message = $"Your OTP to change contact number for your order is {otp}.";
+                using (var response = await client.GetAsync($"https://api.mobireach.com.bd/SendTextMessage?Username=carnesia&Password=Sampas$$w0rd&From=CARNESIA&To={phone}&Message={message}"))
+                {
+                    var successString = "OTP sent";
+                    var erroString = "Faild";
+                    if (response.IsSuccessStatusCode) return successString;
+                    return erroString;
+                }
             }
         }
     }

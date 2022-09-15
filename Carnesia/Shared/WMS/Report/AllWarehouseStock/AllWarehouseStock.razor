@@ -9,8 +9,17 @@
 			<MudItem lg="3" md="6">
 				<MudTextField T="string" Label="SKU" Variant="Variant.Text"/>
 			</MudItem>
+            <MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Word" Variant="Variant.Text"/>
+			</MudItem>
 			<MudItem lg="3" md="6">
 				<MudAutocomplete T="string" Label="Category" ResetValueOnEmptyText="true"/>
+			</MudItem>
+            <MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Product Code" Variant="Variant.Text"/>
+			</MudItem>
+            <MudItem lg="3" md="6">
+				<MudAutocomplete T="string" Label="Brand" ResetValueOnEmptyText="true"/>
 			</MudItem>
 			<MudItem lg="3" md="6">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
@@ -23,6 +32,7 @@
 
 		<MudTable Items="@Elements" Hover="true">
             <HeaderContent>
+                <MudTh>Product Code</MudTh>
                 <MudTh>SKU</MudTh>
                 <MudTh>Product Name</MudTh>
                 <MudTh>COGS</MudTh>
@@ -35,6 +45,7 @@
                 <MudTh>Total COGS</MudTh>
             </HeaderContent>
             <RowTemplate>
+                <MudTd DataLabel="SKU">@context.productCode</MudTd>
                 <MudTd DataLabel="SKU">@context.SKU</MudTd>
                 <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
                 <MudTd DataLabel="COGS">@context.COGS</MudTd>

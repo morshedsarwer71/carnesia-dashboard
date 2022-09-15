@@ -4,13 +4,13 @@
 <MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudAutocomplete T="string" Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Required="true" ResetValueOnEmptyText="true" />
-                <MudNumericField @bind-Value="FormData.regularPrice" Label="Regular Price" Variant="Variant.Text" Required="true" RequiredError="Regular Price is required!" />
+                <MudAutocomplete T="string" Label="Product SKU" SearchFunc="@ProductSKUSearch" Value="FormData.sku" ValueChanged="(string s) => GetProductData(s)" Required="true" ResetValueOnEmptyText="true" />
+                <MudNumericField @bind-Value="FormData.regularPrice" Label="Regular Price" Variant="Variant.Text" Required="true" ReadOnly="true"/>
                 <MudSelect @bind-Value="FormData.discountType" Label="Discount Type" Required="true" AnchorOrigin="Origin.BottomCenter">
                     <MudSelectItem Value="@("Cash")" />
                     <MudSelectItem Value="@("Percent")" />
                 </MudSelect>
-                <MudNumericField @bind-Value="FormData.discountAmount" Label="Discount Amount" Variant="Variant.Text" Required="true" RequiredError="Discount Amount is required!" />
+                <MudNumericField @bind-Value="FormData.discountAmount" Max="@(FormData.discountType == "Percent" ? 99 : FormData.regularPrice)" Disabled="String.IsNullOrEmpty(FormData.sku) || String.IsNullOrEmpty(FormData.discountType)" Label="Discount Amount" Variant="Variant.Text" Required="true" RequiredError="Discount Amount is required!" />
                 <div class="d-flex justify-end my-5">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
                 </div>
@@ -40,6 +40,27 @@
 
     // Product SKU List
     private string[] ProductSKU = new string[]{};
+
+    // Get Product Data
+	private async Task GetProductData(string s)
+	{
+		FormData.sku = s;
+		if (!String.IsNullOrEmpty(s))
+		{
+			try
+			{
+				var result = await _products.GetProductBySku(s);
+
+				FormData.regularPrice = result.mrp;
+				FormData.productName = result.productName;
+				FormData.productId = result.productId;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+			}
+		}
+	}
 
     // Autocomplite Search Func for ParentCat
     private async Task<IEnumerable<string>> ProductSKUSearch(string value)

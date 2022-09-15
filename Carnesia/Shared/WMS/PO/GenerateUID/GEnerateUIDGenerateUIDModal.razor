@@ -14,7 +14,7 @@
                     </MudItem>
                 <MudItem xs="12">
                     <div class="d-flex justify-end">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="!success" OnClick="GenerateUID">Generate UID</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="!success || DisableButton" OnClick="GenerateUID">Generate UID</MudButton>
                     </div>
                 </MudItem>
             </MudGrid>
@@ -24,6 +24,9 @@
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    // Disable Button
+    private bool DisableButton { get; set; }
 
     [Parameter]
     public string PoCode { get; set; }
@@ -46,11 +49,13 @@
 
     private async Task GenerateUID()
     {
+        DisableButton = true;
         //_snackbar.Add(PoCode);
         //_snackbar.Add(ProductCode);
         if(Qty < uidForm.generateuidQty)
         {
             _snackbar.Add("Input value bigger than Left UID Qty!",  Severity.Error);
+            DisableButton = false;
         }
         else
         {
@@ -58,6 +63,7 @@
             uidForm.productCode = ProductCode;
             uidForm = await _order.GenerateUID(uidForm);
             _snackbar.Add("UID Generated Successfully!", Severity.Success );
+            DisableButton = false;
             Close();
         }
 

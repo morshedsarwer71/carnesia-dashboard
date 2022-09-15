@@ -392,7 +392,7 @@
 		try
 		{
 			var result = await _generateBill.GetProductByUid(s);
-			if (!String.IsNullOrEmpty(result.error))
+			if (result.error != "Success")
 			{
 				Snackbar.Add(result.error, Severity.Error);
 				return;
@@ -505,7 +505,7 @@
 				Snackbar.Add(result.message, Severity.Success);
 				//ResetFields();
 				disableGenerate = false;
-				await GotoPrint();
+				await GotoPrint(result.trnCode);
 				return;
 			}
 			Snackbar.Add(result.message, Severity.Error);
@@ -533,9 +533,9 @@
 	}
 
 	// Goto Print
-	private async Task GotoPrint()
+	private async Task GotoPrint(string TRNCODE)
 	{
-		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print/{trnCode}", "_blank" });
+		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print/{TRNCODE}", "_blank" });
 	}
 
 	// Reset Fields

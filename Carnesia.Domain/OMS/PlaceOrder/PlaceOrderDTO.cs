@@ -18,6 +18,8 @@ namespace Carnesia.Domain.OMS.PlaceOrder
         public string address { get; set; }
         public string instructions { get; set; }
         public string customerId { get; set; }
+        public string customerPhone { get; set; }
+        public string customerName { get; set; }
         public int autoApplyId { get; set; }
         public decimal autoApplyAmnt { get; set; }
         public decimal totalPrice { get; set; }

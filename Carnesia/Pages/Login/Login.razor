@@ -64,6 +64,8 @@
 		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
+			DisableButton = false;
+			Snackbar.Add("Internal server error!", Severity.Error);
 		}
 	}
 

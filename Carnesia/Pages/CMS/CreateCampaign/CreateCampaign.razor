@@ -56,28 +56,30 @@
                         Upload File
                     </MudButton>
                     <MudButton Class="me-3" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenProductModal" >Add Product</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenProductModal" >Add Combo</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenComboModal" >Add Combo</MudButton>
                 </div>
 
-                <MudTable Items="@Products" Hover="true" Dense="true">
+                <MudTable Items="@Products" Hover="true" Dense="true" Loading="Loading" LoadingProgressColor="Color.Info">
                     <HeaderContent>
-                        <MudTh>Product Name</MudTh>
+                        @*<MudTh>Product Name</MudTh>*@
                         <MudTh>SKU</MudTh>
                         <MudTh>Stock</MudTh>
                         <MudTh>Regular Price</MudTh>
                         <MudTh>Discount Type</MudTh>
                         <MudTh>Discount Amount</MudTh>
                         <MudTh>After Discount</MudTh>
+                        <MudTh>Is Combo</MudTh>
                         <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                        @*<MudTd DataLabel="Product Name">@context.productName</MudTd>*@
                         <MudTd DataLabel="SKU">@context.sku</MudTd>
                         <MudTd DataLabel="Stock">@context.stock</MudTd>
                         <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
                         <MudTd DataLabel="Discount Type">@context.discType</MudTd>
                         <MudTd DataLabel="Discount Amount">@context.discAmount</MudTd>
                         <MudTd DataLabel="After Discount">@context.discPrice</MudTd>
+                        <MudTd DataLabel="Is Combo">@context.isCombo</MudTd>
                         <MudTd DataLabel="Action">
                             <MudButton OnClick="() => RemoveProduct(context)" >
                                 <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
@@ -110,7 +112,10 @@
 
 @code {
     // New Date Time
-	public static string TodayDate = DateTime.Now.ToString("yyyy-MM-dd");
+    public static string TodayDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+    // Loading
+    private bool Loading { get; set; }
 
     // Form Ref
     bool success;
@@ -127,7 +132,7 @@
 
     // Start End Date
     private string StartDate { get; set; } = TodayDate;
-	private string EndDate { get; set; } = TodayDate;
+    private string EndDate { get; set; } = TodayDate;
     private TimeSpan? StartTime = new TimeSpan();
     private TimeSpan? EndTime = new TimeSpan();
 
@@ -151,24 +156,38 @@
                 item.discPrice = item.regularPrice - ((item.regularPrice * item.discAmount) / 100);
             }
 
-            item.productId = await _products.GetProductIdBySku(item.sku);
+            var productId = await _products.GetProductIdBySku(item.sku);
 
-            Products.Add(item);
+            if (productId == 0)
+            {
+                Snackbar.Add($"{item.sku} SKU not found!", Severity.Error);
+            }
+            else
+            {
+                item.productId = productId;
+                Products.Add(item);
+                StateHasChanged();
+            }
+
         }
     }
 
     // Upload .xlsx
     private async Task UploadFile (InputFileChangeEventArgs e)
     {
+        Loading = true;
         try
         {
             BulkProducts.Clear();
             BulkProducts =  await _campaign.UploadXLSXFile(e);
             await BulkProductsAdd();
+            Loading = false;
         }
-        catch (Exception)
+        catch (Exception er)
         {
             Console.WriteLine("Error!");
+            Console.WriteLine(er.Message);
+            Loading = false;
             throw;
         }
     }
@@ -207,6 +226,34 @@
             }
 
             newProduct.productId = await _products.GetProductIdBySku(newProduct.sku);
+
+            Products.Add(newProduct);
+        }
+    }
+
+    // Combo Product
+    private async Task OpenComboModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new AddCampaignProductDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddComboModal>("Add New Combo", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            AddCampaignProductDTO newProduct = dialog.Data as AddCampaignProductDTO;
+
+            bool isThere = Products.Any( x=> x.comboId == newProduct.comboId);
+
+            if (isThere)
+            {
+                int ListIndex = Products.FindIndex(x => x.comboId == newProduct.comboId);
+
+                Products[ListIndex].stock += newProduct.stock;
+
+                return;
+            }
 
             Products.Add(newProduct);
         }
@@ -266,6 +313,7 @@
                 NewCampaign = new AddCampaignDTO();
 				return;
 			}
+            Snackbar.Add("Something Went Wrong!", Severity.Error);
         }
         catch (Exception)
         {

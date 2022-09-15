@@ -12,8 +12,17 @@
 			<MudItem lg="3" md="6">
 				<MudDateRangePicker Label="Date Range" />
 			</MudItem>
+            <MudItem lg="3" md="6">
+				<MudDateRangePicker Label="Receiving Date Range" />
+			</MudItem>
 			<MudItem lg="3" md="6">
 				<MudTextField T="string" Label="SKU" Variant="Variant.Text"/>
+			</MudItem>
+            <MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Product Code" Variant="Variant.Text"/>
+			</MudItem>
+            <MudItem lg="3" md="6">
+				<MudTextField T="string" Label="Word" Variant="Variant.Text"/>
 			</MudItem>
 		</MudGrid>
 
@@ -30,21 +39,33 @@
                 <MudTh>PO ID</MudTh>
                 <MudTh>Receiving Warehouse</MudTh>
                 <MudTh>SKU</MudTh>
+                <MudTh>Product Code</MudTh>
                 <MudTh>Product Name</MudTh>
                 <MudTh>Lifting Price</MudTh>
                 <MudTh>PO Qty</MudTh>
                 <MudTh>Receiving Qty</MudTh>
                 <MudTh>Received Value</MudTh>
+                <MudTh>Not Arrived</MudTh>
+                <MudTh>UID Generated</MudTh>
+                <MudTh>UID Generate Left</MudTh>
+                <MudTh>Inscan Complete</MudTh>
+                <MudTh>Inscan Left</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="PO ID">@context.POID</MudTd>
                 <MudTd DataLabel="Receiving Warehouse">@context.ReceivingWH</MudTd>
                 <MudTd DataLabel="SKU">@context.SKU</MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
                 <MudTd DataLabel="PO Qty">@context.POQTY</MudTd>
                 <MudTd DataLabel="Receiving Qty">@context.ReceivingQTY</MudTd>
                 <MudTd DataLabel="Received Value">@context.ReceivedValue</MudTd>
+                <MudTd DataLabel="Not Arrived">@context.notArrived</MudTd>
+                <MudTd DataLabel="UID Generated">@context.uidGenerated</MudTd>
+                <MudTd DataLabel="UID Generate Left">@context.uidGenerateLeft</MudTd>
+                <MudTd DataLabel="Inscan Complete">@context.inscanComplete</MudTd>
+                <MudTd DataLabel="Inscan Left">@context.inscanLeft</MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />

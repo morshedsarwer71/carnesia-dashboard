@@ -1,0 +1,21 @@
+﻿@using Carnesia.Domain.OMS.Picklist.GeneratedPicklist
+
+<MudDialog>
+	<DialogContent>
+		<MudTextField @bind-Value="FormData.orderCode" Label="Order ID" Immediate="true" />
+
+		<div class="d-flex justify-end my-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(FormData.orderCode)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	[Parameter]
+	public RemoveFromPicklistDTO FormData { get; set; }
+
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<RemoveFromPicklistDTO>(FormData));
+}

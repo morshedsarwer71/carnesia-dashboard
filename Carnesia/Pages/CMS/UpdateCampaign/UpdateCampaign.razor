@@ -61,27 +61,52 @@
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenProductModal" >Add Product</MudButton>
             </div>
 
+            <MudText Typo="Typo.h5" Class="mb-5">Regular Products</MudText>
             <MudTable Items="@campaign.products" Hover="true" Dense="true">
                 <HeaderContent>
                     <MudTh>SKU</MudTh>
+                    <MudTh>Product Name</MudTh>
                     <MudTh>Stock</MudTh>
                     <MudTh>Regular Price</MudTh>
                     <MudTh>Discount Type</MudTh>
                     <MudTh>Discount Amount</MudTh>
                     <MudTh>After Discount</MudTh>
+                    <MudTh>Is Combo</MudTh>
                     <MudTh>Action</MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="SKU">@context.productSku</MudTd>
+                    <MudTd DataLabel="Product Name">@context.productName</MudTd>
                     <MudTd DataLabel="Stock">@context.stock</MudTd>
                     <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
                     <MudTd DataLabel="Discount Type">@context.discType</MudTd>
                     <MudTd DataLabel="Discount Amount">@context.discAmount</MudTd>
                     <MudTd DataLabel="After Discount">@context.atrDiscAmount</MudTd>
+                    <MudTd DataLabel="Is Combo">@context.isCombo</MudTd>
                     <MudTd DataLabel="Action">
-                        <MudButton OnClick="() => OpenUpdateModal(context)" >
+                        <MudButton Disabled="context.isCombo" OnClick="() => OpenUpdateModal(context)" >
                             <MudIcon Icon="@Icons.Filled.Edit" Color="Color.Warning" />
                         </MudButton>
+                        <MudButton OnClick="() => DeleteProduct(context.id)" >
+                            <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+                        </MudButton>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+
+            <MudText Typo="Typo.h5" Class="mt-10 mb-5">Combo Products</MudText>
+            <MudTable Items="@campaign.combos" Hover="true" Dense="true">
+                <HeaderContent>
+                    <MudTh>Combo Name</MudTh>
+                    <MudTh>Regular Price</MudTh>
+                    <MudTh>Discount Price</MudTh>
+                    <MudTh>Action</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Combo Name">@context.comboProductName</MudTd>
+                    <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
+                    <MudTd DataLabel="Discount Price">@context.comboPrice</MudTd>
+                    <MudTd DataLabel="Action">
                         <MudButton OnClick="() => DeleteProduct(context.id)" >
                             <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
                         </MudButton>

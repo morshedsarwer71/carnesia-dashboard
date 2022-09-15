@@ -31,7 +31,7 @@
                         <MudTimePicker Label="End Time" @bind-Time="EndTime" />
                     </MudItem>
                     <MudItem sm="6">
-                        <MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" />
+                        <MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" ReadOnly="true" />
                     </MudItem>
                     <MudItem sm="6">
                         <MudNumericField Label="Combo Price" @bind-Value="FormData.comboPrice" />
@@ -48,6 +48,7 @@
                 <MudTable Items="@Products" Hover="true" Dense="true">
                     <HeaderContent>
                         <MudTh>SKU</MudTh>
+                        <MudTh>Product Name</MudTh>
                         <MudTh>Regular Price</MudTh>
                         <MudTh>Discount Type</MudTh>
                         <MudTh>Discount Ammount</MudTh>
@@ -56,6 +57,7 @@
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd DataLabel="SKU">@context.sku</MudTd>
+                        <MudTd DataLabel="Product Name">@context.productName</MudTd>
                         <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
                         <MudTd DataLabel="Discount Type">@context.discountType</MudTd>
                         <MudTd DataLabel="Discount Ammount">@context.discountAmount</MudTd>
@@ -142,6 +144,7 @@
     private void RemoveProduct(AddComboProductDTO product)
     {
         Products.Remove(product);
+        FormData.regularPrice = Products.Sum(x => x.regularPrice);
     }
 
     // Add Product Modal
@@ -174,9 +177,9 @@
                 newProduct.afterDiscAmount = newProduct.regularPrice - ((newProduct.regularPrice * newProduct.discountAmount) / 100);
             }
 
-            newProduct.productId = await _products.GetProductIdBySku(newProduct.sku);
-
             Products.Add(newProduct);
+
+            FormData.regularPrice = Products.Sum(x => x.regularPrice);
         }
     }
 

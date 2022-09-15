@@ -1,0 +1,132 @@
+﻿@using Carnesia.Domain.OMS.Zones
+@inject IZones _zones
+@inject IPlaceOrder _placeOrder
+
+<MudDialog>
+	<DialogContent>
+		<div style="max-height: 90vh;">
+			<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+				<MudTextField @bind-Value="FormData.name" Label="Customer Name" Required="true" RequiredError="Customer Name is required!" />
+
+				<MudTextField @bind-Value="FormData.contactNumber" Immediate="true" Label="Shipping Phone Number" Required="true" RequiredError="Shipping Phone Number is required!" />
+
+				<MudSelect Value="FormData.division" Label="Division" AnchorOrigin="Origin.BottomCenter" Required="true" ValueChanged="(Int32 i) => ChangeDivision(i)">
+					<MudSelectItem Value="0">Select Division</MudSelectItem>
+					@foreach (var item in Divisions)
+					{
+						<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+					}
+				</MudSelect>
+
+				<MudSelect Value="FormData.district" Label="District" AnchorOrigin="Origin.BottomCenter" Required="true" ValueChanged="(Int32 i) => ChangeDistrict(i)">
+					<MudSelectItem Value="0">Select District</MudSelectItem>
+					@foreach (var item in Districts)
+					{
+						<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+					}
+				</MudSelect>
+
+				<MudSelect Value="FormData.zone" Label="Zone" AnchorOrigin="Origin.BottomCenter" Required="true" ValueChanged="(Int32 i) => ChangeZone(i)">
+					<MudSelectItem Value="0">Select Zone</MudSelectItem>
+					@foreach (var item in Zones)
+					{
+						<MudSelectItem Value="item.id">@item.zoneName</MudSelectItem>
+					}
+				</MudSelect>
+
+				<MudTextField @bind-Value="FormData.houseNo" Label="House No/Flat No" Required="true" RequiredError="House No/Flat No is required!" />
+
+				<MudTextField @bind-Value="FormData.roadNo" Label="Road No/Road Name" Required="true" RequiredError="Road No/Rode Name is required!" />
+
+				<MudTextField @bind-Value="FormData.detailAddress" Label="Detail Address" Required="true" RequiredError="Detail Address is required!" />
+
+				<div class="d-flex justify-end mt-5">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="Submit">Submit</MudButton>
+				</div>
+			</MudForm>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+
+	[Parameter] public CustomerDeliveryAddressDTO FormData { get; set; }
+
+	// Modal On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetDivisions();
+	}
+
+	// Zones
+	private List<DivisionDTO> Divisions = new List<DivisionDTO>();
+	private IList<DistrictDTO> Districts = new List<DistrictDTO>();
+	private IList<ZoneDTO> Zones = new List<ZoneDTO>();
+
+	// Get Divisions
+	private async Task GetDivisions()
+	{
+		Divisions = await _zones.GetDivisions();
+	}
+
+	// Division Change
+	private async Task ChangeDivision(int i)
+	{
+		FormData.division = i;
+		FormData.district = 0;
+		FormData.zone = 0;
+		FormData.shipping = 0;
+		Zones.Clear();
+		if (i == 0)
+		{
+			Districts.Clear();
+			return;
+		}
+
+		var pIndex = Divisions.FindIndex(x => x.id == i);
+		Districts = Divisions[pIndex].districts;
+	}
+
+	// District Change
+	private async Task ChangeDistrict(int i)
+	{
+		FormData.district = i;
+		FormData.shipping = 0;
+		FormData.zone = 0;
+
+		if (i == 0)
+		{
+			Zones.Clear();
+			return;
+		}
+
+		var result = Districts.Where(x => x.id == i).FirstOrDefault();
+		var pIndex = Districts.IndexOf(result);
+		Zones = Districts[pIndex].zones;
+	}
+
+	// Zone Change
+	private async Task ChangeZone(int i)
+	{
+		FormData.zone = i;
+
+		if (i == 0)
+		{
+			FormData.shipping = 0;
+			return;
+		}
+
+		var ZIndex = Zones.FirstOrDefault(x => x.id == i);
+		FormData.shipping = ZIndex.regulaPrice;
+	}
+
+	
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<CustomerDeliveryAddressDTO>(FormData));
+}

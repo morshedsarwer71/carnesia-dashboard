@@ -1,0 +1,60 @@
+﻿@page "/add-customer"
+
+@using Carnesia.Domain.Common.Customer
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<InputFile id="fileInput" hidden accept=".xlsx" />
+		<MudButton HtmlTag="label"
+				   Variant="Variant.Filled"
+				   Color="Color.Primary"
+				   StartIcon="@Icons.Filled.CloudUpload"
+				   Class="me-3"
+				   for="fileInput">
+			Upload File
+		</MudButton>
+
+		<MudTable Class="mt-5" Loading="Loading" LoadingProgressColor="Color.Info" Items="Elements" Dense="true" Hover="true" Striped="true" Bordered="true">
+			<HeaderContent>
+				<MudTh>Customer ID</MudTh>
+				<MudTh>Name</MudTh>
+				<MudTh>User Name</MudTh>
+				<MudTh>Phone Number</MudTh>
+				<MudTh>Password</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Customer ID">@context.customerId</MudTd>
+				<MudTd DataLabel="Name">@context.name</MudTd>
+				<MudTd DataLabel="User Name">@context.userName</MudTd>
+				<MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+				<MudTd DataLabel="Password">@context.password</MudTd>
+			</RowTemplate>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Loading
+	private bool Loading { get; set; }
+
+	// Table Content
+	private List<CustomerInfoBulkUploadDTO> Elements = new List<CustomerInfoBulkUploadDTO>();
+
+	// Upload .xlsx
+    private async Task UploadFile (InputFileChangeEventArgs e)
+    {
+        Loading = true;
+        try
+        {
+            Elements.Clear();
+            //Elements =  await _campaign.UploadXLSXFile(e);
+            Loading = false;
+        }
+        catch (Exception er)
+        {
+            Console.WriteLine(er.Message);
+            Loading = false;
+            throw;
+        }
+    }
+}

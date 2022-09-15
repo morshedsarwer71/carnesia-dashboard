@@ -163,6 +163,7 @@ namespace Carnesia.Application.CMS.Services.CreateCampaign
                         discAmount = discAmount,
                         stock = stock
                     };
+                    Console.WriteLine(pop);
                     Products.Add(pop);
                 }
                 return Products.Where(x => x.sku != null).ToList();

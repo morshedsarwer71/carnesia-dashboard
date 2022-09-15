@@ -4,6 +4,7 @@
 @using Carnesia.Domain.Dashboard.GenerateBill
 @using Carnesia.Domain.OMS.Zones
 @using Carnesia.Shared.Dashboard.GenerateBill
+@using Carnesia.Shared.OMS.OrderEdit
 @inject IZones _zones
 @inject IPlaceOrder _placeOrder
 @inject IGenerateBill _generateBill
@@ -12,6 +13,13 @@
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
+
+		<div>
+			<MudText Typo="Typo.h5">Order Id: @trnCode</MudText>
+			<MudText Typo="Typo.h6">Customer Name: @OrderDetails.customerName</MudText>
+			<MudText Typo="Typo.h6">Customer Phone Number: @OrderDetails.customerPhone</MudText>
+		</div>
+
 		<MudGrid Class="justify-center">
 			<MudItem sm="4">
 				<MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" />
@@ -28,7 +36,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" Dense="true" Hover="true" Striped="true" CustomFooter="true">
+		<MudTable Items="@Elements" Dense="true" Hover="true" Striped="true" CustomFooter="true" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>SKU</MudTh>
 				<MudTh>Product Name</MudTh>
@@ -56,11 +64,11 @@
 				</MudTFootRow>
 				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end;">Shipping:</MudTd>
-					<MudTd colspan="1" Style="text-align: end;">@shipping</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@Math.Round(shipping - minusShipping, 2)</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end;">Coupon Used:</MudTd>
-					<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount - autoDiscount, 2)</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end;">Auto Apply:</MudTd>
@@ -68,7 +76,7 @@
 				</MudTFootRow>
 				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + shipping - discount - autoDiscount), 2)</MudTd>
+					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + shipping - minusShipping - discount - autoDiscount), 2)</MudTd>
 				</MudTFootRow>
 			</FooterContent>
 		</MudTable>
@@ -103,68 +111,25 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudGrid Class="align-baseline">
-			<MudItem sm="6">
-				<MudTextField @bind-Value="customerPhoneNumber" Label="Phone or Id" Immediate="true" Disabled="true"/>
-			</MudItem>
-		</MudGrid>
-		<br />
-		<MudDivider />
-
-		@*<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-			<MudGrid>
-				<MudItem sm="6">
-					<MudTextField @bind-Value="Customer.name" Label="Customer Name" Disabled="true" />
-				</MudItem>
-				<MudItem sm="6">
-					<MudTextField @bind-Value="Customer.address" Label="Address" Immediate="true" Required="true" RequiredError="Address is required!" />
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect Value="SelectedDivision" Label="Division" Immediate="true" AnchorOrigin="Origin.BottomCenter" ValueChanged="(Int32 s) => ChangeDivision(s)">
-						<MudSelectItem Value="0">Select Division</MudSelectItem>
-						@foreach (var item in Divisions)
-						{
-							<MudSelectItem Value="item.id">@item.name</MudSelectItem>
-						}
-					</MudSelect>
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect Value="SelectedDistrict" T="int" Label="District" Immediate="true" AnchorOrigin="Origin.BottomCenter" ValueChanged="(Int32 s) => ChangeDistrict(s)">
-						<MudSelectItem Value="0">Select District</MudSelectItem>
-						@foreach (var item in Districts)
-						{
-							<MudSelectItem Value="item.id">@item.name</MudSelectItem>
-						}
-					</MudSelect>
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect Value="SelectedZone" Label="Zone" Immediate="true" ValueChanged="(Int32 s) => ChangeZone(s)" AnchorOrigin="Origin.BottomCenter">
-						<MudSelectItem Value="0">Select Zone</MudSelectItem>
-						@foreach (var item in Zones)
-						{
-							<MudSelectItem Value="item.id">@item.zoneName</MudSelectItem>
-						}
-					</MudSelect>
-				</MudItem>
-				<MudItem sm="6">
-					<MudTextField @bind-Value="Customer.comment" Label="Comment" />
-				</MudItem>
-			</MudGrid>
-		</MudForm>*@
+		<div class="d-flex justify-end my-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateAddressModal">View Address</MudButton>
+		</div>
 
 		@*<div class="d-flex justify-end mt-5">
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PlaceNewOrder">Place Order</MudButton>
-		</div>*@
+			</div>*@
 	</MudContainer>
 </MudPaper>
 @code {
 	[Parameter]
 	public string trnCode { get; set; }
 
+	// Loading
+	private bool Loading { get; set; } = true;
+
 	// Page On Load
 	protected override async Task OnInitializedAsync()
 	{
-		await GetDivisions();
 		await GetProductAsSKU();
 		await GetOrder();
 	}
@@ -178,8 +143,10 @@
 	// Shipping, Subtotal, Discount
 	private decimal subTotal { get; set; }
 	private decimal shipping { get; set; }
+	private decimal minusShipping { get; set; }
 	private decimal discount { get; set; }
 	private decimal autoDiscount { get; set; }
+	private int addressId { get; set; }
 
 	// Auto Apply Data
 	private PlaceOrderAutoApplyDTO AutoApply = new PlaceOrderAutoApplyDTO();
@@ -191,10 +158,9 @@
 
 		if (AutoApply.isDeliveryCharge)
 		{
-			shipping = shipping - AutoApply.amount;
+			minusShipping = AutoApply.amount;
 			return;
 		}
-		discount -= AutoApply.amount;
 		autoDiscount = AutoApply.amount;
 	}
 
@@ -227,20 +193,33 @@
 	private PlaceOrderDetailsDTO PlacedOrderDetails = new PlaceOrderDetailsDTO();
 
 	// Get Order
+	private PlaceOrderDetailsDTO OrderDetails = new PlaceOrderDetailsDTO();
+
 	private async Task GetOrder()
 	{
-		var result = await _placeOrder.GetOrderByTrnCode(trnCode);
-		PlacedOrderDetails = result;
-		shipping = result.deliveryPrice;
-		subTotal = result.totalPrice;
-		discount = result.promoPrice;
-		Coupon.coupon = result.voucherCode;
-
-		Elements = result.orderProductsDTOs;
-
-		if (result.autoApplyId > 0)
+		try
 		{
-			await GetAutoApply();
+			OrderDetails = await _placeOrder.GetOrderByTrnCode(trnCode);
+			PlacedOrderDetails = OrderDetails;
+			shipping = OrderDetails.deliveryPrice;
+			subTotal = OrderDetails.totalPrice;
+			discount = OrderDetails.promoPrice;
+			Coupon.coupon = OrderDetails.voucherCode;
+			addressId = OrderDetails.deliveryAddressID;
+
+			Elements = OrderDetails.orderProductsDTOs;
+
+			if (OrderDetails.autoApplyId > 0)
+			{
+				await GetAutoApply();
+			}
+
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
 		}
 	}
 
@@ -317,7 +296,7 @@
 	private void RemoveProduct(ProductTableDTO product)
 	{
 		Elements.Remove(product);
-		subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
+		subTotal = Math.Round(Elements.Sum(x => x.productQuantity * x.salesPrice));
 		ResetCoupon();
 		Snackbar.Add("Product Removed Successfully!", Severity.Success);
 	}
@@ -376,70 +355,43 @@
 	private GenerateBillCustomerInfoDTO Customer = new GenerateBillCustomerInfoDTO();
 	private string customerPhoneNumber { get; set; }
 
-	// Zones
-	private List<DivisionDTO> Divisions = new List<DivisionDTO>();
-	private IList<DistrictDTO> Districts = new List<DistrictDTO>();
-	private IList<ZoneDTO> Zones = new List<ZoneDTO>();
-
-	private int SelectedDivision { get; set; }
-	private int SelectedDistrict { get; set; }
-	private int SelectedZone { get; set; }
-
-	// Get Divisions
-	private async Task GetDivisions()
+	// Update Address Modal
+	private async Task UpdateAddressModal()
 	{
-		Divisions = await _zones.GetDivisions();
-	}
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new CustomerDeliveryAddressDTO{customerID = OrderDetails.customerId, shipping = shipping});
+		parameters.Add("AddressID", OrderDetails.deliveryAddressID);
+		parameters.Add("TRNCode", trnCode);
+		parameters.Add("UserPhone", OrderDetails.customerPhone);
 
-	// Division Change
-	private async Task ChangeDivision(int i)
-	{
-		SelectedDivision = i;
-		SelectedDistrict = 0;
-		SelectedZone = 0;
-		shipping = 0;
-		Zones.Clear();
-		if (i == 0)
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<OrderEditNewCustomerAddressModal>("Update Customer Address", parameters, options).Result;
+
+		if (dialog.Data != null)
 		{
-			Districts.Clear();
-			return;
+			CustomerDeliveryAddressDTO newAddress = dialog.Data as CustomerDeliveryAddressDTO;
+
+			try
+			{
+				var result = await _zones.CreateCustomerAddress(newAddress);
+
+				if (result > 0)
+				{
+					Snackbar.Add("Customer address updated successfully!", Severity.Success);
+					OrderDetails.zoneId = newAddress.zone;
+					OrderDetails.deliveryAddressID = result;
+					shipping = newAddress.shipping;
+					return;
+				}
+
+				Snackbar.Add("Customer address update failed!", Severity.Success);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				Snackbar.Add("Internal server error!", Severity.Error);
+		    }
 		}
-
-		var pIndex = Divisions.FindIndex(x => x.id == i);
-		Districts = Divisions[pIndex].districts;
-	}
-
-	// District Change
-	private async Task ChangeDistrict(int i)
-	{
-		SelectedDistrict = i;
-		SelectedZone = 0;
-		shipping = 0;
-
-		if (i == 0)
-		{
-			Zones.Clear();
-			return;
-		}
-
-		var result = Districts.Where(x => x.id == i).FirstOrDefault();
-		var pIndex = Districts.IndexOf(result);
-		Zones = Districts[pIndex].zones;
-	}
-
-	// Zone Change
-	private async Task ChangeZone(int i)
-	{
-		SelectedZone = i;
-
-		if (i == 0)
-		{
-			shipping = 0;
-			return;
-		}
-
-		var zone = Zones.FirstOrDefault(x => x.id == i);
-		shipping = zone.regulaPrice;
 	}
 
 	// Product Search Class
@@ -455,5 +407,5 @@
 		public string coupon { get; set; }
 		public string platform { get; set; }
 	}
-	
+
 }

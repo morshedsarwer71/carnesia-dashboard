@@ -118,5 +118,19 @@ namespace Carnesia.Application.CMS.Services.Combo
                 throw;
             }
         }
+
+        public async Task<List<CombosInTimeDTO>> GetCombosInTime()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<CombosInTimeDTO>>("ComboProduct/getcombos");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

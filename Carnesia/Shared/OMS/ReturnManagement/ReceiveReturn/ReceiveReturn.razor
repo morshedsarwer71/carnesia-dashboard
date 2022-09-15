@@ -1,6 +1,7 @@
 ﻿@using Carnesia.Domain.OMS.ReturnManagement.ReceiveReturn
 @using Carnesia.Domain.OMS.PickPack
-
+@inject IReceiveReturn _receiveReturn
+@inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
@@ -88,6 +89,8 @@
 			{
 				orderIdShow = orderId;
 				orderId = String.Empty;
+
+				await GetOrderDetails();
 			}
 		}
 	}
@@ -98,8 +101,55 @@
 		{
 			if (uid.Length == 15 && !String.IsNullOrEmpty(orderIdShow))
 			{
-				
+				await ReceiveItem();
 			}
+		}
+	}
+
+	// Get Order Details
+	private async Task GetOrderDetails()
+	{
+		try
+		{
+			var result = await _receiveReturn.GetOrderDetails(orderIdShow);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				return;
+			}
+
+			Elements = result.pickPacks;
+			Snackbar.Add(result.message, Severity.Success);
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+		}
+	}
+
+	// Receive Item
+	private async Task ReceiveItem()
+	{
+		try
+		{
+			var result = await _receiveReturn.ReturnItem(orderId, uid, ReturnType);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				return;
+			}
+
+			Elements = result.pickPacks;
+			Snackbar.Add(result.message, Severity.Success);
+			uid = String.Empty;
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
 		}
 	}
 

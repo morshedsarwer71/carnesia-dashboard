@@ -11,6 +11,7 @@ namespace Carnesia.Domain.CMS.ComboProducts
         public int productId { get; set; }
         public decimal discountAmount { get; set; }
         public decimal regularPrice { get; set; }
+        public string productName { get; set; }
         public decimal afterDiscAmount { get; set; }
         public string discountType { get; set; }
         public string sku { get; set; }

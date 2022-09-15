@@ -1,0 +1,75 @@
+﻿@layout PrintLayout
+@page "/invoice-print-web/{trncode}"
+
+@using Carnesia.Domain.Dashboard.GenerateBill
+@inject IGenerateBill _generateBill
+
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.BarcodeGenerator
+
+@*<div style="width: 3.5in; margin: 0 auto; padding: 3px">
+	<MudImage Width="150" Src="@("./carneisa logo (white outlined).png")" Alt="logo" />
+	<hr />
+	<h1 style="text-align:center; font-weight: 600;">Invoice</h1>
+	<hr />
+	<h4>Outlet Address: @Invoice.outletAddress</h4>
+	<h4>Phone #@Invoice.outletPhone</h4>
+	@if (!String.IsNullOrEmpty(Invoice.trnCode))
+	{
+		<SfBarcodeGenerator Value="@(Invoice.trnCode)" Height="50px">
+			<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
+			</BarcodeGeneratorDisplayText>
+		</SfBarcodeGenerator>
+	}
+	<h4>Order Date: @Invoice.orderDate</h4>
+	<h4>Customer Name: @Invoice.customerName</h4>
+	<h4>Phone #@Invoice.customerPhone</h4>
+	<h4>Cutomer Address: @Invoice.customerAddress</h4>
+	<h4>Area: @Invoice.area</h4>
+	<h4>District: @Invoice.district</h4>
+	<h4>Shipping Zone: @Invoice.shippingZone</h4>
+	<br />
+	<h3 style="font-weight: 600;">Payment: @Invoice.paymentType</h3>
+	<table style="width: 100%; border-collapse: collapse;">
+		<tr style="font-size: 14px;">
+			<th style="width: 60%" class="table-cell">Product Name & SKU</th>
+			<th class="table-cell">Price</th>
+			<th class="table-cell">Qty.</th>
+			<th class="table-cell">Total</th>
+		</tr>
+		@if (Items.Count > 0)
+		{
+			foreach (var item in Items)
+			{
+				<tr style="font-size: 10px;">
+					<td class="table-cell">
+						<p>@item.name</p>
+						<p>SKU-@item.sku</p>
+					</td>
+					<td class="table-cell">@item.price</td>
+					<td class="table-cell">@item.quantity</td>
+					<td class="table-cell">@item.totalPrice</td>
+				</tr>
+			}
+		}
+	</table>
+
+	<div style="text-align:end; margin-top: 10px;">
+		<h5>Subtotal: @Invoice.total</h5>
+		<h5>Discount: @Invoice.discount</h5>
+		<h5>Credit Used: @Invoice.creditUsed</h5>
+		<h5>Reward Value: @Invoice.rewardPoints</h5>
+		<h5>Grand Total: @Invoice.grandTotal</h5>
+	</div>
+	<h5>Instruction: Deliver before 2pm.</h5>
+	<h5>Wishes: Get literature from marketing team.</h5>
+
+	<div style="text-align:center; margin-top: 10px;">
+		<h5>www.carnesia.com</h5>
+		<h5>Helpline: 01900000000</h5>
+	</div>
+</div>*@
+
+@code {
+
+}

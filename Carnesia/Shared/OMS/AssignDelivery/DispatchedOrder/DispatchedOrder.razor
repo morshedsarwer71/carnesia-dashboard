@@ -1,0 +1,196 @@
+﻿@using Carnesia.Domain.OMS.PendingOrder
+@inject IDispatch _dispatch
+@inject ISnackbar Snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Hover="true" Dense="true" Bordered="true" Striped="true" HorizontalScrollbar="true" Loading="Loading" LoadingProgressColor="Color.Info" >
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Tracking</MudTh>
+				<MudTh>Order ID</MudTh>
+				<MudTh>Order Date</MudTh>
+				<MudTh>Amount</MudTh>
+				<MudTh>Payment Method</MudTh>
+				<MudTh>Payment Status</MudTh>
+				<MudTh>To Be Collected</MudTh>
+				<MudTh>Customer Name</MudTh>
+				<MudTh>Phone Number</MudTh>
+				<MudTh>Address</MudTh>
+				<MudTh>Status</MudTh>
+				<MudTh>Assign To</MudTh>
+				<MudTh>Action</MudTh>
+				<MudTh>Print</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.orderId)" />
+					}
+					else if (context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.orderId)" />
+					}
+				</MudTd>
+				<MudTd DataLabel="Tracking">@context.trackingCode</MudTd>
+				<MudTd DataLabel="Order ID">@context.trnCode</MudTd>
+				<MudTd DataLabel="Order Date">@context.orderDate</MudTd>
+				<MudTd DataLabel="Amount">@context.amount</MudTd>
+				<MudTd DataLabel="Payment Method">@context.paymentMethod</MudTd>
+				<MudTd DataLabel="Payment Status">@context.paymentStatus</MudTd>
+				<MudTd DataLabel="To Be Collected">@context.tobeCollected</MudTd>
+				<MudTd DataLabel="Customer Name">@context.customerName</MudTd>
+				<MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+				<MudTd DataLabel="Address">@context.address</MudTd>
+				<MudTd DataLabel="Status">@context.status</MudTd>
+				<MudTd DataLabel="Assign To">@context.assignto</MudTd>
+				<MudTd DataLabel="Action" Class="d-flex flex-column align-center">
+					<MudButton Variant="Variant.Text" Color="Color.Success" OnClick="() => ConfirmDelivery(context.orderId)">Confirm Delivery</MudButton>
+					<MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => CancelDelivery(context.orderId)">Cancel Delivery</MudButton>
+				</MudTd>
+				<MudTd DataLabel="Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
+				</MudTd>
+			</RowTemplate>
+			<ChildRowContent>
+				@if (context.ShowDetails)
+				{
+					<td colspan="14">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Hover="true" Dense="true" Striped="true" Bordered="true" Elevation="0" CustomFooter="true">
+									<HeaderContent>
+										<MudTh>SKU</MudTh>
+										<MudTh>Product Name</MudTh>
+										<MudTh>Quantity</MudTh>
+										<MudTh>Price</MudTh>
+										<MudTh>Amount</MudTh>
+									</HeaderContent>
+									<RowTemplate>
+										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
+										<MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>
+										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
+										<MudTd Style="text-align: right" DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
+									</RowTemplate>
+									<FooterContent>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
+											<MudTd colspan="1" Style="text-align: end;">@context.products.total</MudTd>
+										</MudTFootRow>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end;">Discount:</MudTd>
+											<MudTd colspan="1" Style="text-align: end;">@context.products.discount</MudTd>
+										</MudTFootRow>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end;">Shipping Price:</MudTd>
+											<MudTd colspan="1" Style="text-align: end;">@context.products.shippingPrice</MudTd>
+										</MudTFootRow>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+											<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@context.products.grandTotal</MudTd>
+										</MudTFootRow>
+									</FooterContent>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetOrders();
+	}
+
+	// Loading
+	private bool Loading { get; set; }
+
+	// Table Content
+	private List<PendingOrderDTO> Elements = new List<PendingOrderDTO>();
+
+	// Get Orders
+	private async Task GetOrders()
+	{
+		Loading = true;
+		try
+		{
+			Elements = await _dispatch.GetDispatchedOrders();
+			Loading = false;
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+			Loading = false;
+		}
+	}
+
+	// Confirm Delivery
+	private async Task ConfirmDelivery(int orderId)
+	{
+		Loading = true;
+		try
+		{
+			var result = await _dispatch.ConfirmDispatch(orderId);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				Loading = false;
+				return;
+			}
+
+			Snackbar.Add(result.message, Severity.Success);
+			Loading = false;
+			await GetOrders();
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+			Loading = false;
+		}
+	}
+
+	// Cancel Delivery
+	private async Task CancelDelivery(int orderId)
+	{
+		Loading = true;
+		try
+		{
+			var result = await _dispatch.CancelDispatch(orderId);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				Loading = false;
+				return;
+			}
+
+			Snackbar.Add(result.message, Severity.Success);
+			Loading = false;
+			await GetOrders();
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+			Loading = false;
+		}
+	}
+
+
+	// Show Details
+	private void ShowBtnPress(int orderId)
+	{
+		PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
+		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+}

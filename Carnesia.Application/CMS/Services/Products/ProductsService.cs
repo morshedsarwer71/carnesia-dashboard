@@ -22,12 +22,14 @@ namespace Carnesia.Application.CMS.Services.Products
             try
             {
                 var result = await _httpClient.GetFromJsonAsync<ProductsBySKUDTO>($"Products/getproductbysku/{sku}");
-                return result.productId;
+
+                if (result != null) return result.productId;
+                return 0;
             }
             catch (Exception)
             {
 
-                throw;
+                return 0;
             }
         }
 

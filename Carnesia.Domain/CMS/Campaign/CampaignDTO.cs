@@ -24,5 +24,15 @@ namespace Carnesia.Domain.CMS.Campaign
         public string imageWebUrl { get; set; }
         public string base64Attch { get; set; }
         public List<CampaignProductDTO> products { get; set; }
+        public List<CampaignComboProductDTO> combos { get; set; }
+    }
+
+    public class CampaignComboProductDTO
+    {
+        public int id { get; set; }
+        public int comboId { get; set; }
+        public string comboProductName { get; set; }
+        public decimal regularPrice { get; set; }
+        public decimal comboPrice { get; set; }
     }
 }

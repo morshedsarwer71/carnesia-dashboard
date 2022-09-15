@@ -15,5 +15,6 @@ namespace Carnesia.Application.CMS.Services.Combo
         Task<bool> RemoveProduct(int id);
         Task<bool> AddProduct(AddComboProductDTO product);
         Task<bool> UpdateCombo(ComboListDTO combo);
+        Task<List<CombosInTimeDTO>> GetCombosInTime();
     }
 }

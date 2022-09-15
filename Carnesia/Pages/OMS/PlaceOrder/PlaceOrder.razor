@@ -4,6 +4,7 @@
 @using Carnesia.Domain.Dashboard.GenerateBill
 @using Carnesia.Domain.OMS.Zones
 @using Carnesia.Shared.Dashboard.GenerateBill
+@using Carnesia.Shared.OMS.PlaceOrder
 @inject IZones _zones
 @inject IPlaceOrder _placeOrder
 @inject IGenerateBill _generateBill
@@ -130,43 +131,21 @@
 					<MudTextField @bind-Value="Customer.name" Label="Customer Name" Disabled="true" />
 				</MudItem>
 				<MudItem sm="6">
-					<MudTextField @bind-Value="Customer.address" Label="Address" Immediate="true" Required="true" RequiredError="Address is required!" />
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect Value="SelectedDivision" Label="Division" Immediate="true" AnchorOrigin="Origin.BottomCenter" ValueChanged="(Int32 s) => ChangeDivision(s)">
-						<MudSelectItem Value="0">Select Division</MudSelectItem>
-						@foreach (var item in Divisions)
-						{
-							<MudSelectItem Value="item.id">@item.name</MudSelectItem>
-						}
-					</MudSelect>
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect Value="SelectedDistrict" T="int" Label="District" Immediate="true" AnchorOrigin="Origin.BottomCenter" ValueChanged="(Int32 s) => ChangeDistrict(s)">
-						<MudSelectItem Value="0">Select District</MudSelectItem>
-						@foreach (var item in Districts)
-						{
-							<MudSelectItem Value="item.id">@item.name</MudSelectItem>
-						}
-					</MudSelect>
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect Value="SelectedZone" Label="Zone" Immediate="true" ValueChanged="(Int32 s) => ChangeZone(s)" AnchorOrigin="Origin.BottomCenter">
-						<MudSelectItem Value="0">Select Zone</MudSelectItem>
-						@foreach (var item in Zones)
-						{
-							<MudSelectItem Value="item.id">@item.zoneName</MudSelectItem>
-						}
-					</MudSelect>
-				</MudItem>
-				<MudItem sm="6">
 					<MudTextField @bind-Value="Customer.comment" Label="Comment" />
 				</MudItem>
 			</MudGrid>
 		</MudForm>
 
 		<div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PlaceNewOrder">Place Order</MudButton>
+			@if (AddressID <= 0)
+			{
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Customer.id)" OnClick="AddCustomerAddressModal">Add Address</MudButton>
+			}
+			else
+			{
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PlaceNewOrder">Place Order</MudButton>
+			}
+
 		</div>
 
 		<br />
@@ -186,12 +165,15 @@
 	// Page On Load
 	protected override async Task OnInitializedAsync()
 	{
-		await GetDivisions();
 		await GetProductAsSKU();
 	}
 
 	// Source
 	private string source { get; set; }
+
+	// Zone Id
+	private int ZoneId { get; set; }
+	private int AddressID { get; set; }
 
 	// Shipping, Subtotal, Discount
 	private decimal subTotal { get; set; }
@@ -333,72 +315,6 @@
 		Snackbar.Add("Product Removed Successfully!", Severity.Success);
 	}
 
-	// Zones
-	private List<DivisionDTO> Divisions = new List<DivisionDTO>();
-	private IList<DistrictDTO> Districts = new List<DistrictDTO>();
-	private IList<ZoneDTO> Zones = new List<ZoneDTO>();
-
-	private int SelectedDivision { get; set; }
-	private int SelectedDistrict { get; set; }
-	private int SelectedZone { get; set; }
-
-	// Get Divisions
-	private async Task GetDivisions()
-	{
-		Divisions = await _zones.GetDivisions();
-	}
-
-	// Division Change
-	private async Task ChangeDivision(int i)
-	{
-		SelectedDivision = i;
-		SelectedDistrict = 0;
-		SelectedZone = 0;
-		shipping = 0;
-		Zones.Clear();
-		if (i == 0)
-		{
-			Districts.Clear();
-			return;
-		}
-
-		var pIndex = Divisions.FindIndex(x => x.id == i);
-		Districts = Divisions[pIndex].districts;
-	}
-
-	// District Change
-	private async Task ChangeDistrict(int i)
-	{
-		SelectedDistrict = i;
-		SelectedZone = 0;
-		shipping = 0;
-
-		if (i == 0)
-		{
-			Zones.Clear();
-			return;
-		}
-
-		var result = Districts.Where(x => x.id == i).FirstOrDefault();
-		var pIndex = Districts.IndexOf(result);
-		Zones = Districts[pIndex].zones;
-	}
-
-	// Zone Change
-	private async Task ChangeZone(int i)
-	{
-		SelectedZone = i;
-
-		if (i == 0)
-		{
-			shipping = 0;
-			return;
-		}
-
-		var zone = Zones.FirstOrDefault(x => x.id == i);
-		shipping = zone.regulaPrice;
-	}
-
 	//Customer Data
 	private GenerateBillCustomerInfoDTO Customer = new GenerateBillCustomerInfoDTO();
 
@@ -465,6 +381,41 @@
 		}
 	}
 
+	// Add Customer Address
+	private async Task AddCustomerAddressModal()
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new CustomerDeliveryAddressDTO{customerID = Customer.id});
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<PlaceOrderAddCustomerAddressModal>("Add Customer Address", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			CustomerDeliveryAddressDTO newAddress = dialog.Data as CustomerDeliveryAddressDTO;
+
+			try
+			{
+				var result = await _zones.CreateCustomerAddress(newAddress);
+
+				if (result > 0)
+				{
+					Snackbar.Add("Customer address added successfully!", Severity.Success);
+					ZoneId = newAddress.zone;
+					AddressID = result;
+					shipping = newAddress.shipping;
+					return;
+				}
+				Snackbar.Add("Address creation faild!", Severity.Error);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				Snackbar.Add("Internal Server Error!", Severity.Error);
+			}
+		}
+	}
+
 	// Place Order
 	private PlaceOrderDTO NewOrder = new PlaceOrderDTO();
 
@@ -488,18 +439,6 @@
 			return;
 		}
 
-		if (String.IsNullOrEmpty(Customer.address))
-		{
-			Snackbar.Add("Please add customer address!", Severity.Error);
-			return;
-		}
-
-		if (SelectedZone <= 0)
-		{
-			Snackbar.Add("Please add customer zone!", Severity.Error);
-			return;
-		}
-
 		var orderDetails = new PlaceOrderDetailsDTO
 			{
 				address = Customer.address,
@@ -511,10 +450,10 @@
 				instructions = Customer.comment,
 				paymentType = 1,
 				source = source,
-				zoneId = SelectedZone,
+				zoneId = ZoneId,
 				voucherCode = Coupon.coupon,
 				totalPrice = subTotal,
-				deliveryAddressID = 0,
+				deliveryAddressID = AddressID,
 				afterPromoPrice = subTotal - discount,
 				promoPrice = discount,
 				deliveryType = 1,
@@ -527,17 +466,12 @@
 		{
 			var result = await _placeOrder.PlaceOrder(NewOrder);
 
-			if (result)
+			if (result.sslUrl == "Success")
 			{
 				Snackbar.Add("Order placed successfully!", Severity.Success);
 				NewOrder = new PlaceOrderDTO();
 				source = String.Empty;
 				shipping = 0;
-				SelectedDistrict = 0;
-				SelectedDivision = 0;
-				SelectedZone = 0;
-				Districts.Clear();
-				Zones.Clear();
 				Elements.Clear();
 				Customer = new GenerateBillCustomerInfoDTO();
 				customerPhoneNumber = String.Empty;
@@ -545,9 +479,9 @@
 				ResetCoupon();
 				return;
 			}
-			Snackbar.Add("Order not placed. Please check all the property!", Severity.Error);
+			Snackbar.Add(result.sslUrl, Severity.Error);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal server error!", Severity.Error);

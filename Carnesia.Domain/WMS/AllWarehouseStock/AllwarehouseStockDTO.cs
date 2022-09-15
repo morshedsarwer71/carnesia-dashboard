@@ -10,6 +10,7 @@ namespace Carnesia.Domain.WMS.AllWarehouseStock
     {
         public string SKU { get; set; }
         public string ProductName { get; set; }
+        public string productCode { get; set; }
         public decimal COGS { get; set; }
         public decimal MRP { get; set; }
         public decimal SellingPrice { get; set; }

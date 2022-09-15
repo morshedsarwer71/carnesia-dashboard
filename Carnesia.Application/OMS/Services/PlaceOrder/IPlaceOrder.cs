@@ -13,8 +13,9 @@ namespace Carnesia.Application.OMS.Services.PlaceOrder
         Task<List<ProductTableDTO>> GetAllProducts();
         Task<ProductTableDTO> GetProductBySKU(string sku);
         Task<PlaceOrderCouponDTO> ApplyCoupon(string coupon, string platform);
-        Task<bool> PlaceOrder(PlaceOrderDTO order);
+        Task<PlaceOrderResponseDTO> PlaceOrder(PlaceOrderDTO order);
         Task<PlaceOrderDetailsDTO> GetOrderByTrnCode(string trnCode);
         Task<PlaceOrderAutoApplyDTO> GetAutoApply(string trnCode);
+        Task<string> SendOTP(string phone, string otp);
     }
 }
