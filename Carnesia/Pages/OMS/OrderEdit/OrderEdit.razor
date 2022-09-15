@@ -112,12 +112,9 @@
 		</MudGrid>
 
 		<div class="d-flex justify-end my-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateAddressModal">View Address</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateAddressModal" Class="me-3">View Address</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateOrder">Update Order</MudButton>
 		</div>
-
-		@*<div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PlaceNewOrder">Place Order</MudButton>
-			</div>*@
 	</MudContainer>
 </MudPaper>
 @code {
@@ -359,7 +356,7 @@
 	private async Task UpdateAddressModal()
 	{
 		var parameters = new DialogParameters();
-		parameters.Add("FormData", new CustomerDeliveryAddressDTO{customerID = OrderDetails.customerId, shipping = shipping});
+		parameters.Add("FormData", new CustomerDeliveryAddressDTO { customerID = OrderDetails.customerId, shipping = shipping });
 		parameters.Add("AddressID", OrderDetails.deliveryAddressID);
 		parameters.Add("TRNCode", trnCode);
 		parameters.Add("UserPhone", OrderDetails.customerPhone);
@@ -390,7 +387,65 @@
 			{
 				Console.WriteLine(e.Message);
 				Snackbar.Add("Internal server error!", Severity.Error);
-		    }
+			}
+		}
+	}
+
+	// Update Order
+	private async Task UpdateOrder()
+	{
+		var UpdateOrderDetails = new OrderEditUpdatedOrderDTO();
+
+		if (OrderDetails.autoApplyId > 0 && subTotal >= AutoApply.mincartamnt && AutoApply.isDeliveryCharge == false)
+		{
+			UpdateOrderDetails.autoApplyAmnt = AutoApply.amount;
+			UpdateOrderDetails.autoApplyId = OrderDetails.autoApplyId;
+			UpdateOrderDetails.grandTotalPrice = subTotal + shipping - discount - AutoApply.amount;
+			UpdateOrderDetails.deliveryPrice = shipping;
+			UpdateOrderDetails.promoPrice = discount + AutoApply.amount;
+			UpdateOrderDetails.afterPromoPrice = subTotal - discount + AutoApply.amount;
+		}
+		else if (OrderDetails.autoApplyId > 0 && subTotal >= AutoApply.mincartamnt && AutoApply.isDeliveryCharge == true)
+		{
+			UpdateOrderDetails.autoApplyAmnt = AutoApply.amount;
+			UpdateOrderDetails.autoApplyId = OrderDetails.autoApplyId;
+			UpdateOrderDetails.grandTotalPrice = subTotal - discount - AutoApply.amount;
+			UpdateOrderDetails.deliveryPrice = 0;
+			UpdateOrderDetails.promoPrice = discount;
+			UpdateOrderDetails.afterPromoPrice = subTotal - discount;
+		}
+		else
+		{
+			UpdateOrderDetails.autoApplyAmnt = 0;
+			UpdateOrderDetails.autoApplyId = 0;
+			UpdateOrderDetails.grandTotalPrice = subTotal + shipping - discount;
+			UpdateOrderDetails.deliveryPrice = shipping;
+			UpdateOrderDetails.promoPrice = discount;
+			UpdateOrderDetails.afterPromoPrice = subTotal - discount;
+		}
+
+		UpdateOrderDetails.totalPrice = subTotal;
+		UpdateOrderDetails.zoneId = OrderDetails.zoneId;
+		UpdateOrderDetails.deliveryAddressID = OrderDetails.deliveryAddressID;
+		UpdateOrderDetails.orderProductsDTOs = Elements;
+
+		try
+		{
+			var result = await _placeOrder.UpdateOrder(UpdateOrderDetails, trnCode);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				return;
+			}
+
+			Snackbar.Add(result.message, Severity.Success);
+			await GetOrder();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
 		}
 	}
 

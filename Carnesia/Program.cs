@@ -71,13 +71,13 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://carnesialive.bespokeit.io/api/") });
+//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://carnesiaapi.bespokeit.io/api/") });
 
 //meesagehandler
 
 builder.Services.AddHttpClient("RetailSuite", client =>
 {
-    client.BaseAddress = new Uri("https://carnesialive.bespokeit.io/api/");
+    client.BaseAddress = new Uri("https://carnesiaapi.bespokeit.io/api/");
 }).AddHttpMessageHandler<AuthorizationMessageHandler>();
 
 builder.Services.AddTransient<AuthorizationMessageHandler>();

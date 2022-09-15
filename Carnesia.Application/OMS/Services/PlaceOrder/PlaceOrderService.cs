@@ -140,5 +140,23 @@ namespace Carnesia.Application.OMS.Services.PlaceOrder
                 }
             }
         }
+
+        public async Task<OrderEditResponseDTO> UpdateOrder(OrderEditUpdatedOrderDTO order, string trnCode)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"Order/orderedit/{trnCode}", order);
+
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<OrderEditResponseDTO>(json);
+
+                return data;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
     }
 }
