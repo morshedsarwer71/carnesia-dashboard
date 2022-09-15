@@ -169,12 +169,12 @@
 	{
 		if (subTotal < AutoApply.mincartamnt && AutoApply.isDeliveryCharge)
 		{
-			shipping += AutoApply.amount;
+			minusShipping = 0;
 		}
 
 		if (subTotal >= AutoApply.mincartamnt && AutoApply.isDeliveryCharge)
 		{
-			shipping = PlacedOrderDetails.deliveryPrice - AutoApply.amount;
+			minusShipping = AutoApply.amount;
 		}
 
 		if (subTotal < AutoApply.mincartamnt && AutoApply.isDeliveryCharge == false)
