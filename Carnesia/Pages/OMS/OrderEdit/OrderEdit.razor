@@ -21,8 +21,11 @@
 		</div>
 
 		<MudGrid Class="justify-center">
-			<MudItem sm="4">
+			@*<MudItem sm="4">
 				<MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" />
+			</MudItem>*@
+			<MudItem sm="4">
+				<MudTextField Label="SKU" @bind-Value="FormData.sku" />
 			</MudItem>
 			<MudItem sm="4">
 				<MudNumericField @bind-Value="FormData.qty" Min="1" />
@@ -127,8 +130,8 @@
 	// Page On Load
 	protected override async Task OnInitializedAsync()
 	{
-		await GetProductAsSKU();
 		await GetOrder();
+		//await GetProductAsSKU();
 	}
 
 	// Form Ref
@@ -206,9 +209,12 @@
 
 			Elements = OrderDetails.orderProductsDTOs;
 
+			
+
 			if (OrderDetails.autoApplyId > 0)
 			{
 				await GetAutoApply();
+				StateHasChanged();
 			}
 
 			Loading = false;
@@ -244,6 +250,12 @@
 		try
 		{
 			var result = await _placeOrder.GetProductBySKU(FormData.sku);
+
+			if (result.message == "Product not found or stock out!")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				return;
+			}
 
 			var isThere = Elements.FirstOrDefault(x => x.sku == result.sku);
 

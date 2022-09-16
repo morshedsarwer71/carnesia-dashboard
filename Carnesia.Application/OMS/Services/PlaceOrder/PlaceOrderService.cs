@@ -80,10 +80,18 @@ namespace Carnesia.Application.OMS.Services.PlaceOrder
         {
             try
             {
-                var result = await GetAllProducts();
-                var pIndex = result.FindIndex(x => x.sku == sku);
+                var result = await _httpClient.GetFromJsonAsync<List<ProductTableDTO>>($"Products/placeorderproduct/{sku}");
 
-                return result[pIndex];
+                if (result.Count() <= 0)
+                {
+                    return new ProductTableDTO { message = "Product not found or stock out!" };
+                }
+
+                var data = result[0];
+
+                data.message = "Product added successfully!";
+
+                return data;
             }
             catch (Exception)
             {

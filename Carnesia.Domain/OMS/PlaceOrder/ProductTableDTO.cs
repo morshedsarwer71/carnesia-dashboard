@@ -24,5 +24,6 @@ namespace Carnesia.Domain.OMS.PlaceOrder
         public decimal salesPrice { get; set; }
         public decimal productPrice { get; set; }
         public string name { get; set; }
+        public string message { get; set; }
     }
 }

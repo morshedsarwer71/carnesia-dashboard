@@ -26,8 +26,11 @@
 		<MudDivider />
 
 		<MudGrid Class="justify-center">
-			<MudItem sm="4">
+			@*<MudItem sm="4">
 				<MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" />
+			</MudItem>*@
+			<MudItem sm="4">
+				<MudTextField Label="SKU" @bind-Value="FormData.sku" />
 			</MudItem>
 			<MudItem sm="4">
 				<MudNumericField @bind-Value="FormData.qty" Min="1" />
@@ -162,11 +165,11 @@
 
 @code {
 
-	// Page On Load
-	protected override async Task OnInitializedAsync()
-	{
-		await GetProductAsSKU();
-	}
+	//// Page On Load
+	//protected override async Task OnInitializedAsync()
+	//{
+	//	//await GetProductAsSKU();
+	//}
 
 	// Source
 	private string source { get; set; }
@@ -242,21 +245,18 @@
 	// Product Search Form
 	private ProductSearchDTO FormData = new ProductSearchDTO();
 
-	// Product Search
-	private string[] ProductSKU = new string[] { };
-
-	// Get Product SKU String
-	private async Task GetProductAsSKU()
-	{
-		ProductSKU = await _placeOrder.GetProductsAsSku();
-	}
-
 	// Add Product To List
 	private async Task AddProduct()
 	{
 		try
 		{
 			var result = await _placeOrder.GetProductBySKU(FormData.sku);
+
+			if (result.message == "Product not found or stock out!")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				return;
+			}
 
 			var isThere = Elements.FirstOrDefault(x => x.sku == result.sku);
 
@@ -298,12 +298,6 @@
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal Server Error!", Severity.Success);
 		}
-	}
-
-	// Autocomplite Search Func for ParentCat
-	private async Task<IEnumerable<string>> ProductSKUSearch(string value)
-	{
-		return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
 	}
 
 	// Remove Product
