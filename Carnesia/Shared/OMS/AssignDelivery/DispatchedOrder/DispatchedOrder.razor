@@ -1,6 +1,7 @@
 ﻿@using Carnesia.Domain.OMS.PendingOrder
 @inject IDispatch _dispatch
 @inject ISnackbar Snackbar
+@inject IJSRuntime IJS
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
@@ -50,7 +51,7 @@
 					<MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => CancelDelivery(context.orderId)">Cancel Delivery</MudButton>
 				</MudTd>
 				<MudTd DataLabel="Print">
-					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.trnCode)">Invoice</MudButton>
 				</MudTd>
 			</RowTemplate>
 			<ChildRowContent>
@@ -192,5 +193,11 @@
 	{
 		PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+
+	// Goto Print
+	private async Task GotoPrint(string TRNCODE)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print-web/{TRNCODE}", "_blank" });
 	}
 }

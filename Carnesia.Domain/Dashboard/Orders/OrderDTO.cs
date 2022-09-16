@@ -15,5 +15,6 @@ namespace Carnesia.Domain.Dashboard.Orders
         public string address { get; set; }
         public decimal orderValue { get; set; }
         public string status { get; set; }
+        public string? store { get; set; }
     }
 }

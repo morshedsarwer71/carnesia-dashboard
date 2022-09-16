@@ -1,19 +1,19 @@
 ﻿@layout PrintLayout
 @page "/invoice-print-web/{trncode}"
 
-@using Carnesia.Domain.Dashboard.GenerateBill
+@using Carnesia.Domain.OMS.Invoice
 @inject IGenerateBill _generateBill
+@inject HttpClient _httpclient
+@inject ISnackbar Snackbar
 
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.BarcodeGenerator
 
-@*<div style="width: 3.5in; margin: 0 auto; padding: 3px">
+<div style="width: 3.5in; margin: 0 auto; padding: 3px">
 	<MudImage Width="150" Src="@("./carneisa logo (white outlined).png")" Alt="logo" />
 	<hr />
 	<h1 style="text-align:center; font-weight: 600;">Invoice</h1>
 	<hr />
-	<h4>Outlet Address: @Invoice.outletAddress</h4>
-	<h4>Phone #@Invoice.outletPhone</h4>
 	@if (!String.IsNullOrEmpty(Invoice.trnCode))
 	{
 		<SfBarcodeGenerator Value="@(Invoice.trnCode)" Height="50px">
@@ -24,12 +24,12 @@
 	<h4>Order Date: @Invoice.orderDate</h4>
 	<h4>Customer Name: @Invoice.customerName</h4>
 	<h4>Phone #@Invoice.customerPhone</h4>
-	<h4>Cutomer Address: @Invoice.customerAddress</h4>
+	<h4>Cutomer Address: @Invoice.address</h4>
 	<h4>Area: @Invoice.area</h4>
 	<h4>District: @Invoice.district</h4>
 	<h4>Shipping Zone: @Invoice.shippingZone</h4>
 	<br />
-	<h3 style="font-weight: 600;">Payment: @Invoice.paymentType</h3>
+	<h3 style="font-weight: 600;">Payment: @Invoice.payment</h3>
 	<table style="width: 100%; border-collapse: collapse;">
 		<tr style="font-size: 14px;">
 			<th style="width: 60%" class="table-cell">Product Name & SKU</th>
@@ -43,33 +43,65 @@
 			{
 				<tr style="font-size: 10px;">
 					<td class="table-cell">
-						<p>@item.name</p>
-						<p>SKU-@item.sku</p>
+						<p>@item.productName</p>
 					</td>
 					<td class="table-cell">@item.price</td>
 					<td class="table-cell">@item.quantity</td>
-					<td class="table-cell">@item.totalPrice</td>
+					<td class="table-cell">@item.total</td>
 				</tr>
 			}
 		}
 	</table>
 
 	<div style="text-align:end; margin-top: 10px;">
-		<h5>Subtotal: @Invoice.total</h5>
+		<h5>Subtotal: @Invoice.subtotal</h5>
 		<h5>Discount: @Invoice.discount</h5>
 		<h5>Credit Used: @Invoice.creditUsed</h5>
-		<h5>Reward Value: @Invoice.rewardPoints</h5>
+		<h5>Reward Value: @Invoice.rewardValue</h5>
 		<h5>Grand Total: @Invoice.grandTotal</h5>
 	</div>
-	<h5>Instruction: Deliver before 2pm.</h5>
-	<h5>Wishes: Get literature from marketing team.</h5>
+
+
+	<h5 style="text-align: center;" class="mt-3">Thank you for your business! Any Faulty Product Changes or
+refund should be made with in 3 days and product Should be
+intact.</h5>
 
 	<div style="text-align:center; margin-top: 10px;">
 		<h5>www.carnesia.com</h5>
-		<h5>Helpline: 01900000000</h5>
+		<h5>Helpline: 01748-623900</h5>
 	</div>
-</div>*@
+</div>
 
 @code {
+	// Parameter
+	[Parameter]
+	public string trncode { get; set; }
 
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetOrder();
+		Items = Invoice.orderProducts;
+	}
+
+
+	// Invoice Data
+	private InvoicePrintDTO Invoice = new InvoicePrintDTO();
+
+	// Items
+	private List<InvoicePrintProductsDTO> Items = new List<InvoicePrintProductsDTO>();
+
+	// Get Order 
+	private async Task GetOrder()
+	{
+		try
+		{
+			Invoice = await _httpclient.GetFromJsonAsync<InvoicePrintDTO>($"Oms/invoice/{trncode}");
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+		}
+	}
 }

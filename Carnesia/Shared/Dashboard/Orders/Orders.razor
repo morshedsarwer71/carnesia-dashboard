@@ -26,6 +26,7 @@
                 <MudTh>Customer Name</MudTh>
                 <MudTh>Address</MudTh>
                 <MudTh>Order Value(SP)</MudTh>
+                <MudTh>Store</MudTh>
                 <MudTh>Status</MudTh>
                 <MudTh>Re-Print</MudTh>
             </HeaderContent>
@@ -46,6 +47,7 @@
                 <MudTd DataLabel="Customer Name">@context.customerName</MudTd>
                 <MudTd DataLabel="Address">@context.address</MudTd>
                 <MudTd DataLabel="Order Value(SP)">@context.orderValue</MudTd>
+                <MudTd DataLabel="Store">@context.store</MudTd>
                 <MudTd DataLabel="Status">@context.status</MudTd>
                 <MudTd DataLabel="Re-Print">
 					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.orderId)">Re-Print Invoice</MudButton>

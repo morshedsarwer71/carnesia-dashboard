@@ -3,6 +3,7 @@
 @inject IOrderPicklist _picklist
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject IJSRuntime IJS
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
@@ -14,7 +15,7 @@
 				<MudTh>Created By</MudTh>
 				<MudTh>Created On</MudTh>
 				<MudTh>Action</MudTh>
-				<MudTh>Print</MudTh>
+				@*<MudTh>Print</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="Picklist Id">@context.pickListCode</MudTd>
@@ -24,10 +25,11 @@
 				<MudTd DataLabel="Created On">@context.date</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveOrderModal(context.pickListCode)">Remove Order</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.pickListCode)">Print</MudButton>
 				</MudTd>
-				<MudTd DataLabel="Print">
+				@*<MudTd DataLabel="Print">
 					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
-				</MudTd>
+				</MudTd>*@
 			</RowTemplate>
 			<PagerContent>
 				<MudTablePager />
@@ -108,5 +110,10 @@
 				Snackbar.Add("Internal server error!", Severity.Error);
 			}
 		}
+	}
+	// Goto Print
+	private async Task GotoPrint(string pickCode)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/picklist-print-oms/{pickCode}", "_blank" });
 	}
 }

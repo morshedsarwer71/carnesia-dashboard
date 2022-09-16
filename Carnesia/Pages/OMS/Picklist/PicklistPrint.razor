@@ -1,5 +1,5 @@
 ﻿@layout PrintLayout
-@page "/picklist-print"
+@page "/picklist-print-oms/{pickCode}"
 
 @using Carnesia.Domain.WMS.UpdateTO
 @using Newtonsoft.Json
@@ -12,7 +12,7 @@
 			<th class="table-cell">Product Code</th>
 			<th class="table-cell">SKU</th>
 			<th class="table-cell">Product Name</th>
-			<th class="table-cell">Transfer Quantity</th>
+			<th class="table-cell">Quantity</th>
 			<th class="table-cell">Bin Name</th>
 		</tr>
 		@if (Products.Count > 0)
@@ -39,20 +39,19 @@
 		await GetProducts();
 	}
 
+	[Parameter] public string pickCode { get; set; }
+
 	// Products
 	private List<UpdateToProductsDTO> Products = new List<UpdateToProductsDTO>();
 
 	// Get Products
 	private async Task GetProducts()
 	{
-		var PickList = await _storage.GetItemAsync<List<PickListGenerateDTO>>("selected-picklist");
-
 		try
 		{
-			var result = await _httpClient.PostAsJsonAsync("Oms/generatepicklist", PickList);
+			Products = await _httpClient.GetFromJsonAsync<List<UpdateToProductsDTO>>($"Oms/getgeneratepicklist/{pickCode}");
 
-			var json = await result.Content.ReadAsStringAsync();
-			Products = JsonConvert.DeserializeObject<List<UpdateToProductsDTO>>(json);
+			
 		}
 		catch(Exception e)
 		{

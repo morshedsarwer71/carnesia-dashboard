@@ -76,7 +76,7 @@
 				<MudTh>Varified On</MudTh>
 				<MudTh>Order Type</MudTh>
 				<MudTh>Instructions</MudTh>
-				<MudTh>Print</MudTh>
+				@*<MudTh>Print</MudTh>*@
 				@*<MudTh>CS/Ops Comment</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
@@ -100,9 +100,9 @@
 				<MudTd DataLabel="Varified On">@context.verifiedDate</MudTd>
 				<MudTd DataLabel="Order Type"></MudTd>
 				<MudTd DataLabel="Instructions">@context.instructions</MudTd>
-				<MudTd DataLabel="Print">
+				@*<MudTd DataLabel="Print">
 					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
-				</MudTd>
+				</MudTd>*@
 				@*<MudTd DataLabel="CS/Ops Comment">@context.Comment</MudTd>*@
 			</RowTemplate>
 			<ChildRowContent>

@@ -26,9 +26,12 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
         public decimal grandTotal { get; set; }
         public decimal creditValue { get; set; }
         public decimal rewardPoints { get; set; }
+        public decimal tobeCollected { get; set; }
+        public decimal returnedAmnt { get; set; }
         public string? membershipId { get; set; }
         public string? couponCode { get; set; }
         public string? comment { get; set; }
+        public string? refNumber { get; set; }
         public string paymentType { get; set; } = "Cash";
     }
 }

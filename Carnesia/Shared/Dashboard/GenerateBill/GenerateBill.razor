@@ -138,8 +138,18 @@
 					<MudSelect @bind-Value="POSDetails.paymentType" Label="Payment Type" AnchorOrigin="Origin.BottomCenter">
 						<MudSelectItem Value="@("Cash")" />
 						<MudSelectItem Value="@("Card")" />
-						<MudSelectItem Value="@("Digital Payment")" />
+						<MudSelectItem Value="@("Bkash")" />
+						<MudSelectItem Value="@("Nagad")" />
 					</MudSelect>
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField @bind-Value="POSDetails.refNumber" Label="Payment Reference" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField Value="POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount)" Label="Return Amount" ReadOnly="true" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField @bind-Value="POSDetails.tobeCollected" Label="Collected Amount" Immediate="true" Disabled="subTotal <= 0" />
 				</MudItem>
 			</MudGrid>
 
@@ -480,7 +490,8 @@
 		POSDetails.discount = discount;
 		POSDetails.vatAmount = vatAmount;
 		POSDetails.total = subTotal;
-		POSDetails.grandTotal = subTotal - discount + vatAmount;
+		POSDetails.grandTotal = subTotal - discount - usedCredit + vatAmount;
+		POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
 		POSDetails.creditValue = usedCredit;
 		POSDetails.membershipId = MembershipID;
 		POSDetails.couponCode = Coupon;

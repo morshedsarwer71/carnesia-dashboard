@@ -5,6 +5,8 @@
 @inject IAssignOrder _assignOrder
 @inject IDispatch _dispatch
 @inject ISnackbar Snackbar
+@inject IJSRuntime IJS
+
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -139,14 +141,14 @@
 				<MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
 				<MudTd DataLabel="Address">@context.address</MudTd>
 				<MudTd DataLabel="Verified On">@context.verifiedDate</MudTd>
-				<MudTd DataLabel="Dispatched On">NANANa</MudTd>
+				<MudTd DataLabel="Dispatched On">@context.dispatchDate</MudTd>
 				<MudTd DataLabel="Status">@context.status</MudTd>
 				@*<MudTd DataLabel="Hub">@context.hub</MudTd>*@
 				@*<MudTd DataLabel="Location">@context.Location</MudTd>*@
 				@*<MudTd DataLabel="Run Number">@context.RunNumber</MudTd>*@
 				@*<MudTd DataLabel="Last Update On">@context.UpdateDate</MudTd>*@
 				<MudTd DataLabel="Print">
-					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.trnCode)">Invoice</MudButton>
 				</MudTd>
 			</RowTemplate>
 			<ChildRowContent>
@@ -280,5 +282,11 @@
 	{
 		PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+
+	// Goto Print
+	private async Task GotoPrint(string TRNCODE)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print-web/{TRNCODE}", "_blank" });
 	}
 }

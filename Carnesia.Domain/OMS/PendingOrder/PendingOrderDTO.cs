@@ -29,6 +29,7 @@ namespace Carnesia.Domain.OMS.PendingOrder
         public string source { get; set; }
         public string assignto { get; set; }
         public bool ShowDetails { get; set; }
+        public DateTime? dispatchDate { get; set; }
         public PendingOrderDetailsDTO products { get; set; }
     }
 }

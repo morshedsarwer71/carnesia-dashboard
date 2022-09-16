@@ -50,7 +50,7 @@
 
 				<div class="d-flex justify-end mt-5">
 					<MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="me-3" Disabled="currentPhoneNumber == FormData.contactNumber" OnClick="SendOTP">OTP</MudButton>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="UpdateAddress">Submit</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="!success || FormData.zone == 0 || FormData.district == 0 || FormData.division == 0" OnClick="UpdateAddress">Submit</MudButton>
 				</div>
 			</MudForm>
 		</div>
