@@ -1,0 +1,88 @@
+﻿@using Carnesia.Domain.OMS.AssignDelivery.Dispatch
+@inject IAssignOrder _assignOrder
+@inject ISnackbar Snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid>
+			<MudItem sm="6">
+				<MudSelect @bind-Value="CourierData.courierId" Label="Courier" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Courier</MudSelectItem>
+					@foreach (var item in Couriers)
+					{
+						<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="6">
+				<MudTextField @bind-Value="CourierData.carrierName" Label="Carrier Name" />
+			</MudItem>
+			<MudItem sm="6">
+				<MudTextField @bind-Value="CourierData.carrierPhone" Label="Carrier Phone Number" />
+			</MudItem>
+			<MudItem sm="6">
+				<MudTextField @bind-Value="CourierData.trnCode" Label="Order Id" OnKeyPress="AddCourier" />
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end my-3">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(CourierData.carrierName) || String.IsNullOrEmpty(CourierData.carrierPhone) || String.IsNullOrEmpty(CourierData.trnCode) || CourierData.courierId == 0" OnClick="AssignNewOrder">
+				Assign Courier
+			</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetCouriers();
+	}
+
+	// Courier List
+	private List<CourierDTO> Couriers = new List<CourierDTO>();
+
+	// Courier Data
+	private AssignCourierDTO CourierData = new AssignCourierDTO();
+
+	// Get Couriers
+	private async Task GetCouriers()
+	{
+		Couriers = await _assignOrder.GetCouriers();
+	}
+
+	// Assign Order
+	private async Task AssignNewOrder()
+	{
+		try
+		{
+			var result = await _assignOrder.AssignCourier(CourierData);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				return;
+			}
+
+			Snackbar.Add(result.message, Severity.Success);
+			CourierData = new AssignCourierDTO();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+		}
+	}
+
+	private async Task AddCourier(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(CourierData.trnCode) || !String.IsNullOrEmpty(CourierData.carrierPhone) || !String.IsNullOrEmpty(CourierData.carrierName) || CourierData.courierId > 0)
+			{
+				await AssignNewOrder();
+			}
+		}
+	}
+}

@@ -1,0 +1,106 @@
+﻿@layout PrintLayout
+@page "/invoice-print-bulk/{pickcode}"
+
+@using Carnesia.Domain.OMS.Invoice
+@inject HttpClient _httpclient
+@inject ISnackbar Snackbar
+
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.BarcodeGenerator
+
+<div style="width: 3.5in; margin: 0 auto; padding: 3px">
+	@foreach (var item in Invoice)
+	{
+		<MudImage Width="250" Src="@("./Carnesia logo for POS Bill.png")" Alt="logo" Style="margin-left: auto; margin-right: auto; display: block;" />
+		<hr />
+		<h1 style="text-align:center; font-weight: 600;">Invoice</h1>
+		<hr />
+		@if (!String.IsNullOrEmpty(item.trnCode))
+		{
+			<SfBarcodeGenerator Value="@(item.trnCode)" Height="50px">
+				<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
+				</BarcodeGeneratorDisplayText>
+			</SfBarcodeGenerator>
+		}
+		<h4>Order Date: @item.orderDate</h4>
+		<h4>Customer Name: @item.customerName</h4>
+		<h4>Phone #@item.customerPhone</h4>
+		<h4>Cutomer Address: @item.address</h4>
+		<h4>Shipping Area: @item.shippingZone</h4>
+		<h4>District: @item.district</h4>
+		<h4>Area: @item.area</h4>
+		<br />
+		<h3 style="font-weight: 600;">Payment: @item.payment</h3>
+		<table style="width: 100%; border-collapse: collapse;">
+			<tr style="font-size: 14px;">
+				<th style="width: 60%" class="table-cell">Product Name & SKU</th>
+				<th class="table-cell">Price</th>
+				<th class="table-cell">Qty.</th>
+				<th class="table-cell">Total</th>
+			</tr>
+			@if (item.orderProducts.Count > 0)
+			{
+				foreach (var product in item.orderProducts)
+				{
+					<tr style="font-size: 10px;">
+						<td class="table-cell">
+							<p>@product.productName</p>
+						</td>
+						<td class="table-cell">@product.price</td>
+						<td class="table-cell">@product.quantity</td>
+						<td class="table-cell">@product.total</td>
+					</tr>
+				}
+			}
+		</table>
+
+		<div style="text-align:end; margin-top: 10px;">
+			<h5>Subtotal: @item.subtotal</h5>
+			<h5>Shipping: @item.shippingPrice</h5>
+			<h5>Discount: @item.discount</h5>
+			<h5>Credit Used: @item.creditUsed</h5>
+			<h5>Reward Value: @item.rewardValue</h5>
+			<h5>Grand Total: @item.grandTotal</h5>
+		</div>
+
+
+		<h5 style="text-align: center;" class="mt-3">
+			Thank you for your business! Any Faulty Product Changes or
+			refund should be made with in 3 days and product Should be
+			intact.
+		</h5>
+
+		<div style="text-align:center; margin-top: 10px;">
+			<h5>www.carnesia.com</h5>
+			<h5>Helpline: 01748-623900</h5>
+		</div>
+	}
+</div>
+
+@code {
+	// Parameter
+	[Parameter] public string pickcode { get; set; }
+
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetOrder();
+	}
+
+	// Invoice Data
+	private List<InvoicePrintDTO> Invoice = new List<InvoicePrintDTO>();
+
+	// Get Order 
+	private async Task GetOrder()
+	{
+		try
+		{
+			Invoice = await _httpclient.GetFromJsonAsync<List<InvoicePrintDTO>>($"Oms/invoicebypickcode/{pickcode}");
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+		}
+	}
+}

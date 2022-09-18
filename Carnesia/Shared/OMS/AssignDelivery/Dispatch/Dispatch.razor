@@ -63,7 +63,7 @@
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetOrdersByFilter">Filter</MudButton>
 		</div>
 
-		<MudGrid Class="justify-center">
+		@*<MudGrid Class="justify-center">
 			<MudItem sm="4">
 				<MudSelect @bind-Value="DispatchDetails.courierId" Label="Courier" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="0">Select Courier</MudSelectItem>
@@ -79,7 +79,7 @@
 			<MudItem sm="4">
 				<MudTextField @bind-Value="DispatchDetails.phoneNumber" Label="Carrier Phone Number" />
 			</MudItem>
-		</MudGrid>
+		</MudGrid>*@
 		<div class="d-flex justify-end mt-5">
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(DispatchDetails.phoneNumber) || String.IsNullOrEmpty(DispatchDetails.carrierName) || DispatchDetails.courierId <= 0" OnClick="CreateDispatch">Assign Carrier</MudButton>
 		</div>
@@ -97,7 +97,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info" MultiSelection="true" @bind-SelectedItems="SelectedItems">
+		<MudTable Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info" MultiSelection="false" @bind-SelectedItems="SelectedItems">
 			<HeaderContent>
 				<MudTh></MudTh>
 				<MudTh>Tracking</MudTh>

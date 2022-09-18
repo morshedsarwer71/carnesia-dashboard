@@ -8,6 +8,15 @@
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
+			<ColGroup>
+				<col />
+				<col />
+				<col />
+				<col />
+				<col />
+				<col />
+				<col />
+			</ColGroup>
 			<HeaderContent>
 				<MudTh>Picklist ID</MudTh>
 				<MudTh>Order Ids</MudTh>
@@ -15,11 +24,15 @@
 				<MudTh>Created By</MudTh>
 				<MudTh>Created On</MudTh>
 				<MudTh>Action</MudTh>
-				@*<MudTh>Print</MudTh>*@
+				<MudTh>Print</MudTh>
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="Picklist Id">@context.pickListCode</MudTd>
-				<MudTd DataLabel="Order Ids">@context.orders</MudTd>
+				<MudTd DataLabel="Order Ids" Style="word-wrap: break-word;">
+					<div style="width: 300px;">
+						@context.orders
+					</div>
+				</MudTd>
 				<MudTd DataLabel="Number of Orders">@context.numberOfOrders</MudTd>
 				<MudTd DataLabel="Created By">@context.generateBy</MudTd>
 				<MudTd DataLabel="Created On">@context.date</MudTd>
@@ -27,9 +40,9 @@
 					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveOrderModal(context.pickListCode)">Remove Order</MudButton>
 					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.pickListCode)">Print</MudButton>
 				</MudTd>
-				@*<MudTd DataLabel="Print">
-					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
-				</MudTd>*@
+				<MudTd DataLabel="Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoInvoicePrint(context.pickListCode)">Invoice</MudButton>
+				</MudTd>
 			</RowTemplate>
 			<PagerContent>
 				<MudTablePager />
@@ -115,5 +128,10 @@
 	private async Task GotoPrint(string pickCode)
 	{
 		await IJS.InvokeAsync<object>("open", new object[] { $"/picklist-print-oms/{pickCode}", "_blank" });
+	}
+
+	private async Task GotoInvoicePrint(string pickCode)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print-bulk/{pickCode}", "_blank" });
 	}
 }

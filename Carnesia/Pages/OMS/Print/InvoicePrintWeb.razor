@@ -2,7 +2,6 @@
 @page "/invoice-print-web/{trncode}"
 
 @using Carnesia.Domain.OMS.Invoice
-@inject IGenerateBill _generateBill
 @inject HttpClient _httpclient
 @inject ISnackbar Snackbar
 
@@ -10,7 +9,7 @@
 @using Syncfusion.Blazor.BarcodeGenerator
 
 <div style="width: 3.5in; margin: 0 auto; padding: 3px">
-	<MudImage Width="150" Src="@("./carneisa logo (white outlined).png")" Alt="logo" />
+	<MudImage Width="250" Src="@("./Carnesia logo for POS Bill.png")" Alt="logo" Style="margin-left: auto; margin-right: auto; display: block;" />
 	<hr />
 	<h1 style="text-align:center; font-weight: 600;">Invoice</h1>
 	<hr />
@@ -25,9 +24,9 @@
 	<h4>Customer Name: @Invoice.customerName</h4>
 	<h4>Phone #@Invoice.customerPhone</h4>
 	<h4>Cutomer Address: @Invoice.address</h4>
-	<h4>Area: @Invoice.area</h4>
+	<h4>Shipping Area: @Invoice.shippingZone</h4>
 	<h4>District: @Invoice.district</h4>
-	<h4>Shipping Zone: @Invoice.shippingZone</h4>
+	<h4>Area: @Invoice.area</h4>
 	<br />
 	<h3 style="font-weight: 600;">Payment: @Invoice.payment</h3>
 	<table style="width: 100%; border-collapse: collapse;">
@@ -55,6 +54,7 @@
 
 	<div style="text-align:end; margin-top: 10px;">
 		<h5>Subtotal: @Invoice.subtotal</h5>
+		<h5>Shipping: @Invoice.shippingPrice</h5>
 		<h5>Discount: @Invoice.discount</h5>
 		<h5>Credit Used: @Invoice.creditUsed</h5>
 		<h5>Reward Value: @Invoice.rewardValue</h5>

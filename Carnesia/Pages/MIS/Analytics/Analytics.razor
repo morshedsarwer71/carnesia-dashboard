@@ -1,0 +1,186 @@
+﻿@page "/analytics"
+
+@using Carnesia.Domain.MIS.Analytics
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.WMS.Store.Models
+@inject IStore _store
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid>
+			<MudItem sm="3">
+				<MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudDatePicker Label="To Date" @bind-Date="Filter.toDate" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudSelect @bind-Value="Filter.outletId" Label="Outlet" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Outlet</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="3">
+				<MudSelect @bind-Value="Filter.brandId" Label="Brand" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Brand</MudSelectItem>
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="3">
+				<MudSelect @bind-Value="Filter.category" Label="Category" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Category</MudSelectItem>
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="3">
+				<MudTextField @bind-Value="Filter.sku" Label="SKU" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudTextField @bind-Value="Filter.productCode" Label="Product Code" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudTextField @bind-Value="Filter.productName" Label="Product Name" />
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end my-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Business Unit</MudTh>
+				<MudTh>Transaction</MudTh>
+				<MudTh>Item Total</MudTh>
+				<MudTh>QTY Total</MudTh>
+				<MudTh>Revenue Total</MudTh>
+				<MudTh>Shipping Discount</MudTh>
+				<MudTh>Discount on Product</MudTh>
+				<MudTh>Total Discount</MudTh>
+				<MudTh>Revenue After Discount</MudTh>
+				<MudTh>Cost</MudTh>
+				<MudTh>Gross Profit</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowDetails(context.id)" />
+					}
+					else if (context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowDetails(context.id)" />
+					}
+				</MudTd>
+				<MudTd DataLabel="Business Unit">@context.businessUnit</MudTd>
+				<MudTd DataLabel="Transaction">@context.transaction</MudTd>
+				<MudTd DataLabel="Item Total">@context.totalItem</MudTd>
+				<MudTd DataLabel="QTY Total">@context.totalQty</MudTd>
+				<MudTd DataLabel="Revenue Total">@context.totalRevenue</MudTd>
+				<MudTd DataLabel="Shipping Discount">@context.shippingDiscount</MudTd>
+				<MudTd DataLabel="Discount on Product">@context.productDiscount</MudTd>
+				<MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
+				<MudTd DataLabel="Revenue After Discount">@context.afterDiscountRevenue</MudTd>
+				<MudTd DataLabel="Cost">@context.cost</MudTd>
+				<MudTd DataLabel="Gross Profit">@context.grossProfit</MudTd>
+			</RowTemplate>
+			<ChildRowContent>
+				@if (context.showDetails)
+				{
+					<td colspan="12">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.details" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+									<HeaderContent>
+										<MudTh>Business Unit</MudTh>
+										<MudTh>Transaction</MudTh>
+										<MudTh>Item Total</MudTh>
+										<MudTh>QTY Total</MudTh>
+										<MudTh>Revenue Total</MudTh>
+										<MudTh>Shipping Discount</MudTh>
+										<MudTh>Discount on Product</MudTh>
+										<MudTh>Total Discount</MudTh>
+										<MudTh>Revenue After Discount</MudTh>
+										<MudTh>Cost</MudTh>
+										<MudTh>Gross Profit</MudTh>
+									</HeaderContent>
+									<RowTemplate>
+										<MudTd DataLabel="Business Unit">@DetailsContext.businessUnit</MudTd>
+										<MudTd DataLabel="Transaction">@DetailsContext.transaction</MudTd>
+										<MudTd DataLabel="Item Total">@DetailsContext.totalItem</MudTd>
+										<MudTd DataLabel="QTY Total">@DetailsContext.totalQty</MudTd>
+										<MudTd DataLabel="Revenue Total">@DetailsContext.totalRevenue</MudTd>
+										<MudTd DataLabel="Shipping Discount">@DetailsContext.shippingDiscount</MudTd>
+										<MudTd DataLabel="Discount on Product">@DetailsContext.productDiscount</MudTd>
+										<MudTd DataLabel="Total Discount">@DetailsContext.totalDiscount</MudTd>
+										<MudTd DataLabel="Revenue After Discount">@DetailsContext.afterDiscountRevenue</MudTd>
+										<MudTd DataLabel="Cost">@DetailsContext.cost</MudTd>
+										<MudTd DataLabel="Gross Profit">@DetailsContext.grossProfit</MudTd>
+									</RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+			<FooterContent>
+				<MudTFootRow>
+					<MudTd></MudTd>
+					<MudTd Style="font-weight: 600;">Grand Total</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.transaction)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalItem)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalQty)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalRevenue)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.shippingDiscount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.productDiscount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalDiscount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.afterDiscountRevenue)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.cost)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.grossProfit)</MudTd>
+				</MudTFootRow>
+			</FooterContent>
+		</MudTable>
+
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetStores();
+	}
+
+	// Filter
+	private AnalyticsFilterDTO Filter = new AnalyticsFilterDTO();
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Elements
+	private List<AnalyticsDTO> Elements = new List<AnalyticsDTO>();
+
+	// Stores
+	private List<StoreDTO> Stores = new List<StoreDTO>();
+
+	// Get Stores
+	private async Task GetStores()
+	{
+		Stores = await _store.GetStoresAsync();
+	}
+
+	// Show Details
+	private void ShowDetails(int id)
+	{
+		AnalyticsDTO tmpElements = Elements.First(f => f.id == id);
+		tmpElements.showDetails = !tmpElements.showDetails;
+	}
+}

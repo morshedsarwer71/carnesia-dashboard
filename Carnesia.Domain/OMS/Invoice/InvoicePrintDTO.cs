@@ -22,6 +22,7 @@ namespace Carnesia.Domain.OMS.Invoice
         public decimal creditUsed { get; set; }
         public decimal rewardValue { get; set; }
         public decimal grandTotal { get; set; }
+        public decimal shippingPrice { get; set; }
         public List<InvoicePrintProductsDTO> orderProducts { get; set; }
     }
 

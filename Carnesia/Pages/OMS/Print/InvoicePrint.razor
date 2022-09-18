@@ -8,7 +8,7 @@
 @using Syncfusion.Blazor.BarcodeGenerator
 
 <div style="width: 3.5in; margin: 0 auto; padding: 3px">
-	<MudImage Width="150" Src="@("./carneisa logo (white outlined).png")" Alt="logo" />
+	<MudImage Width="250" Src="@("./Carnesia logo for POS Bill.png")" Alt="logo" Style="margin-left: auto; margin-right: auto; display: block;" />
 	<hr />
 	<h1 style="text-align:center; font-weight: 600;">Invoice</h1>
 	<hr />
@@ -25,9 +25,9 @@
 	<h4>Customer Name: @Invoice.customerName</h4>
 	<h4>Phone #@Invoice.customerPhone</h4>
 	<h4>Cutomer Address: @Invoice.customerAddress</h4>
-	<h4>Area: @Invoice.area</h4>
+	<h4>Shipping Area: @Invoice.shippingZone</h4>
 	<h4>District: @Invoice.district</h4>
-	<h4>Shipping Zone: @Invoice.shippingZone</h4>
+	<h4>Area: @Invoice.area</h4>
 	<br />
 	<h3 style="font-weight: 600;">Payment: @Invoice.paymentType</h3>
 	<table style="width: 100%; border-collapse: collapse;">

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
+using Carnesia.Domain.OMS.PickPack;
 
 namespace Carnesia.Application.OMS.Services.AssignOrder
 {
@@ -16,6 +17,22 @@ namespace Carnesia.Application.OMS.Services.AssignOrder
         {
             _httpClient = httpClient;
         }
+
+        public async Task<PickPackDTO> AssignCourier(AssignCourierDTO courierData)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/dispatchorder/{courierData.courierId}/{courierData.carrierName}/{courierData.carrierPhone}/{courierData.trnCode}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<CourierDTO>> GetCouriers()
         {
             try

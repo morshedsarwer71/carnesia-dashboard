@@ -1,0 +1,107 @@
+﻿@using Carnesia.Domain.WMS.Store.Models
+@using Carnesia.Domain.Dashboard.SalesReport
+@inject IStore _store
+@inject IDashboard _dashboard
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center">
+@*			<MudItem sm="3">
+				<MudSelect @bind-Value="Filter.storeId" Label="Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">All</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>*@
+			<MudItem sm="4">
+				<MudDatePicker Label="From Date" DateFormat="yyyy-MM-dd" @bind-Date="Filter.fromDate" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudDatePicker Label="To Date" DateFormat="yyyy-MM-dd" @bind-Date="Filter.toDate" />
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center mb-3">
+			<MudItem sm="8" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReport">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="@Elements" Hover="true" Striped="true" Dense="true" Bordered="true" Loading="Loading" LoadingProgressColor="Color.Info">
+			<HeaderContent>
+				<MudTh>Outlet Name</MudTh>
+				<MudTh>Total Orders</MudTh>
+				<MudTh>Total Items</MudTh>
+				<MudTh>Total QTY</MudTh>
+				<MudTh>Total Sales</MudTh>
+				<MudTh>Total Discount</MudTh>
+				<MudTh>Refund</MudTh>
+				<MudTh>Credit Issued</MudTh>
+				<MudTh>Grand Total</MudTh>
+				<MudTh>Received by Accounts</MudTh>
+				<MudTh>Pending</MudTh>
+				<MudTh>Lost Amount</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Outlet Name">@context.storeName</MudTd>
+				<MudTd DataLabel="Total Orders">@context.totalOrders</MudTd>
+				<MudTd DataLabel="Total Items">@context.totalItems</MudTd>
+				<MudTd DataLabel="Total QTY">@context.totalQty</MudTd>
+				<MudTd DataLabel="Total Sales">@context.totalSale</MudTd>
+				<MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
+				<MudTd DataLabel="Refund">@context.totalRefund</MudTd>
+				<MudTd DataLabel="Credit Issued">@context.creditUsed</MudTd>
+				<MudTd DataLabel="Grand Total">@context.grandTotal</MudTd>
+				<MudTd DataLabel="Received by Accounts">@context.rcvdByAccountsAmnt</MudTd>
+				<MudTd DataLabel="Pending">@context.pendingAmount</MudTd>
+				<MudTd DataLabel="Lost Amount">@context.lostAmount</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetStores();
+		//await GetReports();
+	}
+
+	// Loading
+	private bool Loading { get; set; }
+
+	// Filter
+	private SalesReportFilterDTO Filter = new SalesReportFilterDTO();
+
+	// Table Element
+	private List<SalesReportDTO> Elements = new List<SalesReportDTO>();
+
+	// Stores
+	private List<StoreDTO> Stores = new List<StoreDTO>();
+
+	// Get Stores
+	private async Task GetStores()
+	{
+		Stores = await _store.GetStoresAsync();
+	}
+
+	// Get Sales Report
+	private async Task GetReport()
+	{
+		Loading = true;
+		try
+		{
+			Elements = await _dashboard.GetSalesReport(Filter);
+			Loading = false;
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+}
