@@ -1,0 +1,50 @@
+﻿@using Carnesia.Domain.Dashboard.SalesReport
+@inject IDashboard _dashboard
+
+<MudDialog>
+	<DialogContent> 
+		<MudTable Items="Elements" Hover="true" Dense="true" Striped="true" Bordered="true" Loading="Loading" LoadingProgressColor="Color.Info">
+			<HeaderContent>
+				<MudTh>Payment Type</MudTh>
+				<MudTh>Amount</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Payment Type">@context.paymentType</MudTd>
+				<MudTd DataLabel="Amount">@context.amount</MudTd>
+			</RowTemplate>
+		</MudTable>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	// Parameter
+	[Parameter] public string date { get; set; }
+	[Parameter] public int store { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await GetData();
+	}
+
+	// Loading 
+	private bool Loading { get; set; } = true;
+
+	// Table elements 
+	private List<SalesReportPaymentTypeDTO> Elements = new List<SalesReportPaymentTypeDTO>();
+
+	// Get Data 
+	private async Task GetData()
+	{
+		try
+		{
+			Elements = await _dashboard.GetSalesPaymentReport(date, store);
+			Loading = false;
+		}
+		catch(Exception e)
+		{
+			Loading = false;
+		}
+	}
+}

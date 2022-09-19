@@ -20,5 +20,14 @@ namespace Carnesia.Domain.Dashboard.SalesReport
         public int totalItems { get; set; }
         public int totalQty { get; set; }
         public int totalOrders { get; set; }
+        public int storeId { get; set; }
+        public DateTime date { get; set; }
+    }
+
+    public class SalesReportPaymentTypeDTO
+	{
+        public string paymentType { get; set; }
+        public decimal amount { get; set; }
+
     }
 }

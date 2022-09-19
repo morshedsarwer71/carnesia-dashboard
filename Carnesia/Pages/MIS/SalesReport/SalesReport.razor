@@ -2,8 +2,10 @@
 
 @using Carnesia.Domain.WMS.Store.Models
 @using Carnesia.Domain.Dashboard.SalesReport
+@using Carnesia.Shared.Dashboard.SalesReport
 @inject IStore _store
 @inject IDashboard _dashboard
+@inject IDialogService DialogService
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
@@ -31,9 +33,10 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" Hover="true" Striped="true" Dense="true" Bordered="true" Loading="Loading" LoadingProgressColor="Color.Info">
+		<MudTable Items="@Elements" Hover="true" Striped="true" Dense="true" Bordered="true" Loading="Loading" LoadingProgressColor="Color.Info" CustomFooter="true">
 			<HeaderContent>
 				<MudTh>Outlet Name</MudTh>
+				<MudTh>Date</MudTh>
 				<MudTh>Total Orders</MudTh>
 				<MudTh>Total Items</MudTh>
 				<MudTh>Total QTY</MudTh>
@@ -48,6 +51,7 @@
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="Outlet Name">@context.storeName</MudTd>
+				<MudTd DataLabel="Date">@context.date.ToString("dd-MM-yyyy")</MudTd>
 				<MudTd DataLabel="Total Orders">@context.totalOrders</MudTd>
 				<MudTd DataLabel="Total Items">@context.totalItems</MudTd>
 				<MudTd DataLabel="Total QTY">@context.totalQty</MudTd>
@@ -55,11 +59,30 @@
 				<MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
 				<MudTd DataLabel="Refund">@context.totalRefund</MudTd>
 				<MudTd DataLabel="Credit Issued">@context.creditUsed</MudTd>
-				<MudTd DataLabel="Grand Total">@context.grandTotal</MudTd>
+				<MudTd DataLabel="Grand Total">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => DetailsModal(context.date.ToString("yyyy-MM-dd"), context.storeId))">@context.grandTotal</MudButton>
+				</MudTd>
 				<MudTd DataLabel="Received by Accounts">@context.rcvdByAccountsAmnt</MudTd>
 				<MudTd DataLabel="Pending">@context.pendingAmount</MudTd>
 				<MudTd DataLabel="Lost Amount">@context.lostAmount</MudTd>
 			</RowTemplate>
+			<FooterContent>
+				<MudTFootRow>
+					<MudTd Style="font-weight: 600;"></MudTd>
+					<MudTd Style="font-weight: 600;">Grand Total</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalOrders)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalItems)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalQty)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalSale)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalDiscount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalRefund)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.creditUsed)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.grandTotal)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.rcvdByAccountsAmnt)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.pendingAmount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.lostAmount)</MudTd>
+				</MudTFootRow>
+			</FooterContent>
 		</MudTable>
 
 	</MudContainer>
@@ -97,13 +120,24 @@
 		Loading = true;
 		try
 		{
-			Elements = await _dashboard.GetSalesReport(Filter);
+			Elements = await _dashboard.GetMISSalesReport(Filter);
 			Loading = false;
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Loading = false;
 		}
+	}
+
+	// Details Modal
+	private async Task DetailsModal(string date, int store)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("date", date);
+		parameters.Add("store", store);
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<SalesReportPaymentTypeModal>("Payment Details", parameters, options).Result;
 	}
 }

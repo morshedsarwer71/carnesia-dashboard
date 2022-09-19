@@ -28,7 +28,7 @@
 		<MudGrid Class="justify-center">
 			@*<MudItem sm="4">
 				<MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" />
-			</MudItem>*@
+				</MudItem>*@
 			<MudItem sm="4">
 				<MudTextField Label="SKU" @bind-Value="FormData.sku" />
 			</MudItem>
@@ -72,18 +72,24 @@
 				</MudTFootRow>
 				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end;">Shipping:</MudTd>
-					<MudTd colspan="1" Style="text-align: end;">@shipping</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@(isFreeOrder ? 0 : shipping)</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end;">Coupon Used:</MudTd>
 					<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
+					<MudTd colspan="5" Style="text-align: end;">Auto Apply:</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@Math.Round(AutoAmount, 2)</MudTd>
+				</MudTFootRow>
+				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + shipping - discount), 2)</MudTd>
+					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + (isFreeOrder ? 0 : shipping) - discount - AutoAmount), 2)</MudTd>
 				</MudTFootRow>
 			</FooterContent>
 		</MudTable>
+
+		<MudText Typo="Typo.body1" Align="Align.Center" Class="my-3">@AutoText</MudText>
 
 		<MudGrid Class="justify-center">
 			<MudItem sm="4">
@@ -146,7 +152,7 @@
 			}
 			else
 			{
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PlaceNewOrder">Place Order</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PlaceNewOrder" Disabled="disableSubmit">Place Order</MudButton>
 			}
 
 		</div>
@@ -173,6 +179,9 @@
 
 	// Source
 	private string source { get; set; }
+
+	// Disable Place Order
+	private bool disableSubmit { get; set; }
 
 	// Zone Id
 	private int ZoneId { get; set; }
@@ -280,6 +289,8 @@
 				subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
 				Snackbar.Add("Product Updated Successfully!", Severity.Success);
 				ResetCoupon();
+				await CheckAutoApply();
+				await CheckAutoApplyValue();
 				return;
 			}
 			result.quantity = FormData.qty;
@@ -291,6 +302,8 @@
 			subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
 			Snackbar.Add("Product Added Successfully!", Severity.Success);
 			ResetCoupon();
+			await CheckAutoApply();
+			await CheckAutoApplyValue();
 			return;
 		}
 		catch (Exception e)
@@ -300,12 +313,61 @@
 		}
 	}
 
+	// Check AutoApply
+	private string AutoText { get; set; }
+
+	private decimal AutoAmount { get; set; }
+	private int AutoId { get; set; }
+	private bool isFreeOrder { get; set; }
+
+	private async Task CheckAutoApply()
+	{
+		try
+		{
+			AutoText = await _placeOrder.AutoApplyMSG(Math.Round(Elements.Sum(x => x.quantity * x.salesPrice)));
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	private async Task CheckAutoApplyValue()
+	{
+		try
+		{
+			var result = await _placeOrder.AutoApplyValue(Math.Round(Elements.Sum(x => x.quantity * x.salesPrice)));
+
+			if (result == null)
+			{
+				AutoAmount = 0;
+				AutoId = 0;
+				isFreeOrder = false;
+				return;
+			}
+
+			if (result != null)
+			{
+				AutoAmount = result.amount;
+				AutoId = result.id;
+				isFreeOrder = result.isDeliveryCharge;
+				return;
+			}
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+		}
+	}
+
 	// Remove Product
-	private void RemoveProduct(ProductTableDTO product)
+	private async Task RemoveProduct(ProductTableDTO product)
 	{
 		Elements.Remove(product);
 		subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
 		ResetCoupon();
+		await CheckAutoApply();
+		await CheckAutoApplyValue();
 		Snackbar.Add("Product Removed Successfully!", Severity.Success);
 	}
 
@@ -379,7 +441,7 @@
 	private async Task AddCustomerAddressModal()
 	{
 		var parameters = new DialogParameters();
-		parameters.Add("FormData", new CustomerDeliveryAddressDTO{customerID = Customer.id});
+		parameters.Add("FormData", new CustomerDeliveryAddressDTO { customerID = Customer.id });
 
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
 		var dialog = await DialogService.Show<PlaceOrderAddCustomerAddressModal>("Add Customer Address", parameters, options).Result;
@@ -436,11 +498,11 @@
 		var orderDetails = new PlaceOrderDetailsDTO
 			{
 				address = Customer.address,
-				autoApplyAmnt = 0,
-				autoApplyId = 0,
+				autoApplyAmnt = AutoAmount,
+				autoApplyId = AutoId,
 				customerId = Customer.id,
-				deliveryPrice = shipping,
-				grandTotalPrice = subTotal + shipping - discount,
+				deliveryPrice = isFreeOrder ? 0 : shipping,
+				grandTotalPrice = subTotal + (isFreeOrder ? 0 : shipping) - discount - AutoAmount,
 				instructions = Customer.comment,
 				paymentType = 1,
 				source = source,
@@ -448,13 +510,15 @@
 				voucherCode = Coupon.coupon,
 				totalPrice = subTotal,
 				deliveryAddressID = AddressID,
-				afterPromoPrice = subTotal - discount,
-				promoPrice = discount,
+				afterPromoPrice = subTotal - discount - AutoAmount,
+				promoPrice = discount + AutoAmount,
 				deliveryType = 1,
 				orderProductsDTOs = Elements
 			};
 
 		NewOrder.createOrderDTO = orderDetails;
+
+		disableSubmit = true;
 
 		try
 		{
@@ -463,22 +527,18 @@
 			if (result.sslUrl == "Success")
 			{
 				Snackbar.Add("Order placed successfully!", Severity.Success);
-				NewOrder = new PlaceOrderDTO();
-				source = String.Empty;
-				shipping = 0;
-				Elements.Clear();
-				Customer = new GenerateBillCustomerInfoDTO();
-				customerPhoneNumber = String.Empty;
-				subTotal = 0;
 				ResetCoupon();
 				return;
 			}
+
 			Snackbar.Add(result.sslUrl, Severity.Error);
+			disableSubmit = false;
 		}
 		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal server error!", Severity.Error);
+			disableSubmit = false;
 		}
 	}
 

@@ -26,9 +26,9 @@ namespace Carnesia.Application.OMS.Services.AssignOrder
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
                 throw;
             }
         }

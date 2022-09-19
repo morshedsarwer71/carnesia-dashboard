@@ -23,7 +23,7 @@
 		<MudGrid Class="justify-center">
 			@*<MudItem sm="4">
 				<MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" />
-			</MudItem>*@
+				</MudItem>*@
 			<MudItem sm="4">
 				<MudTextField Label="SKU" @bind-Value="FormData.sku" />
 			</MudItem>
@@ -67,19 +67,19 @@
 				</MudTFootRow>
 				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end;">Shipping:</MudTd>
-					<MudTd colspan="1" Style="text-align: end;">@Math.Round(shipping - minusShipping, 2)</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@(isFreeOrder ? 0 : shipping)</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end;">Coupon Used:</MudTd>
-					<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount - autoDiscount, 2)</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end;">Auto Apply:</MudTd>
-					<MudTd colspan="1" Style="text-align: end;">@Math.Round(autoDiscount, 2)</MudTd>
+					<MudTd colspan="1" Style="text-align: end;">@Math.Round(AutoAmount, 2)</MudTd>
 				</MudTFootRow>
 				<MudTFootRow>
 					<MudTd colspan="5" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + shipping - minusShipping - discount - autoDiscount), 2)</MudTd>
+					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + (isFreeOrder ? 0 : shipping) - discount - AutoAmount), 2)</MudTd>
 				</MudTFootRow>
 			</FooterContent>
 		</MudTable>
@@ -143,9 +143,9 @@
 	// Shipping, Subtotal, Discount
 	private decimal subTotal { get; set; }
 	private decimal shipping { get; set; }
-	private decimal minusShipping { get; set; }
 	private decimal discount { get; set; }
-	private decimal autoDiscount { get; set; }
+	private bool isFreeOrder { get; set; }
+	private decimal AutoAmount { get; set; }
 	private int addressId { get; set; }
 
 	// Auto Apply Data
@@ -155,36 +155,24 @@
 	private async Task GetAutoApply()
 	{
 		AutoApply = await _placeOrder.GetAutoApply(trnCode);
-
-		if (AutoApply.isDeliveryCharge)
-		{
-			minusShipping = AutoApply.amount;
-			return;
-		}
-		autoDiscount = AutoApply.amount;
+		CheckAutoApply();
 	}
 
 	// Check Auto Apply
 	private void CheckAutoApply()
 	{
-		if (subTotal < AutoApply.mincartamnt && AutoApply.isDeliveryCharge)
+		if (subTotal < AutoApply.mincartamnt)
 		{
-			minusShipping = 0;
+			isFreeOrder = false;
+			AutoAmount = 0;
+			return;
 		}
 
-		if (subTotal >= AutoApply.mincartamnt && AutoApply.isDeliveryCharge)
+		if (subTotal >= AutoApply.mincartamnt)
 		{
-			minusShipping = AutoApply.amount;
-		}
-
-		if (subTotal < AutoApply.mincartamnt && AutoApply.isDeliveryCharge == false)
-		{
-			autoDiscount = 0;
-		}
-
-		if (subTotal >= AutoApply.mincartamnt && AutoApply.isDeliveryCharge == false)
-		{
-			autoDiscount = AutoApply.amount;
+			isFreeOrder = AutoApply.isDeliveryCharge;
+			AutoAmount = AutoApply.amount;
+			return;
 		}
 	}
 
@@ -209,7 +197,7 @@
 
 			Elements = OrderDetails.orderProductsDTOs;
 
-			
+
 
 			if (OrderDetails.autoApplyId > 0)
 			{
@@ -307,6 +295,7 @@
 		Elements.Remove(product);
 		subTotal = Math.Round(Elements.Sum(x => x.productQuantity * x.salesPrice));
 		ResetCoupon();
+		CheckAutoApply();
 		Snackbar.Add("Product Removed Successfully!", Severity.Success);
 	}
 
@@ -408,33 +397,13 @@
 	{
 		var UpdateOrderDetails = new OrderEditUpdatedOrderDTO();
 
-		if (OrderDetails.autoApplyId > 0 && subTotal >= AutoApply.mincartamnt && AutoApply.isDeliveryCharge == false)
-		{
-			UpdateOrderDetails.autoApplyAmnt = AutoApply.amount;
-			UpdateOrderDetails.autoApplyId = OrderDetails.autoApplyId;
-			UpdateOrderDetails.grandTotalPrice = subTotal + shipping - discount - AutoApply.amount;
-			UpdateOrderDetails.deliveryPrice = shipping;
-			UpdateOrderDetails.promoPrice = discount + AutoApply.amount;
-			UpdateOrderDetails.afterPromoPrice = subTotal - discount + AutoApply.amount;
-		}
-		else if (OrderDetails.autoApplyId > 0 && subTotal >= AutoApply.mincartamnt && AutoApply.isDeliveryCharge == true)
-		{
-			UpdateOrderDetails.autoApplyAmnt = AutoApply.amount;
-			UpdateOrderDetails.autoApplyId = OrderDetails.autoApplyId;
-			UpdateOrderDetails.grandTotalPrice = subTotal - discount - AutoApply.amount;
-			UpdateOrderDetails.deliveryPrice = 0;
-			UpdateOrderDetails.promoPrice = discount;
-			UpdateOrderDetails.afterPromoPrice = subTotal - discount;
-		}
-		else
-		{
-			UpdateOrderDetails.autoApplyAmnt = 0;
-			UpdateOrderDetails.autoApplyId = 0;
-			UpdateOrderDetails.grandTotalPrice = subTotal + shipping - discount;
-			UpdateOrderDetails.deliveryPrice = shipping;
-			UpdateOrderDetails.promoPrice = discount;
-			UpdateOrderDetails.afterPromoPrice = subTotal - discount;
-		}
+		UpdateOrderDetails.autoApplyAmnt = AutoAmount;
+		UpdateOrderDetails.autoApplyId = OrderDetails.autoApplyId > 0 && subTotal >= AutoApply.mincartamnt ? OrderDetails.autoApplyId : 0;
+		UpdateOrderDetails.grandTotalPrice = subTotal + shipping - discount - AutoAmount;
+		UpdateOrderDetails.deliveryPrice = isFreeOrder ? 0 : shipping;
+		UpdateOrderDetails.promoPrice = discount + AutoAmount;
+		UpdateOrderDetails.afterPromoPrice = subTotal - discount + AutoApply.amount;
+
 
 		UpdateOrderDetails.totalPrice = subTotal;
 		UpdateOrderDetails.zoneId = OrderDetails.zoneId;

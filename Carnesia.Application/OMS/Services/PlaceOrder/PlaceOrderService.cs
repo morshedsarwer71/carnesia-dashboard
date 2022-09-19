@@ -32,6 +32,38 @@ namespace Carnesia.Application.OMS.Services.PlaceOrder
             }
         }
 
+        public async Task<string> AutoApplyMSG(decimal subTotal)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"Products/getautoapplymsg/{subTotal}");
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
+        public async Task<PlaceOrderAutoApplyDTO> AutoApplyValue(decimal subTotal)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<PlaceOrderAutoApplyDTO>($"Voucher/getautoapply/{subTotal}");
+
+                if (result == null) return null;
+                Console.WriteLine(result.ToString());
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
         public async Task<List<ProductTableDTO>> GetAllProducts()
         {
             try
@@ -136,7 +168,7 @@ namespace Carnesia.Application.OMS.Services.PlaceOrder
 
         public async Task<string> SendOTP(string phone, string otp)
         {
-            using(var client = new HttpClient())
+            using (var client = new HttpClient())
             {
                 string message = $"Your OTP to change contact number for your order is {otp}.";
                 using (var response = await client.GetAsync($"https://api.mobireach.com.bd/SendTextMessage?Username=carnesia&Password=Sampas$$w0rd&From=CARNESIA&To={phone}&Message={message}"))

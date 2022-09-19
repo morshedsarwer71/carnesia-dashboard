@@ -18,5 +18,7 @@ namespace Carnesia.Application.OMS.Services.PlaceOrder
         Task<PlaceOrderAutoApplyDTO> GetAutoApply(string trnCode);
         Task<OrderEditResponseDTO> UpdateOrder(OrderEditUpdatedOrderDTO order, string trnCode);
         Task<string> SendOTP(string phone, string otp);
+        Task<string> AutoApplyMSG(decimal subTotal);
+        Task<PlaceOrderAutoApplyDTO> AutoApplyValue(decimal subTotal);
     }
 }

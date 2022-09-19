@@ -12,5 +12,7 @@ namespace Carnesia.Application.Dashboard.Dashboard
 	{
 		Task<List<DashboardDTO>> GetSalesReport(string fromDate, string toDate, int store);
 		Task<List<SalesReportDTO>> GetSalesReport(SalesReportFilterDTO Filter);
+		Task<List<SalesReportDTO>> GetMISSalesReport(SalesReportFilterDTO Filter);
+		Task<List<SalesReportPaymentTypeDTO>> GetSalesPaymentReport(string date, int store);
 	}
 }

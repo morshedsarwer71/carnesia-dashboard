@@ -85,33 +85,9 @@
 		{
 			if (!String.IsNullOrEmpty(uid) && uid.Length == 15 && !String.IsNullOrEmpty(orderIdShow))
 			{
-				await CheckUid();
+				await AddUID();
 			}
 		}
-	}
-
-	// UID Collection
-	private class UIDCollectionDTO
-	{
-		public string uid { get; set; }
-	}
-
-	private List<UIDCollectionDTO> uidCollection = new List<UIDCollectionDTO>();
-
-	// Check UID
-	private async Task CheckUid()
-	{
-		var isThere = uidCollection.Any(x => x.uid == uid);
-
-		if (isThere)
-		{
-			Snackbar.Add("UID already used!", Severity.Error);
-			return;
-		}
-		// Else Do Something
-		await AddUID();
-		uidCollection.Add(new UIDCollectionDTO { uid = uid });
-		uid = String.Empty;
 	}
 
 	// Enter TRN
@@ -157,6 +133,7 @@
 			}
 			Picklist = result;
 			Elements = result.pickPacks;
+			uid = String.Empty;
 			Loading = false;
 		}
 		catch (Exception e)

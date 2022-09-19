@@ -5,7 +5,20 @@
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
-		<MudTable Items="@Elements" Hover="true" Dense="true" Bordered="true" Striped="true" HorizontalScrollbar="true" Loading="Loading" LoadingProgressColor="Color.Info" >
+
+		@*<MudGrid>
+			<MudItem sm="4">
+				<MudSelect T="string" Label="Delivery Action" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Confirm")" />
+					<MudSelectItem Value="@("Cancel")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="4">
+				<MudTextField T="string" Label="Order ID" />
+			</MudItem>
+		</MudGrid>*@
+
+		<MudTable Items="@Elements" Hover="true" Dense="true" Bordered="true" Striped="true" HorizontalScrollbar="true" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh></MudTh>
 				<MudTh>Tracking</MudTh>
@@ -20,7 +33,7 @@
 				<MudTh>Address</MudTh>
 				<MudTh>Status</MudTh>
 				<MudTh>Assign To</MudTh>
-				<MudTh>Action</MudTh>
+				@*<MudTh>Action</MudTh>*@
 				<MudTh>Print</MudTh>
 			</HeaderContent>
 			<RowTemplate>
@@ -46,10 +59,10 @@
 				<MudTd DataLabel="Address">@context.address</MudTd>
 				<MudTd DataLabel="Status">@context.status</MudTd>
 				<MudTd DataLabel="Assign To">@context.assignto</MudTd>
-				<MudTd DataLabel="Action" Class="d-flex flex-column align-center">
+				@*<MudTd DataLabel="Action" Class="d-flex flex-column align-center">
 					<MudButton Variant="Variant.Text" Color="Color.Success" OnClick="() => ConfirmDelivery(context.orderId)">Confirm Delivery</MudButton>
 					<MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => CancelDelivery(context.orderId)">Cancel Delivery</MudButton>
-				</MudTd>
+				</MudTd>*@
 				<MudTd DataLabel="Print">
 					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.trnCode)">Invoice</MudButton>
 				</MudTd>
@@ -99,6 +112,9 @@
 					</td>
 				}
 			</ChildRowContent>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
 		</MudTable>
 	</MudContainer>
 </MudPaper>
@@ -125,7 +141,7 @@
 			Elements = await _dispatch.GetDispatchedOrders();
 			Loading = false;
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal server error!", Severity.Error);
@@ -152,7 +168,7 @@
 			Loading = false;
 			await GetOrders();
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal server error!", Severity.Error);
@@ -179,7 +195,7 @@
 			Loading = false;
 			await GetOrders();
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal server error!", Severity.Error);
