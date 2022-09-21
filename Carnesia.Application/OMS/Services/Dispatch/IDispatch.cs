@@ -15,7 +15,7 @@ namespace Carnesia.Application.OMS.Services.Dispatch
         Task<List<PendingOrderDTO>> GetDispatchedOrders();
         Task<List<PendingOrderDTO>> GetOrdersByFilter(DispatchFilterDTO filter);
         Task<bool> AssignCourier(CreateDispatchDTO dispatchData);
-        Task<PickPackDTO> ConfirmDispatch(int orderId);
-        Task<PickPackDTO> CancelDispatch(int orderId);
+        Task<PickPackDTO> ConfirmDispatch(string orderId);
+        Task<PickPackDTO> CancelDispatch(string orderId);
     }
 }

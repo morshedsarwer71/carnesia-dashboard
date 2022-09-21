@@ -1,0 +1,73 @@
+﻿@page "/product-sales-report"
+
+<MudPaper Class="mx-3 my-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid>
+			<MudItem sm="4">
+				<MudDatePicker Label="From" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudDatePicker Label="From" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudTextField T="string" Label="Product Code" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudTextField T="string" Label="SKU" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudTextField T="string" Label="Product Name" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudSelect T="string" Label="Brand" AnchorOrigin="Origin.BottomCenter">
+					@*					<MudSelectItem Value="@("Cappuccino")" />
+						<MudSelectItem Value="@("Cafe Latte")" />
+						<MudSelectItem Value="@("Espresso")" />*@
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="4">
+				<MudSelect T="string" Label="Category" AnchorOrigin="Origin.BottomCenter">
+					@*<MudSelectItem Value="@("Cappuccino")" />
+						<MudSelectItem Value="@("Cafe Latte")" />
+						<MudSelectItem Value="@("Espresso")" />*@
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="4">
+				<MudSelect T="string" Label="Outlet" AnchorOrigin="Origin.BottomCenter">
+					@*<MudSelectItem Value="@("Cappuccino")" />
+						<MudSelectItem Value="@("Cafe Latte")" />
+						<MudSelectItem Value="@("Espresso")" />*@
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="4">
+				<MudSelect T="string" Label="Source" AnchorOrigin="Origin.BottomCenter">
+					@*<MudSelectItem Value="@("Cappuccino")" />
+						<MudSelectItem Value="@("Cafe Latte")" />
+						<MudSelectItem Value="@("Espresso")" />*@
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="4">
+				<MudSelect T="string" Label="Business Unit" AnchorOrigin="Origin.BottomCenter">
+					@*<MudSelectItem Value="@("Cappuccino")" />
+						<MudSelectItem Value="@("Cafe Latte")" />
+						<MudSelectItem Value="@("Espresso")" />*@
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="4">
+				<MudSelect T="string" Label="Supplier" AnchorOrigin="Origin.BottomCenter">
+					@*<MudSelectItem Value="@("Cappuccino")" />
+						<MudSelectItem Value="@("Cafe Latte")" />
+						<MudSelectItem Value="@("Espresso")" />*@
+				</MudSelect>
+			</MudItem>
+		</MudGrid>
+
+		<div class="d-flex justify-end my-3">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+
+}

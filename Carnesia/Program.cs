@@ -63,6 +63,8 @@ using Carnesia.Application.WMS.PutAway.Services;
 using Syncfusion.Blazor;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
 
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjY3OTMzQDMxMzgyZTM0MmUzMEtBS0dyOEpaTnpmSXZvaHNsT0doNW5HZ1l5L2J5cmRtRmtkQU5GamlQejg9");
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -79,6 +81,8 @@ builder.Services.AddHttpClient("RetailSuite", client =>
 {
     client.BaseAddress = new Uri("https://carnesialive.bespokeit.io/api/");
 }).AddHttpMessageHandler<AuthorizationMessageHandler>();
+
+builder.Services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
 
 builder.Services.AddTransient<AuthorizationMessageHandler>();
 builder.Services.AddScoped(sp => sp.GetService<IHttpClientFactory>().CreateClient("RetailSuite"));

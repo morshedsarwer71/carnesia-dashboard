@@ -6,17 +6,27 @@
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 
-		@*<MudGrid>
+		<MudGrid Class="justify-center">
 			<MudItem sm="4">
-				<MudSelect T="string" Label="Delivery Action" AnchorOrigin="Origin.BottomCenter">
+				<MudSelect @bind-Value="DispatchData.disPatchType" Label="Delivery Action" AnchorOrigin="Origin.BottomCenter" Immediate="true">
 					<MudSelectItem Value="@("Confirm")" />
 					<MudSelectItem Value="@("Cancel")" />
 				</MudSelect>
 			</MudItem>
 			<MudItem sm="4">
-				<MudTextField T="string" Label="Order ID" />
+				<MudTextField @bind-Value="DispatchData.orderId" Label="Order ID" Immediate="true" OnKeyPress="TriggerDispatch" />
 			</MudItem>
-		</MudGrid>*@
+		</MudGrid>
+
+		<MudGrid Class="justify-center">
+			<MudItem sm="8">
+				<div class="my-3 d-flex justify-end">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunDispatch">Submit</MudButton>
+		</div>
+			</MudItem>
+		</MudGrid>
+
+		
 
 		<MudTable Items="@Elements" Hover="true" Dense="true" Bordered="true" Striped="true" HorizontalScrollbar="true" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
@@ -62,7 +72,7 @@
 				@*<MudTd DataLabel="Action" Class="d-flex flex-column align-center">
 					<MudButton Variant="Variant.Text" Color="Color.Success" OnClick="() => ConfirmDelivery(context.orderId)">Confirm Delivery</MudButton>
 					<MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => CancelDelivery(context.orderId)">Cancel Delivery</MudButton>
-				</MudTd>*@
+					</MudTd>*@
 				<MudTd DataLabel="Print">
 					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.trnCode)">Invoice</MudButton>
 				</MudTd>
@@ -150,7 +160,7 @@
 	}
 
 	// Confirm Delivery
-	private async Task ConfirmDelivery(int orderId)
+	private async Task ConfirmDelivery(string orderId)
 	{
 		Loading = true;
 		try
@@ -166,6 +176,7 @@
 
 			Snackbar.Add(result.message, Severity.Success);
 			Loading = false;
+			DispatchData.orderId = String.Empty;
 			await GetOrders();
 		}
 		catch (Exception e)
@@ -177,7 +188,7 @@
 	}
 
 	// Cancel Delivery
-	private async Task CancelDelivery(int orderId)
+	private async Task CancelDelivery(string orderId)
 	{
 		Loading = true;
 		try
@@ -193,6 +204,7 @@
 
 			Snackbar.Add(result.message, Severity.Success);
 			Loading = false;
+			DispatchData.orderId = String.Empty;
 			await GetOrders();
 		}
 		catch (Exception e)
@@ -215,5 +227,37 @@
 	private async Task GotoPrint(string TRNCODE)
 	{
 		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print-web/{TRNCODE}", "_blank" });
+	}
+
+	// Dispatch Confirm
+	private ScanClass DispatchData = new ScanClass();
+
+	private async Task TriggerDispatch(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			await RunDispatch();
+		}
+	}
+
+	private async Task RunDispatch()
+	{
+		if (!String.IsNullOrEmpty(DispatchData.orderId))
+		{
+			if (DispatchData.disPatchType == "Confirm")
+			{
+				await ConfirmDelivery(DispatchData.orderId);
+				return;
+			}
+
+			await CancelDelivery(DispatchData.orderId);
+		}
+	}
+
+	// Scan Class
+	public class ScanClass
+	{
+		public string disPatchType { get; set; } = "Confirm";
+		public string orderId { get; set; }
 	}
 }

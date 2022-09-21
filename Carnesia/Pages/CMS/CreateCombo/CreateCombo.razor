@@ -11,239 +11,245 @@
 <MudPaper Class="ma-2 pa-16">
 	<MudContainer Fixed="true">
 		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudGrid Class="mb-5">
-                    <MudItem sm="6">
-                        <MudTextField @bind-Value="FormData.comboProductName" Label="Combo Name" Required="true" RequiredError="Combo name is required!"/>
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudAutocomplete Label="Parent Combo Product" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Required="true" ResetValueOnEmptyText="true" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudTimePicker Label="End Time" @bind-Time="EndTime" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" ReadOnly="true" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudNumericField Label="Combo Price" @bind-Value="FormData.comboPrice" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="FormData.description" Label="Description" Lines="5" Required="true" RequiredError="Description is required!"/>
-                    </MudItem>
-                </MudGrid>
+			<MudGrid Class="mb-5">
+				<MudItem sm="6">
+					<MudTextField @bind-Value="FormData.comboProductName" Label="Combo Name" Required="true" RequiredError="Combo name is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudAutocomplete Label="Parent Combo Product" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Required="true" ResetValueOnEmptyText="true" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTimePicker Label="Start Time" @bind-Time="StartTime" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTimePicker Label="End Time" @bind-Time="EndTime" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" ReadOnly="true" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField Label="Combo Price" @bind-Value="FormData.comboPrice" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudSelect T="string" Label="Combo Type" AnchorOrigin="Origin.BottomCenter">
+						<MudSelectItem Value="@("BOGO")" />
+						<MudSelectItem Value="@("COMBO")" />
+					</MudSelect>
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
+				</MudItem>
+			</MudGrid>
 
-                <div class="my-5 d-flex justify-end">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenProductModal" >Add Product</MudButton>
-                </div>
+			<div class="my-5 d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenProductModal">Add Product</MudButton>
+			</div>
 
-                <MudTable Items="@Products" Hover="true" Dense="true">
-                    <HeaderContent>
-                        <MudTh>SKU</MudTh>
-                        <MudTh>Product Name</MudTh>
-                        <MudTh>Regular Price</MudTh>
-                        <MudTh>Discount Type</MudTh>
-                        <MudTh>Discount Ammount</MudTh>
-                        <MudTh>After Discount</MudTh>
-                        <MudTh>Action</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="SKU">@context.sku</MudTd>
-                        <MudTd DataLabel="Product Name">@context.productName</MudTd>
-                        <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
-                        <MudTd DataLabel="Discount Type">@context.discountType</MudTd>
-                        <MudTd DataLabel="Discount Ammount">@context.discountAmount</MudTd>
-                        <MudTd DataLabel="After Discount">@context.afterDiscAmount</MudTd>
-                        <MudTd DataLabel="Action">
-                            <MudButton OnClick="() => RemoveProduct(context)" >
-                                <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
-                            </MudButton>
-                        </MudTd>
-                    </RowTemplate>
-                </MudTable>
+			<MudTable Items="@Products" Hover="true" Dense="true">
+				<HeaderContent>
+					<MudTh>SKU</MudTh>
+					<MudTh>Product Name</MudTh>
+					<MudTh>Regular Price</MudTh>
+					<MudTh>Discount Type</MudTh>
+					<MudTh>Discount Ammount</MudTh>
+					<MudTh>After Discount</MudTh>
+					<MudTh>Action</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="SKU">@context.sku</MudTd>
+					<MudTd DataLabel="Product Name">@context.productName</MudTd>
+					<MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
+					<MudTd DataLabel="Discount Type">@context.discountType</MudTd>
+					<MudTd DataLabel="Discount Ammount">@context.discountAmount</MudTd>
+					<MudTd DataLabel="After Discount">@context.afterDiscAmount</MudTd>
+					<MudTd DataLabel="Action">
+						<MudButton OnClick="() => RemoveProduct(context)">
+							<MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+						</MudButton>
+					</MudTd>
+				</RowTemplate>
+			</MudTable>
 
-                <div class="mt-5">
-                    <InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
+			<div class="mt-5">
+				<InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
 
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Filled.CloudUpload"
-                               for="fileInput">
-                        Upload Images
-                    </MudButton>
-                    <MudText Class="mt-1">600 * 600(Max 50Kb)</MudText>
-                </div>
+				<MudButton HtmlTag="label"
+						   Variant="Variant.Filled"
+						   Color="Color.Primary"
+						   StartIcon="@Icons.Filled.CloudUpload"
+						   for="fileInput">
+					Upload Images
+				</MudButton>
+				<MudText Class="mt-1">600 * 600(Max 50Kb)</MudText>
+			</div>
 
-                <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
+			<MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;" />
 
-                <div class="d-flex align-center justify-space-between"> 
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateNewCombo">Submit</MudButton>
-                </div>
-        </MudForm>
+			<div class="d-flex align-center justify-space-between">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateNewCombo">Submit</MudButton>
+			</div>
+		</MudForm>
 	</MudContainer>
 </MudPaper>
 
 @code {
-    // New Date Time
+	// New Date Time
 	public static string TodayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-    // Page On Load
-    protected override async Task OnInitializedAsync()
-    {
-        ProductSKU = await _products.GetProductsAsSKU();
-    }
-    // Form Ref
-    bool success;
-    string[] errors = { };
-    MudForm form;
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		ProductSKU = await _products.GetProductsAsSKU();
+	}
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
 
-    // Start End Date Time
-    private string StartDate { get; set; } = TodayDate;
-    private string EndDate { get; set; } = TodayDate;
-    private TimeSpan? StartTime = new TimeSpan();
-    private TimeSpan? EndTime = new TimeSpan();
+	// Start End Date Time
+	private string StartDate { get; set; } = TodayDate;
+	private string EndDate { get; set; } = TodayDate;
+	private TimeSpan? StartTime = new TimeSpan();
+	private TimeSpan? EndTime = new TimeSpan();
 
-    // Products
-    private List<AddComboProductDTO> Products = new List<AddComboProductDTO>();
+	// Products
+	private List<AddComboProductDTO> Products = new List<AddComboProductDTO>();
 
-    // Details
-    private AddComboDetailsDTO FormData = new AddComboDetailsDTO();
+	// Details
+	private AddComboDetailsDTO FormData = new AddComboDetailsDTO();
 
-    // Product SKU List
-    private string[] ProductSKU = new string[]{};
+	// Product SKU List
+	private string[] ProductSKU = new string[] { };
 
-    // Autocomplite Search Func for ParentCat
-    private async Task<IEnumerable<string>> ProductSKUSearch(string value)
-    {
-        return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
+	// Autocomplite Search Func for ParentCat
+	private async Task<IEnumerable<string>> ProductSKUSearch(string value)
+	{
+		return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+	}
 
-    // Upload Image
-    private async Task UploadImage(InputFileChangeEventArgs e)
-    {
-        try
-        {
-            FormData.base64Attch = await _base64.ConvertToBase64(153600, 1080, 420, e);
-        }
-        catch(Exception error)
-        {
-            Snackbar.Add(error.Message, Severity.Error);
-        }
-    }
+	// Upload Image
+	private async Task UploadImage(InputFileChangeEventArgs e)
+	{
+		try
+		{
+			FormData.base64Attch = await _base64.ConvertToBase64(153600, 1080, 420, e);
+		}
+		catch (Exception error)
+		{
+			Snackbar.Add(error.Message, Severity.Error);
+		}
+	}
 
-    // Remove Products
-    private void RemoveProduct(AddComboProductDTO product)
-    {
-        Products.Remove(product);
-        FormData.regularPrice = Products.Sum(x => x.regularPrice);
-    }
+	// Remove Products
+	private void RemoveProduct(AddComboProductDTO product)
+	{
+		Products.Remove(product);
+		FormData.regularPrice = Products.Sum(x => x.regularPrice);
+	}
 
-    // Add Product Modal
-    private async Task OpenProductModal()
-    {
-        var parameters = new DialogParameters();
-        parameters.Add("FormData", new AddComboProductDTO());
+	// Add Product Modal
+	private async Task OpenProductModal()
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new AddComboProductDTO());
 
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        var dialog = await DialogService.Show<AddComboProductModal>("Add New Product", parameters, options).Result;
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<AddComboProductModal>("Add New Product", parameters, options).Result;
 
-        if (dialog.Data != null)
-        {
-            AddComboProductDTO newProduct = dialog.Data as AddComboProductDTO;
-            bool isThere = Products.Any( x=> x.sku == newProduct.sku);
+		if (dialog.Data != null)
+		{
+			AddComboProductDTO newProduct = dialog.Data as AddComboProductDTO;
+			bool isThere = Products.Any(x => x.sku == newProduct.sku);
 
-            if (isThere)
-            {
-                Snackbar.Add("This Product Already Exists!", Severity.Error);
-                return;
-            }
+			if (isThere)
+			{
+				Snackbar.Add("This Product Already Exists!", Severity.Error);
+				return;
+			}
 
 
-            if (newProduct.discountType == "Cash")
-            {
-                newProduct.afterDiscAmount = newProduct.regularPrice - newProduct.discountAmount;
-            }
-            else
-            {
-                newProduct.afterDiscAmount = newProduct.regularPrice - ((newProduct.regularPrice * newProduct.discountAmount) / 100);
-            }
+			if (newProduct.discountType == "Cash")
+			{
+				newProduct.afterDiscAmount = newProduct.regularPrice - newProduct.discountAmount;
+			}
+			else
+			{
+				newProduct.afterDiscAmount = newProduct.regularPrice - ((newProduct.regularPrice * newProduct.discountAmount) / 100);
+			}
 
-            Products.Add(newProduct);
+			Products.Add(newProduct);
 
-            FormData.regularPrice = Products.Sum(x => x.regularPrice);
-        }
-    }
+			FormData.regularPrice = Products.Sum(x => x.regularPrice);
+		}
+	}
 
-    // Create New Combo
-    private AddComboDTO NewCombo = new AddComboDTO();
+	// Create New Combo
+	private AddComboDTO NewCombo = new AddComboDTO();
 
-    private async Task CreateNewCombo()
-    {
-        if (String.IsNullOrEmpty(FormData.sku))
-        {
-            Snackbar.Add("Parent Combo Product is required!", Severity.Error);
-            return;
-        }
+	private async Task CreateNewCombo()
+	{
+		if (String.IsNullOrEmpty(FormData.sku))
+		{
+			Snackbar.Add("Parent Combo Product is required!", Severity.Error);
+			return;
+		}
 
-        FormData.productId = await _products.GetProductIdBySku(FormData.sku);
+		FormData.productId = await _products.GetProductIdBySku(FormData.sku);
 
-        if (Products.Count() <= 0)
-        {
-            Snackbar.Add("Child Combo Products is required!", Severity.Error);
-            return;
-        }
-        
-        if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
-        {
-            Snackbar.Add("Start & End Date is required!", Severity.Error);
-            return;
-        }
+		if (Products.Count() <= 0)
+		{
+			Snackbar.Add("Child Combo Products is required!", Severity.Error);
+			return;
+		}
 
-        if (String.IsNullOrEmpty(FormData.base64Attch))
-        {
-            Snackbar.Add("Campaign image is required!", Severity.Error);
-            return;
-        }
+		if (String.IsNullOrEmpty(StartDate) || String.IsNullOrEmpty(EndDate))
+		{
+			Snackbar.Add("Start & End Date is required!", Severity.Error);
+			return;
+		}
 
-        FormData.startDate = $"{StartDate}T{StartTime}.000Z";
-        FormData.endDate = $"{EndDate}T{EndTime}.000Z";
+		if (String.IsNullOrEmpty(FormData.base64Attch))
+		{
+			Snackbar.Add("Campaign image is required!", Severity.Error);
+			return;
+		}
 
-        NewCombo.comboProductDTO = FormData;
-        NewCombo.comboProductTags = Products;
+		FormData.startDate = $"{StartDate}T{StartTime}.000Z";
+		FormData.endDate = $"{EndDate}T{EndTime}.000Z";
 
-        try
-        {
-            var result = await _combo.CreateCombo(NewCombo);
-            if (result)
-            {
-                Snackbar.Add("New Combo Created Successfully!", Severity.Success);
-                Products.Clear();
-                NewCombo = new AddComboDTO();
-                FormData = new AddComboDetailsDTO();
+		NewCombo.comboProductDTO = FormData;
+		NewCombo.comboProductTags = Products;
 
-                StartDate = TodayDate;
-                EndDate = TodayDate;
-                StartTime = new TimeSpan();
-                EndTime = new TimeSpan();
+		try
+		{
+			var result = await _combo.CreateCombo(NewCombo);
+			if (result)
+			{
+				Snackbar.Add("New Combo Created Successfully!", Severity.Success);
+				Products.Clear();
+				NewCombo = new AddComboDTO();
+				FormData = new AddComboDetailsDTO();
 
-                return;
-            }
+				StartDate = TodayDate;
+				EndDate = TodayDate;
+				StartTime = new TimeSpan();
+				EndTime = new TimeSpan();
 
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-        }
-        catch (Exception)
-        {
-            
-            throw;
-        }
-    }
+				return;
+			}
+
+			Snackbar.Add("Something Went Wrong!", Severity.Error);
+		}
+		catch (Exception)
+		{
+
+			throw;
+		}
+	}
 }

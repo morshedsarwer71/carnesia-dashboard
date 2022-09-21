@@ -35,7 +35,7 @@ namespace Carnesia.Application.OMS.Services.Dispatch
             }
         }
 
-		public async Task<PickPackDTO> CancelDispatch(int orderId)
+		public async Task<PickPackDTO> CancelDispatch(string orderId)
 		{
 			try
 			{
@@ -50,7 +50,7 @@ namespace Carnesia.Application.OMS.Services.Dispatch
 			}
 		}
 
-		public async Task<PickPackDTO> ConfirmDispatch(int orderId)
+		public async Task<PickPackDTO> ConfirmDispatch(string orderId)
 		{
             try
             {
