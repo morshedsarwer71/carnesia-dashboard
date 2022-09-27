@@ -28,7 +28,14 @@
 	<h4>District: @Invoice.district</h4>
 	<h4>Area: @Invoice.area</h4>
 	<br />
-	<h3 style="font-weight: 600;">Payment: @Invoice.payment</h3>
+	<MudGrid>
+		<MudItem xs="6">
+			<h3 style="font-weight: 600;">Payment: @Invoice.payment</h3>
+		</MudItem>
+		<MudItem xs="6">
+			<h3 style="font-weight: 600; text-align: end;">COD: @Invoice.duePayment</h3>
+		</MudItem>
+	</MudGrid>
 	<table style="width: 100%; border-collapse: collapse;">
 		<tr style="font-size: 14px;">
 			<th style="width: 60%" class="table-cell">Product Name & SKU</th>
@@ -42,7 +49,7 @@
 			{
 				<tr style="font-size: 10px;">
 					<td class="table-cell">
-						<p>@item.productName</p>
+						<p style="font-weight: 600;">@item.productName</p>
 					</td>
 					<td class="table-cell">@item.price</td>
 					<td class="table-cell">@item.quantity</td>

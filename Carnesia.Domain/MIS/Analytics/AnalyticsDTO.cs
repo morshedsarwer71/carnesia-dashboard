@@ -6,37 +6,41 @@ using System.Threading.Tasks;
 
 namespace Carnesia.Domain.MIS.Analytics
 {
-    public class AnalyticsDTO : AnalyticsDetailsDTO
+    public class AnalyticsDTO
     {
-        public bool showDetails { get; set; }
-        public List<AnalyticsDetailsDTO> details { get; set; }
+        public List<AnalyticsDetailsDTO> cmsRevenue { get; set; }
+        public List<AnalyticsDetailsDTO> posRevenue { get; set; }
     }
 
     public class AnalyticsDetailsDTO
     {
-        public int id { get; set; }
-        public string businessUnit { get; set; }
-        public int transaction { get; set; }
-        public int totalItem { get; set; }
-        public int totalQty { get; set; }
-        public decimal totalRevenue { get; set; }
+        public string buisnessUnit { get; set; }
+        public int numberOfTransaction { get; set; }
+        public int itemTotal { get; set; }
+        public int qtyTotal { get; set; }
+        public int storeId { get; set; }
+        public decimal revenueTotal { get; set; }
         public decimal shippingDiscount { get; set; }
         public decimal productDiscount { get; set; }
         public decimal totalDiscount { get; set; }
-        public decimal afterDiscountRevenue { get; set; }
+        public decimal afterDiscount { get; set; }
         public decimal cost { get; set; }
-        public decimal grossProfit { get; set; }
+        public decimal grosProfit { get; set; }
+        public string date { get; set; }
+        public string platform { get; set; }
+        public DateTime orderDate { get; set; }
     }
     
     public class AnalyticsFilterDTO
     {
         public DateTime? fromDate { get; set; }
         public DateTime? toDate { get; set; }
-        public int outletId { get; set; }
+        public int storeId { get; set; }
         public int brandId { get; set; }
-        public int category { get; set; }
+        public int catId { get; set; }
         public string sku { get; set; }
         public string productCode { get; set; }
         public string productName { get; set; }
+        public int outletId { get; set; }
     }
 }

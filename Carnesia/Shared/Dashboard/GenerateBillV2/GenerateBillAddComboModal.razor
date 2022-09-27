@@ -1,0 +1,44 @@
+﻿<MudDialog DisableSidePadding="true">
+	<DialogContent>
+		<div Style="max-height: 90vh; overflow-y: scroll">
+			<MudGrid>
+				<MudItem xs="6">
+					<MudSelect T="string" Label="Combo/Bogo" AnchorOrigin="Origin.BottomCenter">
+					</MudSelect>
+				</MudItem>
+				<MudItem xs="6">
+					<MudNumericField T="int" Min="1" Label="Quantity" />
+				</MudItem>
+			</MudGrid>
+
+			<div class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+			</div>
+
+			<MudGrid>
+				<MudItem xs="6">
+					<MudTextField Label="Scan UID" T="string" />
+				</MudItem>
+			</MudGrid>
+
+			<table class="mt-3" style="width: 100%; border-collapse: collapse;">
+				<tr>
+					<th class="table-cell">SKU</th>
+					<th class="table-cell">Product Name</th>
+					<th class="table-cell">Price</th>
+					<th class="table-cell">To Be Scanned</th>
+					<th class="table-cell">Scanned</th>
+				</tr>
+			</table>
+
+			<div class="d-flex justify-end mt-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+			</div>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter]
+	MudDialogInstance MudDialog { get; set; }
+}

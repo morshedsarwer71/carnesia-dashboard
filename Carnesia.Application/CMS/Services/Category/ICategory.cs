@@ -31,5 +31,6 @@ namespace Carnesia.Application.CMS.Services.Category
         Task<List<CategoryXLSLDTO>> GetCategoriesForXLSL();
 
         Task<ParentUpdateDTO> GetParentById(int id);
+        Task<List<OnlyChildCategoryDTO>> GetOnlyChildCategory();
     }
 }

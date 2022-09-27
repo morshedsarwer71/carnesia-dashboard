@@ -1,0 +1,85 @@
+﻿@using Carnesia.Domain.MIS.Analytics
+@inject IAnalytics _analytics
+
+<MudDialog DisableSidePadding="true">
+	<DialogContent>
+		<div Style="max-height: 90vh; overflow-y: scroll">
+			<MudTable Items="@Elements" Dense="true" Hover="true" Bordered="true" Striped="true" CustomFooter="true" Loading="Loading" LoadingProgressColor="Color.Info">
+				<HeaderContent>
+					<MudTh>Business Unit</MudTh>
+					<MudTh>Transaction</MudTh>
+					<MudTh>Item Total</MudTh>
+					<MudTh>QTY Total</MudTh>
+					<MudTh>Revenue Total</MudTh>
+					<MudTh>Shipping Discount</MudTh>
+					<MudTh>Discount on Product</MudTh>
+					<MudTh>Total Discount</MudTh>
+					<MudTh>Revenue After Discount</MudTh>
+					<MudTh>Cost</MudTh>
+					<MudTh>Gross Profit</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="Business Unit">@context.buisnessUnit</MudTd>
+					<MudTd DataLabel="Transaction">@context.numberOfTransaction</MudTd>
+					<MudTd DataLabel="Item Total">@context.itemTotal</MudTd>
+					<MudTd DataLabel="QTY Total">@context.qtyTotal</MudTd>
+					<MudTd DataLabel="Revenue Total">@context.revenueTotal</MudTd>
+					<MudTd DataLabel="Shipping Discount">@context.shippingDiscount</MudTd>
+					<MudTd DataLabel="Discount on Product">@context.productDiscount</MudTd>
+					<MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
+					<MudTd DataLabel="Revenue After Discount">@context.afterDiscount</MudTd>
+					<MudTd DataLabel="Cost">@context.cost</MudTd>
+					<MudTd DataLabel="Gross Profit">@context.grosProfit</MudTd>
+				</RowTemplate>
+				<FooterContent>
+				<MudTFootRow>
+					<MudTd Style="font-weight: 600;">Grand Total</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.numberOfTransaction)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.itemTotal)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.qtyTotal)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.revenueTotal)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.shippingDiscount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.productDiscount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalDiscount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.afterDiscount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.cost)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.grosProfit)</MudTd>
+				</MudTFootRow>
+			</FooterContent>
+			</MudTable>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	[Parameter] public string businessDate { get; set; }
+
+	// Loading
+	private bool Loading { get; set; } = true;
+
+	// Modal On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetData();
+	}
+
+	// Table Content
+	private List<AnalyticsDetailsDTO> Elements = new List<AnalyticsDetailsDTO>();
+
+	//Get Data 
+	private async Task GetData()
+	{
+		try
+		{
+			Elements = await _analytics.GetwebDetailsByDate(businessDate);
+			Loading = false;
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+}

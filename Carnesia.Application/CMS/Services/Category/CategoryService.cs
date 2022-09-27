@@ -155,7 +155,21 @@ namespace Carnesia.Application.CMS.Services.Category
             }
         }
 
-        public async Task<ParentUpdateDTO> GetParentById(int id)
+		public async Task<List<OnlyChildCategoryDTO>> GetOnlyChildCategory()
+		{
+			try
+			{
+                var result = await _httpClient.GetFromJsonAsync<List<OnlyChildCategoryDTO>>("Category/getchildcategories");
+                return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<ParentUpdateDTO> GetParentById(int id)
         {
             try
             {

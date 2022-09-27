@@ -30,7 +30,14 @@
 		<h4>District: @item.district</h4>
 		<h4>Area: @item.area</h4>
 		<br />
-		<h3 style="font-weight: 600;">Payment: @item.payment</h3>
+		<MudGrid>
+			<MudItem xs="6">
+				<h3 style="font-weight: 600;">Payment: @item.payment</h3>
+			</MudItem>
+			<MudItem xs="6">
+				<h3 style="font-weight: 600; text-align: end;">COD: @item.duePayment</h3>
+			</MudItem>
+		</MudGrid>
 		<table style="width: 100%; border-collapse: collapse;">
 			<tr style="font-size: 14px;">
 				<th style="width: 60%" class="table-cell">Product Name & SKU</th>
@@ -43,7 +50,7 @@
 				foreach (var product in item.orderProducts)
 				{
 					<tr style="font-size: 10px;">
-						<td class="table-cell">
+						<td class="table-cell" style="font-weight: 600;">
 							<p>@product.productName</p>
 						</td>
 						<td class="table-cell">@product.price</td>
@@ -90,14 +97,14 @@
 	// Invoice Data
 	private List<InvoicePrintDTO> Invoice = new List<InvoicePrintDTO>();
 
-	// Get Order 
+	// Get Order
 	private async Task GetOrder()
 	{
 		try
 		{
 			Invoice = await _httpclient.GetFromJsonAsync<List<InvoicePrintDTO>>($"Oms/invoicebypickcode/{pickcode}");
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal server error!", Severity.Error);

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
+using Carnesia.Domain.OMS.OrderDetails;
 
 namespace Carnesia.Application.OMS.Services.PendingOrder
 {
@@ -79,7 +80,24 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
             }
         }
 
-        public async Task<bool> VerifyOrder(int orderId)
+		public async Task<List<PendingOrderDTO>> GetOrderDetails(OrderDetailsFilterDTO filter)
+		{
+			try
+			{
+                var result = await _httpClient.PostAsJsonAsync("Oms/orderdetailsreport", filter);
+
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<List<PendingOrderDTO>>(json);
+                return data;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<bool> VerifyOrder(int orderId)
         {
             try
             {

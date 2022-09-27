@@ -7,13 +7,13 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-<MudPaper Class="ma-2 pa-16">
+<MudPaper Class="py-16 px-3 ma-2">
 	<MudContainer Fixed="true">
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ProductQuickSettingDTO,bool>(FilterFuncInitial)">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="false" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="false" Placeholder="SKU, Product Name, Product Code" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>Product Name</MudTh>

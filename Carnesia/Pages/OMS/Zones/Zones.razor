@@ -13,7 +13,7 @@
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh></MudTh>
@@ -89,7 +89,7 @@
 																<MudTd DataLabel="Express Delivery Day">@GDetailsContext.expressDeliDay</MudTd>
 																<MudTd DataLabel="Express Delivery Price">@GDetailsContext.expressPrice</MudTd>
 																<MudTd DataLabel="Action">
-                                                                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => UpdateZoneModal(GDetailsContext.id,                                                                                  GDetailsContext)">
+                                                                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => UpdateZoneModal(GDetailsContext.id, GDetailsContext)">
 												                        Edit Zone
 											                        </MudButton>
 																</MudTd>

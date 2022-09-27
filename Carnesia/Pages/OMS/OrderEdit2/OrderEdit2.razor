@@ -1,4 +1,4 @@
-﻿@page "/order-edit/{trnCode}"
+﻿@page "/order-edit-2/{trnCode}"
 
 @using Carnesia.Domain.OMS.PlaceOrder
 @using Carnesia.Domain.Dashboard.GenerateBill
@@ -39,14 +39,18 @@
 			</MudItem>
 		</MudGrid>
 
-		@*<MudGrid Class="justify-center">
+		<MudGrid Class="justify-center">
+			@*<MudItem sm="4">
+				<MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" />
+				</MudItem>*@
 			<MudItem sm="4">
-				<MudTextField Label="Combo SKU" @bind-Value="FormData.sku" />
+				<MudSelect T="string" Label="Combo/Bogo" AnchorOrigin="Origin.BottomCenter">
+					</MudSelect>
 			</MudItem>
 			<MudItem sm="4">
 				<MudNumericField @bind-Value="FormData.qty" Min="1" />
 			</MudItem>
-		</MudGrid>*@
+		</MudGrid>
 
 		<MudGrid Class="justify-center my-5">
 			<MudItem sm="8">
@@ -463,3 +467,4 @@
 	}
 
 }
+

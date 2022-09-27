@@ -6,10 +6,10 @@
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == VoucherList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(VoucherList)">@VoucherList</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == CreateVoucher ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateVoucher)">
                 @CreateVoucher
             </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == VoucherList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(VoucherList)">@VoucherList</MudButton>
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
@@ -27,7 +27,7 @@ else if(CurrentPage == VoucherList){
     private string VoucherList = "Voucher List";
 
     // Current Page 
-    private string CurrentPage { get; set; } = "Create Voucher";
+    private string CurrentPage { get; set; } = "Voucher List";
 
     // Change Current Page
     void ChangePage(string pageName)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Carnesia.Domain.OMS.PendingOrder;
+using Carnesia.Domain.OMS.OrderDetails;
 
 namespace Carnesia.Application.OMS.Services.PendingOrder
 {
@@ -14,5 +15,6 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
         Task<bool> CancelOrder(int orderId);
         Task<bool> VerifyOrder(int orderId);
         Task<List<AgentDTO>> GetAgents();
+        Task<List<PendingOrderDTO>> GetOrderDetails(OrderDetailsFilterDTO filter);
     }
 }

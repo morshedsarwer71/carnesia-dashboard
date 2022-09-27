@@ -1,54 +1,67 @@
 ﻿@page "/order-details"
 @using Carnesia.Domain.OMS.OrderDetails
+@using Carnesia.Domain.OMS.PendingOrder
 @using Carnesia.Shared.OMS.OrderDetails
+@using Carnesia.Domain.OMS.AssignDelivery.Dispatch
+@inject IAssignOrder _assignOrder
+@inject IPendingOrder _pendingOrder
 @inject IDialogService DialogService
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-10">
 	<MudContainer Fixed="true">
 		<MudGrid Class="align-baseline mb-5">
 			<MudItem lg="3" md="6">
-				<MudTextField T="string" Label="Order Id" Variant="Variant.Text"/>
+				<MudTextField @bind-Value="Filter.trnCode" Label="Order Id" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudDatePicker Label="Order Date"/>
+				<MudDatePicker Label="Order Date From" @bind-Date="Filter.fromOrderDate"/>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudDatePicker Label="Packing Date"/>
+				<MudDatePicker Label="Order Date To" @bind-Date="Filter.fromOrderDate"/>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudDatePicker Label="Dispatch Date"/>
+				<MudDatePicker Label="Packing Date From" @bind-Date="Filter.fromPackingDate"/>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudSelect T="string" Label="Sort by Date" AnchorOrigin="Origin.BottomCenter">
+				<MudDatePicker Label="Packing Date To" @bind-Date="Filter.toPackingDate"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDatePicker Label="Dispatch Date From" @bind-Date="Filter.fromDispatchDate"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDatePicker Label="Dispatch Date To" @bind-Date="Filter.toDispatchDate"/>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect @bind-Value="Filter.sortBy" Label="Sort by Date" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="@("Newest to Oldes")" />
 					<MudSelectItem Value="@("Oldest to Newest")" />
 				</MudSelect>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudTextField T="string" Label="SKU" Variant="Variant.Text"/>
+				<MudTextField @bind-Value="Filter.sku" Label="SKU" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudTextField T="string" Label="Product Name" Variant="Variant.Text"/>
+				<MudTextField @bind-Value="Filter.productName" Label="Product Name" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudSelect T="string" Label="Shipping Area" AnchorOrigin="Origin.BottomCenter">
+				<MudSelect @bind-Value="Filter.shippingArea" Label="Shipping Area" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="@("Inside Dhaka")" />
 					<MudSelectItem Value="@("Dhaka Suburb")" />
 					<MudSelectItem Value="@("Outside Dhaka")" />
 				</MudSelect>
 			</MudItem>
-			<MudItem lg="3" md="6">
+			@*<MudItem lg="3" md="6">
 				<MudAutocomplete T="string" Label="Zone" ResetValueOnEmptyText="true" />
-			</MudItem>
-			<MudItem lg="3" md="6">
+			</MudItem>*@
+			@*<MudItem lg="3" md="6">
 				<MudSelect T="string" Label="Order type" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="@("Regular")" />
 					<MudSelectItem Value="@("Achomka")" />
 					<MudSelectItem Value="@("Big Sale")" />
 				</MudSelect>
-			</MudItem>
+			</MudItem>*@
 			<MudItem lg="3" md="6">
-				<MudSelect T="string" Label="Order Source" AnchorOrigin="Origin.BottomCenter">
+				<MudSelect @bind-Value="Filter.source" Label="Order Source" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="@("FB")" />
 					<MudSelectItem Value="@("Web")" />
 					<MudSelectItem Value="@("App")" />
@@ -56,37 +69,38 @@
 				</MudSelect>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudTextField T="string" Label="Customer Name" Variant="Variant.Text"/>
+				<MudTextField @bind-Value="Filter.customerName" Label="Customer Name" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudTextField T="string" Label="Phone Number" Variant="Variant.Text"/>
+				<MudTextField @bind-Value="Filter.phoneNumber" Label="Phone Number" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudSelect T="string" Label="Courier" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("REDX")" />
-					<MudSelectItem Value="@("E-Courier")" />
-					<MudSelectItem Value="@("Shatota")" />
-					<MudSelectItem Value="@("Own Fleet")" />
-					<MudSelectItem Value="@("Panna Bahok")" />
+				<MudSelect @bind-Value="Filter.courierId" Label="Courier" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Courier</MudSelectItem>
+					@foreach (var item in Couriers)
+					{
+						<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+					}
 				</MudSelect>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("Pending")" />
-					<MudSelectItem Value="@("CA Assigned")" />
-					<MudSelectItem Value="@("Cancelled")" />
-					<MudSelectItem Value="@("Verified")" />
-					<MudSelectItem Value="@("Awaiting Pickup")" />
-					<MudSelectItem Value="@("Packed")" />
-					<MudSelectItem Value="@("Awaiting Dispatch")" />
-					<MudSelectItem Value="@("Dispatched")" />
-					<MudSelectItem Value="@("Delivered")" />
-					<MudSelectItem Value="@("Returned")" />
+				<MudSelect @bind-Value="Filter.statusId" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0" >Select Status</MudSelectItem>
+					<MudSelectItem Value="26" >Pending</MudSelectItem>
+					<MudSelectItem Value="13" >CA Assigned</MudSelectItem>
+					<MudSelectItem Value="15" >Cancelled</MudSelectItem>
+					<MudSelectItem Value="29" >Verified</MudSelectItem>
+					@*<MudSelectItem Value="@("Awaiting Pickup")" >Awaiting Pickup</MudSelectItem>*@
+					@*<MudSelectItem Value="@("Packed")" >Packed</MudSelectItem>*@
+					@*<MudSelectItem Value="@("Awaiting Dispatch")" >Awaiting Dispatch</MudSelectItem>*@
+					@*<MudSelectItem Value="@("Dispatched")" >Dispatched</MudSelectItem>*@
+					<MudSelectItem Value="23" >Delivered</MudSelectItem>
+					<MudSelectItem Value="16" >Returned</MudSelectItem>
 				</MudSelect>
 			</MudItem>
 			<MudItem lg="3" md="6">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
-				<MudButton Variant="Variant.Filled" Color="Color.Warning">Clear Filter</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetOrderDetails">Filter</MudButton>
+				@*<MudButton Variant="Variant.Filled" Color="Color.Warning">Clear Filter</MudButton>*@
 			</MudItem>
 		</MudGrid>
 
@@ -110,27 +124,7 @@
 			</MudItem>
 		</MudGrid>*@
 
-		<MudTable Items="@Elements" MultiSelection="true" Hover="true" @bind-SelectedItems="SelectedItems">
-			<ColGroup>
-				<col />
-				<col />
-				<col />
-				<col />
-				<col style="width:150px;" />
-				<col />
-				<col />
-				<col />
-				<col />
-				<col />
-				<col />
-				<col style="width:250px;" />
-				<col style="width:150px;" />
-				<col style="width:150px;" />
-				<col />
-				<col />
-				<col />
-				<col style="width:150px;" />
-			</ColGroup>
+		<MudTable Items="@Elements" Hover="true" Striped="true" Bordered="true" Dense="true" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh></MudTh>
 				<MudTh>Tracking</MudTh>
@@ -146,61 +140,77 @@
 				<MudTh>Verified On</MudTh>
 				<MudTh>Dispatched On</MudTh>
 				<MudTh>Status</MudTh>
-				<MudTh>Hub</MudTh>
+				@*<MudTh>Hub</MudTh>
 				<MudTh>Run Number</MudTh>
-				<MudTh>Last Updated On</MudTh>
+				<MudTh>Last Updated On</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="">
 					@if (!context.ShowDetails)
 					{
-						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.OrderID)" />
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.orderId)" />
 					}
 					else if (context.ShowDetails)
 					{
-						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.OrderID)" />
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.orderId)" />
 					}
 				</MudTd>
-				<MudTd DataLabel="Tracking">@context.Tracking</MudTd>
-				<MudTd DataLabel="Order ID">@context.OrderID</MudTd>
-				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
-				<MudTd DataLabel="Amount">@context.Amount</MudTd>
-				<MudTd DataLabel="Payment Method">@context.PaymentMethod</MudTd>
-				<MudTd DataLabel="Payment Status">@context.PaymentStatus</MudTd>
-				<MudTd DataLabel="To Be Collected">@context.ToBeCollected</MudTd>
-				<MudTd DataLabel="Customer Name">@context.CustomerName</MudTd>
-				<MudTd DataLabel="Phone Number">@context.Phone</MudTd>
-				<MudTd DataLabel="Address">@context.Address</MudTd>
-				<MudTd DataLabel="Verified On">@context.VerificationDate</MudTd>
-				<MudTd DataLabel="Dispatched On">@context.DispatchedDate</MudTd>
-				<MudTd DataLabel="Status">@context.Status</MudTd>
-				<MudTd DataLabel="Hub">@context.HUB</MudTd>
-				<MudTd DataLabel="Run Number">@context.RunNumber</MudTd>
-				<MudTd DataLabel="Last Updated On">@context.LastUpdateDate</MudTd>
+				<MudTd DataLabel="Tracking">@context.trackingCode</MudTd>
+				<MudTd DataLabel="Order ID">@context.trnCode</MudTd>
+				<MudTd DataLabel="Order Date">@context.orderDate</MudTd>
+				<MudTd DataLabel="Amount">@context.amount</MudTd>
+				<MudTd DataLabel="Payment Method">@context.paymentMethod</MudTd>
+				<MudTd DataLabel="Payment Status">@context.paymentStatus</MudTd>
+				<MudTd DataLabel="To Be Collected">@context.tobeCollected</MudTd>
+				<MudTd DataLabel="Customer Name">@context.customerName</MudTd>
+				<MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+				<MudTd DataLabel="Address">@context.address</MudTd>
+				<MudTd DataLabel="Verified On">@context.verifiedDate</MudTd>
+				<MudTd DataLabel="Dispatched On">@context.dispatchDate</MudTd>
+				<MudTd DataLabel="Status">@context.status</MudTd>
+				@*<MudTd DataLabel="Hub">@context.HUB</MudTd>*@
+				@*<MudTd DataLabel="Run Number">@context.ru</MudTd>*@
+				@*<MudTd DataLabel="Last Updated On">@context.up</MudTd>*@
 			</RowTemplate>
 			<ChildRowContent>
 				@if (context.ShowDetails)
 				{
-					<td colspan="17">
+					<td colspan="14">
 						<MudCard Elevation="0">
 							<MudCardContent Class="pa-0">
-								<MudTable Items="@context.Details" Context="DetailsContext" Hover="true" Elevation="0">
-								   <HeaderContent>
+								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
+									<HeaderContent>
 										<MudTh>SKU</MudTh>
 										<MudTh>Product Name</MudTh>
 										<MudTh>Quantity</MudTh>
 										<MudTh>Price</MudTh>
 										<MudTh>Amount</MudTh>
-										<MudTh>Status</MudTh>
-								   </HeaderContent>
-								   <RowTemplate>
-										<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
-										<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
-										<MudTd DataLabel="Quantity">@DetailsContext.QTY</MudTd>
-										<MudTd DataLabel="Price">@DetailsContext.Price</MudTd>
-										<MudTd DataLabel="Amount">@DetailsContext.Amount</MudTd>
-										<MudTd DataLabel="Status">@DetailsContext.Status</MudTd>
-								   </RowTemplate>
+									</HeaderContent>
+									<RowTemplate>
+										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
+										<MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>
+										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
+										<MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
+									</RowTemplate>
+									<FooterContent>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
+											<MudTd colspan="1" Style="text-align: end;">@context.products.total</MudTd>
+										</MudTFootRow>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end;">Discount:</MudTd>
+											<MudTd colspan="1" Style="text-align: end;">@context.products.discount</MudTd>
+										</MudTFootRow>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end;">Shipping Price:</MudTd>
+											<MudTd colspan="1" Style="text-align: end;">@context.products.shippingPrice</MudTd>
+										</MudTFootRow>
+										<MudTFootRow>
+											<MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+											<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@context.products.grandTotal</MudTd>
+										</MudTFootRow>
+									</FooterContent>
 								</MudTable>
 							</MudCardContent>
 						</MudCard>
@@ -215,14 +225,50 @@
 </MudPaper>
 
 @code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetCouriers();
+	}
+
+	// Loading
+	private bool Loading { get; set; }
+
+	// Order Details Filter
+	private OrderDetailsFilterDTO Filter = new OrderDetailsFilterDTO();
+
 	// Table Content
-	private IEnumerable<OrderDetailsDTO> Elements = new List<OrderDetailsDTO>();
-	private HashSet<OrderDetailsDTO> SelectedItems = new HashSet<OrderDetailsDTO>();
+	private List<PendingOrderDTO> Elements = new List<PendingOrderDTO>();
+
+	// Courier List
+	private List<CourierDTO> Couriers = new List<CourierDTO>();
+
+	// Get Couriers
+	private async Task GetCouriers()
+	{
+		Couriers = await _assignOrder.GetCouriers();
+	}
+
+	// Get Order Details
+	private async Task GetOrderDetails()
+	{
+		Loading = true;
+		try
+		{
+			Elements = await _pendingOrder.GetOrderDetails(Filter);
+			Loading = false;
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
 
 	// Show Details
-	private void ShowBtnPress(string orderId)
+	private void ShowBtnPress(int orderId)
 	{
-		OrderDetailsDTO tmpElements = Elements.First(f => f.OrderID == orderId);
+		PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
 	}
 
