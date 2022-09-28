@@ -14,5 +14,8 @@ namespace Carnesia.Application.CMS.Services.ProductList
         Task<List<ProductQuickSettingDTO>> GetAllUnapprovedProducts();
         Task<bool> QuickSetting(ProductQuickSettingUpdateDTO product);
         Task<bool> ApproveProduct(int id);
+        Task<List<ProductListV2DTO>> GetProductsV2(int prev, int next);
+        Task<List<ProductListV2DTO>> GetProductsBySearchV2(ProductListFilterV2DTO Filter);
+        Task<List<ProductListV2DTO>> GetProductsForDownloadV2();
     }
 }

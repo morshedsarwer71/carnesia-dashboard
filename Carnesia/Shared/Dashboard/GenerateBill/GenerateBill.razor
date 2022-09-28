@@ -506,7 +506,7 @@
 	{
 		try
 		{
-			//disableGenerate = true;
+			disableGenerate = true;
 			await AssignData();
 			var result = await _generateBill.NewPOS(POSData);
 
@@ -514,8 +514,6 @@
 			{
 				trnCode = result.trnCode;
 				Snackbar.Add(result.message, Severity.Success);
-				//ResetFields();
-				disableGenerate = false;
 				await GotoPrint(result.trnCode);
 				return;
 			}

@@ -14,7 +14,7 @@
             <MudButton Color="Color.Primary" Variant="CurrentPage == SalesReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(SalesReport)">@SalesReport</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == CustomerProfile ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CustomerProfile)">@CustomerProfile</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateBill ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateBill)">@GenerateBill</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateBillV2 ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateBillV2)">@GenerateBillV2</MudButton>
+            @*<MudButton Color="Color.Primary" Variant="CurrentPage == GenerateBillV2 ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateBillV2)">@GenerateBillV2</MudButton>*@
             <MudButton Color="Color.Primary" Variant="CurrentPage == Orders ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Orders)">@Orders</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == ReturnAndRefund ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReturnAndRefund)">@ReturnAndRefund</MudButton>
         </MudButtonGroup>
@@ -39,7 +39,7 @@
 }else if (CurrentPage == SalesReport)
 {
     <SalesReport />
-}else if (CurrentPage == SalesReport)
+}else if (CurrentPage == GenerateBillV2)
 {
     <GenerateBillV2 />
 }

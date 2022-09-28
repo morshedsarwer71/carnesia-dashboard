@@ -74,6 +74,54 @@ namespace Carnesia.Application.CMS.Services.ProductList
             }
         }
 
+        public async Task<List<ProductListV2DTO>> GetProductsBySearchV2(ProductListFilterV2DTO Filter)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("Products/productlists", Filter);
+
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<List<ProductListV2DTO>>(json);
+
+                return data;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<ProductListV2DTO>> GetProductsForDownloadV2()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<ProductListV2DTO>>("Products/productlists");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<ProductListV2DTO>> GetProductsV2(int prev, int next)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<ProductListV2DTO>>($"Products/productlists/{prev}/{next}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<bool> QuickSetting(ProductQuickSettingUpdateDTO product)
         {
             try
