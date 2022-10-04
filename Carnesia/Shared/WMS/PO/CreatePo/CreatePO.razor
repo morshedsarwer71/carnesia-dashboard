@@ -16,7 +16,7 @@
 @using System.Data
 
 
-<MudPaper Class="pa-16 ma-2" Elevation="1">
+<MudPaper Class="px-3 py-16 ma-2" Elevation="1">
     <MudContainer Fixed="true">
         <MudGrid>
             <MudItem xs="12" sm="6" md="3">
@@ -41,7 +41,7 @@
     </MudContainer>
 </MudPaper>
 
-<MudPaper Class="ps-16 pe-16 pb-16 pt-10 ma-2 mt-10" Elevation="1">
+<MudPaper Class="px-3 py-16 ma-2" Elevation="1">
     <MudContainer Fixed="true">
         <div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
             <MudText Class="px-15 py-2" Typo="Typo.h6">Purchase Order</MudText>
@@ -64,7 +64,7 @@
                 <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Disabled="@(!Success)" OnClick="() => AddProduct(PoProduct)">Add</MudButton>
             </div>
         </MudForm>
-        <MudTable Class="mt-5" Items="@products" Hover="false" Dense="true">
+        <MudTable Class="mt-5" Items="@products" Hover="false" Dense="true" Loading="SingleLoading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh>SKU</MudTh>
                 <MudTh>Product Code</MudTh>
@@ -93,7 +93,7 @@
     </MudContainer>
 </MudPaper>
 
-<MudPaper Class="ps-16 pe-16 pb-16 pt-10 ma-2 mt-10" Elevation="1">
+<MudPaper Class="px-3 py-16 ma-2" Elevation="1">
     <MudContainer Fixed="true">
         <div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
             <MudText Class="px-15 py-2" Typo="Typo.h6">Bulk Purchase Order</MudText>
@@ -114,7 +114,7 @@
             </MudButton>
         </div>
 
-        <MudTable Class="mt-5" Items="@poExcelProducts" Hover="false" Dense="true">
+        <MudTable Class="mt-5" Items="@poExcelProducts" Hover="false" Dense="true" Loading="BulkLoading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh>SKU</MudTh>
                 <MudTh>Code</MudTh>
@@ -154,6 +154,10 @@
     public List<PoProductDTO> products = new List<PoProductDTO>();
     public List<PoProductDTO> poExcelProducts = new List<PoProductDTO>();
 
+    // Loading
+    private bool SingleLoading { get; set; }
+    private bool BulkLoading { get; set; }
+
     // Form Reference
     private MudForm form;
     private bool Success;
@@ -174,14 +178,17 @@
 
     private async Task UploadFiles (InputFileChangeEventArgs e)
     {
+        BulkLoading = true;
         try
         {
             poExcelProducts.Clear();
             poExcelProducts =  await _order.UploadExcelFile(e);
+            BulkLoading = false;
         }
         catch (Exception)
         {
             Console.WriteLine("error");
+            BulkLoading = false;
             throw;
         }
     }
@@ -259,6 +266,7 @@
 
     private async Task AddProduct(PoProductDTO poco)
     {
+        SingleLoading = true;
         if (poco != null)
         {
             var product = await _order.AddProduct(poco);
@@ -273,22 +281,26 @@
                     products[ListIndex].quantity += product.quantity;
                     products[ListIndex].liftingPrice = product.liftingPrice;
                     products[ListIndex].TotalPrice = products[ListIndex].quantity * products[ListIndex].liftingPrice;
+                    SingleLoading = false;
                 }
                 else
                 {
                     products.Add(product);
+                    SingleLoading = false;
                 }
             }
             else
             {
                 snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
                 snackbar.Add("SKU not found", Severity.Error);
+                SingleLoading = false;
             }
         }
         else
         {
             snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
             snackbar.Add("Please add valid product", Severity.Warning);
+            SingleLoading = false;
         }
     }
 

@@ -6,7 +6,7 @@
 @inject ISnackbar Snackbar
 @inject IPurchaseOrder _purchaseOrder
 
-<MudPaper Class="ma-2 pa-16">
+<MudPaper Class="ma-2 py-16 px-3">
 	<MudContainer Fixed="true">
 		<div class="d-flex justify-center mb-5">
             <a href="./BulkUID.xlsx" download target="_top">
@@ -73,6 +73,8 @@
 </MudPaper>
 
 @code {
+    // Loading
+    private bool Loading { get; set; }
     // UID List
     private List<BulkUIDPoco> UIDS = new List<BulkUIDPoco>();
     //private List<BulkUIDPoco> RejectedUIDS = new List<BulkUIDPoco>();
@@ -80,14 +82,17 @@
     // Upload .xlsx
     private async Task UploadFile (InputFileChangeEventArgs e)
     {
+        Loading = true;
         try
         {
             UIDS.Clear();
             UIDS =  await _purchaseOrder.UploadXLSXFile(e);
+            Loading = false;
         }
         catch (Exception)
         {
             Console.WriteLine("Error!");
+            Loading = false;
             throw;
         }
     }
@@ -143,19 +148,23 @@
     // Create Bulk UIDs
     private async Task CreateBulkUIDs()
     {
+        Loading = true;
         try
         {
             var result = await _purchaseOrder.GenerateBulkUID(UIDS);
             if (result)
             {
                 Snackbar.Add("UIDS Generated Successfully!", Severity.Success);
+                Loading = false;
                 return;
             }
             Snackbar.Add("Error While Generating UIDS!", Severity.Error);
+            Loading = false;
         }
         catch (Exception)
         {
             Snackbar.Add("Error While Generating UIDS!", Severity.Error);
+            Loading = false;
             throw;
         }
     }

@@ -10,23 +10,26 @@
 @inject IReceivePO _receivePO
 @inject IDialogService DialogService
 
-<MudPaper Class="pa-16 ma-2" Elevation="0">
-    <MudContainer Fixed="true">
-        <MudPaper Width="400px" Square="true">
-            <MudList Clickable="true">
-                <MudListItem><MudText Typo="Typo.h4">PO ID: @PO.poCode</MudText></MudListItem>
-                <MudDivider />
-                <MudListItem>Supplier: @PO.vendorName</MudListItem>
-                <MudDivider />
-                <MudListItem>Date: @PO.orderDate</MudListItem>
-            </MudList>
-        </MudPaper>
-    </MudContainer>
-</MudPaper>
+@if (!String.IsNullOrEmpty(PO.poCode))
+{
+	<MudPaper Class="py-16 px-3 ma-2" Elevation="0">
+		<MudContainer Fixed="true">
+			<MudPaper Width="400px" Square="true">
+				<MudList Clickable="true">
+					<MudListItem><MudText Typo="Typo.h4">PO ID: @PO.poCode</MudText></MudListItem>
+					<MudDivider />
+					<MudListItem>Supplier: @PO.vendorName</MudListItem>
+					<MudDivider />
+					<MudListItem>Date: @PO.orderDate</MudListItem>
+				</MudList>
+			</MudPaper>
+		</MudContainer>
+	</MudPaper>
+}
 
-<MudPaper Class="pa-16 ma-2">
-    <MudContainer Fixed="true">
-        <MudGrid Class="justify-center align-baseline">
+<MudPaper Class="py-16 px-3 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline">
 			<MudItem md="3">
 				<MudTextField @bind-Value="POID" Label="PO ID" Variant="Variant.Text" />
 			</MudItem>
@@ -37,217 +40,226 @@
 			</MudItem>
 		</MudGrid>
 
-        <div class="mt-5 d-flex justify-end">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Elements.Count <= 0" OnClick="OpenAllPrintLabelDialog">Print All UIDS</MudButton>
-        </div>
+		<div class="mt-5 d-flex justify-end">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Elements.Count <= 0" OnClick="OpenAllPrintLabelDialog">Print All UIDS</MudButton>
+		</div>
 
-        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" SortLabel="Sort By" Class="mt-5">
-            <HeaderContent>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.sku)">SKU Code</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.productCode)">Product Code</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.productName)">Product Name</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.poQuantity)">PO Quantity</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.liftingPrice)">Lifting Price</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.qcPassed)">QC Passed</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.qcFailed)">QC Failed</MudTableSortLabel></MudTh>
-                <MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.notArrivedQty)">Not Arrived</MudTableSortLabel></MudTh>
-                
-                <MudTh>Left generate Qty</MudTh>
-                <MudTh>Value</MudTh>
-                <MudTh>Generate UID</MudTh>
-                <MudTh>Print Label</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="SKU Code">@context.sku</MudTd>
-                <MudTd DataLabel="SKU Code">@context.productCode</MudTd>
-                <MudTd DataLabel="Name">@context.productName</MudTd>
-                <MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
-                <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
-                <MudTd DataLabel="QC Passed">@context.qcPassed</MudTd>
-                <MudTd DataLabel="QC Failed">@context.qcFailed</MudTd>
-                <MudTd DataLabel="Not Arrived">@context.notArrivedQty</MudTd>
-                <MudTd DataLabel="Left UID">@context.leftUIDGnrtQty</MudTd>
-                <MudTd DataLabel="Value">@(@context.qcPassed * @context.liftingPrice)</MudTd>
-                <MudTd DataLabel="Generate UID">
-                    <MudButton Variant="Variant.Filled" Disabled="context.leftUIDGnrtQty <= 0? true : false" Color="Color.Primary" OnClick="()=>OpenGenerateUIDDialog(PO.poCode,context.productCode,context.leftUIDGnrtQty)">Generate UID</MudButton>
-                    @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenPrintLabelDialog">Print Label</MudButton>*@
-                </MudTd>
-                <MudTd DataLabel="Print Label">
-                    @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenGenerateUIDDialog">Generate UID</MudButton>*@
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenPrintLabelDialog(PO.poCode, context.productCode)">Print Label</MudButton>
-                </MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" SortLabel="Sort By" Class="mt-5" Loading="Loading" LoadingProgressColor="Color.Info">
+			<HeaderContent>
+				<MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.sku)">SKU Code</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.productCode)">Product Code</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.productName)">Product Name</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.poQuantity)">PO Quantity</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.liftingPrice)">Lifting Price</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.qcPassed)">QC Passed</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.qcFailed)">QC Failed</MudTableSortLabel></MudTh>
+				<MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.notArrivedQty)">Not Arrived</MudTableSortLabel></MudTh>
 
-        <div class="d-flex flex-wrap mt-4">
-            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
-            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
-        </div>
+				<MudTh>Left generate Qty</MudTh>
+				<MudTh>Value</MudTh>
+				<MudTh>Generate UID</MudTh>
+				<MudTh>Print Label</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="SKU Code">@context.sku</MudTd>
+				<MudTd DataLabel="SKU Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Name">@context.productName</MudTd>
+				<MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
+				<MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
+				<MudTd DataLabel="QC Passed">@context.qcPassed</MudTd>
+				<MudTd DataLabel="QC Failed">@context.qcFailed</MudTd>
+				<MudTd DataLabel="Not Arrived">@context.notArrivedQty</MudTd>
+				<MudTd DataLabel="Left UID">@context.leftUIDGnrtQty</MudTd>
+				<MudTd DataLabel="Value">@(@context.qcPassed * @context.liftingPrice)</MudTd>
+				<MudTd DataLabel="Generate UID">
+					<MudButton Variant="Variant.Filled" Disabled="context.leftUIDGnrtQty <= 0? true : false" Color="Color.Primary" OnClick="()=>OpenGenerateUIDDialog(PO.poCode,context.productCode,context.leftUIDGnrtQty)">Generate UID</MudButton>
+					@*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenPrintLabelDialog">Print Label</MudButton>*@
+				</MudTd>
+				<MudTd DataLabel="Print Label">
+					@*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenGenerateUIDDialog">Generate UID</MudButton>*@
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenPrintLabelDialog(PO.poCode, context.productCode)">Print Label</MudButton>
+				</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
 
-        <div class="mt-5 d-flex justify-end">
-            <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;" OnClick="CreateDocument" Disabled="Elements.Count() <= 0 ? true : false">
-                Download CSV
-            </MudButton>
-        </div>
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
 
-        <MudPaper Width="400px" Square="true" Class="mt-10">
-            <MudList Clickable="true">
-                <MudListItem>Total PO Quantity: 5000</MudListItem>
-                <MudDivider />
-                <MudListItem>Total Quantity Received: 500</MudListItem>
-                <MudDivider />
-                <MudListItem>Total PO Amount: 5000000</MudListItem>
-                <MudDivider />
-                <MudListItem>Total Received Amount: 5000000</MudListItem>
-            </MudList>
-        </MudPaper>
-    </MudContainer>
+		<div class="mt-5 d-flex justify-end">
+			<MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;" OnClick="CreateDocument" Disabled="Elements.Count() <= 0 ? true : false">
+				Download CSV
+			</MudButton>
+		</div>
+
+		<MudPaper Width="400px" Square="true" Class="mt-10">
+			<MudList Clickable="true">
+				<MudListItem>Total PO Quantity: 5000</MudListItem>
+				<MudDivider />
+				<MudListItem>Total Quantity Received: 500</MudListItem>
+				<MudDivider />
+				<MudListItem>Total PO Amount: 5000000</MudListItem>
+				<MudDivider />
+				<MudListItem>Total Received Amount: 5000000</MudListItem>
+			</MudList>
+		</MudPaper>
+	</MudContainer>
 </MudPaper>
 
 @code {
-    // Filter
-    private string POID { get; set; }
 
-    // Search Term
-    private string SearchTerm { get; set; }
+	// Loading
+	private bool Loading { get; set; }
 
-    // Table Customaization
-    private TableCommon tableCommon = new TableCommon();
+	// Filter
+	private string POID { get; set; }
 
-    // Table Content
-    //private List<GenerateUIDListPoco> Elements = new List<GenerateUIDListPoco>();
-    private List<ReceivePOProductDTO> Elements = new List<ReceivePOProductDTO>();
-    private ReceivePODTO PO = new ReceivePODTO();
+	// Search Term
+	private string SearchTerm { get; set; }
 
-    private async Task GetReceivePO()
-    {
-        if (String.IsNullOrEmpty(POID))
-        {
-            Snackbar.Add("Please enter a PO ID!", Severity.Error);
-            return;
-        }
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
 
-        try
-        {
-            PO = await _receivePO.ReceivedPoByCode(POID);
-            if (PO != null)
-            {
-                Elements = PO.products;
-            }
-            else
-            {
-                Snackbar.Add($"{POID} not found", Severity.Warning);
-            }
+	// Table Content
+	//private List<GenerateUIDListPoco> Elements = new List<GenerateUIDListPoco>();
+	private List<ReceivePOProductDTO> Elements = new List<ReceivePOProductDTO>();
+	private ReceivePODTO PO = new ReceivePODTO();
 
-        }
-        catch (Exception)
-        {
-            Snackbar.Add($"{POID} not found", Severity.Warning);
-            //throw;
-        }
-    }
+	private async Task GetReceivePO()
+	{
+		Loading = true;
+		if (String.IsNullOrEmpty(POID))
+		{
+			Snackbar.Add("Please enter a PO ID!", Severity.Error);
+			Loading = false;
+			return;
+		}
 
-    // Search Function
-    //private bool FilterCycleCheck(ReceivePOProductDTO item)
-    //{
-    //if (item.sku.ToLower().Contains(SearchTerm.ToLower()))
-    //{
-    // return true;
-    //}
-    //return false;
-    //}
+		try
+		{
+			PO = await _receivePO.ReceivedPoByCode(POID);
+			if (PO != null)
+			{
+				Elements = PO.products;
+				Loading = false;
+			}
+			else
+			{
+				Snackbar.Add($"{POID} not found", Severity.Warning);
+				Loading = false;
+			}
 
-    // Print Label Modal
-    private void OpenPrintLabelDialog(string poCode, string productCode)
-    {
-        var parameters = new DialogParameters { ["poCode"]=poCode, ["productCode"]=productCode  };
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        DialogService.Show<GenerateUIDPrintLabelModal>("Print Label", parameters, options);
-    }
+		}
+		catch (Exception)
+		{
+			Snackbar.Add($"{POID} not found", Severity.Warning);
+			Loading = false;
+			//throw;
+		}
+	}
 
-    private void OpenAllPrintLabelDialog()
-    {
-        var parameters = new DialogParameters { ["poCode"]=PO.poCode  };
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        DialogService.Show<PoPrintLabelModal>("Print Label", parameters, options);
-    }
+	// Search Function
+	//private bool FilterCycleCheck(ReceivePOProductDTO item)
+	//{
+	//if (item.sku.ToLower().Contains(SearchTerm.ToLower()))
+	//{
+	// return true;
+	//}
+	//return false;
+	//}
 
-    // Print Label Modal
-    private async Task OpenGenerateUIDDialog(string poCode,string productCode, int qty)
-    {
-        var parameter = new DialogParameters();
-        parameter.Add("PoCode", poCode);
-        parameter.Add("ProductCode", productCode);
-        parameter.Add("Qty",qty);
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        var result = await  DialogService.Show<GEnerateUIDGenerateUIDModal>("Generate UID",parameter, options).Result;
-        if(result.Data != null)
-        {
-            await GetReceivePO();
-            //UIDPoco poco = result.Data as UIDPoco;
-            //var results = Elements.FirstOrDefault(x=>x.productCode==poco.productCode);
-            //var s = results.leftUIDGnrtQty - poco.generateuidQty;
-            //results.leftUIDGnrtQty = s;
-            //Elements.Remove(results);            
-            //Elements.Add()
+	// Print Label Modal
+	private void OpenPrintLabelDialog(string poCode, string productCode)
+	{
+		var parameters = new DialogParameters { ["poCode"] = poCode, ["productCode"] = productCode };
+		var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
+		DialogService.Show<GenerateUIDPrintLabelModal>("Print Label", parameters, options);
+	}
 
-        }
-    }
+	private void OpenAllPrintLabelDialog()
+	{
+		var parameters = new DialogParameters { ["poCode"] = PO.poCode };
+		var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
+		DialogService.Show<PoPrintLabelModal>("Print Label", parameters, options);
+	}
 
-    // Create Document
-    private async Task CreateDocument()
-    {
-        using (ExcelEngine excelEngine = new ExcelEngine())
-        {
-            IApplication application = excelEngine.Excel;
-            application.DefaultVersion = ExcelVersion.Xlsx;
+	// Print Label Modal
+	private async Task OpenGenerateUIDDialog(string poCode, string productCode, int qty)
+	{
+		var parameter = new DialogParameters();
+		parameter.Add("PoCode", poCode);
+		parameter.Add("ProductCode", productCode);
+		parameter.Add("Qty", qty);
+		var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
+		var result = await DialogService.Show<GEnerateUIDGenerateUIDModal>("Generate UID", parameter, options).Result;
+		if (result.Data != null)
+		{
+			await GetReceivePO();
+			//UIDPoco poco = result.Data as UIDPoco;
+			//var results = Elements.FirstOrDefault(x=>x.productCode==poco.productCode);
+			//var s = results.leftUIDGnrtQty - poco.generateuidQty;
+			//results.leftUIDGnrtQty = s;
+			//Elements.Remove(results);
+			//Elements.Add()
 
-            //Create a workbook.
-            IWorkbook workbook = application.Workbooks.Create(1);
-            IWorksheet worksheet = workbook.Worksheets[0];
+		}
+	}
 
-            //Initialize DataTable and data get from SampleDataTable method.
-            DataTable table = PODataTable();
+	// Create Document
+	private async Task CreateDocument()
+	{
+		using (ExcelEngine excelEngine = new ExcelEngine())
+		{
+			IApplication application = excelEngine.Excel;
+			application.DefaultVersion = ExcelVersion.Xlsx;
 
-            //Export data from DataTable to Excel worksheet.
-            worksheet.ImportDataTable(table, true, 1, 1);
+			//Create a workbook.
+			IWorkbook workbook = application.Workbooks.Create(1);
+			IWorksheet worksheet = workbook.Worksheets[0];
 
-            worksheet.UsedRange.AutofitColumns();
+			//Initialize DataTable and data get from SampleDataTable method.
+			DataTable table = PODataTable();
 
-            //Save the document as a stream and return the stream.
-            using (MemoryStream stream = new MemoryStream())
-            {
-                //Save the created Excel document to MemoryStream
-                workbook.SaveAs(stream);
+			//Export data from DataTable to Excel worksheet.
+			worksheet.ImportDataTable(table, true, 1, 1);
 
-                //Download the excel file.
-                await JS.SaveAs("PO.xlsx", stream.ToArray());
-            }
-        }
-    }
+			worksheet.UsedRange.AutofitColumns();
 
-    private DataTable PODataTable()
-    {
-        DataTable reports = new DataTable();
-        reports.Columns.Add("POID");
-        reports.Columns.Add("SKU");
-        reports.Columns.Add("ProductName");
-        reports.Columns.Add("ProductCode");
-        reports.Columns.Add("ProfileCode");
-        reports.Columns.Add("LiftingPrice", typeof(decimal));
-        reports.Columns.Add("SkuQty", typeof(int));
-        reports.Columns.Add("QCPassed", typeof(int));
-        reports.Columns.Add("ExpDate");
+			//Save the document as a stream and return the stream.
+			using (MemoryStream stream = new MemoryStream())
+			{
+				//Save the created Excel document to MemoryStream
+				workbook.SaveAs(stream);
 
-        foreach (var item in Elements)
-        {
-            reports.Rows.Add(POID, item.sku, item.productName, item.productCode, null, item.liftingPrice, item.leftUIDGnrtQty, item.qcPassed, "null");
-        }
-        return reports;
-    }
+				//Download the excel file.
+				await JS.SaveAs("PO.xlsx", stream.ToArray());
+			}
+		}
+	}
+
+	private DataTable PODataTable()
+	{
+		DataTable reports = new DataTable();
+		reports.Columns.Add("POID");
+		reports.Columns.Add("SKU");
+		reports.Columns.Add("ProductName");
+		reports.Columns.Add("ProductCode");
+		reports.Columns.Add("ProfileCode");
+		reports.Columns.Add("LiftingPrice", typeof(decimal));
+		reports.Columns.Add("SkuQty", typeof(int));
+		reports.Columns.Add("QCPassed", typeof(int));
+		reports.Columns.Add("ExpDate");
+
+		foreach (var item in Elements)
+		{
+			reports.Rows.Add(POID, item.sku, item.productName, item.productCode, null, item.liftingPrice, item.leftUIDGnrtQty, item.qcPassed, "null");
+		}
+		return reports;
+	}
 }

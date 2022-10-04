@@ -30,7 +30,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" HorizontalScrollbar="true" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" HorizontalScrollbar="true" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>Created on</MudTh>
 				<MudTh>TO ID</MudTh>
@@ -97,6 +97,9 @@
 		await GetTos();
 	}
 
+	// Loading
+	private bool Loading { get; set; }
+
 	// Table Customaization
 	private TableCommon tableCommon = new TableCommon();
 
@@ -106,7 +109,16 @@
 	// Get Manage To
 	private async Task GetTos()
 	{
-		Elements = await _manageTo.GetAllManageTo();
+		Loading = true;
+		try
+		{
+			Elements = await _manageTo.GetAllManageTo();
+			Loading = false;
+		}catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
 	}
 
 	// Generate Picklist ID

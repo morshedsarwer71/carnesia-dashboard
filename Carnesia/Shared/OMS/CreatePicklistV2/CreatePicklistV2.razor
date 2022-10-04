@@ -1,0 +1,248 @@
+﻿@using Carnesia.Domain.OMS.Picklist.CreatePicklist
+@using Carnesia.Domain.OMS.PendingOrder
+@using Carnesia.Domain.OMS.Zones
+@inject IZones _zone
+@inject IOrderPicklist _picklist
+@inject ILocalStorageService _storage
+@inject IJSRuntime IJS
+@inject ISnackbar Snackbar
+
+
+<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+	<MudContainer Fixed="true">
+		<MudGrid>
+			<MudItem lg="3" md="6">
+				<MudTextField @bind-Value="PicklistFilter.trnCode" Label="Order" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDatePicker Label="Form Date" DateFormat="yyyy-MM-dd" @bind-Text="PicklistFilter.fromDate" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudDatePicker Label="To Date" DateFormat="yyyy-MM-dd" @bind-Text="PicklistFilter.toDateDate" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField @bind-Value="PicklistFilter.productCode" Label="Product Code(Separate by Comma)" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudTextField @bind-Value="PicklistFilter.skuPerOrder" Label="SKU Per Order" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect @bind-Value="PicklistFilter.source" Label="Order Source" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("FB Order")" />
+					<MudSelectItem Value="@("Website Order")" />
+					<MudSelectItem Value="@("Admin Order")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect @bind-Value="PicklistFilter.area" Label="Shipping Area" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("Inside Dhaka")" />
+					<MudSelectItem Value="@("Dhaka Suburb")" />
+					<MudSelectItem Value="@("Outside Dhaka")" />
+					<MudSelectItem Value="@("Inside CTG City")" />
+					<MudSelectItem Value="@("Outside CTG City")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem lg="3" md="6">
+				<MudSelect @bind-Value="PicklistFilter.zoneId" Label="Zone" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Zone</MudSelectItem>
+					@foreach (var item in Zones)
+					{
+						<MudSelectItem Value="item.id">@item.zoneName</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			@*<MudItem lg="3" md="6">
+				<MudSelect T="string" Label="Offer Type" AnchorOrigin="Origin.BottomCenter">
+				<MudSelectItem Value="@("Regular")" />
+				<MudSelectItem Value="@("Achomka")" />
+				<MudSelectItem Value="@("Big Sale")" />
+				</MudSelect>
+				</MudItem>*@
+		</MudGrid>
+		<div class="d-flex justify-end mt-3 mb-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetPicklistByFilter">Filter</MudButton>
+		</div>
+
+		<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true" HorizontalScrollbar="true" Loading="Loading" LoadingProgressColor="Color.Info">
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Order Id</MudTh>
+				<MudTh>Source</MudTh>
+				<MudTh>Order Date</MudTh>
+				<MudTh>Consumer Name</MudTh>
+				<MudTh>Customer Phone</MudTh>
+				<MudTh>Area</MudTh>
+				<MudTh>Zone</MudTh>
+				<MudTh>Varified On</MudTh>
+				<MudTh>Order Type</MudTh>
+				<MudTh>Instructions</MudTh>
+				@*<MudTh>Print</MudTh>*@
+				@*<MudTh>CS/Ops Comment</MudTh>*@
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.orderId)" />
+					}
+					else if (context.ShowDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.orderId)" />
+					}
+				</MudTd>
+				<MudTd DataLabel="Order Id">@context.trnCode</MudTd>
+				<MudTd DataLabel="Source">@context.source</MudTd>
+				<MudTd DataLabel="Order Date">@context.orderDate</MudTd>
+				<MudTd DataLabel="Consumer Name">@context.customerName</MudTd>
+				<MudTd DataLabel="Customer Phone">@context.phoneNumber</MudTd>
+				<MudTd DataLabel="Area">@context.area</MudTd>
+				<MudTd DataLabel="Zone">@context.zone</MudTd>
+				<MudTd DataLabel="Varified On">@context.verifiedDate</MudTd>
+				<MudTd DataLabel="Order Type"></MudTd>
+				<MudTd DataLabel="Instructions">@context.instructions</MudTd>
+				@*<MudTd DataLabel="Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
+				</MudTd>*@
+				@*<MudTd DataLabel="CS/Ops Comment">@context.Comment</MudTd>*@
+			</RowTemplate>
+			<ChildRowContent>
+				@if (context.ShowDetails)
+				{
+					<td colspan="12">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Hover="true" Dense="true" Striped="true" Bordered="true" Elevation="0">
+									<HeaderContent>
+										<MudTh>SKU</MudTh>
+										<MudTh>Product Name</MudTh>
+										<MudTh>Quantity</MudTh>
+										<MudTh>Selling Price</MudTh>
+										<MudTh>SubTotal</MudTh>
+									</HeaderContent>
+									<RowTemplate>
+										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
+										<MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>
+										<MudTd DataLabel="Selling Price">@DetailsContext.mrp</MudTd>
+										<MudTd DataLabel="Subtotal">@DetailsContext.totalMrp</MudTd>
+									</RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+
+		<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="GeneratePicklist" Class="me-3">Generate Picklist</MudButton>
+			@*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePickList">Generate</MudButton>*@
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		await GetZones();
+		await GetPicklist();
+	}
+
+	// Loading
+	private bool Loading { get; set; }
+
+	// Table Content
+	private IEnumerable<PendingOrderDTO> Elements = new List<PendingOrderDTO>();
+	private HashSet<PendingOrderDTO> SelectedItems = new HashSet<PendingOrderDTO>();
+
+	// Get Picklist
+	private async Task GetPicklist()
+	{
+		Loading = true;
+		Elements = await _picklist.GetOrders();
+		Loading = false;
+	}
+
+	// Get Picklist By Filter
+	private async Task GetPicklistByFilter()
+	{
+		Loading = true;
+		try
+		{
+			Elements = await _picklist.GetOrdersByFilter(PicklistFilter);
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Loading = false;
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	// Picklist Filter
+	private PicklistFilterDTO PicklistFilter = new PicklistFilterDTO();
+
+	// Zones
+	private List<ZoneDTO> Zones = new List<ZoneDTO>();
+
+	// Get Zones
+	private async Task GetZones()
+	{
+		Zones = await _zone.GetZones();
+	}
+
+	// Generate PickList
+	//private async Task GeneratePickList()
+	//{
+	//	var PickListList = new List<PickListGenerateDTO>();
+
+	//	foreach (var item in SelectedItems)
+	//	{
+	//		PickListList.Add(new PickListGenerateDTO { code = item.trnCode });
+	//	}
+
+	//	await _storage.SetItemAsync<List<PickListGenerateDTO>>("selected-picklist", PickListList);
+	//	await IJS.InvokeAsync<object>("open", new object[] { $"/picklist-print", "_blank" });
+	//}
+
+	private async Task GeneratePicklist()
+	{
+		var PickListList = new List<PickListGenerateDTO>();
+
+		foreach (var item in SelectedItems)
+		{
+			PickListList.Add(new PickListGenerateDTO { code = item.trnCode });
+		}
+
+		try
+		{
+			var result = await _picklist.GeneratePicklist(PickListList);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				return;
+			}
+
+			Snackbar.Add("Picklist generated successfully!", Severity.Success);
+			await GetPicklist();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
+		}
+	}
+
+
+	// Show Details
+	private void ShowBtnPress(int orderId)
+	{
+		PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
+		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+
+}

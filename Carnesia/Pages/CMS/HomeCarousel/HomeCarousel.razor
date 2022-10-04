@@ -14,7 +14,7 @@
 			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="OpenCarouselModal">Add New Carousel</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<HomeCarouselDTO,bool>(FilterFuncInitial)">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<HomeCarouselDTO,bool>(FilterFuncInitial)" Loading="Loading" LoadingProgressColor="Color.Info">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
@@ -31,7 +31,7 @@
                 <MudTd DataLabel="Name">@context.name</MudTd>
                 <MudTd DataLabel="URL">@context.url</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imagePath)" Src="@($"https://carnesialive.bespokeit.io/{context.imagePath}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.imagePath)" Src="@($"https://oshud.com/{context.imagePath}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Publish">
                     <MudSwitch @bind-Checked="context.isPublish" Color="Color.Primary" @onclick="(() => PublishUnpublish(context.id)) " />
@@ -60,6 +60,9 @@
     {
         await GetCarousel();
     }
+
+    // Loading 
+    private bool Loading { get; set; }
 
     // Table Customaization
     private TableCommon tableCommon = new TableCommon();

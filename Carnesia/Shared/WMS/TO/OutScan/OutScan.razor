@@ -3,7 +3,7 @@
 @inject IManageTo _manageTo
 @inject ISnackbar Snackbar
 
-<MudPaper Class="px-3 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudText Class="my-3" Typo="Typo.h3">Picklist: @PickListShow</MudText>
 		<MudGrid Class="justify-center align-baseline">
@@ -22,7 +22,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable Class="mt-5" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>Picklist ID</MudTh>
 				<MudTh>Product Code</MudTh>
@@ -64,6 +64,9 @@
 </MudPaper>
 
 @code {
+	// Loading
+	private bool Loading { get; set; }
+
 	// Table Customization
 	private TableCommon tableCommon = new TableCommon();
 
@@ -103,6 +106,7 @@
 	// Add Products
 	private async Task AddProducts()
 	{
+		Loading = true;
 		try
 		{
 			var result = await _manageTo.GetOutScan(PickListShow, UID);
@@ -112,20 +116,24 @@
 				Elements = result.data;
 				Snackbar.Add(result.message, Severity.Success);
 				UID = String.Empty;
+				Loading = false;
 				return;
 			}
 			Snackbar.Add(result.message, Severity.Error);
+			Loading = false;
 		}
 		catch (Exception e)
 		{
 			Snackbar.Add("Internal server error!", Severity.Error);
 			Console.WriteLine(e.Message);
+			Loading = false;
 		}
 	}
 
 	// Get Products By Picklist
 	private async Task GetProductsByPickList()
 	{
+		Loading = true;
 		try
 		{
 			var result = await _manageTo.GetProductsByPickList(PickListShow);
@@ -134,14 +142,17 @@
 			{
 				Elements = result;
 				Snackbar.Add("Products found by picklist!", Severity.Success);
+				Loading = false;
 				return;
 			}
 			Snackbar.Add("Picklist id is wrong!", Severity.Error);
+			Loading = false;
 		}
 		catch (Exception e)
 		{
 			Snackbar.Add("Internal server error!", Severity.Success);
 			Console.WriteLine(e.Message);
+			Loading = false;
 		}
 	}
 

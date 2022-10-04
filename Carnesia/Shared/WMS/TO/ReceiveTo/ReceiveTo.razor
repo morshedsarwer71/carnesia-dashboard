@@ -4,7 +4,7 @@
 @inject IManageTo _manageTo
 @inject ISnackbar Snackbar
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudText Class="my-3" Typo="Typo.h3">To ID: @ToidShow</MudText>
 		<MudGrid Class="justify-center">
@@ -22,7 +22,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>Product Code</MudTh>
 				<MudTh>SKU Code</MudTh>
@@ -58,6 +58,9 @@
 </MudPaper>
 
 @code {
+	// Loading
+	private bool Loading { get; set; }
+
 	// Toid & Uid
 	private string Toid { get; set; }
 	private string ToidShow { get; set; }
@@ -95,6 +98,7 @@
 	// Add Products
 	private async Task AddProductsByToid()
 	{
+		Loading = true;
 		try
 		{
 			var result = await _manageTo.ReceiveToByToid(Toid);
@@ -105,19 +109,23 @@
 				Snackbar.Add(result.message, Severity.Success);
 				ToidShow = Toid;
 				Toid = String.Empty;
+				Loading = false;
 				return;
 			}
 			Snackbar.Add(result.message, Severity.Error);
+			Loading = false;
 		}
 		catch (Exception e)
 		{
 			Snackbar.Add("Toid not found!", Severity.Error);
 			Console.WriteLine(e.Message);
+			Loading = false;
 		}
 	}
 
 	private async Task AddProductsByUID()
 	{
+		Loading = true;
 		try
 		{
 			var result = await _manageTo.ReceiveToByUID(ToidShow, UID);
@@ -126,14 +134,17 @@
 				Elements = result.data;
 				Snackbar.Add(result.message, Severity.Success);
 				UID = String.Empty;
+				Loading = false;
 				return;
 			}
 			Snackbar.Add(result.message, Severity.Error);
+			Loading = false;
 		}
 		catch (Exception e)
 		{
 			Snackbar.Add("Internal server error!", Severity.Error);
 			Console.WriteLine(e.Message);
+			Loading = false;
 		}
 	}
 

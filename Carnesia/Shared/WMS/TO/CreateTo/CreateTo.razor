@@ -5,7 +5,7 @@
 @inject IStore _store
 @inject ICreateTo _createTo
 
-<MudPaper Class="pa-16 ma-2" Elevation="1">
+<MudPaper Class="py-16 px-3 ma-2" Elevation="1">
 	<MudContainer Fixed="true">
 		<MudGrid Class="justify-center">
 			<MudItem xs="12" sm="6" md="3">
@@ -30,7 +30,7 @@
 	</MudContainer>
 </MudPaper>
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
 			<MudText Class="px-15 py-2" Typo="Typo.h6">Transfer Order</MudText>
@@ -51,7 +51,7 @@
 			</MudButton>
 		</div>
 
-		<MudTable Items="@manualAddProducts" Class="mt-5">
+		<MudTable Items="@manualAddProducts" Class="mt-5" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>SKU</MudTh>
 				<MudTh>Product Name</MudTh>
@@ -80,7 +80,7 @@
 	</MudContainer>
 </MudPaper>
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
 			<MudText Class="px-15 py-2" Typo="Typo.h6">Bulk Transfer Order</MudText>
@@ -160,8 +160,9 @@
 	// Disable Submit
 	private bool DisableSubmit { get; set; }
 
-	// Bulk Loading
+	// Loading
 	private bool BulkLoading { get; set; }
+	private bool Loading { get; set; }
 
 	// Stores ID
 	private int DestinationID { get; set; }
@@ -189,6 +190,7 @@
 	// Get Product For Manual Incert
 	private async Task GetProduct()
 	{
+		Loading = true;
 		try
 		{
 			var result = await _createTo.GetProduct(SourceID, DestinationID, createToInput.sku);
@@ -205,6 +207,7 @@
 					Snackbar.Add(result.message, Severity.Success);
 					createToInput.sku = String.Empty;
 					createToInput.quantity = 0;
+					Loading = false;
 					return;
 				}
 
@@ -213,13 +216,16 @@
 				Snackbar.Add(result.message, Severity.Success);
 				createToInput.sku = String.Empty;
 				createToInput.quantity = 0;
+				Loading = false;
 				return;
 			}
 			Snackbar.Add(result.message, Severity.Error);
+			Loading = false;
 		}
 		catch (Exception)
 		{
 			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			Loading = false;
 		}
 	}
 

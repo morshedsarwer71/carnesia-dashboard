@@ -2,7 +2,7 @@
 @inject IStockRelocation _stock
 @inject ISnackbar Snackbar
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudText Class="my-3" Typo="Typo.h3">Bin: @BinNumberShow</MudText>
 		<MudGrid Class="justify-center">
@@ -20,7 +20,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" Hover="true" Dense="true" Striped="true">
+		<MudTable Items="@Elements" Hover="true" Dense="true" Striped="true" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>#</MudTh>
 				<MudTh>Item Code</MudTh>
@@ -46,6 +46,9 @@
 </MudPaper>
 
 @code {
+	// Loading
+	private bool Loading { get; set; }
+
 	// Uid & Bin
 	private string BinNumber { get; set; }
 	private string BinNumberShow { get; set; }
@@ -81,9 +84,11 @@
 	// Relocate Product
 	private async Task RelocateProduct()
 	{
+		Loading = true;
 		if (String.IsNullOrEmpty(UID) || String.IsNullOrEmpty(BinNumberShow))
 		{
 			Snackbar.Add("Please add both UID & Bin Number!", Severity.Error);
+			Loading = false;
 			return;
 		}
 
@@ -101,20 +106,24 @@
 					Elements[ProductIndex].inputQty += 1;
 					Snackbar.Add(result.message, Severity.Success);
 					UID = String.Empty;
+					Loading = false;
 					return;
 				}
 
 				Elements.Add(result.product);
 				Snackbar.Add(result.message, Severity.Success);
 				UID = String.Empty;
+				Loading = false;
 				return;
 			}
 			Snackbar.Add(result.message, Severity.Error);
+			Loading = false;
 			return;
 		}
 		catch (Exception)
 		{
 			Snackbar.Add("Server Error", Severity.Error);
+			Loading = false;
 		}
 	}
 

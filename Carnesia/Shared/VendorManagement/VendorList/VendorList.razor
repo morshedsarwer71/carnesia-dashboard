@@ -10,9 +10,9 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
-		<MudTable Items="@Vendors" Dense="@table.Dense" Hover="@table.Hover" Bordered="@table.Bordered" Striped="@table.Striped" Filter="new Func<VendorDTO,bool>(FilterFuncInitial)">
+		<MudTable Items="@Vendors" Dense="@table.Dense" Hover="@table.Hover" Bordered="@table.Bordered" Striped="@table.Striped" Filter="new Func<VendorDTO,bool>(FilterFuncInitial)" Loading="Loading" LoadingProgressColor="Color.Info">
 			<ToolBarContent>
 				<MudSpacer />
 				<MudSpacer />
@@ -63,6 +63,9 @@
 </MudPaper>
 
 @code {
+	// Loading
+	private bool Loading { get; set; } = true;
+
 	// Table Content
 	private IEnumerable<VendorDTO> Vendors = new List<VendorDTO>();
 
@@ -72,6 +75,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		Vendors = await _vendor.GetVendorsAsync();
+		Loading = false;
 	}
 
 	// Update Vendor
@@ -104,6 +108,7 @@
 				var result = await _vendor.UpdateVendor(newVendor);
 				if (result == true)
 				{
+					Loading = true;
 					Snackbar.Add("Vendor Updated Successfully!", Severity.Success);
 					await OnInitializedAsync();
 					return;
@@ -121,6 +126,7 @@
 	// Create Document
 	private async Task CreateDocument()
 	{
+		Loading = true;
 		using (ExcelEngine excelEngine = new ExcelEngine())
 		{
 			IApplication application = excelEngine.Excel;
@@ -146,6 +152,7 @@
 
 				//Download the excel file.
 				await JS.SaveAs("Vendors.xlsx", stream.ToArray());
+				Loading = false;
 			}
 		}
 	}

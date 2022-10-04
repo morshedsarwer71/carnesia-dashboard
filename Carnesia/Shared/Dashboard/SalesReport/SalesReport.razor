@@ -40,10 +40,11 @@
 				<MudTh>Total Sales</MudTh>
 				<MudTh>Total Discount</MudTh>
 				<MudTh>Refund</MudTh>
-				<MudTh>Credit Issued</MudTh>
+				@*<MudTh>Credit Issued</MudTh>*@
+				<MudTh>Reveniue After Discount</MudTh>
 				<MudTh>Grand Total</MudTh>
 				<MudTh>Received by Accounts</MudTh>
-				<MudTh>Pending</MudTh>
+				<MudTh>Accounts Receivable</MudTh>
 				<MudTh>Lost Amount</MudTh>
 			</HeaderContent>
 			<RowTemplate>
@@ -55,12 +56,13 @@
 				<MudTd DataLabel="Total Sales">@context.totalSale</MudTd>
 				<MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
 				<MudTd DataLabel="Refund">@context.totalRefund</MudTd>
-				<MudTd DataLabel="Credit Issued">@context.creditUsed</MudTd>
+				@*<MudTd DataLabel="Credit Issued">@context.creditUsed</MudTd>*@
+				<MudTd DataLabel="Reveniue After Discount">@(context.totalSale - context.totalDiscount)</MudTd>
 				<MudTd DataLabel="Grand Total">
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => DetailsModal(context.date.ToString("yyyy-MM-dd"), context.storeId))">@context.grandTotal</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => DetailsModal(context.date.ToString("yyyy-MM-dd"), context.storeId))">@((context.totalSale - context.totalDiscount) - context.totalRefund)</MudButton>
 				</MudTd>
 				<MudTd DataLabel="Received by Accounts">@context.rcvdByAccountsAmnt</MudTd>
-				<MudTd DataLabel="Pending">@context.pendingAmount</MudTd>
+				<MudTd DataLabel="Accounts Receivable">@(((context.totalSale - context.totalDiscount) - context.totalRefund) - context.rcvdByAccountsAmnt)</MudTd>
 				<MudTd DataLabel="Lost Amount">@context.lostAmount</MudTd>
 			</RowTemplate>
 			<FooterContent>
@@ -73,10 +75,10 @@
 					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalSale)</MudTd>
 					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalDiscount)</MudTd>
 					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalRefund)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.creditUsed)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.grandTotal)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalSale - x.totalDiscount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => (x.totalSale - x.totalDiscount) - x.totalRefund)</MudTd>
 					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.rcvdByAccountsAmnt)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.pendingAmount)</MudTd>
+					<MudTd Style="font-weight: 600;">@Elements.Sum(x => ((x.totalSale - x.totalDiscount) - x.totalRefund) - x.rcvdByAccountsAmnt)</MudTd>
 					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.lostAmount)</MudTd>
 				</MudTFootRow>
 			</FooterContent>

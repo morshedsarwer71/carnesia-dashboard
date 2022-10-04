@@ -6,14 +6,14 @@
 @inject IPurchaseOrder _order
 @inject IVendor _vendor
 
-<MudPaper Class="pa-16 ma-2 mt-10" Elevation="1">
+<MudPaper Class="py-16 px-3 ma-2" Elevation="1">
 	<MudContainer Fixed="true">
 		<MudGrid Class="justify-center align-baseline">
 			<MudItem md="2">
 				<MudTextField @bind-Value="filterInput.POID" Label="PO ID" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="2">
-				<MudAutocomplete T="string" Label="Supplier" Value="filterInput.SupplierName" ValueChanged="(string s) => GetSupplierId(s)" SearchFunc="@SupplierSearch"						 ResetValueOnEmptyText="@true"/>
+				<MudAutocomplete T="string" Label="Supplier" Value="filterInput.SupplierName" ValueChanged="(string s) => GetSupplierId(s)" SearchFunc="@SupplierSearch" ResetValueOnEmptyText="@true"/>
 			</MudItem>
 			<MudItem md="2">
 				<MudSelect @bind-Value="filterInput.Status" Label="Status" AnchorOrigin="Origin.BottomCenter">
@@ -32,7 +32,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Class="mt-10" Items="@poList" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable Class="mt-10" Items="@poList" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>Date</MudTh>
 				<MudTh>PO ID</MudTh>
@@ -71,6 +71,9 @@
 </MudPaper>
 
 @code {
+	// Loading
+	private bool Loading { get; set; } = true;
+
 	// Filter Class
 	public POFilterPoco filterInput = new POFilterPoco();
 	DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.Date);
@@ -78,12 +81,13 @@
 	public List<POListPoco> poList = new List<POListPoco>();
 
 	// Table Customaization
-    private TableCommon tableCommon = new TableCommon();
+	private TableCommon tableCommon = new TableCommon();
 
 	protected override async Task OnInitializedAsync()
 	{
 		poList = await _order.GetPoList();
 		await GetVendors();
+		Loading = false;
 	}
 
 	// Suppliers

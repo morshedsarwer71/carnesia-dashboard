@@ -11,7 +11,7 @@
 
 @attribute [Authorize]
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
     <MudContainer Fixed="true">
         <MudGrid Class="justify-center align-baseline mb-5">
             <MudItem md="2">
@@ -35,7 +35,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddBinModal" >Add New Bin</MudButton>
         </div>
 
-        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh>BIN</MudTh>
                 <MudTh>Status</MudTh>
@@ -81,6 +81,9 @@
 </MudPaper>
 
 @code {
+    // Loading
+    private bool Loading { get; set; } = true;
+
     // Table Customization
     private TableCommon tableCommon = new TableCommon();
 
@@ -96,6 +99,7 @@
     {
         stores = await _store.GetStoreNameAsString();
         Elements = await _bin.GetBins();
+        Loading = false;
     }
 
     private async Task<IEnumerable<string>> StoreSearch(string value)
@@ -105,17 +109,20 @@
 
     private async Task<List<GetBinDTO>> Filter()
     {
+        Loading = true;
         try
         {
             var store = await _store.GetStore(warehouse);
             storeId = store.storeId;
             Elements.Clear();
             Elements = await _bin.GetBinSearch(binName, storeId, status);
+            Loading = false;
             return Elements;
         }
         catch
         {
             return null;
+            Loading = false;
         }
     }
 
@@ -156,6 +163,7 @@
                 var result = await _bin.AddBin(newBin);
                 if (result != null)
                 {
+                    Loading = true;
                     Snackbar.Add("New Bin Created Successfully!", Severity.Success);
                     await OnInitializedAsync();
                     return;
@@ -188,6 +196,7 @@
                 var result = await _bin.UpdateBin(newBin);
                 if (result)
                 {
+                    Loading = true;
                     Snackbar.Add("Bin Updated Successfully!", Severity.Success);
                     await OnInitializedAsync();
                     return;

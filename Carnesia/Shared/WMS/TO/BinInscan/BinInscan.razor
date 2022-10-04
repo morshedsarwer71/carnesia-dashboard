@@ -4,7 +4,7 @@
 @inject ISnackbar _snackbar
 
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
 			<MudText Class="px-15 py-2" Typo="Typo.h6">Bin Inscan</MudText>
@@ -25,7 +25,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@SingleBin" Hover="true">
+		<MudTable Items="@SingleBin" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>#</MudTh>
 				<MudTh>Product Code</MudTh>
@@ -43,14 +43,14 @@
 				<MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
 				<MudTd DataLabel="BIN">@context.binName</MudTd>
 				@*<MudTd DataLabel="Image">
-					<MudImage Src="@($"https://carnesialive.bespokeit.io/{context.url}")" Width="50" Height="50" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg" />
+					<MudImage Src="@($"https://oshud.com/{context.url}")" Width="50" Height="50" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg" />
 					</MudTd>*@
 			</RowTemplate>
 		</MudTable>
 	</MudContainer>
 </MudPaper>
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
 			<MudText Class="px-15 py-2" Typo="Typo.h6">Bulk Bin Inscan</MudText>
@@ -96,6 +96,10 @@
 </MudPaper>
 
 @code {
+	// Loading
+	private bool Loading { get; set; }
+
+	//
 	public string BinNumber { get; set; }
 	public string BinNumberUse { get; set; }
 	public string PoCode { get; set; }
@@ -108,6 +112,7 @@
 	// Get Single Bin
 	private async Task GetSingleBinInscan()
 	{
+		Loading = true;
 		try
 		{
 			var result = await _binInscan.GetSingleBinInscan(UID, BinNumberUse);
@@ -122,6 +127,7 @@
 					SingleBin[ProductIndex].inputQty += 1;
 					_snackbar.Add(result.message, Severity.Success);
 					UID = String.Empty;
+					Loading = false;
 					return;
 				}
 
@@ -130,15 +136,18 @@
 				SingleBin.Add(result.Product);
 				_snackbar.Add(result.message, Severity.Success);
 				UID = String.Empty;
+				Loading = false;
 				return;
 			}
 
 			_snackbar.Add(result.message, Severity.Error);
+			Loading = false;
 
 		}
 		catch (Exception)
 		{
 			_snackbar.Add("Something went wrong!", Severity.Error);
+			Loading = false;
 		}
 	}
 
