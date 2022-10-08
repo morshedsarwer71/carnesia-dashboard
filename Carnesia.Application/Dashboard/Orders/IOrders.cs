@@ -10,6 +10,6 @@ namespace Carnesia.Application.Dashboard.Orders
     public interface IOrders
     {
         Task<List<OrderDTO>> GetOrders();
-        Task<List<OrderDTO>> GetOrdersBySearch(string searchTearm);
+        Task<List<OrderDTO>> GetOrdersBySearch(OrderFilterDTO filter);
     }
 }

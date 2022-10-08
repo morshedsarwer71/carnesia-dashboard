@@ -14,11 +14,11 @@
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="NavigateToCreateCampaign" >Add New Campaign</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<CampaignDTO,bool>(FilterFuncInitial)" >
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<CampaignDTO,bool>(FilterFuncInitial)" Loading="Loading" LoadingProgressColor="Color.Info" >
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
+                <MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh>Campaign Name</MudTh>
@@ -36,7 +36,7 @@
                 <MudTd DataLabel="Start Date">@context.startDate</MudTd>
                 <MudTd DataLabel="End Date">@context.endDate</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imageWebUrl)" Src="@($"https://oshud.com/{context.imageWebUrl}")" Alt="@context.campaignName" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.imageWebUrl)" Src="@($"http://carnesiapanelapi.carnesia.com/{context.imageWebUrl}")" Alt="@context.campaignName" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Publish">
                     <MudSwitch @bind-Checked="@context.isPublish" Color="Color.Primary" @onclick="(() => TogglePublish(context.id))"/>
@@ -69,6 +69,9 @@
         await GetCampaigns();
     }
 
+    // Loading
+    private bool Loading { get; set; }
+
     // Table Customaization
     private TableCommon tableCommon = new TableCommon();
 
@@ -78,7 +81,16 @@
     // Get Campaigns
     private async Task GetCampaigns()
     {
-        Elements = await _campaign.GetCampaigns();
+        Loading = true;
+        try
+        {
+            Elements = await _campaign.GetCampaigns();
+            Loading = false;
+        }catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Loading = false;
+        }
     }
 
     // Toggle Publish
@@ -87,19 +99,18 @@
         try
         {
             var result = await _campaign.Publishtoggle(id);
-            Snackbar.Add("Published Changed!", Severity.Success);
             if (result)
             {
                 Snackbar.Add("Published Changed!", Severity.Success);
                 await GetCampaigns();
                 return;
             }
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            Snackbar.Add("Toggle failed!", Severity.Error);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-            throw;
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal server error!", Severity.Error);
         }
     }
 
@@ -109,19 +120,18 @@
         try
         {
             var result = await _campaign.ToggleHomePlacement(id);
-
             if (result)
             {
                 Snackbar.Add("Campaign Toggled Successfully!", Severity.Success);
                 await GetCampaigns();
                 return;
             }
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
+            Snackbar.Add("Toggle failed!", Severity.Error);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            Snackbar.Add("Something Went Wrong!", Severity.Error);
-            throw;
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal server error!", Severity.Error);
         }
     }
 

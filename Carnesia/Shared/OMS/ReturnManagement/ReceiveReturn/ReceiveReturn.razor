@@ -9,31 +9,35 @@
 
 		<MudText Typo="Typo.h3">Order ID: @orderIdShow</MudText>
 
-		<MudGrid>
-			<MudItem md="6">
+		<MudGrid Class="justify-center">
+			<MudItem sm="4">
 				<MudTextField @bind-Value="orderId" Label="Scan Order ID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddOrder" />
 			</MudItem>
-			<MudItem md="6">
+			<MudItem sm="4">
 				<MudTextField @bind-Value="uid" Label="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddUID" />
+			</MudItem>
+			<MudItem sm="8">
+				<MudRadioGroup @bind-SelectedOption="ReturnType" Class="mt-3">
+					<MudRadio Option="false" Color="Color.Primary" Dense="true">Received</MudRadio>
+					<MudRadio Option="true" Color="Color.Primary" Dense="true">Damaged</MudRadio>
+				</MudRadioGroup>
+			</MudItem>
+			<MudItem sm="8">
+				<div class="d-flex justify-end mt-5">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+		</div>
 			</MudItem>
 		</MudGrid>
 
-		<MudRadioGroup @bind-SelectedOption="ReturnType" Class="mt-3">
-			<MudRadio Option="false" Color="Color.Primary" Dense="true">Received</MudRadio>
-			<MudRadio Option="true" Color="Color.Primary" Dense="true">Damaged</MudRadio>
-		</MudRadioGroup>
-
-		<div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
-		</div>
+		
 
 
 		@*<MudText Typo="Typo.h6" Class="mt-5">Order Info.</MudText>
-		<MudText>Order ID: 123456</MudText>
-		<MudText>Order Date: 12-Feb-2022 2:00:00 PM</MudText>
-		<MudText>Packing Date: 13-Feb-2022 12:00:00 PM</MudText>
-		<MudText>Dispatched Date: 13-Feb-2022 6:00:00 PM</MudText>
-		<MudText>SLA: Breached</MudText>*@
+			<MudText>Order ID: 123456</MudText>
+			<MudText>Order Date: 12-Feb-2022 2:00:00 PM</MudText>
+			<MudText>Packing Date: 13-Feb-2022 12:00:00 PM</MudText>
+			<MudText>Dispatched Date: 13-Feb-2022 6:00:00 PM</MudText>
+			<MudText>SLA: Breached</MudText>*@
 
 		<MudTable Class="mt-5" Items="@Elements" Hover="true">
 			<HeaderContent>
@@ -44,8 +48,8 @@
 				<MudTh>Picked Qty</MudTh>
 				<MudTh>Returned Qty</MudTh>
 				@*<MudTh>Received</MudTh>
-				<MudTh>Damaged</MudTh>
-				<MudTh>Missing</MudTh>*@
+					<MudTh>Damaged</MudTh>
+					<MudTh>Missing</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="SKU">@context.sku</MudTd>
@@ -53,12 +57,12 @@
 				<MudTd DataLabel="Quantity">@context.totalQty</MudTd>
 				@*<MudTd DataLabel="Image">
 					<MudImage Style="width: 150px;" Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg" />
-				</MudTd>*@
+					</MudTd>*@
 				<MudTd DataLabel="Picked Qty">@context.totalPickedQty</MudTd>
 				<MudTd DataLabel="Returned Qty">@context.totalReturnQty</MudTd>
 				@*<MudTd DataLabel="Received">@context.Received</MudTd>
-				<MudTd DataLabel="Damaged">@context.Damaged</MudTd>
-				<MudTd DataLabel="Missing">@context.Missing</MudTd>*@
+					<MudTd DataLabel="Damaged">@context.Damaged</MudTd>
+					<MudTd DataLabel="Missing">@context.Missing</MudTd>*@
 			</RowTemplate>
 		</MudTable>
 
@@ -122,7 +126,7 @@
 			Elements = result.pickPacks;
 			Snackbar.Add(result.message, Severity.Success);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal server error!", Severity.Error);
@@ -146,7 +150,7 @@
 			Snackbar.Add(result.message, Severity.Success);
 			uid = String.Empty;
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal server error!", Severity.Error);

@@ -102,7 +102,7 @@
 				<MudTd DataLabel="Instructions">@context.instructions</MudTd>
 				@*<MudTd DataLabel="Print">
 					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
-				</MudTd>*@
+					</MudTd>*@
 				@*<MudTd DataLabel="CS/Ops Comment">@context.Comment</MudTd>*@
 			</RowTemplate>
 			<ChildRowContent>
@@ -162,8 +162,16 @@
 	private async Task GetPicklist()
 	{
 		Loading = true;
-		Elements = await _picklist.GetOrders();
-		Loading = false;
+		try
+		{
+			Elements = await _picklist.GetOrders();
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
 	}
 
 	// Get Picklist By Filter

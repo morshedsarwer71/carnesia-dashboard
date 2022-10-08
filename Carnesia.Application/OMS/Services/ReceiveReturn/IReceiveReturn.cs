@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Carnesia.Domain.OMS.PickPack;
+using Carnesia.Domain.OMS.ReturnManagement.PendingReturn;
 
 namespace Carnesia.Application.OMS.Services.ReceiveReturn
 {
@@ -11,5 +12,7 @@ namespace Carnesia.Application.OMS.Services.ReceiveReturn
 	{
 		Task<PickPackDTO> GetOrderDetails(string orderId);
 		Task<PickPackDTO> ReturnItem(string orderId, string uid, bool returnType);
+		Task<List<PendingReturnDTO>> GetPendingReturns();
+		Task<List<PendingReturnDTO>> GetPendingReturnsByFilter(PendingReturnsFilterDTO filter);
 	}
 }

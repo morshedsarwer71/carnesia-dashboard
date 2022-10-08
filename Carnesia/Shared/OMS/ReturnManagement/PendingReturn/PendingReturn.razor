@@ -1,33 +1,41 @@
 ﻿@using Carnesia.Domain.OMS.ReturnManagement.PendingReturn
+@using Carnesia.Domain.OMS.AssignDelivery.Dispatch
+@inject IAssignOrder _assignOrder
+@inject IReceiveReturn _receiveReturn
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudGrid>
 			<MudItem md="3" sm="6">
-				<MudTextField T="string" Label="Order ID" Variant="Variant.Text"/>
+				<MudTextField @bind-Value="Filter.orderCode" Label="Order ID" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="3" sm="6">
-				<MudSelect T="string" Label="Courier" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("Own Fleet")" />
-					<MudSelectItem Value="@("REDX")" />
-					<MudSelectItem Value="@("E-Courier")" />
+				<MudSelect @bind-Value="Filter.courierId" Label="Courier" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Courier</MudSelectItem>
+					@foreach (var item in Couriers)
+					{
+						<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+					}
 				</MudSelect>
 			</MudItem>
 			<MudItem md="3" sm="6">
-				<MudAutocomplete T="string" Label="Delivery Receiver" ResetValueOnEmptyText="true" />
+				<MudTextField @bind-Value="Filter.delivedryRcvId" Label="Delivery Receiver" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="3" sm="6">
-				<MudDateRangePicker Label="Return Date" />
+				<MudDatePicker Label="From" @bind-Date="Filter.returnFromDate"/>
+			</MudItem>
+			<MudItem md="3" sm="6">
+				<MudDatePicker Label="To" @bind-Date="Filter.returnToDate"/>
 			</MudItem>
 		</MudGrid>
 
-		<div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+		<div class="d-flex justify-end my-3">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => GetOrdersByFilter()">Filter</MudButton>
 		</div>
 
-		<MudTable Items="@Elements">
+		<MudTable Items="@Elements" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
-				<MudTh></MudTh>
+				@*<MudTh></MudTh>*@
 				<MudTh>Order ID</MudTh>
 				<MudTh>Order Date</MudTh>
 				<MudTh>Return Date</MudTh>
@@ -36,7 +44,7 @@
 				<MudTh>Amount</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="">
+				@*<MudTd DataLabel="">
 					@if (!context.ShowDetails)
 					{
 						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.OrderID)" />
@@ -45,15 +53,15 @@
 					{
 						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.OrderID)" />
 					}
-				</MudTd>
-				<MudTd DataLabel="Order ID">@context.OrderID</MudTd>
-				<MudTd DataLabel="Order Date">@context.OrderDate</MudTd>
-				<MudTd DataLabel="Return Date">@context.ReturnDate</MudTd>
-				<MudTd DataLabel="Selling Price">@context.Price</MudTd>
-				<MudTd DataLabel="Receivable Qty.">@context.QTY</MudTd>
-				<MudTd DataLabel="Amount">@context.Amount</MudTd>
+				</MudTd>*@
+				<MudTd DataLabel="Order ID">@context.orderCode</MudTd>
+				<MudTd DataLabel="Order Date">@context.orderDate</MudTd>
+				<MudTd DataLabel="Return Date">@context.returnDate</MudTd>
+				<MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+				<MudTd DataLabel="Receivable Qty.">@context.totalQty</MudTd>
+				<MudTd DataLabel="Amount">@context.amount</MudTd>
 			</RowTemplate>
-			<ChildRowContent>
+			@*<ChildRowContent>
 				@if (context.ShowDetails)
 				{
 					<td colspan="7">
@@ -73,7 +81,7 @@
 						</MudCard>
 					</td>
 				}
-			</ChildRowContent>
+			</ChildRowContent>*@
 			<PagerContent>
 				<MudTablePager />
 			</PagerContent>
@@ -82,13 +90,66 @@
 </MudPaper>
 
 @code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetOrders();
+		await GetCouriers();
+	}
+
+	// Loading 
+	private bool Loading { get; set; }
+
 	// Table Content
-	private IEnumerable<PendingReturnDTO> Elements = new List<PendingReturnDTO>();
+	private List<PendingReturnDTO> Elements = new List<PendingReturnDTO>();
+
+	// Filter
+	private PendingReturnsFilterDTO Filter = new PendingReturnsFilterDTO();
+
+	// Get Orders
+	private async Task GetOrders()
+	{
+		Loading = true;
+		try
+		{
+			Elements = await _receiveReturn.GetPendingReturns();
+			Loading = false;
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+
+	private async Task GetOrdersByFilter()
+	{
+		Loading = true;
+		try
+		{
+			Elements = await _receiveReturn.GetPendingReturnsByFilter(Filter);
+			Loading = false;
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+
+	// Courier List
+	private List<CourierDTO> Couriers = new List<CourierDTO>();
+
+	// Get Couriers
+	private async Task GetCouriers()
+	{
+		Couriers = await _assignOrder.GetCouriers();
+	}
 
 	// Show Details
 	private void ShowBtnPress(string orderId)
 	{
-		PendingReturnDTO tmpElements = Elements.First(f => f.OrderID == orderId);
+		PendingReturnDTO tmpElements = Elements.First(f => f.orderCode == orderId);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
 	}
 }

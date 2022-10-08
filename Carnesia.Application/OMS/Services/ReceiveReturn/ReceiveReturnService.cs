@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
+using Carnesia.Domain.OMS.ReturnManagement.PendingReturn;
 
 namespace Carnesia.Application.OMS.Services.ReceiveReturn
 {
@@ -30,7 +31,38 @@ namespace Carnesia.Application.OMS.Services.ReceiveReturn
 			}
 		}
 
-		public async Task<PickPackDTO> ReturnItem(string orderId, string uid, bool returnType)
+        public async Task<List<PendingReturnDTO>> GetPendingReturns()
+        {
+            try
+            {
+				var result = await _httpClient.GetFromJsonAsync<List<PendingReturnDTO>>("Oms/pendingreturns");
+				return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<PendingReturnDTO>> GetPendingReturnsByFilter(PendingReturnsFilterDTO filter)
+        {
+            try
+            {
+				var result = await _httpClient.PostAsJsonAsync("Oms/getpendingreturns", filter);
+
+				var json = await result.Content.ReadAsStringAsync();
+				var data = JsonConvert.DeserializeObject<List<PendingReturnDTO>>(json);
+				return data;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<PickPackDTO> ReturnItem(string orderId, string uid, bool returnType)
 		{
 			try
 			{

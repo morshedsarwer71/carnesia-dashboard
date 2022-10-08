@@ -74,13 +74,13 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://oshud.com/api/") });
+//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://carnesiapanelapi.carnesia.com/api/") });
 
 //meesagehandler
 
 builder.Services.AddHttpClient("RetailSuite", client =>
 {
-    client.BaseAddress = new Uri("https://oshud.com/api/");
+    client.BaseAddress = new Uri("http://carnesiapanelapi.carnesia.com/api/");
 }).AddHttpMessageHandler<AuthorizationMessageHandler>();
 
 builder.Services.RemoveAll<IHttpMessageHandlerBuilderFilter>();

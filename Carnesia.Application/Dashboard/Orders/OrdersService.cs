@@ -31,13 +31,16 @@ namespace Carnesia.Application.Dashboard.Orders
             }
         }
 
-        public async Task<List<OrderDTO>> GetOrdersBySearch(string searchTearm)
+        public async Task<List<OrderDTO>> GetOrdersBySearch(OrderFilterDTO filter)
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<List<OrderDTO>>($"Pos/posorders/{searchTearm}");
+                var result = await _httpClient.PostAsJsonAsync("Pos/posordersfilter", filter);
 
-                return result;
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<List<OrderDTO>>(json);
+
+                return data;
             }
             catch (Exception)
             {
