@@ -41,6 +41,8 @@ namespace Carnesia.Domain.WMS.BinInscan
         public string ProductCode { get; set; }
         public string productName { get; set; }
         public int binSKUStockQty { get; set; }
+        public int physicalQty { get; set; }
+        public int availableQty { get; set; }
         public string binName { get; set; }
         public string? expDate { get; set; }
     }
