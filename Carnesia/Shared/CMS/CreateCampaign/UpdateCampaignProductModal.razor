@@ -10,6 +10,7 @@
 				<MudSelectItem Value="@("Percent")" />
 			</MudSelect>
 			<MudNumericField @bind-Value="FormData.discAmount" Max="@(FormData.discType == "Percent" ? 99 : FormData.regularPrice)" Label="Discount Amount" Variant="Variant.Text" Required="true" RequiredError="Discount Amount is required!" />
+			<MudNumericField @bind-Value="FormData.maxOrderQty" Label="Max Order Quantity" Required="true" RequiredError="Max order quantity is required!" />
 			<div class="d-flex justify-end my-5">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
 			</div>

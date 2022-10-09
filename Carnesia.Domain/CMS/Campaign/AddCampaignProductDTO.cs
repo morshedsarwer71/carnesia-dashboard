@@ -12,6 +12,7 @@ namespace Carnesia.Domain.CMS.Campaign
         public int comboId { get; set; }
         public bool isCombo { get; set; }
         public int stock { get; set; }
+        public int maxOrderQty { get; set; }
         public string campaignCode { get; set; }
         public string sku { get; set; }
         public string productName { get; set; }

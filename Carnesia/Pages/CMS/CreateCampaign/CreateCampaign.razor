@@ -68,6 +68,7 @@
                         <MudTh>Discount Type</MudTh>
                         <MudTh>Discount Amount</MudTh>
                         <MudTh>After Discount</MudTh>
+                        <MudTh>Max Order Quantity</MudTh>
                         <MudTh>Is Combo</MudTh>
                         <MudTh>Action</MudTh>
                     </HeaderContent>
@@ -79,6 +80,7 @@
                         <MudTd DataLabel="Discount Type">@context.discType</MudTd>
                         <MudTd DataLabel="Discount Amount">@context.discAmount</MudTd>
                         <MudTd DataLabel="After Discount">@context.discPrice</MudTd>
+                        <MudTd DataLabel="Max Order Quantity">@context.maxOrderQty</MudTd>
                         <MudTd DataLabel="Is Combo">@context.isCombo</MudTd>
                         <MudTd DataLabel="Action">
                             <MudButton OnClick="() => RemoveProduct(context)" >

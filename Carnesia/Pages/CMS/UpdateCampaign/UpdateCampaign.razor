@@ -71,6 +71,7 @@
                     <MudTh>Discount Type</MudTh>
                     <MudTh>Discount Amount</MudTh>
                     <MudTh>After Discount</MudTh>
+                    <MudTh>Max Order Quantity</MudTh>
                     <MudTh>Is Combo</MudTh>
                     <MudTh>Action</MudTh>
                 </HeaderContent>
@@ -82,6 +83,7 @@
                     <MudTd DataLabel="Discount Type">@context.discType</MudTd>
                     <MudTd DataLabel="Discount Amount">@context.discAmount</MudTd>
                     <MudTd DataLabel="After Discount">@context.atrDiscAmount</MudTd>
+                    <MudTd DataLabel="Max Order Quantity">@context.maxOrderQty</MudTd>
                     <MudTd DataLabel="Is Combo">@context.isCombo</MudTd>
                     <MudTd DataLabel="Action">
                         <MudButton Disabled="context.isCombo" OnClick="() => OpenUpdateModal(context)" >
@@ -293,7 +295,8 @@
                 stock = newProduct.stock,
                 regularPrice = newProduct.regularPrice,
                 isCombo = newProduct.isCombo,
-                comboId = newProduct.comboId
+                comboId = newProduct.comboId,
+                maxOrderQty = newProduct.maxOrderQty
             };
 
             try

@@ -97,7 +97,25 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
 			}
 		}
 
-		public async Task<bool> VerifyOrder(int orderId)
+        public async Task<List<PendingOrderDTO>> GetPendingOrdersByFilter(PendingOrderFilterDTO filter)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("Oms/pendingorderfilter", filter);
+
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<List<PendingOrderDTO>>(json);
+
+                return data;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> VerifyOrder(int orderId)
         {
             try
             {

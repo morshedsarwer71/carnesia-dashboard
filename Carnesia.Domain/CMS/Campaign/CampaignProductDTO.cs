@@ -21,6 +21,7 @@ namespace Carnesia.Domain.CMS.Campaign
         public decimal weight { get; set; }
         public bool isCombo { get; set; }
         public int comboId { get; set; }
+        public int maxOrderQty { get; set; }
     }
 
     public class CampaignProductUpdateDTO
@@ -32,6 +33,7 @@ namespace Carnesia.Domain.CMS.Campaign
         public decimal discPrice { get; set; }
         public int stock { get; set; }
         public int comboId { get; set; }
+        public int maxOrderQty { get; set; }
         public bool isCombo { get; set; }
     }
 }

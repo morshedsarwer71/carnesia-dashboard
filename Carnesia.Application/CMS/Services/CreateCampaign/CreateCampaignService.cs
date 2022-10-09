@@ -152,6 +152,7 @@ namespace Carnesia.Application.CMS.Services.CreateCampaign
                     var sku = row.Field<string>("SKU");
                     var discType = row.Field<string>("DiscountType");
                     var stock = Convert.ToInt32(row.Field<string>("Stock"));
+                    var maxOrderQty = Convert.ToInt32(row.Field<string>("MaxBuy"));
                     var regularPrice = Convert.ToDecimal(row.Field<string>("RegularPrice"));
                     var discAmount = Convert.ToDecimal(row.Field<string>("DiscountAmount"));
 
@@ -161,7 +162,8 @@ namespace Carnesia.Application.CMS.Services.CreateCampaign
                         discType = discType,
                         regularPrice = regularPrice,
                         discAmount = discAmount,
-                        stock = stock
+                        stock = stock,
+                        maxOrderQty = maxOrderQty
                     };
                     Console.WriteLine(pop);
                     Products.Add(pop);

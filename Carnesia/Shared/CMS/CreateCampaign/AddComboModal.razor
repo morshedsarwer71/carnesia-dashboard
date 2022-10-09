@@ -12,6 +12,7 @@
 				}
 			</MudSelect>
 			<MudNumericField @bind-Value="FormData.stock" Label="Stock" Variant="Variant.Text" Required="true" RequiredError="Stock is required!" />
+			<MudNumericField @bind-Value="FormData.maxOrderQty" Label="Max Order Quantity" Required="true" RequiredError="Max order quantity is required!" />
 			<div class="d-flex justify-end my-5">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="!success || comboValue == 0" Class="ml-auto" OnClick="SetCombo">Submit</MudButton>
 			</div>

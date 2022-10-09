@@ -9,17 +9,17 @@
 <MudPaper Class="py-16 px-3 ma-10">
 	<MudContainer Fixed="true">
 		<MudGrid Class="align-baseline mb-5">
-			<MudItem md="4">
-				<MudTextField T="string" Label="Order Id" Variant="Variant.Text" />
+			<MudItem md="3">
+				<MudTextField @bind-Value="Filter.trnCode" Label="Order Id" Variant="Variant.Text" />
 			</MudItem>
-			<MudItem md="4">
-				<MudTextField T="string" Label="Customer Name" Variant="Variant.Text" />
+			<MudItem md="3">
+				<MudTextField @bind-Value="Filter.customerName" Label="Customer Name" Variant="Variant.Text" />
 			</MudItem>
-			<MudItem md="4">
-				<MudTextField T="string" Label="Customer Phone Number" Variant="Variant.Text" />
+			<MudItem md="3">
+				<MudTextField @bind-Value="Filter.phoneNumber" Label="Customer Phone Number" Variant="Variant.Text" />
 			</MudItem>
-			<MudItem md="4">
-				<MudSelect T="string" Label="Shipphing Area" AnchorOrigin="Origin.BottomCenter">
+			<MudItem md="3">
+				<MudSelect @bind-Value="Filter.area" Label="Shipphing Area" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="@("Inside Dhaka")" />
 					<MudSelectItem Value="@("Dhaka Suburb")" />
 					<MudSelectItem Value="@("Outside Dhaka")" />
@@ -27,11 +27,16 @@
 					<MudSelectItem Value="@("Outside CTG City")" />
 				</MudSelect>
 			</MudItem>
-			<MudItem md="4">
-				<MudAutocomplete T="string" Label="Agent" ResetValueOnEmptyText="true" />
-			</MudItem>
-			<MudItem md="4">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			@*<MudItem md="3">
+				<MudSelect @bind-Value="Filter.i" Label="Select Agent" AnchorOrigin="Origin.BottomCenter">
+					@foreach (var item in Agents)
+					{
+						<MudSelectItem Value="item.id">@item.name</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>*@
+			<MudItem xs="12" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetOrdersByFilter">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -95,7 +100,7 @@
 				</MudTd>
 				@*<MudTd DataLabel="Print">
 					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
-				</MudTd>*@
+					</MudTd>*@
 			</RowTemplate>
 			<ChildRowContent>
 				@if (context.ShowDetails)
@@ -164,12 +169,38 @@
 	private List<PendingOrderDTO> Elements = new List<PendingOrderDTO>();
 	private HashSet<PendingOrderDTO> SelectedItems = new HashSet<PendingOrderDTO>();
 
+	// Filter Order
+	private PendingOrderFilterDTO Filter = new PendingOrderFilterDTO();
+
 	// Get Orders
 	private async Task GetOrders()
 	{
 		tableLoading = true;
-		Elements = await _pendingOrder.GetAllPendingOrders();
-		tableLoading = false;
+		try
+		{
+			Elements = await _pendingOrder.GetAllPendingOrders();
+			tableLoading = false;
+		}
+		catch(Exception e)
+		{
+			tableLoading = false;
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	private async Task GetOrdersByFilter()
+	{
+		tableLoading = true;
+		try
+		{
+			Elements = await _pendingOrder.GetPendingOrdersByFilter(Filter);
+			tableLoading = false;
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			tableLoading = false;
+		}
 	}
 
 	// Assign Agent
@@ -281,9 +312,9 @@
 	}
 
 	// Navigate To Order Edit
-    private void NavigateToOrderEdit(string trncode)
-    {
-        NavigationManager.NavigateTo($"order-edit/{trncode}");
-    }
+	private void NavigateToOrderEdit(string trncode)
+	{
+		NavigationManager.NavigateTo($"order-edit/{trncode}");
+	}
 
 }
