@@ -21,12 +21,12 @@
 		<MudGrid Class="justify-center">
 			<MudItem sm="8">
 				<div class="my-3 d-flex justify-end">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunDispatch">Submit</MudButton>
-		</div>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RunDispatch">Submit</MudButton>
+				</div>
 			</MudItem>
 		</MudGrid>
 
-		
+
 
 		<MudTable Items="@Elements" Hover="true" Dense="true" Bordered="true" Striped="true" HorizontalScrollbar="true" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
@@ -242,9 +242,15 @@
 
 	private async Task RunDispatch()
 	{
+		if (String.IsNullOrEmpty(DispatchData.disPatchType))
+		{
+			Snackbar.Add("Please select delivery action!", Severity.Error);
+			return;
+		}
+
 		if (!String.IsNullOrEmpty(DispatchData.orderId))
 		{
-			if (DispatchData.disPatchType == "Confirm")
+			if (DispatchData.disPatchType == "Delivered")
 			{
 				await ConfirmDelivery(DispatchData.orderId);
 				return;
@@ -257,7 +263,7 @@
 	// Scan Class
 	public class ScanClass
 	{
-		public string disPatchType { get; set; } = "Confirm";
+		public string disPatchType { get; set; }
 		public string orderId { get; set; }
 	}
 }

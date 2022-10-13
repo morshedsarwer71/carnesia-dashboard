@@ -39,7 +39,7 @@ namespace Carnesia.Application.OMS.Services.Dispatch
 		{
 			try
 			{
-                var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/canceldelivery/{orderId}");
+                var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/returndelivery/{orderId}");
 
                 return result;
 			}
