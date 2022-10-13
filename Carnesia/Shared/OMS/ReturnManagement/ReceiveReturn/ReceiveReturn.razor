@@ -16,12 +16,12 @@
 			<MudItem sm="4">
 				<MudTextField @bind-Value="uid" Label="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddUID" />
 			</MudItem>
-			<MudItem sm="8">
+			@*<MudItem sm="8">
 				<MudRadioGroup @bind-SelectedOption="ReturnType" Class="mt-3">
 					<MudRadio Option="false" Color="Color.Primary" Dense="true">Received</MudRadio>
 					<MudRadio Option="true" Color="Color.Primary" Dense="true">Damaged</MudRadio>
 				</MudRadioGroup>
-			</MudItem>
+			</MudItem>*@
 			<MudItem sm="8">
 				<div class="d-flex justify-end mt-5">
 			<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>

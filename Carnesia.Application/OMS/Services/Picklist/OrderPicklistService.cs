@@ -20,6 +20,21 @@ namespace Carnesia.Application.OMS.Services.Picklist
             _httpClient = httpClient;
         }
 
+        public async Task<PickPackDTO> ConfirmPicklist(string pickCode)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/confirmpicklist/{pickCode}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<PickPackDTO> GeneratePicklist(List<PickListGenerateDTO> orderIDS)
         {
             try

@@ -23,6 +23,7 @@
 				<MudTh>Number of Orders</MudTh>
 				<MudTh>Created By</MudTh>
 				<MudTh>Created On</MudTh>
+				<MudTh>Confirm</MudTh>
 				<MudTh>Action</MudTh>
 				<MudTh>Print</MudTh>
 			</HeaderContent>
@@ -36,12 +37,15 @@
 				<MudTd DataLabel="Number of Orders">@context.numberOfOrders</MudTd>
 				<MudTd DataLabel="Created By">@context.generateBy</MudTd>
 				<MudTd DataLabel="Created On">@context.date</MudTd>
+				<MudTd DataLabel="Confirm">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="() => ConfirmPicklist(context.pickListCode)">Confirm Picklist</MudButton>
+				</MudTd>
 				<MudTd DataLabel="Action">
-					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveOrderModal(context.pickListCode)">Remove Order</MudButton>
-					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.pickListCode)">Print</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="() => RemoveOrderModal(context.pickListCode)">Remove Order</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Info" Size="Size.Small" OnClick="() => GotoPrint(context.pickListCode)">Print</MudButton>
 				</MudTd>
 				<MudTd DataLabel="Print">
-					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoInvoicePrint(context.pickListCode)">Invoice</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Info" Size="Size.Small" OnClick="() => GotoInvoicePrint(context.pickListCode)">Invoice</MudButton>
 				</MudTd>
 			</RowTemplate>
 			<PagerContent>
@@ -122,6 +126,29 @@
 				Console.WriteLine(e.Message);
 				Snackbar.Add("Internal server error!", Severity.Error);
 			}
+		}
+	}
+
+	// Confirm Picklist
+	private async Task ConfirmPicklist(string pickCode)
+	{
+		try
+		{
+			var result = await _picklist.ConfirmPicklist(pickCode);
+
+			if (result.message != "Success")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				return;
+			}
+
+			Snackbar.Add(result.message, Severity.Success);
+			await GetGeneratedPicklist();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal server error!", Severity.Error);
 		}
 	}
 	// Goto Print

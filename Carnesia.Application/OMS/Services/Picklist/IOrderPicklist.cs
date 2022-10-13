@@ -18,5 +18,6 @@ namespace Carnesia.Application.OMS.Services.Picklist
         Task<PickPackDTO> GeneratePicklist(List<PickListGenerateDTO> orderIDS);
         Task<List<GeneratedPicklistDTO>> GetGeneratedPiclist();
         Task<PickPackDTO> RemoveOrderFromPicklist(RemoveFromPicklistDTO order);
+        Task<PickPackDTO> ConfirmPicklist(string pickCode);
     }
 }
