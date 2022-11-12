@@ -35,15 +35,15 @@ namespace Carnesia.Application.OMS.Services.Picklist
             }
         }
 
-        public async Task<PickPackDTO> GeneratePicklist(List<PickListGenerateDTO> orderIDS)
+        public async Task<bool> GeneratePicklist(List<PickListGenerateDTO> orderIDS)
         {
             try
             {
                 var result = await _httpClient.PostAsJsonAsync("Oms/generatepicklist", orderIDS);
 
-                var json = await result.Content.ReadAsStringAsync();
-                var data = JsonConvert.DeserializeObject<PickPackDTO>(json);
-                return data;
+                if (result.IsSuccessStatusCode) return true;
+
+                return false;
             }
             catch (Exception e)
             {

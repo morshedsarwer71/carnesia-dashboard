@@ -88,5 +88,21 @@ namespace Carnesia.Application.CRM.Services.Vouchers.GeneralVoucher
                 throw;
             }
         }
+
+        public async Task<bool> UpdateGeneralVoucher(UpdateVoucherDTO voucher)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"Voucher/general/{voucher.generalVId}", voucher);
+
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

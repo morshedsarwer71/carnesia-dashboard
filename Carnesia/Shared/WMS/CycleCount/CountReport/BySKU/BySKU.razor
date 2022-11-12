@@ -23,23 +23,29 @@
 				<MudTh>SKU</MudTh>
 				<MudTh>Product Name</MudTh>
 				<MudTh>BIN</MudTh>
+				<MudTh>Last Count Date</MudTh>
 				<MudTh>Available Qty</MudTh>
 				<MudTh>Found</MudTh>
 				<MudTh>Missing</MudTh>
+				<MudTh>Close</MudTh>
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="SKU">@context.SKU</MudTd>
 				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
 				<MudTd DataLabel="BIN">@context.BIN</MudTd>
+				<MudTd DataLabel="Last Count Date"></MudTd>
 				<MudTd DataLabel="Available Qty">@context.AvailableQTY</MudTd>
 				<MudTd DataLabel="Fount">@context.Found</MudTd>
 				<MudTd DataLabel="Missing">@context.Missing</MudTd>
+				<MudTd DataLabel="Close">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Close</MudButton>
+				</MudTd>
 			</RowTemplate>
 		</MudTable>
 
-		<div class="d-flex justify-end mt-5">
+		@*<div class="d-flex justify-end mt-5">
 			<MudButton Variant="Variant.Filled" Color="Color.Primary">Close</MudButton>
-		</div>
+		</div>*@
 	</MudContainer>
 </MudPaper>
 

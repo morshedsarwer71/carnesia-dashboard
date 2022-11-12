@@ -1,0 +1,144 @@
+﻿@page "/create-campaign-section/{campId:int}"
+
+@using Carnesia.Domain.CMS.CampaignSection
+@using Carnesia.Shared.CMS.CampaignSection
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject ICampaignSection _section
+
+
+<MudPaper Class="ma-2 px-3 py-16">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudGrid Class="justify-center">
+				<MudItem sm="6">
+					<MudTextField @bind-Value="FormData.name" Label="Section Name" Required="true" RequiredError="Section name is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudSelect @bind-Value="FormData.alignment" @onblur="() => ClearThumbs()" Label="Alignment" ReadOnly="!String.IsNullOrEmpty(FormData.alignment)" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Alignment is required!">
+						<MudSelectItem Value="@("8*1")" />
+						<MudSelectItem Value="@("12*1")" />
+						<MudSelectItem Value="@("3*2")" />
+						<MudSelectItem Value="@("4*2")" />
+						<MudSelectItem Value="@("6*2")" />
+					</MudSelect>
+				</MudItem>
+			</MudGrid>
+
+			<div class="d-flex justify-end my-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" Disabled="String.IsNullOrEmpty(FormData.alignment)" OnClick="OpenAddThumbModal">Add Thumbs</MudButton>
+			</div>
+
+			<MudTable Items="@Thumbs" Hover="true" Dense="true">
+				<HeaderContent>
+					<MudTh>Name</MudTh>
+					<MudTh>Link</MudTh>
+					<MudTh>Image</MudTh>
+					<MudTh>Action</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="Name">@context.name</MudTd>
+					<MudTd DataLabel="Link">@context.url</MudTd>
+					<MudTd DataLabel="Image">
+						<MudImage Src="@($"data:image/webp;base64,{context.base64}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:100px;" />
+					</MudTd>
+					<MudTd DataLabel="Action">
+						<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveThumbs(context)">Delete</MudButton>
+					</MudTd>
+				</RowTemplate>
+			</MudTable>
+
+			<div class="d-flex align-center justify-space-between mt-6">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateNewSection">Submit</MudButton>
+			</div>
+		</MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	[Parameter]
+	public int campId { get; set; }
+
+	// Form ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+
+	// Section
+	private CampaignSectionDTO FormData = new CampaignSectionDTO();
+
+	// Thumbs
+	private List<CampaignSectionThumbsDTO> Thumbs = new List<CampaignSectionThumbsDTO>();
+
+	// Remove Thumbs
+	private void RemoveThumbs(CampaignSectionThumbsDTO thumb)
+	{
+		Thumbs.Remove(thumb);
+	}
+
+	// Clear Thumbs
+	private void ClearThumbs()
+	{
+		Thumbs.Clear();
+	}
+
+	// Add Thumb
+	private async Task OpenAddThumbModal()
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new CampaignSectionThumbsDTO());
+		parameters.Add("Alignment", FormData.alignment);
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<AddCampaignThumbsModal>("Add New Thumb", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			CampaignSectionThumbsDTO newThumb = dialog.Data as CampaignSectionThumbsDTO;
+
+			Thumbs.Add(newThumb);
+		}
+	}
+
+	// Create Section
+	private async Task CreateNewSection()
+	{
+		string[] allignmentArray = FormData.alignment.Split("*");
+		int sum = 1;
+		Array.ForEach(allignmentArray, delegate (string i) { sum = sum * int.Parse(i); });
+
+		if (Thumbs.Count == 0)
+		{
+			Snackbar.Add("Please Add Thumbs!", Severity.Error);
+			return;
+		}
+
+		if (Thumbs.Count != sum)
+		{
+			Snackbar.Add($"Please Add or Remove Thumbs to Match {FormData.alignment}!", Severity.Error);
+			return;
+		}
+
+		FormData.thumbs = Thumbs;
+		FormData.campaignId = campId;
+
+		try
+		{
+			var result = await _section.CreateNewCampaignBunch(FormData);
+			if (result)
+			{
+				Snackbar.Add("Campaign Section Created Successfully!", Severity.Success);
+				form.Reset();
+				FormData = new CampaignSectionDTO();
+				Thumbs.Clear();
+				return;
+			}
+			Snackbar.Add("Section creation failed!", Severity.Error);
+		}
+		catch (Exception)
+		{
+			Snackbar.Add("Internal server error!", Severity.Error);
+			throw;
+		}
+	}
+}

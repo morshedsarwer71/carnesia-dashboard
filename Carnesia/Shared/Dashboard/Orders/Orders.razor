@@ -7,10 +7,10 @@
 	<MudContainer Fixed="true">
 		<MudGrid>
 			<MudItem sm="3">
-				<MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" />
+				<MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" DateFormat="yyyy-MM-dd" />
 			</MudItem>
 			<MudItem sm="3">
-				<MudDatePicker Label="To Date" @bind-Date="Filter.toDate" />
+				<MudDatePicker Label="To Date" @bind-Date="Filter.toDate" DateFormat="yyyy-MM-dd" />
 			</MudItem>
 			<MudItem sm="3">
 				<MudTextField @bind-Value="Filter.phoneNumber" Placeholder="Customer Phone Number" Variant="Variant.Text" />

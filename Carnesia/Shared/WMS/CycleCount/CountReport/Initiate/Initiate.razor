@@ -1,0 +1,86 @@
+﻿@page "/initiates"
+@using Carnesia.Domain.WMS.Store.Models
+@using Carnesia.Domain.WMS.Initiate
+@inject IStore _store
+@inject IProjects _projects
+@inject ISnackbar Snackbar
+
+<MudPaper Class="ma-2 px-3 py-16">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center">
+			<MudItem sm="4">
+				<MudSelect @bind-Value="NewProject.storeId" Label="Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Store</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="4">
+				<MudSelect @bind-Value="NewProject.projectType" Label="Type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("BIN")"/>
+					<MudSelectItem Value="@("SKU")"/>
+					<MudSelectItem Value="@("PO")"/>
+				</MudSelect>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center">
+			<MudItem sm="8">
+				<div class="d-flex justify-end">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => CreateNewProjects()" Disabled="NewProject.storeId <= 0">Submit</MudButton>
+				</div>
+			</MudItem>
+		</MudGrid>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetStores();
+	}
+
+	// Initiate 
+	private InitiateDTO NewProject = new InitiateDTO();
+
+	// Stores
+	private List<StoreDTO> Stores = new List<StoreDTO>();
+
+	// Create New Projects
+	private async Task CreateNewProjects()
+	{
+		try
+		{
+			var result = await _projects.NewProjects(NewProject);
+
+			if (result)
+			{
+				Snackbar.Add("New Project Created Successfully!", Severity.Success);
+				NewProject = new InitiateDTO();
+				return;
+			}
+			Snackbar.Add("New Project Creation Failed!", Severity.Error);
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal Server Error!", Severity.Error);
+		}
+	}
+
+	// Get Stores
+	private async Task GetStores()
+	{
+		try
+		{
+			Stores = await _store.GetStoresAsync();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+		}
+	}
+}

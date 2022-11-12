@@ -22,6 +22,7 @@
                 <MudTh>MRP</MudTh>
                 <MudTh>Discount</MudTh>
                 <MudTh>Discount Type</MudTh>
+                <MudTh>Last Publish/Unpublish Date</MudTh>
                 <MudTh>Edit</MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -31,6 +32,7 @@
                 <MudTd DataLabel="MRP">@context.mrp</MudTd>
                 <MudTd DataLabel="Discount">@context.discount</MudTd>
                 <MudTd DataLabel="Discount Type">@(context.isPercent ? "Percent" : "Cash")</MudTd>
+                <MudTd DataLabel="Last Publish/Unpublish Date"></MudTd>
                 <MudTd DataLabel="Edit">
                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateModal(context)">Edit</MudButton>
                 </MudTd>

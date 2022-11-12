@@ -1,0 +1,157 @@
+﻿@page "/Upload-customer"
+
+@using NPOI.XSSF.UserModel
+@using NPOI.SS.UserModel
+@using System.Data
+@inject HttpClient _http
+@inject ISnackbar Snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<div class="my-3">
+			<InputFile id="fileInput" hidden accept=".xlsx" OnChange="UploadFile" />
+			<MudButton HtmlTag="label"
+					   Variant="Variant.Filled"
+					   Color="Color.Primary"
+					   StartIcon="@Icons.Filled.CloudUpload"
+					   Class="me-3"
+					   for="fileInput">
+				Upload File
+			</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="SubmitChanges">Submit</MudButton>
+		</div>
+
+		<MudTable Items="@Customers" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info" Dense="true">
+			<HeaderContent>
+				<MudTh>Name</MudTh>
+				<MudTh>Username</MudTh>
+				<MudTh>Phone Number</MudTh>
+				<MudTh>Credit Value</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Name">@context.name</MudTd>
+				<MudTd DataLabel="Username">@context.username</MudTd>
+				<MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+				<MudTd DataLabel="Credit Value">@context.creditValue</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+		<MudText Typo="Typo.h5" Class="mt-3">Rejected Customers</MudText>
+		<MudTable Items="@CancelledCustomers" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info" Dense="true">
+			<HeaderContent>
+				<MudTh>Name</MudTh>
+				<MudTh>Username</MudTh>
+				<MudTh>Phone Number</MudTh>
+				<MudTh>Credit Value</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Name">@context.name</MudTd>
+				<MudTd DataLabel="Username">@context.username</MudTd>
+				<MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+				<MudTd DataLabel="Credit Value">@context.creditValue</MudTd>
+			</RowTemplate>
+		</MudTable>
+		<div class="mt-3">
+			<DownloadRejectedCustomer CancelledCustomers="CancelledCustomers" />
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	private bool Loading { get; set; }
+	private List<CustomerUpload> Customers = new List<CustomerUpload>();
+	private List<CustomerUpload> CancelledCustomers = new List<CustomerUpload>();
+
+	// Upload Files
+	private async Task UploadFile(InputFileChangeEventArgs e)
+	{
+		Loading = true;
+		Customers.Clear();
+		try
+		{
+			DataTable dt = new DataTable();
+			var fileStream = e.File.OpenReadStream();
+			var ms = new MemoryStream();
+			await fileStream.CopyToAsync(ms);
+			fileStream.Close();
+			ms.Position = 0;
+			ISheet sheet;
+			var xsswb = new XSSFWorkbook(ms);
+			sheet = xsswb.GetSheetAt(0);
+			IRow hr = sheet.GetRow(0);
+			var rl = new List<string>();
+			int cc = hr.LastCellNum;
+
+			for (int j = 0; j < cc; j++)
+			{
+				ICell cell = hr.GetCell(j);
+				dt.Columns.Add(cell.ToString());
+			}
+			for (int j = (sheet.FirstRowNum + 1); j <= sheet.LastRowNum; j++)
+			{
+				var r = sheet.GetRow(j);
+				for (int i = r.FirstCellNum; i < cc; i++)
+				{
+					rl.Add(r.GetCell(i).ToString());
+				}
+				if (rl.Count > 0)
+				{
+					dt.Rows.Add(rl.ToArray());
+				}
+				rl.Clear();
+			}
+
+			foreach (DataRow row in dt.Rows)
+			{
+				var name = row.Field<string>("Name");
+				var username = row.Field<string>("UserName");
+				var phoneNumber = row.Field<string>("PhoneNumber");
+				var creditValue = Convert.ToInt32(row.Field<string>("CreditValue"));
+
+				var pop = new CustomerUpload()
+					{
+						name = name,
+						username = username,
+						password = phoneNumber,
+						phoneNumber = phoneNumber,
+						creditValue = creditValue
+					};
+				Customers.Add(pop);
+			}
+			Loading = false;
+		}
+		catch (Exception er)
+		{
+			Console.WriteLine(er.Message);
+			Loading = false;
+		}
+	}
+
+	// Submit
+	private async Task SubmitChanges()
+	{
+		Loading = true;
+		foreach (var item in Customers)
+		{
+			try
+			{
+				var result = await _http.PostAsJsonAsync("Authentication/register-customer", item);
+
+				if (!result.IsSuccessStatusCode)
+				{
+					CancelledCustomers.Add(item);
+					StateHasChanged();
+				}
+			}
+			catch (Exception e)
+			{
+				//Console.WriteLine($"GUID:{item.customerGuid}, ID:{item.customerId}");
+
+				Console.WriteLine(e.Message);
+
+			}
+		}
+		Snackbar.Add("Complete", Severity.Success);
+		Loading = false;
+	}
+}

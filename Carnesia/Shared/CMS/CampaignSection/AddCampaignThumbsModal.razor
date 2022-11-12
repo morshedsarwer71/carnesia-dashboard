@@ -1,0 +1,100 @@
+﻿@using Carnesia.Domain.CMS.CampaignSection
+@inject IBase64 _base64
+
+<MudDialog>
+	<DialogContent>
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudTextField @bind-Value="FormData.name" Label="Thumb Name" Required="true" RequiredError="Thumb Name is required!" />
+			<MudTextField @bind-Value="FormData.url" Label="Link" Required="true" RequiredError="Link is required!" />
+
+			<InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
+			<MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5" Required="true">
+				Upload Banner Images
+			</MudButton>
+			@if (Alignment == "12*1")
+			{
+				<MudText>100 * 100(.webp only. Max 50Kb.)</MudText>
+			}
+			else if (Alignment == "8*1")
+			{
+				<MudText>100 * 100(.webp only. Max 50Kb.)</MudText>
+			}
+			else
+			{
+				<MudText>600 * 420(.webp only. Max 100Kb.)</MudText>
+			}
+
+			<br />
+			<MudText Color="Color.Error">@ImageError</MudText>
+			<MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+
+			<div class="d-flex justify-end my-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="AddThumb" Class="ml-auto">Submit</MudButton>
+			</div>
+		</MudForm>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	[Parameter]
+	public CampaignSectionThumbsDTO FormData { get; set; } = new CampaignSectionThumbsDTO();
+
+	[Parameter]
+	public string Alignment { get; set; }
+
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+
+	// Image SRC
+	private string ImageSRC { get; set; }
+
+	// Image Error
+	private string ImageError { get; set; }
+
+	// Image Validation
+	private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
+	{
+		ImageError = String.Empty;
+		try
+		{
+			if (Alignment == "12*1")
+			{
+				ImageSRC = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
+				FormData.base64 = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
+			}
+			else if (Alignment == "8*1")
+			{
+				ImageSRC = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
+				FormData.base64 = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
+			}
+			else
+			{
+				ImageSRC = await _base64.ConvertToBase64(102400, 600, 420, ImageFile);
+				FormData.base64 = await _base64.ConvertToBase64(102400, 600, 420, ImageFile);
+			}
+		}
+		catch (Exception e)
+		{
+			ImageError = e.Message;
+		}
+	}
+
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<CampaignSectionThumbsDTO>(FormData));
+
+	// Create Banner
+	private void AddThumb()
+	{
+		if (String.IsNullOrEmpty(FormData.base64))
+		{
+			ImageError = "Please upload an image!";
+			return;
+		}
+
+		Submit();
+	}
+}

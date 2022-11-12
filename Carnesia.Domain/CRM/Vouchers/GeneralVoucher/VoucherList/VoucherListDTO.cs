@@ -11,10 +11,11 @@ namespace Carnesia.Domain.CRM.Vouchers.GeneralVoucher.VoucherList
         public int generalVId { get; set; }
         public string gvCode { get; set; }
         public int numOfVoucher { get; set; }
+        public int numberOfUsege { get; set; }
         public string startDate { get; set; }
-        public string startTime { get; set; }
+        public TimeSpan? startTime { get; set; }
         public string endDate { get; set; }
-        public string endTime { get; set; }
+        public TimeSpan? endTime { get; set; }
         public decimal minCartAmount { get; set; }
         public string platformType { get; set; }
         public string voucherDiscType { get; set; }
@@ -24,5 +25,21 @@ namespace Carnesia.Domain.CRM.Vouchers.GeneralVoucher.VoucherList
         public string approvedBy { get; set; }
         public string description { get; set; }
         public bool isEnable { get; set; }
+    }
+
+    public class UpdateVoucherDTO
+    {
+        public int generalVId { get; set; }
+        public string gvCode { get; set; }
+        public int numOfVoucher { get; set; }
+        public string startDate { get; set; }
+        public string endDate { get; set; }
+        public decimal minCartAmount { get; set; }
+        public string platformType { get; set; }
+        public string voucherDiscType { get; set; }
+        public decimal discAmntOrPercent { get; set; }
+        public decimal upToDiscAmnt { get; set; }
+        public string description { get; set; }
+        public int numberOfUsege { get; set; }
     }
 }

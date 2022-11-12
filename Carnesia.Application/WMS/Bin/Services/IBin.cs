@@ -16,5 +16,6 @@ namespace Carnesia.Application.WMS.Bin.Services
         Task<Response> ChangeStatus(int binId);
         Task<BinDTO> GetSingleBin(int id);
         Task<bool> UpdateBin(BinDTO bin);
+        string ReturnImageBase();
     }
 }

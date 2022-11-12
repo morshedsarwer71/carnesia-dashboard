@@ -8,7 +8,7 @@
 @inject ISnackbar Snackbar
 
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudGrid>
 			<MudItem lg="3" md="6">
@@ -138,7 +138,7 @@
 		</MudTable>
 
 		<div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="GeneratePicklist" Class="me-3">Generate Picklist</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="me-3">Generate Picklist</MudButton>
 			@*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePickList">Generate</MudButton>*@
 		</div>
 	</MudContainer>
@@ -208,34 +208,34 @@
 	//	await IJS.InvokeAsync<object>("open", new object[] { $"/picklist-print", "_blank" });
 	//}
 
-	private async Task GeneratePicklist()
-	{
-		var PickListList = new List<PickListGenerateDTO>();
+	//private async Task GeneratePicklist()
+	//{
+	//	var PickListList = new List<PickListGenerateDTO>();
 
-		foreach (var item in SelectedItems)
-		{
-			PickListList.Add(new PickListGenerateDTO { code = item.trnCode });
-		}
+	//	foreach (var item in SelectedItems)
+	//	{
+	//		PickListList.Add(new PickListGenerateDTO { code = item.trnCode });
+	//	}
 
-		try
-		{
-			var result = await _picklist.GeneratePicklist(PickListList);
+	//	try
+	//	{
+	//		var result = await _picklist.GeneratePicklist(PickListList);
 
-			if (result.message != "Success")
-			{
-				Snackbar.Add(result.message, Severity.Error);
-				return;
-			}
+	//		if (result.message != "Success")
+	//		{
+	//			Snackbar.Add(result.message, Severity.Error);
+	//			return;
+	//		}
 
-			Snackbar.Add("Picklist generated successfully!", Severity.Success);
-			await GetPicklist();
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-			Snackbar.Add("Internal server error!", Severity.Error);
-		}
-	}
+	//		Snackbar.Add("Picklist generated successfully!", Severity.Success);
+	//		await GetPicklist();
+	//	}
+	//	catch (Exception e)
+	//	{
+	//		Console.WriteLine(e.Message);
+	//		Snackbar.Add("Internal server error!", Severity.Error);
+	//	}
+	//}
 
 
 	// Show Details

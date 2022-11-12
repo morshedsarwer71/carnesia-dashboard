@@ -36,9 +36,9 @@
 			<th class="table-cell">Bin Number</th>
 			<th class="table-cell">Remarks</th>
 		</tr>
-		@if (Items.Count > 0)
+		@if (Items.Count() > 0)
 		{
-			foreach (var item in Picklist.bins)
+			foreach (var item in Items)
 			{
 				sl++;
 				<tr style="font-size: 12px;">
@@ -83,13 +83,21 @@
 
 	// Picklist
 	private PicklistDTO Picklist = new PicklistDTO();
-	private List<PicklistProductsDTO> Items = new List<PicklistProductsDTO>();
+	private IEnumerable<PicklistProductsDTO> Items = new List<PicklistProductsDTO>();
 
 	// Get Picklists
 	private async Task GetPicklists()
 	{
 		Picklist = await _httpClient.GetFromJsonAsync<PicklistDTO>($"Oms/getpicklist/{pickCode}");
-		Items = Picklist.bins;
+		Items = Picklist.bins.OrderBy(x => x.productName);
+		//StateHasChanged();
+
+		//foreach (var item in Items)
+		//{
+		//	Console.WriteLine(item.productName);
+		//}
+
+		
 	}
 
 	private class PicklistDTO

@@ -1,39 +1,32 @@
 ﻿@page "/counting-report"
-@using Carnesia.Shared.WMS.CycleCount.CountReport.BinAudit
-@using Carnesia.Shared.WMS.CycleCount.CountReport.CountByPO
-@using Carnesia.Shared.WMS.CycleCount.CountReport.BySKU
+@using Carnesia.Shared.WMS.CycleCount.CountReport.Initiate
+@using Carnesia.Shared.WMS.CycleCount.CountReport.Projects
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            <MudButton Color="Color.Primary" Variant="CurrentPage == BinAudit ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinAudit)">@BinAudit</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == CountByPO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CountByPO)">@CountByPO</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == BySKU ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BySKU)">@BySKU</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == Projects ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Projects)">@Projects</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == Initiate ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Initiate)">@Initiate</MudButton>
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
 
-@if(CurrentPage == BinAudit)
+@if(CurrentPage == Initiate)
 {
-    <BinAudit />
+    <Initiate />
 }
-else if(CurrentPage == CountByPO)
+else if(CurrentPage == Projects)
 {
-    <CountByPO />
-}
-else if(CurrentPage == BySKU)
-{
-    <BySKU />
+    <Projects />
 }
 
 @code {
     // Pages
-    private string BinAudit = "Bin Audit";
-    private string CountByPO = "Count By PO";
-    private string BySKU = "By SKU";
+    private string Initiate = "Initiate";
+    private string Projects = "Projects";
 
     // Current Page
-    private string CurrentPage { get; set; } = "Bin Audit";
+    private string CurrentPage { get; set; } = "Projects";
 
     // Change Page
     private void ChangePage(string page)

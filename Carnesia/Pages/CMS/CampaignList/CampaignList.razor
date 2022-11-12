@@ -3,10 +3,14 @@
 @using Carnesia.Domain.CMS.Campaign
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Shared.CommonComponents
+@using Carnesia.Shared.CMS.CampaignCarousel
+@using Carnesia.Domain.CMS.CampaignCarousel
 @inject ICampaignList _campaign
+@inject ICampaignCarousel _carousel
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 @inject IDialogService DialogService
+@inject IJSRuntime IJS
 
 <MudPaper Class="py-16 px-3 ma-2">
 	<MudContainer Fixed="true">
@@ -28,6 +32,7 @@
                 <MudTh>Image</MudTh>
                 <MudTh>Publish</MudTh>
                 <MudTh>Home</MudTh>
+                <MudTh>Carousel/Section</MudTh>
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -36,13 +41,17 @@
                 <MudTd DataLabel="Start Date">@context.startDate</MudTd>
                 <MudTd DataLabel="End Date">@context.endDate</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imageWebUrl)" Src="@($"https://oshud.com/{context.imageWebUrl}")" Alt="@context.campaignName" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.imageWebUrl)" Src="@($"https://cscpguide.com/{context.imageWebUrl}")" Alt="@context.campaignName" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Publish">
                     <MudSwitch @bind-Checked="@context.isPublish" Color="Color.Primary" @onclick="(() => TogglePublish(context.id))"/>
                 </MudTd>
                 <MudTd DataLabel="Home">
                     <MudSwitch @bind-Checked="@context.isHome" Color="Color.Primary" @onclick="(() => ToggleHome(context.id))"/>
+                </MudTd>
+                <MudTd DataLabel="Carousel/Section">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenCarouselModal(context.id)">Carousel</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => GoToSection(context.id)">Section</MudButton>
                 </MudTd>
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => NavigateToUpdate(context.id)">Edit</MudButton>
@@ -67,6 +76,12 @@
     protected override async Task OnInitializedAsync()
     {
         await GetCampaigns();
+    }
+
+    // Go to Section
+    private async Task GoToSection(int id)
+    {
+        await IJS.InvokeAsync<object>("open", new object[] { $"create-campaign-section/{id}", "_blank" });
     }
 
     // Loading
@@ -145,6 +160,38 @@
     private void NavigateToUpdate(int id)
     {
         NavigationManager.NavigateTo($"update-campaign/{id}");
+    }
+
+    // Add Carousel
+    private async Task OpenCarouselModal(int id)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new CampaignCarouselDTO{campaignId = id});
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<CreateCampaignCarouselModal>("Add New Carousel", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            CampaignCarouselDTO newCarousel = dialog.Data as CampaignCarouselDTO;
+
+            try
+            {
+                var result = await _carousel.CreateCarousel(newCarousel);
+
+                if (result)
+                {
+                    Snackbar.Add("New Carousel Created Successfully!", Severity.Success);
+                    return;
+                }
+
+                Snackbar.Add("Carousel Creation Failed!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Internal Server Error!", Severity.Error);
+            }
+        }
     }
 
     // Table Search

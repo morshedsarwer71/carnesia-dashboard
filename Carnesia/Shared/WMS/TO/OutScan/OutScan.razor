@@ -29,7 +29,7 @@
 				<MudTh>Product Name</MudTh>
 				@*<MudTh>Image</MudTh>*@
 				<MudTh>QTY.</MudTh>
-				<MudTh>BIN Name</MudTh>
+				@*<MudTh>BIN Name</MudTh>*@
 				<MudTh>Picked QTY</MudTh>
 				<MudTh>To Be Scanned</MudTh>
 			</HeaderContent>
@@ -41,13 +41,10 @@
 					<MudImage Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg"/>
 					</MudTd>*@
 				<MudTd DataLabel="QTY.">@context.quantity</MudTd>
-				<MudTd DataLabel="BIN Name">@context.binName</MudTd>
+				@*<MudTd DataLabel="BIN Name">@context.binName</MudTd>*@
 				<MudTd DataLabel="Picked QTY">@context.pickedQty</MudTd>
 				<MudTd DataLabel="To Be Scanned">@context.toBeScanned</MudTd>
 			</RowTemplate>
-			<PagerContent>
-				<MudTablePager />
-			</PagerContent>
 		</MudTable>
 
 		<div class="d-flex flex-wrap mt-4">

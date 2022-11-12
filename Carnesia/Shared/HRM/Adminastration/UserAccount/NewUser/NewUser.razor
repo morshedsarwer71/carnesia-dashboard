@@ -139,11 +139,11 @@
 				Snackbar.Add("New User Created Successfully!", Severity.Success);
 				return;
 			}
-			Snackbar.Add("Something went wrong!", Severity.Success);
+			Snackbar.Add("Something went wrong!", Severity.Error);
 		}
 		catch (Exception)
 		{
-			Snackbar.Add("Something went wrong!", Severity.Success);
+			Snackbar.Add("Something went wrong!", Severity.Error);
 		}
 	}
 

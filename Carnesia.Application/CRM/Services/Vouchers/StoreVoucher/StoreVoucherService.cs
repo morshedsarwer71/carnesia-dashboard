@@ -60,6 +60,20 @@ namespace Carnesia.Application.CRM.Services.Vouchers.StoreVoucher
             }
         }
 
+        public async Task<VoucherListDTO> GetVoucherById(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<VoucherListDTO>($"Voucher/store/{id}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<bool> ToggleUse(int id)
         {
             try
@@ -72,6 +86,19 @@ namespace Carnesia.Application.CRM.Services.Vouchers.StoreVoucher
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateVoucher(UpdateStoreVoucherDTO voucher)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"Voucher/store/{voucher.id}", voucher);
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }

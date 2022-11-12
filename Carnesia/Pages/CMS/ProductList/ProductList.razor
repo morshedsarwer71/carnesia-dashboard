@@ -11,6 +11,7 @@
 @inject IBrand _brand
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
+@inject IJSRuntime IJS
 
 <MudPaper Class="py-16 px-3 ma-2">
 	<MudContainer Fixed="true">
@@ -63,7 +64,7 @@
 				<MudTd DataLabel="Discount">@context.discount</MudTd>
 				<MudTd DataLabel="Sales Price">@Math.Round(context.salesPrice, 2)</MudTd>
 				<MudTd DataLabel="Action">
-					<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.productId, context.productTy)">Edit</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.productCode, context.productTy)">Edit</MudButton>
 				</MudTd>
 			</RowTemplate>
 			<PagerContent>
@@ -136,15 +137,15 @@
 	}
 
 	// Go To Update
-	private void GoToUpdate(int id, string pType)
+	private async Task GoToUpdate(string id, string pType)
 	{
 		if (pType.ToLower() == "compound")
 		{
-			NavigationManager.NavigateTo($"update-compound-product/{id}");
+			await IJS.InvokeAsync<object>("open", new object[] { $"update-compound-product/{id}", "_blank" });
 		}
 		else
 		{
-			NavigationManager.NavigateTo($"update-simple-product/{id}");
+			await IJS.InvokeAsync<object>("open", new object[] { $"update-simple-product/{id}", "_blank" });
 		}
 	}
 

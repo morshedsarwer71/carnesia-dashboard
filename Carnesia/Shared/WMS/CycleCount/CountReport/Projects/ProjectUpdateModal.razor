@@ -1,0 +1,24 @@
+﻿@using Carnesia.Domain.WMS.Projects
+
+<MudDialog>
+	<DialogContent>
+		<MudSelect @bind-Value="FormData.projectType" Label="Type" AnchorOrigin="Origin.BottomCenter">
+			<MudSelectItem Value="@("BIN")" />
+			<MudSelectItem Value="@("SKU")" />
+			<MudSelectItem Value="@("PO")" />
+		</MudSelect>
+		<div class="d-flex justify-end my-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+			</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	[Parameter]
+	public UpdateProjectDTO FormData { get; set; } = new UpdateProjectDTO();
+
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<UpdateProjectDTO>(FormData));
+}

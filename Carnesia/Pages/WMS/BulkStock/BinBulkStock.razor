@@ -1,0 +1,256 @@
+﻿@page "/bin-stock-bulk"
+
+@using Carnesia.Domain.WMS.Store.Models
+@using Carnesia.Domain.WMS.BulkStockUpload
+@using NPOI.XSSF.UserModel
+@using NPOI.SS.UserModel
+@using System.Data
+@inject IStore _store
+@inject IBulkStockUpload _bulkStock
+@inject ISnackbar Snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudText Typo="Typo.h4">Bin Stock</MudText>
+		<div class="my-3">
+			<InputFile id="fileInput" hidden accept=".xlsx" OnChange="UploadFile" />
+			<MudButton HtmlTag="label"
+					   Variant="Variant.Filled"
+					   Color="Color.Primary"
+					   StartIcon="@Icons.Filled.CloudUpload"
+					   Class="me-3"
+					   for="fileInput">
+				Upload File
+			</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Info">Submit</MudButton>
+		</div>
+
+		<MudTable Items="@Stocks" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info" Dense="true">
+			<HeaderContent>
+				<MudTh>Product Code</MudTh>
+				<MudTh>Bin Id</MudTh>
+				<MudTh>Store Id</MudTh>
+				<MudTh>Stock</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Bin Id">@context.binId</MudTd>
+				<MudTd DataLabel="Store Id">@context.storeId</MudTd>
+				<MudTd DataLabel="Stock">@context.stock</MudTd>
+			</RowTemplate>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+<MudPaper Class="ma-2 px-3 py-16">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center">
+			<MudItem sm="4">
+				<MudSelect @bind-Value="StockFilter.storeId" Label="Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Store</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="4">
+				<MudSelect @bind-Value="StockFilter.stockType" Label="Stock Type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Stock Type</MudSelectItem>
+					<MudSelectItem Value="1">Virtual</MudSelectItem>
+					<MudSelectItem Value="2">Physical</MudSelectItem>
+				</MudSelect>
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center">
+			<MudItem sm="8">
+				<div class="d-flex justify-end">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Class="me-2" OnClick="GetProductsByFilter" Disabled="StockFilter.storeId == 0 || StockFilter.stockType == 0">Filter</MudButton>
+				</div>
+			</MudItem>
+		</MudGrid>
+
+		<div class="my-3">
+			<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="UpdateStock" Disabled="StockFilter.storeId == 0 || StockFilter.stockType == 0">Update Entire Stock</MudButton>
+		</div>
+		<MudTable Items="Elements" Hover="true" Dense="true" Loading="FilterLoading">
+			<HeaderContent>
+				<MudTh>Product Code</MudTh>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Bin</MudTh>
+				<MudTh>Stock</MudTh>
+				@*<MudTh>Action</MudTh>*@
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Bin">@context.bin</MudTd>
+				<MudTd DataLabel="Stock">@context.stock</MudTd>
+				@*<MudTd DataLabel="Action">
+					<MudButton Variant="Variant.Filled" Color="Color.Warning">Reverse</MudButton>
+				</MudTd>*@
+			</RowTemplate>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetStores();
+	}
+
+	private bool Loading { get; set; }
+	private List<BinStock> Stocks = new List<BinStock>();
+
+	// Filter Stock
+	private List<FilterStockProductDTO> Elements = new List<FilterStockProductDTO>();
+
+	private StockFilterDTO StockFilter = new StockFilterDTO();
+
+	private bool FilterLoading { get; set; }
+
+	// Filter Product Stock
+	private async Task GetProductsByFilter()
+	{
+		FilterLoading = true;
+		try
+		{
+			Elements = await _bulkStock.GetProducts(StockFilter);
+			FilterLoading = false;
+		}
+		catch(Exception e)
+		{
+			FilterLoading = false;
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	// Stores
+	private List<StoreDTO> Stores = new List<StoreDTO>();
+
+	// Get Stores
+	private async Task GetStores()
+	{
+		try
+		{
+			Stores = await _store.GetStoresAsync();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	// Update Stock
+	private async Task UpdateStock()
+	{
+		FilterLoading = true;
+		try
+		{
+			var result = await _bulkStock.UpdateStock(StockFilter);
+
+			if (result)
+			{
+				Snackbar.Add("Stock Updated Successfully!", Severity.Success);
+				FilterLoading = false;
+				return;
+			}
+			Snackbar.Add("Stock Update Failed!", Severity.Error);
+			FilterLoading = false;
+		}
+		catch(Exception e)
+		{
+			Snackbar.Add("Internal Server Error!", Severity.Error);
+			Console.WriteLine(e.Message);
+			FilterLoading = false;
+		}
+	}
+
+
+	// Upload Files
+	private async Task UploadFile(InputFileChangeEventArgs e)
+	{
+		Loading = true;
+		Stocks.Clear();
+		try
+		{
+			DataTable dt = new DataTable();
+			var fileStream = e.File.OpenReadStream();
+			var ms = new MemoryStream();
+			await fileStream.CopyToAsync(ms);
+			fileStream.Close();
+			ms.Position = 0;
+			ISheet sheet;
+			var xsswb = new XSSFWorkbook(ms);
+			sheet = xsswb.GetSheetAt(0);
+			IRow hr = sheet.GetRow(0);
+			var rl = new List<string>();
+			int cc = hr.LastCellNum;
+
+			for (int j = 0; j < cc; j++)
+			{
+				ICell cell = hr.GetCell(j);
+				dt.Columns.Add(cell.ToString());
+			}
+			for (int j = (sheet.FirstRowNum + 1); j <= sheet.LastRowNum; j++)
+			{
+				var r = sheet.GetRow(j);
+				for (int i = r.FirstCellNum; i < cc; i++)
+				{
+					rl.Add(r.GetCell(i).ToString());
+				}
+				if (rl.Count > 0)
+				{
+					dt.Rows.Add(rl.ToArray());
+				}
+				rl.Clear();
+			}
+
+			foreach (DataRow row in dt.Rows)
+			{
+				var productCode = row.Field<string>("ProductCode");
+				var binId = Convert.ToInt32(row.Field<string>("BinId"));
+				var storeId = Convert.ToInt32(row.Field<string>("StoreId"));
+				var stock = Convert.ToInt32(row.Field<string>("Stock"));
+
+				var pop = new BinStock()
+					{
+						productCode = productCode,
+						binId = binId,
+						storeId = storeId,
+						stock = stock
+					};
+				Stocks.Add(pop);
+			}
+			Loading = false;
+		}
+		catch (Exception er)
+		{
+			Console.WriteLine(er.Message);
+			Loading = false;
+		}
+	}
+
+	// Class
+	public class BinStock
+	{
+		public int binId { get; set; }
+		public int storeId { get; set; }
+		public int stock { get; set; }
+		public string productCode { get; set; }
+	}
+
+	// Table Class
+	public class StockTable
+	{
+		public string productCode { get; set; }
+		public string sku { get; set; }
+		public string productName { get; set; }
+		public int stock { get; set; }
+	}
+}

@@ -133,7 +133,7 @@
 
 		<div class="d-flex justify-end my-5">
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateAddressModal" Class="me-3">View Address</MudButton>
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateOrder">Update Order</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateOrder" Disabled="disableSubmit">Update Order</MudButton>
 		</div>
 	</MudContainer>
 </MudPaper>
@@ -143,6 +143,9 @@
 
 	// Loading
 	private bool Loading { get; set; } = true;
+
+	// disable submit
+	private bool disableSubmit { get; set; }
 
 	// Page On Load
 	protected override async Task OnInitializedAsync()
@@ -412,6 +415,7 @@
 	// Update Order
 	private async Task UpdateOrder()
 	{
+		disableSubmit = true; 
 		var UpdateOrderDetails = new OrderEditUpdatedOrderDTO();
 
 		UpdateOrderDetails.autoApplyAmnt = AutoAmount;
@@ -435,16 +439,19 @@
 			if (result.message != "Success")
 			{
 				Snackbar.Add(result.message, Severity.Error);
+				disableSubmit = false;
 				return;
 			}
 
 			Snackbar.Add(result.message, Severity.Success);
 			await GetOrder();
+			disableSubmit = false;
 		}
 		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Snackbar.Add("Internal server error!", Severity.Error);
+			disableSubmit = false;
 		}
 	}
 

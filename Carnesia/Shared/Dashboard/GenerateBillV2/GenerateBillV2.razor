@@ -457,7 +457,7 @@
 	{
 		try
 		{
-			var result = await _generateBill.GetDiscount(Coupon, subTotal);
+			var result = await _generateBill.GetDiscount(Coupon, subTotal, Customer.customerId);
 			if (result == 0)
 			{
 				Snackbar.Add("Coupon not applicable", Severity.Error);

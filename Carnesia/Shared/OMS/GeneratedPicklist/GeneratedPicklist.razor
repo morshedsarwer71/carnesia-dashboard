@@ -38,7 +38,7 @@
 				<MudTd DataLabel="Created By">@context.generateBy</MudTd>
 				<MudTd DataLabel="Created On">@context.date</MudTd>
 				<MudTd DataLabel="Confirm">
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="() => ConfirmPicklist(context.pickListCode)">Confirm Picklist</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="() => ConfirmPicklist(context.pickListCode)">Complete</MudButton>
 				</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="() => RemoveOrderModal(context.pickListCode)">Remove Order</MudButton>
@@ -112,7 +112,7 @@
 			{
 				var result = await _picklist.RemoveOrderFromPicklist(newData);
 
-				if (result.message != "Success")
+				if (result.message != "Order transfe to pending orders")
 				{
 					Snackbar.Add(result.message, Severity.Error);
 					return;

@@ -40,8 +40,8 @@
 
 		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CanCancelEdit="@true" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated", Severity.Info))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true" Loading="Loading" LoadingProgressColor="Color.Info"> 
 			<HeaderContent>
-				<MudTh>SKU Code</MudTh>
 				<MudTh>Product Code</MudTh>
+				<MudTh>SKU</MudTh>
 				<MudTh>Name</MudTh>
 				<MudTh>PO Quantity</MudTh>
 				<MudTh>Lifting Price</MudTh>
@@ -52,8 +52,8 @@
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="SKU Code">@context.sku</MudTd>
-				<MudTd DataLabel="SKU Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
 				<MudTd DataLabel="Name">@context.productName</MudTd>
 				<MudTd DataLabel="PO Quantity">@context.poQuantity</MudTd>
 				<MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>

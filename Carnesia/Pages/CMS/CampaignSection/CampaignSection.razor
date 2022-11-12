@@ -1,0 +1,131 @@
+﻿@page "/campaign-section"
+@using Carnesia.Domain.CMS.CampaignSection
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.CommonComponents
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject ICampaignSection _section
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+				<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading">
+			<ToolBarContent>
+				<MudSpacer />
+				<MudSpacer />
+				<MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+			</ToolBarContent>
+			<HeaderContent>
+				<MudTh></MudTh>
+				<MudTh>Section Name</MudTh>
+				<MudTh>Allignment</MudTh>
+				<MudTh>Publish</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowToBag(context.id)" />
+					}
+					else if (context.showDetails)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowToBag(context.id)" />
+					}
+				</MudTd>
+				<MudTd DataLabel="Section Name">@context.name</MudTd>
+				<MudTd DataLabel="Allignment">@context.alignment</MudTd>
+				<MudTd DataLabel="Home">
+					<MudSwitch @bind-Checked="@context.IsPublish" Color="Color.Primary"/>
+				</MudTd>
+			</RowTemplate>
+			<ChildRowContent>
+				@if (context.showDetails)
+				{
+					<td colspan="6">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.thumbs" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+									<HeaderContent>
+										<MudTh>Name</MudTh>
+										<MudTh>Image</MudTh>
+										<MudTh>Link</MudTh>
+										@*<MudTh>Action</MudTh>*@
+									</HeaderContent>
+									<RowTemplate>
+										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
+										<MudTd DataLabel="Image">
+											<MudImage @onclick="() => ShowImage(DetailsContext.imageUrl)" Src="@($"https://cscpguide.com/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
+										</MudTd>
+										<MudTd DataLabel="Link">@DetailsContext.url</MudTd>
+										@*<MudTd DataLabel="Link">
+											<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateThumbModal(DetailsContext.id, context.allignment)">Edit</MudButton>
+										</MudTd>*@
+									</RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+       await GetAllSection();
+    }
+
+	// Loading
+	private bool Loading { get; set; }
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Content
+	private List<CampaignSectionDTO> Elements = new List<CampaignSectionDTO>();
+
+	// Get All Section
+	private async Task GetAllSection()
+	{
+		Loading = true;
+		try
+		{
+			Elements = await _section.GetAllSections();
+			Loading = false;
+		}
+		catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+
+	// Show Image
+	private void ShowImage(string url)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("ImageUrl", url);
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		DialogService.Show<ShowImageModal>("Image", parameters, options);
+	}
+
+	// Show Details
+	private void ShowToBag(int id)
+	{
+		CampaignSectionDTO tmpElements = Elements.First(f => f.id == id);
+		tmpElements.showDetails = !tmpElements.showDetails;
+	}
+}

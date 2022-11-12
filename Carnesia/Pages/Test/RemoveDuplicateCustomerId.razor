@@ -1,0 +1,127 @@
+﻿@page "/duplicate-customer"
+
+@using NPOI.XSSF.UserModel
+@using NPOI.SS.UserModel
+@using System.Data
+@inject HttpClient _http
+
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<div class="my-3">
+			<InputFile id="fileInput" hidden accept=".xlsx" OnChange="UploadFile" />
+			<MudButton HtmlTag="label"
+					   Variant="Variant.Filled"
+					   Color="Color.Primary"
+					   StartIcon="@Icons.Filled.CloudUpload"
+					   Class="me-3"
+					   for="fileInput">
+				Upload File
+			</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="SubmitChanges">Submit</MudButton>
+		</div>
+		<MudTable Items="@Customers" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info" Dense="true">
+			<HeaderContent>
+				<MudTh>Guid</MudTh>
+				<MudTh>Customer Id</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Guid">@context.customerGuid</MudTd>
+				<MudTd DataLabel="Customer Id">@context.customerId</MudTd>
+			</RowTemplate>
+		</MudTable>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	private bool Loading { get; set; }
+	private List<Customer> Customers = new List<Customer>();
+
+	// Upload Files
+	private async Task UploadFile(InputFileChangeEventArgs e)
+	{
+		Loading = true;
+		Customers.Clear();
+		try
+		{
+			DataTable dt = new DataTable();
+			var fileStream = e.File.OpenReadStream();
+			var ms = new MemoryStream();
+			await fileStream.CopyToAsync(ms);
+			fileStream.Close();
+			ms.Position = 0;
+			ISheet sheet;
+			var xsswb = new XSSFWorkbook(ms);
+			sheet = xsswb.GetSheetAt(0);
+			IRow hr = sheet.GetRow(0);
+			var rl = new List<string>();
+			int cc = hr.LastCellNum;
+
+			for (int j = 0; j < cc; j++)
+			{
+				ICell cell = hr.GetCell(j);
+				dt.Columns.Add(cell.ToString());
+			}
+			for (int j = (sheet.FirstRowNum + 1); j <= sheet.LastRowNum; j++)
+			{
+				var r = sheet.GetRow(j);
+				for (int i = r.FirstCellNum; i < cc; i++)
+				{
+					rl.Add(r.GetCell(i).ToString());
+				}
+				if (rl.Count > 0)
+				{
+					dt.Rows.Add(rl.ToArray());
+				}
+				rl.Clear();
+			}
+
+			foreach (DataRow row in dt.Rows)
+			{
+				var customerGuid = row.Field<string>("Id");
+				var customerId = Convert.ToInt32(row.Field<string>("customerId"));
+
+				var pop = new Customer()
+					{
+						customerGuid = customerGuid,
+						customerId = customerId
+					};
+				Console.WriteLine(pop);
+				Customers.Add(pop);
+			}
+
+			Loading = false;
+		}
+		catch (Exception er)
+		{
+			Console.WriteLine(er.Message);
+			Loading = false;
+		}
+	}
+
+	// Submit
+	private async Task SubmitChanges()
+	{
+		Loading = true;
+		foreach (var item in Customers)
+		{
+			try
+			{
+				await _http.GetAsync($"Bins/removeduplicateuser/{item.customerGuid}/{item.customerId}");
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine($"GUID:{item.customerGuid}, ID:{item.customerId}");
+				Console.WriteLine(e.Message);
+			}
+		}
+		Loading = false;
+	}
+
+	// Class
+	public class Customer
+	{
+		public string customerGuid { get; set; }
+		public int customerId { get; set; }
+	}
+}

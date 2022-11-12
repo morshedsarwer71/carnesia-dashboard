@@ -1,0 +1,72 @@
+﻿@page "/revenue-report"
+
+@using Carnesia.Domain.WMS.RevenueReport
+@using Carnesia.Domain.Common.POCO
+
+<MudPaper Class="ma-2 px-3 py-16">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Order It</MudTh>
+                <MudTh>Pick Code</MudTh>
+                <MudTh>Product Code</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Product Quantity</MudTh>
+                <MudTh>Selling Price</MudTh>
+                <MudTh>MRP</MudTh>
+                <MudTh>Total Price</MudTh>
+                <MudTh>Promo Price</MudTh>
+                <MudTh>Delivery Price</MudTh>
+                <MudTh>Grand Total Price</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>Created At</MudTh>
+                <MudTh>Dispatched Date</MudTh>
+                <MudTh>Update Date</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Order It">@context.orderTrnId</MudTd>
+                <MudTd DataLabel="Pick Code">@context.PickListCode</MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="SKU">@context.productsku</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+                <MudTd DataLabel="MRP">@context.mrp</MudTd>
+                <MudTd DataLabel="Total Price">@context.totalPrice</MudTd>
+                <MudTd DataLabel="Promo Price">@context.promoPrice</MudTd>
+                <MudTd DataLabel="Delivery Price">@context.deliveryPrice</MudTd>
+                <MudTd DataLabel="Grand Total Price">@context.grandTotalPrice</MudTd>
+                <MudTd DataLabel="Name">@context.name</MudTd>
+                <MudTd DataLabel="Created At">@context.createdAt</MudTd>
+                <MudTd DataLabel="Dispatched Date">@context.dispatchDate</MudTd>
+                <MudTd DataLabel="Update Date">@context.updatedAt</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Elements
+	private List<RevenueReportDTO> Elements = new List<RevenueReportDTO>();
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+}

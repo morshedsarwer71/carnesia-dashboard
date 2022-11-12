@@ -444,7 +444,12 @@
 	{
 		try
 		{
-			var result = await _generateBill.GetDiscount(Coupon, subTotal);
+			if (String.IsNullOrEmpty(Customer.id))
+			{
+				Snackbar.Add("Please add customer first!", Severity.Error);
+				return;
+			}
+			var result = await _generateBill.GetDiscount(Coupon, subTotal, Customer.customerId);
 			if (result == 0)
 			{
 				Snackbar.Add("Coupon not applicable", Severity.Error);

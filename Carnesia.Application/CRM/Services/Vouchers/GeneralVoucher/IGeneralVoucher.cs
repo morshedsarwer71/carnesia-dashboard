@@ -13,6 +13,7 @@ namespace Carnesia.Application.CRM.Services.Vouchers.GeneralVoucher
         Task<bool> CreateNewVoucher(AddGeneralVoucherDTO VoucherData);
         Task<List<VoucherListDTO>> GetVouchers();
         Task<VoucherListDTO> GetVoucherById(int id);
+        Task<bool> UpdateGeneralVoucher(UpdateVoucherDTO voucher);
         Task DeleteVoucher(int id);
         Task<bool> ToggleUse(int id);
     }

@@ -1,0 +1,125 @@
+﻿@page "/store-voucher/{id:int}"
+
+@using Carnesia.Domain.CRM.Vouchers.StoreVoucher.VoucherList
+@inject IStoreVoucher _voucher
+@inject ISnackbar Snackbar
+
+<MudPaper Class="py-16 px-3 ma-2">
+	<MudContainer Fixed="true">
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudGrid>
+				<MudItem sm="6">
+					<MudTextField @bind-Value="Voucher.voucherCode" Label="Code" Required="true" RequiredError="Code is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField @bind-Value="Voucher.numOfVoucher" Label="Number of Voucher" Required="true" RequiredError="Number of Voucher is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="Voucher.startDate" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTimePicker Label="Start Time" @bind-Time="Voucher.startTime" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="Voucher.endDate" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTimePicker Label="End Time" @bind-Time="Voucher.endTime" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField @bind-Value="Voucher.minCartAmount" Label="Minimum Cart Amount" Required="true" RequiredError="Minimum Cart Amount is required!" />
+				</MudItem>
+				<MudItem sm="6">
+                    <MudNumericField @bind-Value="Voucher.numberOfUsege" Label="Maximum Usage" Required="true" RequiredError="Maximum Usage is required!"/>
+                </MudItem>
+				<MudItem sm="6">
+					<MudSelect @bind-Value="Voucher.voucherDiscType" Label="Discount Type" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Discount Type is required!">
+						<MudSelectItem Value="@("Cash")" />
+						<MudSelectItem Value="@("Percent")" />
+					</MudSelect>
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField @bind-Value="Voucher.discAmntOrPercent" Label="Discount Amount" Required="true" RequiredError="Discount Amount is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudNumericField @bind-Value="Voucher.upToDiscAmnt" Label="Up to Discount Amount" Required="true" RequiredError="Up to Discount Amount is required!" />
+				</MudItem>
+				<MudItem sm="6">
+					<MudTextField @bind-Value="Voucher.description" Label="Description" Required="true" RequiredError="Description is required!" />
+				</MudItem>
+			</MudGrid>
+			<div class="d-flex align-center justify-space-between mt-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="!success || disableUpdate" Class="ml-auto" OnClick="UpdateVoucher">Update</MudButton>
+            </div>
+		</MudForm>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	// Url Param
+	[Parameter]
+	public int id { get; set; }
+
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetVoucher();
+	}
+
+	// Disable Button
+	private bool disableUpdate { get; set; }
+
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+
+	// Voucher State
+	private VoucherListDTO Voucher = new VoucherListDTO();
+
+	// Get Voucher
+	private async Task GetVoucher()
+	{
+		Voucher = await _voucher.GetVoucherById(id);
+	}
+
+	// Update Voucher
+	private async Task UpdateVoucher()
+	{
+		disableUpdate = true;
+		var FormData = new UpdateStoreVoucherDTO
+			{
+				id = Voucher.id,
+				voucherCode = Voucher.voucherCode,
+				numOfVoucher = Voucher.numOfVoucher,
+				numberOfUsege = Voucher.numberOfUsege,
+				minCartAmount = Voucher.minCartAmount,
+				voucherDiscType = Voucher.voucherDiscType,
+				discAmntOrPercent = Voucher.discAmntOrPercent,
+				upToDiscAmnt = Voucher.upToDiscAmnt,
+				description = Voucher.description,
+				startDate = $"{Voucher.startDate}T{Voucher.startTime}.000Z",
+				endDate = $"{Voucher.endDate}T{Voucher.endTime}.000Z",
+			};
+		try
+        {
+            var result = await _voucher.UpdateVoucher(FormData);
+
+            if (result)
+            {
+                Snackbar.Add("Voucher Updated Successfully!", Severity.Success);
+                await GetVoucher();
+                disableUpdate = false;
+                return;
+            }
+            Snackbar.Add("Voucher Update Failed!", Severity.Error);
+            disableUpdate = false;
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal Server Error!", Severity.Error);
+            disableUpdate = false;
+        }
+	}
+}

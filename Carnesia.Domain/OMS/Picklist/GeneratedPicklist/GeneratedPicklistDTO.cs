@@ -12,7 +12,7 @@ namespace Carnesia.Domain.OMS.Picklist.GeneratedPicklist
         public string orders { get; set; }
         public int numberOfOrders { get; set; }
         public string generateBy { get; set; }
-        public DateTime date { get; set; }
+        public DateTime? date { get; set; }
     }
 
     public class RemoveFromPicklistDTO

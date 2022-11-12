@@ -49,11 +49,11 @@ namespace Carnesia.Application.Dashboard.GenerateBill
             }
         }
 
-        public async Task<decimal> GetDiscount(string code, decimal subTotal)
+        public async Task<decimal> GetDiscount(string code, decimal subTotal, int coustomerId)
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<decimal>($"Pos/storevoucher/{code}/{subTotal}");
+                var result = await _httpClient.GetFromJsonAsync<decimal>($"Pos/storevoucher/{code}/{subTotal}/{coustomerId}");
                 return result;
             }
             catch (Exception)

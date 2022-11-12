@@ -10,6 +10,7 @@ namespace Carnesia.Domain.CRM.Vouchers.StoreVoucher.CreateStoreVoucher
     {
         public string voucherCode { get; set; }
         public int numOfVoucher { get; set; }
+        public int numberOfUsege { get; set; }
         public string startDate { get; set; }
         public string endDate { get; set; }
         public decimal minCartAmount { get; set; }

@@ -1,0 +1,193 @@
+﻿@page "/sku/{projectcode}"
+
+@using Carnesia.Domain.WMS.Projects
+@inject IProjects _projects
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudText Typo="Typo.h5">Bin Name: @(ProjectsDetails.binName)</MudText>
+		<MudText Typo="Typo.h6">Project Code: @(ProjectsDetails.projectCode)</MudText>
+		<MudText Typo="Typo.h6">Last Count Date: @(ProjectsDetails.lastCountDate)</MudText>
+
+		<MudGrid>
+			<MudItem sm="8">
+				<MudTextField @bind-Value="SKU" Label="SKU" Immediate="true" OnKeyPress="SkuKeyPress" />
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center mt-3">
+			<MudItem sm="4">
+				<MudTextField T="string" Label="Bin" Immediate="true" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudTextField @bind-Value="UID" Immediate="true" Label="UID" OnKeyDown="UidKeyPress" />
+			</MudItem>
+		</MudGrid>
+		<MudGrid Class="justify-center mb-3">
+			<MudItem sm="8" Class="d-flex justify-end">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(UID) || String.IsNullOrEmpty(SKU)" OnClick="AddProductsToProject">Add</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable Items="Elements" Hover="true" Dense="true" Bordered="true" Striped="true" Loading="Loading" LoadingProgressColor="Color.Info">
+			<HeaderContent>
+				<MudTh>Product Code</MudTh>
+				<MudTh>SKU</MudTh>
+				<MudTh>Product Name</MudTh>
+				<MudTh>Bin</MudTh>
+				<MudTh>QTY</MudTh>
+				<MudTh>Found</MudTh>
+				<MudTh>Missing</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Bin">Bin Name</MudTd>
+				<MudTd DataLabel="QTY">@context.quantity</MudTd>
+				<MudTd DataLabel="Found">@context.foundQty</MudTd>
+				<MudTd DataLabel="Missing" Style="@(context.quantity - context.foundQty > 0 ? "background-color: #d1646ee3" : "background-color: #74d8aad1")">@(context.quantity - context.foundQty)</MudTd>
+			</RowTemplate>
+		</MudTable>
+
+		<div class="d-flex justify-end mt-3">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(SKU)" OnClick="Complete">Submit</MudButton>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+	[Parameter]
+	public string projectcode { get; set; }
+
+	// Loading
+	private bool Loading { get; set; }
+
+	// Projects Details
+	private ProjectsDetailsHeadDTO ProjectsDetails = new ProjectsDetailsHeadDTO();
+
+	private List<ProjectsDetailsDTO> Elements = new List<ProjectsDetailsDTO>();
+
+	// SKU and UID
+	private string SKU { get; set; }
+	private string UID { get; set; }
+
+	// Get SKU Details
+	private async Task GetSkuDetails()
+	{
+		Loading = true;
+		try
+		{
+			var result = await _projects.GetSkuDetails(projectcode, SKU);
+			if (result.message == "Success")
+			{
+				ProjectsDetails = result;
+				Elements = result.productDetails;
+				Snackbar.Add(result.message, Severity.Success);
+				Loading = false;
+				return;
+			}
+			Snackbar.Add(result.message, Severity.Error);
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal Server Error!", Severity.Error);
+			Loading = false;
+		}
+	}
+
+	private async Task SkuKeyPress(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(SKU))
+			{
+				await GetSkuDetails();
+			}
+		}
+	}
+
+	// Add Product
+	private async Task AddProductsToProject()
+	{
+		Loading = true;
+		try
+		{
+			var result = await _projects.AddProductToSkuDetails(projectcode, SKU, UID);
+			if (result.message == "Success")
+			{
+				ProjectsDetails = result;
+				Elements = result.productDetails;
+				Snackbar.Add(result.message, Severity.Success);
+				Loading = false;
+				return;
+			}
+			Snackbar.Add(result.message, Severity.Error);
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal Server Error!", Severity.Error);
+			Loading = false;
+		}
+	}
+
+	private async Task UidKeyPress(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(SKU) && !String.IsNullOrEmpty(UID))
+			{
+				await AddProductsToProject();
+			}
+		}
+	}
+
+	// Complete Project
+	private async Task CompleteSkuProject()
+	{
+		Loading = true;
+		try
+		{
+			var result = await _projects.CompleteSkuProject(projectcode, SKU);
+
+			if (result == "Success")
+			{
+				Snackbar.Add("SKU Project Completed Successfully!", Severity.Success);
+				Loading = false;
+				return;
+			}
+			Snackbar.Add(result, Severity.Error);
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal Server Error!", Severity.Error);
+			Loading = false;
+		}
+	}
+
+	// Complete
+	private async Task Complete()
+	{
+
+		var Missing = Elements.Sum(x => x.quantity - x.foundQty);
+
+		var parameters = new DialogParameters { ["Missing"] = Missing };
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true };
+		var dialog = await DialogService.Show<ConfirmMissingUIDModal>("Complete Project", parameters, options).Result;
+
+		if (!dialog.Cancelled)
+		{
+			await CompleteSkuProject();
+		}
+	}
+
+}

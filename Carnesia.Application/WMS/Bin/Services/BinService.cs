@@ -113,5 +113,10 @@ namespace Carnesia.Application.WMS.Bin.Services
                 throw;
             }
         }
+
+        public string ReturnImageBase()
+        {
+            return "https://oshud.com";
+        }
     }
 }

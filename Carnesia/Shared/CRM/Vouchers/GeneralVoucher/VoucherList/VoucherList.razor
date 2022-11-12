@@ -3,6 +3,7 @@
 @inject IGeneralVoucher _generalVoucher
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject IJSRuntime IJS
 
 <MudPaper Class="py-16 px-3 ma-2">
 	<MudContainer Fixed="true">
@@ -19,6 +20,7 @@
 				<MudTh>Number of Vouchers</MudTh>
 				<MudTh>Platform</MudTh>
 				<MudTh>Minimum Cart Amount</MudTh>
+				<MudTh>Number Of Usage</MudTh>
 				<MudTh>Discount Type</MudTh>
 				<MudTh>Discount Amount</MudTh>
 				<MudTh>Up To</MudTh>
@@ -33,6 +35,7 @@
 				<MudTd DataLabel="Number of Vouchers">@context.numOfVoucher</MudTd>
 				<MudTd DataLabel="Platform">@context.platformType</MudTd>
 				<MudTd DataLabel="Minimum Cart Amount">@context.minCartAmount</MudTd>
+				<MudTd DataLabel="Number Of Usage">@context.numberOfUsege</MudTd>
 				<MudTd DataLabel="Discount Type">@context.voucherDiscType</MudTd>
 				<MudTd DataLabel="Discount Amount">@context.discAmntOrPercent</MudTd>
 				<MudTd DataLabel="Up To">@context.upToDiscAmnt</MudTd>
@@ -41,7 +44,8 @@
 					<MudSwitch @bind-Checked="@context.isEnable" Color="Color.Primary" @onclick="(() => ToggleEnable(context.generalVId))"/>
 				</MudTd>
 				<MudTd DataLabel="Action">
-					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteVoucher(context.generalVId)">Delete</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Warning" Size="Size.Small" OnClick="() => GoToUpdate(context.generalVId)">Edit</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="() => DeleteVoucher(context.generalVId)">Delete</MudButton>
 				</MudTd>
 			</RowTemplate>
 			<PagerContent>
@@ -130,4 +134,10 @@
             throw;
         }
     }
+
+	// Go To Update
+	private async Task GoToUpdate(int id)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/general-voucher/{id}", "_blank" });
+	}
 }

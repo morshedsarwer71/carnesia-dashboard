@@ -3,6 +3,10 @@
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
+		<MudText Typo="Typo.h5">Bin Name:</MudText>
+		<MudText Typo="Typo.h6">Last Count Date:</MudText>
+		<MudText Typo="Typo.h6">Expiry Date:</MudText>
+		<MudText Typo="Typo.h6">Expiry Status:</MudText>
 		<MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="3">
 				<MudTextField T="string" Label="Bin Code" Variant="Variant.Text"/>
@@ -23,6 +27,7 @@
 				<MudTh>Found QTY</MudTh>
 				<MudTh>Missing QTY</MudTh>
 				<MudTh>BIN</MudTh>
+				<MudTh>Last Count Date</MudTh>
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="Item Code">@context.ItemCode</MudTd>
@@ -31,6 +36,7 @@
 				<MudTd DataLabel="Fount Qty">@context.FoundQTY</MudTd>
 				<MudTd DataLabel="Missing QTY">@context.MissingQTY</MudTd>
 				<MudTd DataLabel="BIN">@context.BIN</MudTd>
+				<MudTd DataLabel="Last Count Date"></MudTd>
 			</RowTemplate>
 		</MudTable>
 		

@@ -11,6 +11,7 @@ namespace Carnesia.Domain.CMS.HomeCarousel
         public string name { get; set; }
         public string url { get; set; }
         public bool isPublish { get; set; } = true;
-        public string base64Attch { get; set; }
+        public string base64AttchMobile { get; set; }
+        public string base64AttchPc { get; set; }
     }
 }

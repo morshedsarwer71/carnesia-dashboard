@@ -43,7 +43,7 @@
 				<MudTd DataLabel="Input QTY">@context.inputQty</MudTd>
 				<MudTd DataLabel="BIN">@context.binName</MudTd>
 				@*<MudTd DataLabel="Image">
-					<MudImage Src="@($"https://oshud.com/{context.url}")" Width="50" Height="50" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg" />
+					<MudImage Src="@($"https://cscpguide.com/{context.url}")" Width="50" Height="50" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg" />
 					</MudTd>*@
 			</RowTemplate>
 		</MudTable>
@@ -68,7 +68,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@BulkBinProduct" Hover="true">
+		<MudTable Items="@BulkBinProduct" Hover="true" Loading="BulkLoading">
 			<HeaderContent>
 				<MudTh>Product Code</MudTh>
 				<MudTh>Product Name</MudTh>
@@ -98,6 +98,7 @@
 @code {
 	// Loading
 	private bool Loading { get; set; }
+	private bool BulkLoading { get; set; }
 
 	//
 	public string BinNumber { get; set; }

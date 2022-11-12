@@ -8,16 +8,22 @@
                     <MudTextField @bind-Value="FormData.name" Label="Name" Required="true" RequiredError="Name is required!"/>
                     <MudTextField @bind-Value="FormData.url" Label="URL" Required="true" RequiredError="URL is required!"/>
 
-                    <InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
+                    <InputFile id="banner-image" OnChange="@ValidateImageMobile" hidden accept=".webp" />
                     <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5" Required="true">
-                        Upload Carousel Image
+                        Upload Carousel Image For Mobile View
                     </MudButton>
                     <MudText Class="mt-1">1280 * 450(.webp only. Max 300Kb)</MudText>
-
                     <br/>
-                    <MudText Color="Color.Error">@ImageError</MudText>
-                    <MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+                    <MudImage Src="@($"data:image/webp;base64,{FormData.base64AttchMobile}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
 
+                    <InputFile id="banner-image-pc" OnChange="@ValidateImagePc" hidden accept=".webp" />
+                    <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image-pc" Class="mt-5" Required="true">
+                        Upload Carousel Image For PC View
+                    </MudButton>
+                    <MudText Class="mt-1">1280 * 400(.webp only. Max 300Kb)</MudText>
+                    <br/>
+                    <MudImage Src="@($"data:image/webp;base64,{FormData.base64AttchPc}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+                    <MudText Color="Color.Error">@ImageError</MudText>
                     <div class="d-flex justify-end my-5">
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateCarousel">Submit</MudButton>
                     </div>
@@ -44,13 +50,25 @@
     private string ImageError { get; set; }
 
     // Image Validation
-    private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
+    private async Task ValidateImageMobile(InputFileChangeEventArgs ImageFile)
     {
         ImageError = String.Empty;
         try
         {
-            ImageSRC = await _base64.ConvertToBase64(306000, 1280, 450, ImageFile);
-            FormData.base64Attch = await _base64.ConvertToBase64(306000, 1280, 450, ImageFile);
+            FormData.base64AttchMobile = await _base64.ConvertToBase64(306000, 1280, 450, ImageFile);
+        }
+        catch(Exception e)
+        {
+            ImageError = e.Message;
+        }
+    }
+
+    private async Task ValidateImagePc(InputFileChangeEventArgs ImageFile)
+    {
+        ImageError = String.Empty;
+        try
+        {
+            FormData.base64AttchPc = await _base64.ConvertToBase64(306000, 1280, 450, ImageFile);
         }
         catch(Exception e)
         {
@@ -64,9 +82,9 @@
     // Create Banner
     private void CreateCarousel()
     {
-        if (String.IsNullOrEmpty(FormData.base64Attch))
+        if (String.IsNullOrEmpty(FormData.base64AttchMobile) || String.IsNullOrEmpty(FormData.base64AttchPc))
         {
-            ImageError = "Please upload a image!";
+            ImageError = "Please upload both images!";
             return;
         }
 

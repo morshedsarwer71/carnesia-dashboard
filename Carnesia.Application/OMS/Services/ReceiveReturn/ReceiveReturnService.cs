@@ -66,7 +66,7 @@ namespace Carnesia.Application.OMS.Services.ReceiveReturn
 		{
 			try
 			{
-				var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/return/{orderId}/{uid}");
+				var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/returnuid/{orderId}/{uid}");
 				return result;
 			}
 			catch (Exception)

@@ -28,6 +28,9 @@
                     <MudNumericField @bind-Value="FormData.minCartAmount" Label="Minimum Cart Amount" Required="true" RequiredError="Minimum Cart Amount is required!"/>
                 </MudItem>
                 <MudItem sm="6">
+                    <MudNumericField @bind-Value="FormData.numberOfUsege" Label="Maximum Usage" Required="true" RequiredError="Maximum Usage is required!"/>
+                </MudItem>
+                <MudItem sm="6">
                     <MudSelect @bind-Value="FormData.platformType" Label="Voucher Platform" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Voucher Platform is required!">
                         <MudSelectItem Value="@("App")" />
                         <MudSelectItem Value="@("General")" />
@@ -46,8 +49,8 @@
                 <MudItem sm="6">
                     <MudNumericField @bind-Value="FormData.upToDiscAmnt" Label="Up to Discount Amount" Required="true" RequiredError="Up to Discount Amount is required!"/>
                 </MudItem>
-                <MudItem sm="6">
-                    <MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!"/>
+                <MudItem sm="12">
+                    <MudTextField @bind-Value="FormData.description" Label="Description" Lines="5" Required="true" RequiredError="Description is required!"/>
                 </MudItem>
             </MudGrid>
                     

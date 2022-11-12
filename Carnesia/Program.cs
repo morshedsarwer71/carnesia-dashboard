@@ -23,6 +23,8 @@ using Carnesia.Application.CMS.Services.PaymentOffer;
 using Carnesia.Application.CMS.Services.BlogPost;
 using Carnesia.Application.CMS.Services.CampaignList;
 using Carnesia.Application.CMS.Services.ToBag;
+using Carnesia.Application.CMS.Services.CampaignCarousel;
+using Carnesia.Application.CMS.Services.CampaignSection;
 using Carnesia.Application.CRM.Services.Vouchers.GeneralVoucher;
 using Carnesia.Application.CRM.Services.Vouchers.StoreVoucher;
 using Carnesia.Application.CRM.Services.Vouchers.InstantVoucher;
@@ -37,6 +39,8 @@ using Carnesia.Application.WMS.PutAway.BinInscan;
 using Carnesia.Application.WMS.StockRelocation;
 using Carnesia.Application.WMS.StockTransfer.CreateTo;
 using Carnesia.Application.WMS.StockTransfer.ManageTo;
+using Carnesia.Application.WMS.BulkStockUpload;
+using Carnesia.Application.WMS.Projects;
 using Carnesia.Application.OMS.Services.Zones;
 using Carnesia.Application.OMS.Services.PendingOrder;
 using Carnesia.Application.OMS.Services.ClosedOrder;
@@ -74,13 +78,13 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://oshud.com/api/") });
+//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://cscpguide.com/api/") });
 
 //meesagehandler
 
 builder.Services.AddHttpClient("RetailSuite", client =>
 {
-    client.BaseAddress = new Uri("https://oshud.com/api/");
+    client.BaseAddress = new Uri("https://cscpguide.com/api/");
 }).AddHttpMessageHandler<AuthorizationMessageHandler>();
 
 builder.Services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
@@ -114,6 +118,9 @@ builder.Services.AddScoped<IBunchSection, BunchSectionService>();
 builder.Services.AddScoped<IBlogPost, BlogPostService>();
 builder.Services.AddScoped<IProductList, ProductListService>();
 builder.Services.AddScoped<IToBag, ToBagService>();
+builder.Services.AddScoped<IBulkStockUpload, BulkStockUploadService>();
+builder.Services.AddScoped<ICampaignCarousel, CampaignCarouselService>();
+builder.Services.AddScoped<ICampaignSection, CampaignSectionService>();
 builder.Services.AddScoped<ICreateCampaign, CreateCampaignService>();
 builder.Services.AddScoped<ICombo, ServiceCombo>();
 builder.Services.AddScoped<ICampaignList, CampaignListService>();
@@ -150,5 +157,6 @@ builder.Services.AddScoped<IManageTo, ManageToService>();
 builder.Services.AddScoped<IBinInscan, BinInscanService>();
 builder.Services.AddScoped<IReport, ReportService>();
 builder.Services.AddScoped<IAnalytics, AnalyticsService>();
+builder.Services.AddScoped<IProjects, ProjectsService>();
 builder.Services.AddSyncfusionBlazor(option => { option.IgnoreScriptIsolation = true; });
 await builder.Build().RunAsync();

@@ -1,0 +1,142 @@
+﻿@page "/campaign-carousel"
+
+@using Carnesia.Domain.CMS.CampaignCarousel
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.CommonComponents
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject ICampaignCarousel _carousel
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+			<ToolBarContent>
+				<MudSpacer />
+				<MudSpacer />
+				<MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+			</ToolBarContent>
+			<HeaderContent>
+				<MudTh>Carousel Name</MudTh>
+				<MudTh>Campaign Name</MudTh>
+				<MudTh>Url</MudTh>
+				<MudTh>Description</MudTh>
+				<MudTh>Image</MudTh>
+				<MudTh>Publish</MudTh>
+				<MudTh>Action</MudTh>
+			</HeaderContent>
+			<RowTemplate>
+				<MudTd DataLabel="Carousel Name">@context.name</MudTd>
+				<MudTd DataLabel="Campaign Name">@context.campaignName</MudTd>
+				<MudTd DataLabel="Url">@context.url</MudTd>
+				<MudTd DataLabel="Description">@context.description</MudTd>
+				<MudTd DataLabel="Image">
+					<MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://cscpguide.com/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+				</MudTd>
+				<MudTd DataLabel="Publish">
+					<MudSwitch @bind-Checked="context.isPublish" Color="Color.Primary" @onclick="() => ToggleCarousel(context.id)" />
+				</MudTd>
+				<MudTd DataLabel="Action">
+					<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteCarousel(context.id)">
+						Delete
+					</MudButton>
+				</MudTd>
+			</RowTemplate>
+			<PagerContent>
+				<MudTablePager />
+			</PagerContent>
+		</MudTable>
+
+		<div class="d-flex flex-wrap mt-4">
+			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+		</div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+
+	// Page On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetAllCarousels();
+	}
+
+	// Looading
+	private bool Loading { get; set; }
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Table Element
+	private List<CampaignCarouselDTO> Elements = new List<CampaignCarouselDTO>();
+
+	// Get Carousels
+	private async Task GetAllCarousels()
+	{
+		Loading = true;
+		try
+		{
+			Elements = await _carousel.GetAllCarousels();
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+
+	// Toggle Carousel
+	private async Task ToggleCarousel(int id)
+	{
+		try
+		{
+			await _carousel.ToggleCarousel(id);
+			Snackbar.Add("Toggled Successfully!", Severity.Success);
+			await GetAllCarousels();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+		}
+	}
+
+	// Delete Carousel
+	private async Task DeleteCarousel(int id)
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<DeleteModal>("Delete Confirmation", options).Result;
+
+		if (!dialog.Cancelled)
+		{
+			try
+			{
+				var result = await _carousel.DeleteCarousel(id);
+				if (result)
+				{
+					Snackbar.Add("Carousel Deleted Successfully!", Severity.Success);
+					await GetAllCarousels();
+					return;
+				}
+				Snackbar.Add("Carousel Delete Failed!", Severity.Error);
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Internal Server Error!", Severity.Error);
+				throw;
+			}
+		}
+	}
+
+	// Show Image
+	private void ShowImage(string url)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("ImageUrl", url);
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		DialogService.Show<ShowImageModal>("Image", parameters, options);
+	}
+}

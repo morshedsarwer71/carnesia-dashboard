@@ -29,6 +29,9 @@
 					<MudNumericField @bind-Value="FormData.minCartAmount" Label="Minimum Cart Amount" Required="true" RequiredError="Minimum Cart Amount is required!" />
 				</MudItem>
 				<MudItem sm="6">
+                    <MudNumericField @bind-Value="FormData.numberOfUsege" Label="Maximum Usage" Required="true" RequiredError="Maximum Usage is required!"/>
+                </MudItem>
+				<MudItem sm="6">
 					<MudSelect @bind-Value="FormData.voucherDiscType" Label="Discount Type" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Discount Type is required!">
 						<MudSelectItem Value="@("Cash")" />
 						<MudSelectItem Value="@("Percent")" />
@@ -41,15 +44,15 @@
 					<MudNumericField @bind-Value="FormData.upToDiscAmnt" Label="Up to Discount Amount" Required="true" RequiredError="Up to Discount Amount is required!" />
 				</MudItem>
 				<MudItem sm="6">
-					<MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
-				</MudItem>
-				<MudItem sm="6">
 					<MudSelect T="string" Label="Stores" MultiSelection="true" @bind-Value="value" Required="true">
 						@foreach (var store in stores)
 						{
 							<MudSelectItem T="string" Value="@store">@store</MudSelectItem>
 						}
 					</MudSelect>
+				</MudItem>
+				<MudItem xs="12">
+					<MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
 				</MudItem>
 			</MudGrid>
 
