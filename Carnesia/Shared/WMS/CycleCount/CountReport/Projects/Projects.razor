@@ -6,6 +6,7 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject IJSRuntime IJS
+@inject NavigationManager Navigation
 
 <MudPaper Class="ma-2 px-3 py-16">
 	<MudContainer Fixed="true">
@@ -39,7 +40,7 @@
 				<MudTd DataLabel="Created By">@context.createdBy</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Warning" Disabled="@(context.projectType != null || context.status != "Open")" OnClick="() => OpenUpdateModal(context.id, context.projectType)">Edit</MudButton>
-					<MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary">Complete</MudButton>
+					<MudButton Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" Disabled="@(context.status != "Open")" OnClick="() => OnepCompleteModal(context.projectCode)">Complete</MudButton>
 				</MudTd>
 			</RowTemplate>
 			<PagerContent>
@@ -120,6 +121,43 @@
 		}
 	}
 
+	// Complete Project
+	private async Task CompleteProject(string pCode)
+	{
+		Loading = true;
+		try
+		{
+			var result = await _project.CompleteProject(pCode);
+
+			if (result)
+			{
+				Snackbar.Add("Project Completed Successfully!", Severity.Success);
+				Loading = false;
+				return;
+			}
+
+			Snackbar.Add("Project was unable to complete!", Severity.Error);
+			Loading = false;
+		}
+		catch(Exception e)
+		{
+			Snackbar.Add("Internal Server Error!", Severity.Error);
+			Loading = false;
+		}
+	}
+
+	private async Task OnepCompleteModal(string pcode)
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<ProjectCompleteModal>("Complete Project", options).Result;
+
+		if (!dialog.Cancelled)
+		{
+			await CompleteProject(pcode);
+			await GetAllProjects();
+		}
+	}
+
 	// Table Search
 	private bool FilterFuncInitial(ProjectsDTO element) => FilterFunc(element, tableCommon.SearchTerm);
 
@@ -143,17 +181,17 @@
 	{
 		if (type == "BIN")
 		{
-			await IJS.InvokeAsync<object>("open", new object[] { $"/bin/{pCode}", "_blank" });
+			Navigation.NavigateTo($"/bin/{pCode}");
 			return;
 		}
 		if (type == "SKU")
 		{
-			await IJS.InvokeAsync<object>("open", new object[] { $"/sku/{pCode}", "_blank" });
+			Navigation.NavigateTo($"/sku/{pCode}");
 			return;
 		}
 		if (type == "PO")
 		{
-			await IJS.InvokeAsync<object>("open", new object[] { $"/po/{pCode}", "_blank" });
+			Navigation.NavigateTo($"/po/{pCode}");
 			return;
 		}
 	}

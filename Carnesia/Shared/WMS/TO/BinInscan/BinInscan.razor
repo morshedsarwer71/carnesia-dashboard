@@ -178,6 +178,7 @@
 
 	private async Task AddBulKBinScan()
 	{
+		BulkLoading = true;
 		try
 		{
 			var result = await _away.BulkBinInscan(PoCode, BinNumber);
@@ -189,15 +190,18 @@
 				PoCode = "";
 				BinNumber = "";
 				BulkBinProduct = result.Products;
+				BulkLoading = false;
 			}
 			else
 			{
 				_snackbar.Add("Bin Capacity full", Severity.Warning);
+				BulkLoading = false;
 			}
 		}
 		catch (Exception e)
 		{
 			_snackbar.Add("Bin Capacity full", Severity.Warning);
+			BulkLoading = false;
 			//Console.WriteLine(e);
 			//throw;
 		}

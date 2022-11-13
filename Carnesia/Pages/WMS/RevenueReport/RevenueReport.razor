@@ -12,11 +12,13 @@
                 <MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
             </ToolBarContent>
             <HeaderContent>
+                <MudTh>Create Date</MudTh>
                 <MudTh>Order It</MudTh>
                 <MudTh>Pick Code</MudTh>
                 <MudTh>Product Code</MudTh>
                 <MudTh>SKU</MudTh>
                 <MudTh>Product Name</MudTh>
+                <MudTh>Store</MudTh>
                 <MudTh>Product Quantity</MudTh>
                 <MudTh>Selling Price</MudTh>
                 <MudTh>MRP</MudTh>
@@ -25,8 +27,7 @@
                 <MudTh>Delivery Price</MudTh>
                 <MudTh>Grand Total Price</MudTh>
                 <MudTh>Name</MudTh>
-                <MudTh>Created At</MudTh>
-                <MudTh>Dispatched Date</MudTh>
+                <MudTh>Dispatch Date</MudTh>
                 <MudTh>Update Date</MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -35,6 +36,7 @@
                 <MudTd DataLabel="Product Code">@context.productCode</MudTd>
                 <MudTd DataLabel="SKU">@context.productsku</MudTd>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="Store">@context.store</MudTd>
                 <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
                 <MudTd DataLabel="MRP">@context.mrp</MudTd>
                 <MudTd DataLabel="Total Price">@context.totalPrice</MudTd>

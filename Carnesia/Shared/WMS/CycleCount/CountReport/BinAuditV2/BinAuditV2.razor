@@ -4,6 +4,7 @@
 @inject IProjects _projects
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject NavigationManager Navigation
 
 
 <MudPaper Class="px-3 py-16 ma-2">
@@ -155,6 +156,7 @@
 			{
 				Snackbar.Add("Bin Project Completed Successfully!", Severity.Success);
 				Loading = false;
+				Navigation.NavigateTo("/projects");
 				return;
 			}
 			Snackbar.Add(result, Severity.Error);

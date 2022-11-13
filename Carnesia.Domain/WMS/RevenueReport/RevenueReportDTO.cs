@@ -20,6 +20,7 @@ namespace Carnesia.Domain.WMS.RevenueReport
         public decimal deliveryPrice { get; set; }
         public decimal grandTotalPrice { get; set; }
         public string name { get; set; }
+        public string store { get; set; }
         public DateTime? createdAt { get; set; }
         public DateTime? dispatchDate { get; set; }
         public DateTime? updatedAt { get; set; }

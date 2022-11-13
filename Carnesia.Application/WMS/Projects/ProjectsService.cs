@@ -88,6 +88,20 @@ namespace Carnesia.Application.WMS.Projects
             }
         }
 
+		public async Task<bool> CompleteProject(string projectId)
+		{
+			try
+			{
+                var result = await _httpClient.GetAsync($"cyclecount/closeproject/{projectId}");
+                return result.IsSuccessStatusCode;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
 		public async Task<string> CompleteSkuProject(string pCode, string sku)
 		{
             try

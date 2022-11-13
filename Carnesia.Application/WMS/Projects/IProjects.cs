@@ -13,6 +13,7 @@ namespace Carnesia.Application.WMS.Projects
         Task<bool> NewProjects(InitiateDTO initiate);
         Task<List<ProjectsDTO>> GetAllProjects();
         Task<bool> UpdateProject(UpdateProjectDTO project);
+        Task<bool> CompleteProject(string projectId);
 
         Task<ProjectsDetailsHeadDTO> GetBinDetails(string pCode, string bin);
         Task<ProjectsDetailsHeadDTO> GetSkuDetails(string pCode, string sku);
