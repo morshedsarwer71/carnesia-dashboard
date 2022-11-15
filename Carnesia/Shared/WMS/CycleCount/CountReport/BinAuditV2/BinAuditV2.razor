@@ -117,6 +117,7 @@
 			if (result.message == "Success")
 			{
 				ProjectsDetails = result;
+				UID=string.Empty;
 				Elements = result.productDetails;
 				Snackbar.Add(result.message, Severity.Success);
 				Loading = false;
