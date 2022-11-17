@@ -129,14 +129,14 @@
 		{
 			var result = await _project.CompleteProject(pCode);
 
-			if (result)
+			if (result.message == "Success")
 			{
 				Snackbar.Add("Project Completed Successfully!", Severity.Success);
 				Loading = false;
 				return;
 			}
 
-			Snackbar.Add("Project was unable to complete!", Severity.Error);
+			Snackbar.Add(result.message, Severity.Error);
 			Loading = false;
 		}
 		catch(Exception e)

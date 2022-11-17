@@ -13,6 +13,7 @@
 
     [Parameter]
     public int Missing { get; set; }
+    [Parameter]
     public string Bin { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
