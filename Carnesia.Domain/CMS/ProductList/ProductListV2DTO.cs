@@ -29,5 +29,6 @@ namespace Carnesia.Domain.CMS.ProductList
         public string sku { get; set; }
         public string productCode { get; set; }
         public string productName { get; set; }
+        public bool isPublish { get; set; } = true;
     }
 }
