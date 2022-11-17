@@ -1,4 +1,4 @@
-﻿@page "/update-simple-product/{id}"
+﻿@page "/update-simple-product/{id:int}"
 
 @using Carnesia.Domain.CMS.ChildProduct
 @using Carnesia.Domain.CMS.ParentProduct
@@ -240,7 +240,7 @@
 					{
 
 						<MudBadge Icon="@Icons.Filled.DeleteOutline" OnClick="() =>RemoveImage(image.id)" Color="Color.Error" Overlap="true" Class="mx-6 my-4" Style="cursor:pointer">
-							<MudImage Src="@($"https://oshud.com/{image.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;" />
+							<MudImage Src="@($"https://cscpguide.com/{image.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg mx-3" Style="width:100px;" />
 						</MudBadge>
 					}
 				}
@@ -277,7 +277,7 @@
 	MudForm form;
 
 	[Parameter]
-	public string id { get; set; }
+	public int id { get; set; }
 
 	// Rich Text
 	BlazoredTextEditor QuillNative;

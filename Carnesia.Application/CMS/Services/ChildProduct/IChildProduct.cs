@@ -11,7 +11,7 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
     public interface IChildProduct
     {
         Task<string> CreateChildProduct(ChildProductDTO ProductData);
-        Task<SingleChildProductDTO> GetChildById(string id);
+        Task<SingleChildProductDTO> GetChildById(int id);
         Task<string> UpdateChildProduct(ChildProductUpdateDTO childProduct);
         Task DeleteImage(int id);
         Task UpdateImage(UpdateProductImageDTO Images, int id);

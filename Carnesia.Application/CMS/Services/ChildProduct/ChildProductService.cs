@@ -115,7 +115,7 @@ namespace Carnesia.Application.CMS.Services.ChildProduct
             }
         }
 
-        public async Task<SingleChildProductDTO> GetChildById(string id)
+        public async Task<SingleChildProductDTO> GetChildById(int id)
         {
             try
             {
