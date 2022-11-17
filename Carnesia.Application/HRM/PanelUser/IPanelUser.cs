@@ -12,5 +12,6 @@ namespace Carnesia.Application.HRM.PanelUser
         Task<string[]> GetRoles();
         Task<bool> NewPanelUser(PanelUserDTO user);
         Task<List<PanelUserListDTO>> GetUsers();
+        Task<bool> ToggleUser(string id);
     }
 }

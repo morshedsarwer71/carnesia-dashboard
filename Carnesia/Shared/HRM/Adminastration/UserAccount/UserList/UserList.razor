@@ -1,6 +1,7 @@
 ﻿@using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.HRM.PanelUser
 @inject IPanelUser _panelUser
+@inject ISnackbar Snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -32,7 +33,10 @@
 				<MudTd DataLabel="Store">@context.storeName</MudTd>
 				<MudTd DataLabel="Role">@context.roleType</MudTd>
 				<MudTd DataLabel="Team">@context.team</MudTd>
-				<MudTd DataLabel="Action">@context.isActive</MudTd>
+				@*<MudTd DataLabel="Action">@context.isActive</MudTd>*@
+				<MudTd DataLabel="Publish">
+                    <MudSwitch @bind-Checked="@context.isActive" Color="Color.Primary" @onclick="(() => ToggleUser(context.id))"/>			
+                </MudTd>
 			</RowTemplate>
 			<PagerContent>
 				<MudTablePager />
@@ -66,6 +70,27 @@
 	private async Task GetUsers()
 	{
 		Elements = await _panelUser.GetUsers();
+	}
+
+	//Togle User
+	private async Task ToggleUser(string id)
+	{
+		try
+		{
+			var result = await _panelUser.ToggleUser(id);
+			if (result)
+			{
+				Snackbar.Add("Toggled Successfully!", Severity.Success);
+				await GetUsers();
+				return;
+			}
+			Snackbar.Add("Toggle failed!", Severity.Error);
+		}
+		catch(Exception e)
+		{
+			Snackbar.Add("Internal Server Error!", Severity.Error);
+			Console.WriteLine(e.Message);
+		}
 	}
 
 	// Table Search

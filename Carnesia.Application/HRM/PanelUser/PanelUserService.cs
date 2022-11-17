@@ -61,5 +61,21 @@ namespace Carnesia.Application.HRM.PanelUser
                 throw;
             }
         }
+
+        public async Task<bool> ToggleUser(string id)
+        {
+            try
+            {
+                var result = await _httpClient.GetAsync($"Authentication/diableuser/{id}");
+                if (result.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
     }
 }
