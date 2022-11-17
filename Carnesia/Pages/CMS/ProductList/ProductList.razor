@@ -14,274 +14,283 @@
 @inject IJSRuntime IJS
 
 <MudPaper Class="py-16 px-3 ma-2">
-	<MudContainer Fixed="true">
-		<MudGrid>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="Filter.sku" Label="SKU" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="Filter.productCode" Label="Product Code" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="Filter.productName" Label="Product Name" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudSelect @bind-Value="Filter.brandId" Label="Brand" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="0">All Brand</MudSelectItem>
-					@foreach (var item in Brands)
-					{
-						<MudSelectItem Value="item.brandId">@item.name</MudSelectItem>
-					}
-				</MudSelect>
-			</MudItem>
-		</MudGrid>
-		<div class="d-flex justify-end my-3">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchProducts">Filter</MudButton>
-		</div>
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="_loading" LoadingProgressColor="Color.Info">
-			<HeaderContent>
-				<MudTh>Product Name</MudTh>
-				<MudTh>SKU</MudTh>
-				<MudTh>Product Code</MudTh>
-				<MudTh>Brand</MudTh>
-				<MudTh>Origin</MudTh>
-				<MudTh>Product Type</MudTh>
-				<MudTh>MRP</MudTh>
-				<MudTh>Discount Type</MudTh>
-				<MudTh>Discount</MudTh>
-				<MudTh>Sales Price</MudTh>
-				<MudTh>Action</MudTh>
-			</HeaderContent>
-			<RowTemplate>
-				<MudTd DataLabel="Product Name">@context.productName</MudTd>
-				<MudTd DataLabel="SKU">@context.sku</MudTd>
-				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
-				<MudTd DataLabel="Brand">@context.brand</MudTd>
-				<MudTd DataLabel="Origin">@context.origin</MudTd>
-				<MudTd DataLabel="Product Type">@context.productTy</MudTd>
-				<MudTd DataLabel="MRP">@context.mrp</MudTd>
-				<MudTd DataLabel="Discount Type">@context.discountType</MudTd>
-				<MudTd DataLabel="Discount">@context.discount</MudTd>
-				<MudTd DataLabel="Sales Price">@Math.Round(context.salesPrice, 2)</MudTd>
-				<MudTd DataLabel="Action">
-					<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.productId, context.productTy)">Edit</MudButton>
-				</MudTd>
-			</RowTemplate>
-			<PagerContent>
-				<MudTablePager />
-			</PagerContent>
-		</MudTable>
+    <MudContainer Fixed="true">
+        <MudGrid>
+            <MudItem sm="2">
+                <MudTextField @bind-Value="Filter.sku" Label="SKU" />
+            </MudItem>
+            <MudItem sm="2">
+                <MudTextField @bind-Value="Filter.productCode" Label="Product Code" />
+            </MudItem>
+            <MudItem sm="4">
+                <MudTextField @bind-Value="Filter.productName" Label="Product Name" />
+            </MudItem>
+            <MudItem sm="2">
+                <MudSelect @bind-Value="Filter.brandId" Label="Brand" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Brand</MudSelectItem>
+                    @foreach (var item in Brands)
+                    {
+                        <MudSelectItem Value="item.brandId">@item.name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="2">
+                <MudSelect @bind-Value="Filter.isPublish" Label="Is Publish" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="true" >Publish</MudSelectItem>
+                    <MudSelectItem Value="false" >Unpublish</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+        <div class="d-flex justify-end my-3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchProducts">Filter</MudButton>
+        </div>
+        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="_loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>Product Name</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>Product Code</MudTh>
+                <MudTh>Brand</MudTh>
+                <MudTh>Origin</MudTh>
+                <MudTh>Product Type</MudTh>
+                <MudTh>MRP</MudTh>
+                <MudTh>Discount Type</MudTh>
+                <MudTh>Discount</MudTh>
+                <MudTh>Sales Price</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="SKU">@context.sku</MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="Brand">@context.brand</MudTd>
+                <MudTd DataLabel="Origin">@context.origin</MudTd>
+                <MudTd DataLabel="Product Type">@context.productTy</MudTd>
+                <MudTd DataLabel="MRP">@context.mrp</MudTd>
+                <MudTd DataLabel="Discount Type">@context.discountType</MudTd>
+                <MudTd DataLabel="Discount">@context.discount</MudTd>
+                <MudTd DataLabel="Sales Price">@Math.Round(context.salesPrice, 2)</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => GoToUpdate(context.productId, context.productTy)">Edit</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
 
-		<div class="d-flex flex-wrap mt-4">
-			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
-			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
-			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
-		</div>
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
 
-		<div class="mb-5 d-flex justify-end">
-			<MudButton Class="me-3" StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Color="Color.Info" OnClick="CreateDocumentTable">Download Table Products XLSL</MudButton>
-			<MudButton StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Color="Color.Success" OnClick="CreateDocument">Download All Products XLSL</MudButton>
-		</div>
-	</MudContainer>
+        <div class="mb-5 d-flex justify-end">
+            <MudButton Class="me-3" StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Color="Color.Info" OnClick="CreateDocumentTable">Download Table Products XLSL</MudButton>
+            <MudButton StartIcon="@Icons.Filled.Download" Variant="Variant.Filled" Color="Color.Success" OnClick="CreateDocument">Download All Products XLSL</MudButton>
+        </div>
+    </MudContainer>
 </MudPaper>
 
 @code {
-	// Page On Load
-	protected override async Task OnInitializedAsync()
-	{
-		await GetProducts();
-		await GetBrands();
-	}
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetProducts();
+        await GetBrands();
+    }
 
-	// Loading
-	private bool _loading { get; set; } = false;
+    // Loading
+    private bool _loading { get; set; } = false;
 
-	// Product Filter
-	private ProductListFilterV2DTO Filter = new ProductListFilterV2DTO();
+    // Product Filter
+    private ProductListFilterV2DTO Filter = new ProductListFilterV2DTO();
 
-	// Table Customaization
-	private TableCommon tableCommon = new TableCommon();
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
 
-	// Table Content
-	private List<ProductListV2DTO> Elements = new List<ProductListV2DTO>();
+    // Table Content
+    private List<ProductListV2DTO> Elements = new List<ProductListV2DTO>();
 
-	// Get Products
-	private async Task GetProducts()
-	{
-		_loading = true;
-		try
-		{
-			Elements = await _products.GetProductsV2(0, 50);
-			_loading = false;
-		}catch(Exception e)
-		{
-			Console.WriteLine(e.Message);
-			_loading = false;
-		}
-	}
+    // Get Products
+    private async Task GetProducts()
+    {
+        _loading = true;
+        try
+        {
+            Elements = await _products.GetProductsV2(0, 50);
+            _loading = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            _loading = false;
+        }
+    }
 
-	// Search Product
-	private async Task SearchProducts()
-	{
-		_loading = true;
-		try
-		{
-			Elements = await _products.GetProductsBySearchV2(Filter);
-			_loading = false;
-		}catch(Exception e)
-		{
-			Console.WriteLine(e.Message);
-			_loading = false;
-		}
-	}
+    // Search Product
+    private async Task SearchProducts()
+    {
+        _loading = true;
+        try
+        {
+            Elements = await _products.GetProductsBySearchV2(Filter);
+            _loading = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            _loading = false;
+        }
+    }
 
-	// Go To Update
-	private async Task GoToUpdate(int id, string pType)
-	{
-		if (pType.ToLower() == "compound")
-		{
-			NavigationManager.NavigateTo($"update-compound-product/{id}");
-		}
-		else
-		{
-			NavigationManager.NavigateTo($"update-simple-product/{id}");
-		}
-	}
+    // Go To Update
+    private async Task GoToUpdate(int id, string pType)
+    {
+        if (pType.ToLower() == "compound")
+        {
+            NavigationManager.NavigateTo($"update-compound-product/{id}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"update-simple-product/{id}");
+        }
+    }
 
-	// Brands
-	private List<BrandDTO> Brands = new List<BrandDTO>();
+    // Brands
+    private List<BrandDTO> Brands = new List<BrandDTO>();
 
-	// Get Brands
-	private async Task GetBrands()
-	{
-		Brands = await _brand.GetBrands();
-	}
+    // Get Brands
+    private async Task GetBrands()
+    {
+        Brands = await _brand.GetBrands();
+    }
 
-	// Products For Download
-	private List<ProductListV2DTO> Products = new List<ProductListV2DTO>();
+    // Products For Download
+    private List<ProductListV2DTO> Products = new List<ProductListV2DTO>();
 
-	private async Task GetProductsForDownload()
-	{
-		_loading = true;
-		try
-		{
-			Products = await _products.GetProductsForDownloadV2();
-			_loading = false;
-		}catch(Exception e)
-		{
-			Console.WriteLine(e.Message);
-			_loading = false;
-		}
-	}
+    private async Task GetProductsForDownload()
+    {
+        _loading = true;
+        try
+        {
+            Products = await _products.GetProductsForDownloadV2();
+            _loading = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            _loading = false;
+        }
+    }
 
-	// Create Document
-	private async Task CreateDocument()
-	{
-		await GetProductsForDownload();
+    // Create Document
+    private async Task CreateDocument()
+    {
+        await GetProductsForDownload();
 
-		using (ExcelEngine excelEngine = new ExcelEngine())
-		{
-			IApplication application = excelEngine.Excel;
-			application.DefaultVersion = ExcelVersion.Xlsx;
+        using (ExcelEngine excelEngine = new ExcelEngine())
+        {
+            IApplication application = excelEngine.Excel;
+            application.DefaultVersion = ExcelVersion.Xlsx;
 
-			//Create a workbook.
-			IWorkbook workbook = application.Workbooks.Create(1);
-			IWorksheet worksheet = workbook.Worksheets[0];
+            //Create a workbook.
+            IWorkbook workbook = application.Workbooks.Create(1);
+            IWorksheet worksheet = workbook.Worksheets[0];
 
-			//Initialize DataTable and data get from SampleDataTable method.
-			DataTable table = ProductDataTable();
+            //Initialize DataTable and data get from SampleDataTable method.
+            DataTable table = ProductDataTable();
 
-			//Export data from DataTable to Excel worksheet.
-			worksheet.ImportDataTable(table, true, 1, 1);
+            //Export data from DataTable to Excel worksheet.
+            worksheet.ImportDataTable(table, true, 1, 1);
 
-			worksheet.UsedRange.AutofitColumns();
+            worksheet.UsedRange.AutofitColumns();
 
-			//Save the document as a stream and return the stream.
-			using (MemoryStream stream = new MemoryStream())
-			{
-				//Save the created Excel document to MemoryStream
-				workbook.SaveAs(stream);
+            //Save the document as a stream and return the stream.
+            using (MemoryStream stream = new MemoryStream())
+            {
+                //Save the created Excel document to MemoryStream
+                workbook.SaveAs(stream);
 
-				//Download the excel file.
-				await JS.SaveAs("Products.xlsx", stream.ToArray());
-			}
-		}
-	}
+                //Download the excel file.
+                await JS.SaveAs("Products.xlsx", stream.ToArray());
+            }
+        }
+    }
 
-	private DataTable ProductDataTable()
-	{
-		DataTable reports = new DataTable();
-		reports.Columns.Add("ProductName");
-		reports.Columns.Add("ParentName");
-		reports.Columns.Add("ProductSKU");
-		reports.Columns.Add("ProductCode");
-		reports.Columns.Add("BrandName");
-		reports.Columns.Add("Origin");
-		reports.Columns.Add("ProductType");
-		reports.Columns.Add("MRP", typeof(decimal));
-		reports.Columns.Add("DiscountType");
-		reports.Columns.Add("Discount", typeof(decimal));
-		reports.Columns.Add("SalesPrice", typeof(decimal));
+    private DataTable ProductDataTable()
+    {
+        DataTable reports = new DataTable();
+        reports.Columns.Add("ProductName");
+        reports.Columns.Add("ParentName");
+        reports.Columns.Add("ProductSKU");
+        reports.Columns.Add("ProductCode");
+        reports.Columns.Add("BrandName");
+        reports.Columns.Add("Origin");
+        reports.Columns.Add("ProductType");
+        reports.Columns.Add("MRP", typeof(decimal));
+        reports.Columns.Add("DiscountType");
+        reports.Columns.Add("Discount", typeof(decimal));
+        reports.Columns.Add("SalesPrice", typeof(decimal));
 
-		foreach (var item in Products)
-		{
-			reports.Rows.Add(item.productName, item.parentName, item.sku, item.productCode, item.brand, item.origin, item.productTy, item.mrp, item.discountType, item.discount, item.salesPrice);
-		}
-		return reports;
-	}
+        foreach (var item in Products)
+        {
+            reports.Rows.Add(item.productName, item.parentName, item.sku, item.productCode, item.brand, item.origin, item.productTy, item.mrp, item.discountType, item.discount, item.salesPrice);
+        }
+        return reports;
+    }
 
-	// Create Document Table
-	private async Task CreateDocumentTable()
-	{
-		using (ExcelEngine excelEngine = new ExcelEngine())
-		{
-			IApplication application = excelEngine.Excel;
-			application.DefaultVersion = ExcelVersion.Xlsx;
+    // Create Document Table
+    private async Task CreateDocumentTable()
+    {
+        using (ExcelEngine excelEngine = new ExcelEngine())
+        {
+            IApplication application = excelEngine.Excel;
+            application.DefaultVersion = ExcelVersion.Xlsx;
 
-			//Create a workbook.
-			IWorkbook workbook = application.Workbooks.Create(1);
-			IWorksheet worksheet = workbook.Worksheets[0];
+            //Create a workbook.
+            IWorkbook workbook = application.Workbooks.Create(1);
+            IWorksheet worksheet = workbook.Worksheets[0];
 
-			//Initialize DataTable and data get from SampleDataTable method.
-			DataTable table = ProductDataTableTable();
+            //Initialize DataTable and data get from SampleDataTable method.
+            DataTable table = ProductDataTableTable();
 
-			//Export data from DataTable to Excel worksheet.
-			worksheet.ImportDataTable(table, true, 1, 1);
+            //Export data from DataTable to Excel worksheet.
+            worksheet.ImportDataTable(table, true, 1, 1);
 
-			worksheet.UsedRange.AutofitColumns();
+            worksheet.UsedRange.AutofitColumns();
 
-			//Save the document as a stream and return the stream.
-			using (MemoryStream stream = new MemoryStream())
-			{
-				//Save the created Excel document to MemoryStream
-				workbook.SaveAs(stream);
+            //Save the document as a stream and return the stream.
+            using (MemoryStream stream = new MemoryStream())
+            {
+                //Save the created Excel document to MemoryStream
+                workbook.SaveAs(stream);
 
-				//Download the excel file.
-				await JS.SaveAs("Products.xlsx", stream.ToArray());
-			}
-		}
-	}
+                //Download the excel file.
+                await JS.SaveAs("Products.xlsx", stream.ToArray());
+            }
+        }
+    }
 
-	private DataTable ProductDataTableTable()
-	{
-		DataTable reports = new DataTable();
-		reports.Columns.Add("ProductName");
-		reports.Columns.Add("ParentName");
-		reports.Columns.Add("ProductSKU");
-		reports.Columns.Add("ProductCode");
-		reports.Columns.Add("BrandName");
-		reports.Columns.Add("Origin");
-		reports.Columns.Add("ProductType");
-		reports.Columns.Add("MRP", typeof(decimal));
-		reports.Columns.Add("DiscountType");
-		reports.Columns.Add("Discount", typeof(decimal));
-		reports.Columns.Add("SalesPrice", typeof(decimal));
+    private DataTable ProductDataTableTable()
+    {
+        DataTable reports = new DataTable();
+        reports.Columns.Add("ProductName");
+        reports.Columns.Add("ParentName");
+        reports.Columns.Add("ProductSKU");
+        reports.Columns.Add("ProductCode");
+        reports.Columns.Add("BrandName");
+        reports.Columns.Add("Origin");
+        reports.Columns.Add("ProductType");
+        reports.Columns.Add("MRP", typeof(decimal));
+        reports.Columns.Add("DiscountType");
+        reports.Columns.Add("Discount", typeof(decimal));
+        reports.Columns.Add("SalesPrice", typeof(decimal));
 
-		foreach (var item in Elements)
-		{
-			reports.Rows.Add(item.productName, item.parentName, item.sku, item.productCode, item.brand, item.origin, item.productTy, item.mrp, item.discountType, item.discount, item.salesPrice);
-		}
-		return reports;
-	}
+        foreach (var item in Elements)
+        {
+            reports.Rows.Add(item.productName, item.parentName, item.sku, item.productCode, item.brand, item.origin, item.productTy, item.mrp, item.discountType, item.discount, item.salesPrice);
+        }
+        return reports;
+    }
 }
