@@ -46,11 +46,11 @@ namespace Carnesia.Application.WMS.Projects
             }
         }
 
-		public async Task<ProjectsDetailsHeadDTO> AddProductToSkuDetails(string pCode, string sku, string uid)
+		public async Task<ProjectsDetailsHeadDTO> AddProductToSkuDetails(string pCode, string sku, string uid, string bin)
 		{
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<ProjectsDetailsHeadDTO>($"cyclecount/skuaudit/{sku}/{pCode}/{uid}");
+                var result = await _httpClient.GetFromJsonAsync<ProjectsDetailsHeadDTO>($"cyclecount/skuaudit/{bin}/{sku}/{pCode}/{uid}");
                 return result;
             }
             catch (Exception)

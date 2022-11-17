@@ -1,6 +1,6 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudText>Total Missing Quantity @(Missing). Are you sure to proceed further.</MudText>
+        <MudText>Total Missing Quantity is @(Missing), in @(Bin). Are you sure to proceed further.</MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -13,6 +13,7 @@
 
     [Parameter]
     public int Missing { get; set; }
+    public string Bin { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();

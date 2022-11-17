@@ -119,6 +119,7 @@
 							<MudCardContent Class="pa-0">
 								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Hover="true" Elevation="0" CustomFooter="true">
 									<HeaderContent>
+										<MudTh>Product Code</MudTh>
 										<MudTh>SKU</MudTh>
 										<MudTh>Product Name</MudTh>
 										<MudTh>Quantity</MudTh>
@@ -126,6 +127,7 @@
 										<MudTh>Amount</MudTh>
 									</HeaderContent>
 									<RowTemplate>
+										<MudTd DataLabel="Product Code">@DetailsContext.productCode</MudTd>
 										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
 										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
 										<MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>

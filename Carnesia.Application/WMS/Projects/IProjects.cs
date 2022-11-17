@@ -20,7 +20,7 @@ namespace Carnesia.Application.WMS.Projects
         Task<ProjectsDetailsHeadDTO> GetPoDetails(string pCode, string po);
 
         Task<ProjectsDetailsHeadDTO> AddProductToBinDetails(string pCode, string bin, string uid);
-        Task<ProjectsDetailsHeadDTO> AddProductToSkuDetails(string pCode, string sku, string uid);
+        Task<ProjectsDetailsHeadDTO> AddProductToSkuDetails(string pCode, string sku, string uid, string bin);
         Task<ProjectsDetailsHeadDTO> AddProductToPoDetails(string pCode, string po, string uid, string bin);
 
         Task<string> CompleteBinProject (string pCode, string bin);

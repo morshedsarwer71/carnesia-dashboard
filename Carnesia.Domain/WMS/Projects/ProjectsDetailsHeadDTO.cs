@@ -21,6 +21,7 @@ namespace Carnesia.Domain.WMS.Projects
         public string productCode { get; set; }
         public string sku { get; set; }
         public string productName { get; set; }
+        public string binName { get; set; }
         public string? poCode { get; set; }
         public int quantity { get; set; }
         public int foundQty { get; set; }

@@ -90,6 +90,7 @@
 							<MudCardContent Class="pa-0">
 								<MudTable Items="@context.Details" Context="DetailsContext" Hover="true" Elevation="0">
 								   <HeaderContent>
+										@*<MudTh>Product Code</MudTh>*@
 										<MudTh>SKU</MudTh>
 										<MudTh>Product Name</MudTh>
 										<MudTh>Quantity</MudTh>
@@ -97,6 +98,7 @@
 										<MudTh>Subtotal</MudTh>
 								   </HeaderContent>
 								   <RowTemplate>
+										@*<MudTd DataLabel="Product Code">@DetailsContext.</MudTd>*@
 										<MudTd DataLabel="SKU">@DetailsContext.SKU</MudTd>
 										<MudTd DataLabel="Product Name">@DetailsContext.ProductName</MudTd>
 										<MudTd DataLabel="Quantity">@DetailsContext.QTY</MudTd>

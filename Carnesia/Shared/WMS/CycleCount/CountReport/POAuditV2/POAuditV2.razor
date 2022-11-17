@@ -20,7 +20,7 @@
 
 		<MudGrid Class="justify-center mt-3">
 			<MudItem sm="4">
-				<MudTextField T="string" Label="Bin" Immediate="true" />
+				<MudTextField @bind-Value="Bin" Label="Bin" Immediate="true" />
 			</MudItem>
 			<MudItem sm="4">
 				<MudTextField @bind-Value="UID" Immediate="true" Label="UID" OnKeyDown="UidKeyPress" />
@@ -28,7 +28,7 @@
 		</MudGrid>
 		<MudGrid Class="justify-center mb-3">
 			<MudItem sm="8" Class="d-flex justify-end">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(UID) || String.IsNullOrEmpty(PO)" OnClick="AddProductsToProject">Add</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(UID) || String.IsNullOrEmpty(PO) || String.IsNullOrEmpty(Bin)" OnClick="AddProductsToProject">Add</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -46,7 +46,7 @@
 				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
 				<MudTd DataLabel="SKU">@context.sku</MudTd>
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
-				<MudTd DataLabel="Bin">Bin Name</MudTd>
+				<MudTd DataLabel="Bin">@context.binName</MudTd>
 				<MudTd DataLabel="QTY">@context.quantity</MudTd>
 				<MudTd DataLabel="Found">@context.foundQty</MudTd>
 				<MudTd DataLabel="Missing" Style="@(context.quantity - context.foundQty > 0 ? "background-color: #d1646ee3" : "background-color: #74d8aad1")">@(context.quantity - context.foundQty)</MudTd>
@@ -54,7 +54,7 @@
 		</MudTable>
 
 		<div class="d-flex justify-end mt-3">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(PO)" OnClick="Complete">Submit</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Bin)" OnClick="Complete">Submit</MudButton>
 		</div>
 	</MudContainer>
 </MudPaper>
@@ -74,6 +74,7 @@
 	// PO and UID
 	private string PO { get; set; }
 	private string UID { get; set; }
+	private string Bin { get; set; }
 
 	// Get PO Details
 	private async Task GetPoDetails()
@@ -119,7 +120,7 @@
 		Loading = true;
 		try
 		{
-			var result = await _projects.AddProductToPoDetails(projectcode, PO, UID, ProjectsDetails.binName);
+			var result = await _projects.AddProductToPoDetails(projectcode, PO, UID, Bin);
 			if (result.message == "Success")
 			{
 				ProjectsDetails = result;
@@ -156,7 +157,7 @@
 		Loading = true;
 		try
 		{
-			var result = await _projects.CompletePoProject(projectcode, PO);
+			var result = await _projects.CompleteBinProject(projectcode, Bin);
 
 			if (result == "Success")
 			{
@@ -181,7 +182,7 @@
 
 		var Missing = Elements.Sum(x => x.quantity - x.foundQty);
 
-		var parameters = new DialogParameters { ["Missing"] = Missing };
+		var parameters = new DialogParameters { ["Missing"] = Missing, ["Bin"] = Bin };
 
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true };
 		var dialog = await DialogService.Show<ConfirmMissingUIDModal>("Complete Project", parameters, options).Result;
