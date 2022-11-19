@@ -8,6 +8,8 @@ namespace Carnesia.Domain.WMS.POReport
 {
     public class POReportDTO
     {
+        public DateTime CreatedAt { get; set; }
+        public string SupplierName { get; set; }
         public string POID { get; set; }
         public string ReceivingWH { get; set; }
         public string SKU { get; set; }
