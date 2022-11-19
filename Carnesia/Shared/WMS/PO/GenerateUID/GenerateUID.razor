@@ -98,17 +98,20 @@
 			</MudButton>
 		</div>
 
-		<MudPaper Width="400px" Square="true" Class="mt-10">
-			<MudList Clickable="true">
-				<MudListItem>Total PO Quantity: 5000</MudListItem>
-				<MudDivider />
-				<MudListItem>Total Quantity Received: 500</MudListItem>
-				<MudDivider />
-				<MudListItem>Total PO Amount: 5000000</MudListItem>
-				<MudDivider />
-				<MudListItem>Total Received Amount: 5000000</MudListItem>
-			</MudList>
-		</MudPaper>
+		@if (Elements != null)
+		{
+			<MudPaper Width="400px" Square="true" Class="mt-10">
+				<MudList Clickable="true">
+					<MudListItem>Total PO Quantity: @Elements.Sum(x => x.poQuantity)</MudListItem>
+					<MudDivider />
+					<MudListItem>Total Quantity Received: @Elements.Sum(x => x.qcPassed)</MudListItem>
+					<MudDivider />
+					<MudListItem>Total PO Amount: @Elements.Sum(x => x.poQuantity * x.liftingPrice)</MudListItem>
+					<MudDivider />
+					<MudListItem>Total Received Amount: @Elements.Sum(x => x.qcPassed * x.liftingPrice)</MudListItem>
+				</MudList>
+			</MudPaper>
+		}
 	</MudContainer>
 </MudPaper>
 

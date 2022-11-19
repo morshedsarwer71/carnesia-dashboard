@@ -37,7 +37,7 @@
 				<MudTd DataLabel="Product Name">@context.productName</MudTd>
 				<MudTd DataLabel="TO Quantity">@context.qty</MudTd>
 				<MudTd DataLabel="Rcv. QTY">@context.pickedQty</MudTd>
-				<MudTd DataLabel="To Be Scanned">@(context.toBeScanned - context.pickedQty)</MudTd>
+				<MudTd DataLabel="To Be Scanned">@(context.qty - context.pickedQty)</MudTd>
 			</RowTemplate>
 			<PagerContent>
 				<MudTablePager />
