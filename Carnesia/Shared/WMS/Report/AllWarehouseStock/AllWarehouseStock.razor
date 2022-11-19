@@ -21,9 +21,15 @@
             <MudItem lg="3" md="6">
 				<MudAutocomplete T="string" Label="Brand" ResetValueOnEmptyText="true"/>
 			</MudItem>
+             <MudItem lg="3" md="6">
+                <MudSelect T="string" Label="Supplier" AnchorOrigin="Origin.BottomCenter">
+
+                </MudSelect>
+            </MudItem>
 			<MudItem lg="3" md="6">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
 			</MudItem>
+            
 		</MudGrid>
 
         <div class="d-flex justify-end mb-5">
@@ -38,9 +44,9 @@
                 <MudTh>COGS</MudTh>
                 <MudTh>MRP</MudTh>
                 <MudTh>Selling Price</MudTh>
-                <MudTh>Central Warehouse-W100</MudTh>
-                <MudTh>Dhanmondi-W101</MudTh>
-                <MudTh>Mirpur-W102</MudTh>
+                <MudTh>Central Warehouse-W101</MudTh>
+                <MudTh>Dhanmondi-W102</MudTh>
+                <MudTh>Mirpur-W103</MudTh>
                 <MudTh>Total Qty</MudTh>
                 <MudTh>Total COGS</MudTh>
             </HeaderContent>
@@ -51,9 +57,9 @@
                 <MudTd DataLabel="COGS">@context.COGS</MudTd>
                 <MudTd DataLabel="MRP">@context.MRP</MudTd>
                 <MudTd DataLabel="Selling Price">@context.SellingPrice</MudTd>
-                <MudTd DataLabel="Central Warehouse-W100">@context.CentralWH</MudTd>
-                <MudTd DataLabel="Dhanmondi-W101">@context.DhanmondiWH</MudTd>
-                <MudTd DataLabel="Mirpur-W102">@context.MirpurWH</MudTd>
+                <MudTd DataLabel="Central Warehouse-W101">@context.CentralWH</MudTd>
+                <MudTd DataLabel="Dhanmondi-W102">@context.DhanmondiWH</MudTd>
+                <MudTd DataLabel="Mirpur-W103">@context.MirpurWH</MudTd>
                 <MudTd DataLabel="Total Qty">@context.TotalQTY</MudTd>
                 <MudTd DataLabel="Total COGS">@context.TotalCOGS</MudTd>
             </RowTemplate>
