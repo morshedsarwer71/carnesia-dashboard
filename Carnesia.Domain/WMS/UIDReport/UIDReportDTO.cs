@@ -9,16 +9,30 @@ namespace Carnesia.Domain.WMS.UIDReport
     public class UIDReportDTO
     {
         public string? poCreated { get; set; }
-        public string? poClosed { get; set; }
+        // public string? poClosed { get; set; }
+        public string? lastUidCreated { get; set; }
+        public string? brandName { get; set; }
+        public string? supplierName { get; set; }
+
+
         public string poCode { get; set; }
         public string productCode { get; set; }
         public string sku { get; set; }
         public string productName { get; set; }
+
+        public string uidCreated { get; set; }
+
         public string uid { get; set; }
         public decimal liftingPrice { get; set; }
         public string expDate { get; set; }
         public string expStatus { get; set; }
         public string warehouse { get; set; }
+
+        public string mrp { get; set; }
+        public string discount { get; set; }
+        public string sellingPrice { get; set; }
+        public string discountType { get; set; }
+
         public string lastOrder { get; set; }
         public string? lastToCode { get; set; }
         public string? lastPickCode { get; set; }
@@ -26,7 +40,9 @@ namespace Carnesia.Domain.WMS.UIDReport
         public string lastUpdateDate { get; set; }
         public string team { get; set; }
         public string lastUpdateBy { get; set; }
-        public string lastBin { get; set; }
+        //public string lastBin { get; set; }
+        public string binId { get; set; }
+        public string binName { get; set; }
     }
 
     public class UIDReportFilterDTO
