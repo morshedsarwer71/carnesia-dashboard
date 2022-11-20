@@ -63,7 +63,7 @@
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetPicklistByFilter">Filter</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true" HorizontalScrollbar="true" Loading="Loading" LoadingProgressColor="Color.Info">
+		<MudTable RowsPerPage="25" Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true" HorizontalScrollbar="true" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh></MudTh>
 				<MudTh>Order Id</MudTh>

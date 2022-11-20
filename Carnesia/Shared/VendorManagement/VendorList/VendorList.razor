@@ -12,7 +12,7 @@
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
-		<MudTable Items="@Vendors" Dense="@table.Dense" Hover="@table.Hover" Bordered="@table.Bordered" Striped="@table.Striped" Filter="new Func<VendorDTO,bool>(FilterFuncInitial)" Loading="Loading" LoadingProgressColor="Color.Info">
+		<MudTable RowsPerPage="25" Items="@Vendors" Dense="@table.Dense" Hover="@table.Hover" Bordered="@table.Bordered" Striped="@table.Striped" Filter="new Func<VendorDTO,bool>(FilterFuncInitial)" Loading="Loading" LoadingProgressColor="Color.Info">
 			<ToolBarContent>
 				<MudSpacer />
 				<MudSpacer />

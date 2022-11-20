@@ -54,7 +54,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true" Loading="tableLoading" LoadingProgressColor="Color.Info">
+		<MudTable RowsPerPage="25" Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true" Loading="tableLoading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh></MudTh>
 				<MudTh>Order Id</MudTh>

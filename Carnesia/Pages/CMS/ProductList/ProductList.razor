@@ -44,7 +44,7 @@
         <div class="d-flex justify-end my-3">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchProducts">Filter</MudButton>
         </div>
-        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="_loading" LoadingProgressColor="Color.Info">
+        <MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="_loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh>Product Name</MudTh>
                 <MudTh>SKU</MudTh>

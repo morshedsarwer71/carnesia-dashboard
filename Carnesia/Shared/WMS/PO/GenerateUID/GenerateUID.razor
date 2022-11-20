@@ -44,7 +44,7 @@
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Elements.Count <= 0" OnClick="OpenAllPrintLabelDialog">Print All UIDS</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" SortLabel="Sort By" Class="mt-5" Loading="Loading" LoadingProgressColor="Color.Info">
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" SortLabel="Sort By" Class="mt-5" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.sku)">SKU Code</MudTableSortLabel></MudTh>
 				<MudTh><MudTableSortLabel SortBy="new Func<ReceivePOProductDTO, object>(x=>x.productCode)">Product Code</MudTableSortLabel></MudTh>

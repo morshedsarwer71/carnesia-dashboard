@@ -18,7 +18,7 @@
 			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="OpenAddParentCategoryModal">Add New Category</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ParentCategoryDTO,bool>(FilterFuncInitial)">
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ParentCategoryDTO,bool>(FilterFuncInitial)">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />

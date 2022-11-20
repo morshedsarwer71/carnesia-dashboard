@@ -33,7 +33,7 @@
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => GetOrdersByFilter()">Filter</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" Loading="Loading" LoadingProgressColor="Color.Info">
+		<MudTable RowsPerPage="25" Items="@Elements" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				@*<MudTh></MudTh>*@
 				<MudTh>Order ID</MudTh>

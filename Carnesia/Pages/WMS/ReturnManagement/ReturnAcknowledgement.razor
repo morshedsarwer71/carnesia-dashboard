@@ -13,7 +13,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable MultiSelection="true" @bind-SelectedItems="selectedItems" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered"               Striped="@tableCommon.Striped">
+		<MudTable RowsPerPage="25" MultiSelection="true" @bind-SelectedItems="selectedItems" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered"               Striped="@tableCommon.Striped">
             <ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />

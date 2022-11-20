@@ -16,7 +16,7 @@
 		<div class="mb-5 d-flex justify-end">
 			<MudButton StartIcon="@Icons.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenParentModal">Add Parent Product</MudButton>
 		</div>
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ParentProductDTO,bool>(FilterFuncInitial)">
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ParentProductDTO,bool>(FilterFuncInitial)">
 			<ToolBarContent>
 				<MudSpacer />
 				<MudSpacer />
