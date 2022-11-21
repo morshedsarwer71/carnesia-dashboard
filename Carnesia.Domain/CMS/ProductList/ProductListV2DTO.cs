@@ -19,8 +19,12 @@ namespace Carnesia.Domain.CMS.ProductList
         public string discountType { get; set; }
         public decimal salesPrice { get; set; }
         public string brand { get; set; }
+        public string updatedBy { get; set; }
         public int productId { get; set; }
         public int parentId { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
+        public bool isPublish { get; set; }
     }
 
     public class ProductListFilterV2DTO

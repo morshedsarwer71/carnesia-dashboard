@@ -32,6 +32,22 @@ namespace Carnesia.Application.CMS.Services.ProductList
             }
         }
 
+        public async Task<bool> DeleteProduct(int id)
+        {
+            try
+            {
+                var result = await _httpClient.DeleteAsync($"Products/deleteproduct/{id}");
+
+                return result.IsSuccessStatusCode;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<ProductQuickSettingDTO>> GetAllProducts()
         {
             try
