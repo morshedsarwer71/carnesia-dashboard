@@ -88,7 +88,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
         </div>
 
-        <MudTable Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
+        <MudTable RowsPerPage="25" Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh>PO Created on</MudTh>
                 @*<MudTh>Po Closed on</MudTh>*@

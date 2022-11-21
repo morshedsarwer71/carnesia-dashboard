@@ -50,7 +50,7 @@ namespace Carnesia.Application.WMS.Projects
 		{
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<ProjectsDetailsHeadDTO>($"cyclecount/skuaudit/{bin}/{sku}/{pCode}/{uid}");
+                var result = await _httpClient.GetFromJsonAsync<ProjectsDetailsHeadDTO>($"cyclecount/skuaudit/{bin}/{pCode}/{uid}/{sku}");
                 return result;
             }
             catch (Exception)

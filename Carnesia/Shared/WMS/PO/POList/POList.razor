@@ -32,7 +32,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Class="mt-10" Items="@poList" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
+		<MudTable RowsPerPage="25" Class="mt-10" Items="@poList" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>Date</MudTh>
 				<MudTh>PO ID</MudTh>

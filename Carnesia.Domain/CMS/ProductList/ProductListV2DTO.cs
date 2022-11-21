@@ -20,6 +20,7 @@ namespace Carnesia.Domain.CMS.ProductList
         public decimal salesPrice { get; set; }
         public string brand { get; set; }
         public string updatedBy { get; set; }
+        public string createdBy { get; set; }
         public int productId { get; set; }
         public int parentId { get; set; }
         public DateTime createdAt { get; set; }

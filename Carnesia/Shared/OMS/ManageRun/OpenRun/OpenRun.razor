@@ -7,7 +7,7 @@
 			<MudButton Variant="Variant.Filled" Color="Color.Info">Print</MudButton>
 		</div>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" MultiSelection="true" 
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" MultiSelection="true" 
          @bind-SelectedItems="SelectedItems">
             <ToolBarContent>
                 <MudSpacer />

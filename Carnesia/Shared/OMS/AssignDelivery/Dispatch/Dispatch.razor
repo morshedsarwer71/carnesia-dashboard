@@ -97,7 +97,7 @@
 			</MudItem>
 		</MudGrid>
 
-		<MudTable Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info" MultiSelection="false" @bind-SelectedItems="SelectedItems">
+		<MudTable RowsPerPage="25" Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info" MultiSelection="false" @bind-SelectedItems="SelectedItems">
 			<HeaderContent>
 				<MudTh></MudTh>
 				<MudTh>Tracking</MudTh>

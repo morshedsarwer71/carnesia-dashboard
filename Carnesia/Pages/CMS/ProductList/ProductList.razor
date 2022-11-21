@@ -46,7 +46,7 @@
 		<div class="d-flex justify-end my-3">
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchProducts">Filter</MudButton>
 		</div>
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="_loading" LoadingProgressColor="Color.Info">
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="_loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
 				<MudTh>Product Name</MudTh>
 				<MudTh>SKU</MudTh>
@@ -60,6 +60,7 @@
 				<MudTh>Sales Price</MudTh>
 				<MudTh>Status</MudTh>
 				<MudTh>Creation Date</MudTh>
+				<MudTh>Created By</MudTh>
 				<MudTh>Update Date</MudTh>
 				<MudTh>Updated By</MudTh>
 				<MudTh>Action</MudTh>
@@ -79,6 +80,7 @@
 					@(context.isPublish ? "Published" : "Unpublished") 
 				</MudTd>
 				<MudTd DataLabel="Creation Date">@context.createdAt</MudTd>
+				<MudTd DataLabel="Created By">@context.createdBy</MudTd>
 				<MudTd DataLabel="Update Date">@context.updatedAt</MudTd>
 				<MudTd DataLabel="Updated By">@context.updatedBy</MudTd>
 				<MudTd DataLabel="Action">

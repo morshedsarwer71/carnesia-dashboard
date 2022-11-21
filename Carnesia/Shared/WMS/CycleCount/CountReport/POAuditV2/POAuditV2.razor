@@ -20,7 +20,7 @@
 
 		<MudGrid Class="justify-center mt-3">
 			<MudItem sm="4">
-				<MudTextField @bind-Value="Bin" Label="Bin" Immediate="true" />
+				<MudTextField @bind-Value="Bin" Label="Bin" Immediate="true" OnKeyPress="BinKeyPress" />
 			</MudItem>
 			<MudItem sm="4">
 				<MudTextField @bind-Value="UID" Immediate="true" Label="UID" OnKeyDown="UidKeyPress" />
@@ -180,7 +180,7 @@
 	private async Task Complete()
 	{
 
-		var Missing = Elements.Sum(x => x.quantity - x.foundQty);
+		var Missing = Elements.Where(x => x.binName == Bin).Sum(x => x.quantity - x.foundQty);
 
 		var parameters = new DialogParameters { ["Missing"] = Missing, ["Bin"] = Bin };
 
@@ -190,6 +190,45 @@
 		if (!dialog.Cancelled)
 		{
 			await CompletePoProject();
+		}
+	}
+
+	// Get Bin Details
+	private async Task GetBinDetails()
+	{
+		Loading = true;
+		try
+		{
+			var result = await _projects.GetBinDetails(projectcode, Bin);
+
+			if (result.message == "Success")
+			{
+				ProjectsDetails = result;
+				Elements = result.productDetails;
+				Snackbar.Add(result.message, Severity.Success);
+				Loading = false;
+				return;
+			}
+
+			Snackbar.Add(result.message, Severity.Error);
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal Server Error!", Severity.Error);
+			Loading = false;
+		}
+	}
+
+	private async Task BinKeyPress(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			if (!String.IsNullOrEmpty(Bin))
+			{
+				await GetBinDetails();
+			}
 		}
 	}
 }

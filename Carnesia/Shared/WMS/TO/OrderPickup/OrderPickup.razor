@@ -26,7 +26,7 @@
             <MudText Typo="Typo.subtitle1">Total Quantity Added: 430</MudText>
         </div>
 
-		<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" MultiSelection="true" @bind-SelectedItems="SelectedOrders">
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" MultiSelection="true" @bind-SelectedItems="SelectedOrders">
             <HeaderContent>
                 <MudTh></MudTh>
                 <MudTh>SKU</MudTh>
