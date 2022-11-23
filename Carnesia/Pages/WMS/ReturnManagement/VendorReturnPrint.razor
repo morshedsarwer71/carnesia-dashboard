@@ -1,0 +1,129 @@
+﻿@layout PrintLayout
+@page "/vendor-return-print/{id:int}"
+
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.BarcodeGenerator
+@inject IManageTo _manageTo
+@inject HttpClient _httpClient
+
+
+<div style="width: 210mm; margin: 0 auto;">
+	<div class="my-5">
+		<p>Return Warehouse: @VRPrint.returnWH</p>
+		<p>Return Number: @VRPrint.returnNumber</p>
+		<p>Created on: @VRPrint.createdAt</p>
+		<p>Created by: @VRPrint.createdBy</p>
+		<p>Update By: @VRPrint.updateBy</p>
+		<p>Last Status Update On: @VRPrint.lastUpdateOn</p>
+		<p>Supplier: @VRPrint.supplier</p>
+	</div>
+
+	@*<div style="width: 35%; margin: 10px auto;">
+		@if (!String.IsNullOrEmpty(Picklist.pickListCode))
+		{
+			<SfBarcodeGenerator Value="@Picklist.pickListCode" Height="60px">
+				<BarcodeGeneratorDisplayText Text="" Size="12" Alignment="Alignment.Center" Position="TextPosition.Bottom">
+				</BarcodeGeneratorDisplayText>
+			</SfBarcodeGenerator>
+		}
+	</div>*@
+
+	<table style="width: 100%; border-collapse: collapse;">
+		<tr style="font-size: 14px;">
+			<th style="width: 40px" class="table-cell">SL</th>
+			<th class="table-cell">PO ID</th>
+			<th class="table-cell">Product Code</th>
+			<th class="table-cell">SKU</th>
+			<th class="table-cell">Product Name</th>
+			<th class="table-cell">Quantity</th>
+			<th class="table-cell">Value</th>
+			
+		</tr>
+		@*@if (Items.Count > 0)
+		{
+			foreach (var item in Picklist.bins)
+			{
+				sl++;
+				<tr style="font-size: 12px;">
+					<td class="table-cell">@sl</td>
+					<td class="table-cell">@item.productCode</td>
+					<td class="table-cell">@item.sku</td>
+					<td class="table-cell">@item.productName</td>
+					<td class="table-cell">@item.quantity</td>
+					<td class="table-cell">@item.binName</td>
+					<td class="table-cell"></td>
+				</tr>
+			}
+		}*@
+
+	</table>
+
+	<div style="text-align:end" class="mt-5">
+		<p>Total Quantity: 0</p>
+		<p>Grand Total: 0</p>
+	</div>
+
+	@*<MudGrid Class="mt-5">
+		<MudItem xs="4">
+			<p>Picked by........................</p>
+		</MudItem>
+		<MudItem xs="4">
+			<p>Packed by........................</p>
+		</MudItem>
+		<MudItem xs="4">
+			<p>Received by........................</p>
+		</MudItem>
+	</MudGrid>*@
+</div>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    // SL
+    private int sl = 0;
+
+    // Page On Load
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    await GetPicklists();
+    //}
+
+    // Picklist
+    private VRPrintDTO VRPrint = new VRPrintDTO();
+    private List<VRProductsDTO> Items = new List<VRProductsDTO>();
+
+    // Get Picklists
+    //private async Task GetPicklists()
+    //{
+    //    Picklist = await _httpClient.GetFromJsonAsync<PicklistDTO>($"StockTransfers/getpicklist/{pickCode}");
+    //    Items = Picklist.bins;
+    //}
+
+    private class VRPrintDTO
+    {
+        public VRPrintDTO()
+        {
+        }
+
+        public string returnWH { get; set; }
+        public int returnNumber { get; set; }
+        public string createdAt { get; set; }
+		public string createdBy { get; set; }
+		public string updateBy { get; set; }
+		public string lastUpdateOn { get; set; }
+		public string supplier { get; set; }
+		public List<VRProductsDTO> bins { get; set; }
+	}
+
+	private class VRProductsDTO
+	{
+		public int	 poId { get; set; }
+		public string productCode { get; set; }
+		public string sku { get; set; }
+		public string productName { get; set; }
+		public int quantity { get; set; }
+		public string value { get; set; }
+	}
+}
+
