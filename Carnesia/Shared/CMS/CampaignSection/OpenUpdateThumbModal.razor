@@ -1,5 +1,6 @@
 ﻿@using Carnesia.Domain.CMS.CampaignSection
 @inject IBase64 _base64
+@inject ICampaignSection _section
 
 <MudDialog>
 	<DialogContent>
@@ -11,11 +12,11 @@
 			<MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5" Required="true">
 				Upload Banner Images
 			</MudButton>
-			@if (Alignment == "12*1")
+			@if (Allignment == "12*1")
 			{
 				<MudText>100 * 100(.webp only. Max 50Kb.)</MudText>
 			}
-			else if (Alignment == "8*2")
+			else if (Allignment == "8*2")
 			{
 				<MudText>100 * 100(.webp only. Max 50Kb.)</MudText>
 			}
@@ -26,10 +27,10 @@
 
 			<br />
 			<MudText Color="Color.Error">@ImageError</MudText>
-			<MudImage Src="@($"data:image/webp;base64,{ImageSRC}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+			<MudImage Src="@($"data:image/webp;base64,{FormData.base64}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
 
 			<div class="d-flex justify-end my-5">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="AddThumb" Class="ml-auto">Submit</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="AddToBag" Class="ml-auto">Submit</MudButton>
 			</div>
 		</MudForm>
 	</DialogContent>
@@ -38,22 +39,37 @@
 @code {
 	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-	[Parameter]
-	public CampaignSectionThumbsDTO FormData { get; set; } = new CampaignSectionThumbsDTO();
+	// Modal On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetThumb();
+    }
 
 	[Parameter]
-	public string Alignment { get; set; }
+	public CampaignSectionThumbsDTO FormData { get; set; } = new CampaignSectionThumbsDTO();
+	[Parameter]
+	public string Allignment { get; set; }
 
 	// Form Ref
 	bool success;
 	string[] errors = { };
 	MudForm form;
 
-	// Image SRC
-	private string ImageSRC { get; set; }
-
 	// Image Error
 	private string ImageError { get; set; }
+
+	// Get Bunch
+	private async Task GetThumb()
+	{
+		try
+		{
+			FormData = await _section.GetThumbById(FormData.id);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+		}
+	}
 
 	// Image Validation
 	private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
@@ -61,19 +77,16 @@
 		ImageError = String.Empty;
 		try
 		{
-			if (Alignment == "12*1")
+			if (Allignment == "12*1")
 			{
-				ImageSRC = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
 				FormData.base64 = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
 			}
-			else if (Alignment == "8*2")
+			else if (Allignment == "8*2")
 			{
-				ImageSRC = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
 				FormData.base64 = await _base64.ConvertToBase64(51200, 100, 100, ImageFile);
 			}
 			else
 			{
-				ImageSRC = await _base64.ConvertToBase64(102400, 600, 420, ImageFile);
 				FormData.base64 = await _base64.ConvertToBase64(102400, 600, 420, ImageFile);
 			}
 		}
@@ -87,7 +100,7 @@
 	void Submit() => MudDialog.Close(DialogResult.Ok<CampaignSectionThumbsDTO>(FormData));
 
 	// Create Banner
-	private void AddThumb()
+	private void AddToBag()
 	{
 		if (String.IsNullOrEmpty(FormData.base64))
 		{

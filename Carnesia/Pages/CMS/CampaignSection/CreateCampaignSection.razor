@@ -16,7 +16,8 @@
 				</MudItem>
 				<MudItem sm="6">
 					<MudSelect @bind-Value="FormData.alignment" @onblur="() => ClearThumbs()" Label="Alignment" ReadOnly="!String.IsNullOrEmpty(FormData.alignment)" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Alignment is required!">
-						<MudSelectItem Value="@("8*1")" />
+						<MudSelectItem Value="@("2*2")" />
+						<MudSelectItem Value="@("8*2")" />
 						<MudSelectItem Value="@("12*1")" />
 						<MudSelectItem Value="@("3*2")" />
 						<MudSelectItem Value="@("4*2")" />

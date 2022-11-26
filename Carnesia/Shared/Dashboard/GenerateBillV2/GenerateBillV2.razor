@@ -1,4 +1,6 @@
-﻿@using Carnesia.Domain.Dashboard.GenerateBill
+﻿@page "/generatebill2"
+
+@using Carnesia.Domain.Dashboard.GenerateBill
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Shared.Dashboard.GenerateBill
 @inject IJSRuntime JSRuntime
@@ -25,7 +27,7 @@
 			</MudGrid>
 			@*<div class="d-flex justify-end mt-5">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCustomerModal">Create Customer</MudButton>
-			</div>*@
+				</div>*@
 			<MudGrid Class="justify-space-between mb-5">
 				<MudItem sm="4">
 					<MudTextField @bind-Value="uid" Placeholder="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
@@ -147,17 +149,43 @@
 						</MudItem>
 					</MudGrid>
 				</MudItem>
-				<MudItem sm="6">
-					<MudSelect @bind-Value="POSDetails.paymentType" Label="Payment Type" AnchorOrigin="Origin.BottomCenter">
+			</MudGrid>
+
+			<MudGrid>
+				<MudItem xs="4">
+					<MudSelect @bind-Value="NewPayment.paymentType" Label="Payment Type" AnchorOrigin="Origin.BottomCenter">
 						<MudSelectItem Value="@("Cash")" />
 						<MudSelectItem Value="@("Card")" />
 						<MudSelectItem Value="@("Bkash")" />
 						<MudSelectItem Value="@("Nagad")" />
 					</MudSelect>
 				</MudItem>
-				<MudItem sm="6">
-					<MudTextField @bind-Value="POSDetails.refNumber" Label="Payment Reference" />
+				<MudItem xs="4">
+					<MudNumericField @bind-Value="NewPayment.amount" Label="Amount" />
 				</MudItem>
+				<MudItem xs="4">
+					<MudTextField @bind-Value="NewPayment.referance" Label="Payment Reference" />
+				</MudItem>
+			</MudGrid>
+
+			<div class="d-flex justify-end my-3">
+				<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="AddPayment">Add Payment</MudButton>
+			</div>
+
+			<MudTable Class="mb-3" Items="@PaymentTable" Hover="true" Dense="true">
+				<HeaderContent>
+					<MudTh>Payment Type</MudTh>
+					<MudTh>Amount</MudTh>
+					<MudTh>Reference</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="Payment Type">@context.paymentType</MudTd>
+					<MudTd DataLabel="Amount">@context.amount</MudTd>
+					<MudTd DataLabel="Reference">@context.referance</MudTd>
+				</RowTemplate>
+			</MudTable>
+
+			<MudGrid>
 				<MudItem sm="6">
 					<MudNumericField Value="POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount)" Label="Return Amount" ReadOnly="true" />
 				</MudItem>
@@ -189,13 +217,13 @@
 	private bool disableGenerate { get; set; }
 
 	// Invoke Focus
-	protected async override Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			await JSRuntime.InvokeVoidAsync("SetFocusToElement", generateBill);
-		}
-	}
+	//protected async override Task OnAfterRenderAsync(bool firstRender)
+	//{
+	//	if (firstRender)
+	//	{
+	//		await JSRuntime.InvokeVoidAsync("SetFocusToElement", generateBill);
+	//	}
+	//}
 
 	// TRN Code
 	private string trnCode { get; set; }
@@ -585,9 +613,35 @@
 	}
 
 	// Add Combo
-    private void AddCombo()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth=true, CloseButton=true, MaxWidth=MaxWidth.Large };
-        DialogService.Show<GenerateBillAddComboModal>("Add Combo/Bogo", options);
-    }
+	private void AddCombo()
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, MaxWidth = MaxWidth.Large };
+		DialogService.Show<GenerateBillAddComboModal>("Add Combo/Bogo", options);
+	}
+
+	// Temp Table
+
+	private List<PaymentDTO> PaymentTable = new List<PaymentDTO>();
+
+	// New Payment
+	private PaymentDTO NewPayment = new PaymentDTO();
+
+	// Add New Payment
+	private void AddPayment()
+	{
+		if (String.IsNullOrEmpty(NewPayment.paymentType) || NewPayment.amount <= 0)
+		{
+			Snackbar.Add("Payment type and Amount is required!", Severity.Error);
+			return;
+		}
+		PaymentTable.Add(NewPayment);
+		NewPayment = new PaymentDTO();
+	}
+
+	public class PaymentDTO
+	{
+		public string paymentType { get; set; } 
+		public decimal amount {get; set;}
+		public string referance {get; set;}
+	}
 }

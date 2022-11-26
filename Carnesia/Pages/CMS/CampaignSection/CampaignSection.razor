@@ -2,13 +2,14 @@
 @using Carnesia.Domain.CMS.CampaignSection
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Shared.CommonComponents
+@using Carnesia.Shared.CMS.CampaignSection
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject ICampaignSection _section
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
-				<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading">
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading">
 			<ToolBarContent>
 				<MudSpacer />
 				<MudSpacer />
@@ -35,7 +36,7 @@
 				<MudTd DataLabel="Section Name">@context.name</MudTd>
 				<MudTd DataLabel="Allignment">@context.alignment</MudTd>
 				<MudTd DataLabel="Home">
-					<MudSwitch @bind-Checked="@context.IsPublish" Color="Color.Primary"/>
+					<MudSwitch @bind-Checked="@context.IsPublish" Color="Color.Primary" />
 				</MudTd>
 			</RowTemplate>
 			<ChildRowContent>
@@ -49,17 +50,17 @@
 										<MudTh>Name</MudTh>
 										<MudTh>Image</MudTh>
 										<MudTh>Link</MudTh>
-										@*<MudTh>Action</MudTh>*@
+										<MudTh>Action</MudTh>
 									</HeaderContent>
 									<RowTemplate>
 										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
 										<MudTd DataLabel="Image">
-											<MudImage @onclick="() => ShowImage(DetailsContext.imageUrl)" Src="@($"https://cscpguide.com/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
+											<MudImage @onclick="() => ShowImage(DetailsContext.imageUrl)" Src="@($"https://localhost:7090/{DetailsContext.imageUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
 										</MudTd>
 										<MudTd DataLabel="Link">@DetailsContext.url</MudTd>
-										@*<MudTd DataLabel="Link">
-											<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateThumbModal(DetailsContext.id, context.allignment)">Edit</MudButton>
-										</MudTd>*@
+										<MudTd DataLabel="Link">
+											<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateThumbModal(DetailsContext.id, context.alignment)">Edit</MudButton>
+										</MudTd>
 									</RowTemplate>
 								</MudTable>
 							</MudCardContent>
@@ -82,10 +83,10 @@
 
 @code {
 	// Page On Load
-    protected override async Task OnInitializedAsync()
-    {
-       await GetAllSection();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await GetAllSection();
+	}
 
 	// Loading
 	private bool Loading { get; set; }
@@ -105,7 +106,7 @@
 			Elements = await _section.GetAllSections();
 			Loading = false;
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Loading = false;
@@ -127,5 +128,39 @@
 	{
 		CampaignSectionDTO tmpElements = Elements.First(f => f.id == id);
 		tmpElements.showDetails = !tmpElements.showDetails;
+	}
+
+	// Update Thumb
+	private async Task OpenUpdateThumbModal(int id, string allignment)
+	{
+		var parameters = new DialogParameters();
+		parameters.Add("FormData", new CampaignSectionThumbsDTO() { id = id });
+		parameters.Add("Allignment", allignment);
+
+		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+		var dialog = await DialogService.Show<OpenUpdateThumbModal>("Update Thumb", parameters, options).Result;
+
+		if (dialog.Data != null)
+		{
+			CampaignSectionThumbsDTO newThumb = dialog.Data as CampaignSectionThumbsDTO;
+
+			try
+			{
+				var result = await _section.UpdateThumb(newThumb);
+
+				if (result)
+				{
+					Snackbar.Add("Thumb Updated Successfully!", Severity.Success);
+					await GetAllSection();
+					return;
+				}
+				Snackbar.Add("Thumb Update Failed!", Severity.Error);
+			}
+			catch (Exception)
+			{
+				Snackbar.Add("Internal Server Error!", Severity.Error);
+				throw;
+			}
+		}
 	}
 }
