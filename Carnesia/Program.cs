@@ -84,7 +84,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddHttpClient("RetailSuite", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7090/api/");
+    //client.BaseAddress = new Uri("https://localhost:7090/api/");
+    client.BaseAddress = new Uri("https://cscpguide.com/api/");
 }).AddHttpMessageHandler<AuthorizationMessageHandler>();
 
 builder.Services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
