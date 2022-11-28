@@ -1,6 +1,10 @@
 ﻿@page "/update-campaign/{id:int}"
 @using Carnesia.Domain.CMS.Campaign
 @using Carnesia.Shared.CMS.CreateCampaign
+@using Syncfusion.XlsIO
+@using System.IO
+@using System.Data
+@inject Microsoft.JSInterop.IJSRuntime JS
 @inject ICampaignList _campaignList
 @inject ICreateCampaign _createCampaign
 @inject IProducts _products
@@ -62,7 +66,18 @@
             </div>
 
             <MudText Typo="Typo.h5" Class="mb-5">Regular Products</MudText>
-            <MudTable Items="@campaign.products" Hover="true" Dense="true">
+            <div class="d-flex justify-end">
+                <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="CreateDocumentTable" Class="mr-1">Download CSV</MudButton>
+                <InputFile id="fileInputXLSX" hidden accept=".xlsx" OnChange="UploadFiles" />
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Filled.CloudUpload"
+                           for="fileInputXLSX">
+                    Upload XLSX
+                </MudButton>
+            </div>
+            <MudTable Items="@campaign.products" Hover="true" Dense="true" Loading="Loading">
                 <HeaderContent>
                     <MudTh>SKU</MudTh>
                     <MudTh>Product Name</MudTh>
@@ -129,6 +144,9 @@
         await GetCampaign();
         await SetTime();
     }
+
+    // Loading
+    private bool Loading { get; set; }
 
     // Campaign
     private CampaignDTO campaign = new CampaignDTO();
@@ -315,6 +333,109 @@
             {
                 Console.WriteLine(e.Message);
             }
+        }
+    }
+
+    // Create Document Table
+    private async Task CreateDocumentTable()
+    {
+        using (ExcelEngine excelEngine = new ExcelEngine())
+        {
+            IApplication application = excelEngine.Excel;
+            application.DefaultVersion = ExcelVersion.Xlsx;
+
+            //Create a workbook.
+            IWorkbook workbook = application.Workbooks.Create(1);
+            IWorksheet worksheet = workbook.Worksheets[0];
+
+            //Initialize DataTable and data get from SampleDataTable method.
+            DataTable table = ProductDataTableTable();
+
+            //Export data from DataTable to Excel worksheet.
+            worksheet.ImportDataTable(table, true, 1, 1);
+
+            worksheet.UsedRange.AutofitColumns();
+
+            //Save the document as a stream and return the stream.
+            using (MemoryStream stream = new MemoryStream())
+            {
+                //Save the created Excel document to MemoryStream
+                workbook.SaveAs(stream);
+
+                //Download the excel file.
+                await JS.SaveAs("Products.xlsx", stream.ToArray());
+            }
+        }
+    }
+
+    private DataTable ProductDataTableTable()
+    {
+        DataTable reports = new DataTable();
+        reports.Columns.Add("Id", typeof(int));
+        reports.Columns.Add("ProductSKU");
+        reports.Columns.Add("ProductName");
+        reports.Columns.Add("DiscType");
+        reports.Columns.Add("DiscAmount", typeof(decimal));
+        reports.Columns.Add("Stock", typeof(int));
+        reports.Columns.Add("MaxOrder", typeof(int));
+
+        foreach (var item in campaign.products)
+        {
+            reports.Rows.Add(item.productId, item.productSku, item.productName, item.discType, item.discAmount, item.stock, item.maxOrderQty);
+        }
+        return reports;
+    }
+
+    // Bulk Upload
+    private List<CampaignProductUpdateDTO> BulkProducts = new List<CampaignProductUpdateDTO>();
+
+    private async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        Loading = true;
+        try
+        {
+            BulkProducts.Clear();
+            BulkProducts = await _createCampaign.UploadProductUpdateExcelFile(e);
+            await BulkUpdateModal();
+            Loading = false;
+        }
+        catch (Exception er)
+        {
+            Console.WriteLine(er.Message);
+            Snackbar.Add("Internal Server Error!", Severity.Error);
+            Loading = false;
+        }
+    }
+
+    // Update Product Bulk
+    private async Task BulkUpdateModal()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<UpdateProductConfirmationModal>("Update Confirmation", options).Result;
+
+        if (!dialog.Cancelled)
+        {
+            await BulkUpdate();
+        }
+    }
+
+    private async Task BulkUpdate()
+    {
+        try
+        {
+            var result = await _createCampaign.ProductBulkUpdate(BulkProducts, campaign.campaignCode);
+
+            if (result)
+            {
+                Snackbar.Add("Products Updated Successfully!", Severity.Success);
+                await GetCampaign();
+                return;
+            }
+            Snackbar.Add("Products Update Failed!", Severity.Error);
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
         }
     }
 }
