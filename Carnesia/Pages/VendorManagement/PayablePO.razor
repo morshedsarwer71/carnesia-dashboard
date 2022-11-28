@@ -1,0 +1,153 @@
+﻿@*@page "/vendor-payable-po/{poId}"*@
+@page "/vendor-payable-po/{poId}"
+
+
+@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.Vendor.Models
+
+
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudGrid Class="justify-center align-baseline mb-5">
+            <MudItem lg="3" md="6">
+                <MudTextField T="string" Label="PO ID" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem lg="3" md="6">
+                <MudDatePicker Label="PO Form Date" DateFormat="yyyy-MM-dd" />
+            </MudItem>
+            <MudItem lg="3" md="6">
+                <MudDatePicker Label="PO To Date" DateFormat="yyyy-MM-dd" />
+            </MudItem>
+            <MudItem lg="3" md="6">
+                <MudDatePicker Label="Receiving Form Date" DateFormat="yyyy-MM-dd" />
+            </MudItem>
+            <MudItem lg="3" md="6">
+                <MudDatePicker Label="Receiving To Date" DateFormat="yyyy-MM-dd" />
+            </MudItem>
+            <MudItem md="3">
+                <MudSelect T="string" Label="Payment Status" AnchorOrigin="Origin.BottomCenter">
+                    @*<MudSelectItem Value="@("Delivered")" />
+                    <MudSelectItem Value="@("Failed")" />
+                    <MudSelectItem Value="@("Cancelled")" />
+                    <MudSelectItem Value="@("Lost")" />*@
+                </MudSelect>
+            </MudItem>
+            <MudItem md="3">
+                <MudSelect T="string" Label="PO Type" AnchorOrigin="Origin.BottomCenter">
+                    @*<MudSelectItem Value="@("Delivered")" />
+                    <MudSelectItem Value="@("Failed")" />
+                    <MudSelectItem Value="@("Cancelled")" />
+                    <MudSelectItem Value="@("Lost")" />*@
+                </MudSelect>
+            </MudItem>
+            <MudItem md="3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+            </MudItem>
+        </MudGrid>
+
+        <div class="mb-2">
+            <h2>Supplier :</h2>
+            <h2>Initial :</h2>
+        </div>
+
+        <div>
+            <p>Total PO Amount : </p>
+            <p>Total Received Amount : </p>
+            <p>Sold Total : </p>
+            <p>Current Inventory Value : </p>
+            <p>Total Paid : </p>
+            <p>Total Lost : </p>
+            <p>Total Rebate : </p>
+            <p>Processing : </p>
+            <p>Payable : </p>
+        </div>
+
+        <div class="d-flex justify-end mb-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Download Statement</MudButton>
+        </div>
+
+        <MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <HeaderContent>
+                <MudTh>PO Created on</MudTh>
+                <MudTh>Receiving Date</MudTh>
+                <MudTh>PO Type</MudTh>
+                <MudTh>PO ID</MudTh>
+                <MudTh>PO QTY.</MudTh>
+                <MudTh>Received QTY.</MudTh>
+                <MudTh>Curent Inventory QTY.</MudTh>
+                <MudTh>PO Amount</MudTh>
+                <MudTh>Curent Inventory Value</MudTh>
+                <MudTh>Received Amount</MudTh>
+                <MudTh>PO Status</MudTh>
+                <MudTh>Sold UID Value</MudTh>
+                <MudTh>Returned Amount</MudTh>
+                <MudTh>Lost</MudTh>
+                <MudTh>Paid</MudTh>
+                <MudTh>Processing</MudTh>
+                <MudTh>View Products</MudTh>
+                <MudTh>Download UID Status_All</MudTh>
+                <MudTh>PO Created by</MudTh>
+                <MudTh>PO Received by</MudTh>
+                <MudTh>PO Status Changed on</MudTh>
+                <MudTh>Payment Status</MudTh>
+                <MudTh>Payable</MudTh>
+                <MudTh>Pay</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="PO Created on"></MudTd>
+                <MudTd DataLabel="Receiving Date"></MudTd>
+                <MudTd DataLabel="PO Type"></MudTd>
+                <MudTd DataLabel="PO ID"></MudTd>
+                <MudTd DataLabel="PO QTY."></MudTd>
+                <MudTd DataLabel="Received QTY."></MudTd>
+                <MudTd DataLabel="Curent Inventory QTY."></MudTd>
+                <MudTd DataLabel="PO Amount"></MudTd>
+                <MudTd DataLabel="Curent Inventory Value"></MudTd>
+                <MudTd DataLabel="Received Amount"></MudTd>
+                <MudTd DataLabel="PO Status"></MudTd>
+                <MudTd DataLabel="Sold UID Value"></MudTd>
+                <MudTd DataLabel="Returned Amount"></MudTd>
+                <MudTd DataLabel="Lost"></MudTd>
+                <MudTd DataLabel="Paid"></MudTd>
+                <MudTd DataLabel="Processing"></MudTd>
+                <MudTd DataLabel="View Products"></MudTd>
+                <MudTd DataLabel="Download UID Status_All"></MudTd>
+                <MudTd DataLabel="PO Created by"></MudTd>
+                <MudTd DataLabel="PO Received by"></MudTd>
+                <MudTd DataLabel="PO Status Changed on"></MudTd>
+                <MudTd DataLabel="Payment Status"></MudTd>
+                <MudTd DataLabel="Payable"></MudTd>
+                <MudTd DataLabel="Pay"></MudTd>
+
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+       @* <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>*@
+
+        <div class="my-5 d-flex justify-end me-3">
+			    <h3>Invoice Amount: </h3>
+		</div>
+		<div class=" d-flex justify-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="me-3">Generate</MudButton>
+		</div>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    [Parameter]
+	public string poId { get; set; }
+
+    public TableCommon tableCommon = new TableCommon();
+
+    private IEnumerable<PayablePODTO> Elements = new List<PayablePODTO>();
+
+}
