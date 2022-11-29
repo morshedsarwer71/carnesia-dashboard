@@ -46,5 +46,35 @@ namespace Carnesia.Application.CMS.Services.CampaignSection
                 throw;
             }
         }
+
+        public async Task<CampaignSectionThumbsDTO> GetThumbById(int id)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<CampaignSectionThumbsDTO>($"CampaignLanding/campaignsection/thumb/{id}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateThumb(CampaignSectionThumbsDTO thumb)
+        {
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync($"CampaignLanding/campaignsection/thumb/{thumb.id}", thumb);
+
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

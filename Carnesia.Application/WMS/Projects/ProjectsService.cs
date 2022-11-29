@@ -143,7 +143,21 @@ namespace Carnesia.Application.WMS.Projects
             }
         }
 
-		public async Task<ProjectsDetailsHeadDTO> GetPoDetails(string pCode, string po)
+        public async Task<ProjectsDetailsHeadDTO> GetBinDetailsBySKU(string pCode, string sku, string bin)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<ProjectsDetailsHeadDTO>($"cyclecount/skubin/{bin}/{pCode}/{sku}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<ProjectsDetailsHeadDTO> GetPoDetails(string pCode, string po)
 		{
             try
             {

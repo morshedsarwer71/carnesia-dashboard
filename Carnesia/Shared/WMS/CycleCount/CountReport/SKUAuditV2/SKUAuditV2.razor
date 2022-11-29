@@ -197,7 +197,7 @@
 		Loading = true;
 		try
 		{
-			var result = await _projects.GetBinDetails(projectcode, Bin);
+			var result = await _projects.GetBinDetailsBySKU(projectcode, SKU, Bin);
 
 			if (result.message == "Success")
 			{
@@ -223,7 +223,7 @@
 	{
 		if (e.Code == "Enter" || e.Code == "NumpadEnter")
 		{
-			if (!String.IsNullOrEmpty(Bin))
+			if (!String.IsNullOrEmpty(Bin) && !String.IsNullOrEmpty(SKU))
 			{
 				await GetBinDetails();
 			}

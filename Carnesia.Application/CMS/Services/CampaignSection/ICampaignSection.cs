@@ -11,5 +11,7 @@ namespace Carnesia.Application.CMS.Services.CampaignSection
     {
         Task<List<CampaignSectionDTO>> GetAllSections();
         Task<bool> CreateNewCampaignBunch(CampaignSectionDTO section);
+        Task<CampaignSectionThumbsDTO> GetThumbById(int id);
+        Task<bool> UpdateThumb(CampaignSectionThumbsDTO thumb);
     }
 }
