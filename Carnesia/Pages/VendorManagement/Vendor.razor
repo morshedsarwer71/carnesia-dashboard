@@ -2,6 +2,7 @@
 @using Carnesia.Shared.VendorManagement.VendorList
 @using Carnesia.Shared.VendorManagement.NewVendor
 @using Carnesia.Shared.VendorManagement.BulkVendorUpload
+@using Carnesia.Shared.VendorManagement.Payable
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
@@ -12,6 +13,9 @@
             <MudButton Color="Color.Primary" Variant="CurrentPage == NewVendor ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(NewVendor)">@NewVendor</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == BulkVendorUpload ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BulkVendorUpload)">
                 @BulkVendorUpload
+            </MudButton>
+             <MudButton Color="Color.Primary" Variant="CurrentPage == Payable ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Payable)">
+                @Payable
             </MudButton>
         </MudButtonGroup>
     </MudContainer>
@@ -29,6 +33,10 @@ else if(CurrentPage == BulkVendorUpload)
 {
     <BulkVendorUpload />
 }
+else if(CurrentPage == Payable)
+{
+    <Payable />
+}
 
 
 @code {
@@ -36,6 +44,7 @@ else if(CurrentPage == BulkVendorUpload)
     private string VendorList = "Vendor List";
     private string NewVendor = "New Vendor";
     private string BulkVendorUpload = "Bulk Vendor Upload";
+    private string Payable = "Payable";
 
     // Current Page
     private string CurrentPage { get; set; } = "Vendor List";
