@@ -1,0 +1,41 @@
+﻿@page "/revenue-report-2"
+@using Carnesia.Shared.MIS.Revenue.ProdRevAndProfit
+@using Carnesia.Shared.MIS.Revenue.RevenueAndProfit
+
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == RevReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(RevReport)">
+                @RevReport
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ProRevReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ProRevReport)">@ProRevReport</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if (CurrentPage == RevReport)
+{
+    <RevenueAndProfit />
+}
+else if(CurrentPage == ProRevReport)
+{
+    <ProdRevenueAndProfit />
+}
+
+
+@code {
+    // Pages
+    private string RevReport = "Revenue and Profit";
+    private string ProRevReport = "Product Revenue & Profit";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Revenue and Profit";
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+
+}

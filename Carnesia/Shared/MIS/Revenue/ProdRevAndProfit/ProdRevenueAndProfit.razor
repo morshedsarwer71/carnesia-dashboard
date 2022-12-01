@@ -1,0 +1,129 @@
+﻿@using Carnesia.Domain.MIS.Revenue
+
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudGrid>
+            <MudItem sm="3">
+                <MudDatePicker Label="From Date" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudDatePicker Label="To Date" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField T="String" Label="Product Code" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField T="String" Label="SKU" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField T="String" Label="Product Name" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect T="string" Label="Brand" AnchorOrigin="Origin.BottomCenter">
+
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect T="string" Label="Category" AnchorOrigin="Origin.BottomCenter">
+
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect T="string" Label="Outlet" AnchorOrigin="Origin.BottomCenter">
+
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField T="String" Label="Source" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField T="String" Label="Business Unit" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect T="string" Label="Supplier" AnchorOrigin="Origin.BottomCenter">
+
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect T="string" Label="Order Status" AnchorOrigin="Origin.BottomCenter">
+
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+        <div class="d-flex justify-end my-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+        </div>
+
+        <div class="d-flex justify-end mb-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
+        </div>
+
+        <MudTable RowsPerPage="25" Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>BU</MudTh>
+                <MudTh>Ecom./Outlet</MudTh>
+                <MudTh>Child Category</MudTh>
+                <MudTh>Brand</MudTh>
+                <MudTh>Product Code</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Sold QTY</MudTh>
+                <MudTh>Selling Price</MudTh>
+                <MudTh>Sold Value</MudTh>
+                <MudTh>Total Cost</MudTh>
+                <MudTh>Profit</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="BU">@context.bu</MudTd>
+                <MudTd DataLabel="Ecom./Outlet">@context.ecomOrOutlet</MudTd>
+                <MudTd DataLabel="Child Category">@context.childCat</MudTd>
+                <MudTd DataLabel="Brand">@context.brand</MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="SKU">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="Sold QTY">@context.soldQty</MudTd>
+                <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+                <MudTd DataLabel="Sold Value">@context.soldValue</MudTd>
+                <MudTd DataLabel="Total Cost">@context.totalCost</MudTd>
+                <MudTd DataLabel="Profit">@context.profit</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <table style="width: 100%; border-collapse: collapse;" class="my-2">
+            <tr style="font-size: 14px;">
+                <th class="table-cell">Sold Total</th>
+                <th class="table-cell">Product</th>
+                <th class="table-cell">Quantity</th>
+                <th class="table-cell">Total Cost</th>
+                <th class="table-cell">Profit</th>
+            </tr>
+            @if (Total.Count > 0)
+            {
+                foreach (var item in Total)
+                {
+                    <tr style="font-size: 12px;">
+                        <td class="table-cell">@item.soldTotal</td>
+                        <td class="table-cell">@item.product</td>
+                        <td class="table-cell">@item.quantity</td>
+                        <td class="table-cell">@item.totalCost</td>
+                        <td class="table-cell">@item.profit</td>
+                    </tr>
+                }
+            }
+
+        </table>
+
+    </MudContainer>
+</MudPaper>
+
+@code {
+    private bool Loading { get; set; }
+
+    private List<ProdRevenueAndProfitDTO> Elements = new List<ProdRevenueAndProfitDTO>();
+
+    private List<TotalRevProfitDTO> Total = new List<TotalRevProfitDTO>();
+}
