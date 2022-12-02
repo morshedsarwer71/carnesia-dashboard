@@ -17,6 +17,22 @@ namespace Carnesia.Application.CRM.Services.Vouchers.StoreVoucher
         {
             _httpClient = httpClient;
         }
+
+        public async Task<bool> AddNewStore(int id, CreateStoreVoucherStoreDTO storeId)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync($"Voucher/store/newstore/{id}", storeId);
+
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<bool> CreateStoreVoucher(CreateStoreVoucherDTO Voucher)
         {
             try
@@ -38,6 +54,20 @@ namespace Carnesia.Application.CRM.Services.Vouchers.StoreVoucher
             try
             {
                 await _httpClient.DeleteAsync($"Voucher/store/{id}");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteVoucherStore(int id)
+        {
+            try
+            {
+                var result = await _httpClient.DeleteAsync($"Voucher/store/store/{id}");
+                return result.IsSuccessStatusCode;
             }
             catch (Exception)
             {
