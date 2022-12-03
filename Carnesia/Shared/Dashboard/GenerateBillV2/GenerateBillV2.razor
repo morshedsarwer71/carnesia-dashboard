@@ -161,10 +161,10 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="4">
-                    <MudNumericField @bind-Value="NewPayment.amount" Label="Amount" />
+                    <MudNumericField @bind-Value="NewPayment.amount" Immediate="true" Label="Amount" OnKeyPress="EnterPayment" />
                 </MudItem>
                 <MudItem xs="4">
-                    <MudTextField @bind-Value="NewPayment.paymentRef" Label="Payment Reference" />
+                    <MudTextField @bind-Value="NewPayment.paymentRef" Immediate="true" Label="Payment Reference" OnKeyPress="EnterPayment" />
                 </MudItem>
             </MudGrid>
 
@@ -658,9 +658,26 @@
             POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
         }
 
-        NewPayment.id = Guid.NewGuid().ToString();
-        PaymentTable.Add(NewPayment);
-        NewPayment = new PosPaymentDTO();
+        var cashPay = PaymentTable.FirstOrDefault(x => x.paymentType == "Cash");
+
+        if (cashPay == null)
+        {
+            NewPayment.id = Guid.NewGuid().ToString();
+            PaymentTable.Add(NewPayment);
+            NewPayment = new PosPaymentDTO();
+            return;
+        }
+
+        cashPay.amount += NewPayment.amount;
+    }
+
+    // Enter Payment
+    private async Task EnterPayment(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            AddPayment();
+        }
     }
 
     // Remove Payment 

@@ -17,11 +17,17 @@ namespace Carnesia.Domain.Dashboard.Orders
         public string status { get; set; }
         public string? store { get; set; }
         public decimal returnAmount { get; set; }
-        public string? paymentMethod { get; set; }
+        public List<OrderPaymentDTO>? paymentMethod { get; set; }
         public string? orderCreatBy { get; set; }
     }
 
-    public class OrderFilterDTO
+	public class OrderPaymentDTO
+    {
+        public string PaymentType { get; set;}
+    }
+
+
+	public class OrderFilterDTO
     {
         public string phoneNumber { get; set; }
         public string trnCode { get; set; }
