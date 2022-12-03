@@ -83,8 +83,20 @@
 		<tr style="font-size: 10px;">
 			<td class="table-cell">
 			</td>
-			<td class="table-cell">Total:</td>
+			<td class="table-cell">Collected:</td>
 			<td class="table-cell">@Payments.Sum(x => x.amount)</td>
+		</tr>
+		<tr style="font-size: 10px;">
+			<td class="table-cell">
+			</td>
+			<td class="table-cell">Returned:</td>
+			<td class="table-cell">@Invoice.returnedAmnt</td>
+		</tr>
+		<tr style="font-size: 10px;">
+			<td class="table-cell">
+			</td>
+			<td class="table-cell">Total:</td>
+			<td class="table-cell">@(Payments.Sum(x => x.amount) - Invoice.returnedAmnt)</td>
 		</tr>
 	</table>
 
