@@ -555,7 +555,7 @@
     {
         if (Math.Round(PaymentTable.Sum(x => x.amount), 2) < Math.Round((subTotal - usedCredit - discount + vatAmount), 2))
         {
-            Snackbar.Add("Please collect exact grand total amount!", Severity.Error);
+            Snackbar.Add("Please collect exact or greater amount than grand total!", Severity.Error);
             return;
         }
         try
