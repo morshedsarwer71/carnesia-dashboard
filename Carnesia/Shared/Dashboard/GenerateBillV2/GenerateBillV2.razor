@@ -1,6 +1,4 @@
-﻿@page "/generatebill2"
-
-@using Carnesia.Domain.Dashboard.GenerateBill
+﻿@using Carnesia.Domain.Dashboard.GenerateBill
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Shared.Dashboard.GenerateBill
 @inject IJSRuntime JSRuntime
@@ -161,7 +159,7 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="4">
-                    <MudNumericField @bind-Value="NewPayment.amount" Immediate="true" Label="Amount" OnKeyPress="EnterPayment" />
+                    <MudNumericField @bind-Value="NewPayment.amount" Immediate="true" Label="Amount" />
                 </MudItem>
                 <MudItem xs="4">
                     <MudTextField @bind-Value="NewPayment.paymentRef" Immediate="true" Label="Payment Reference" OnKeyPress="EnterPayment" />
@@ -653,22 +651,24 @@
         if (POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount) <= 0 || (subTotal - discount - usedCredit + vatAmount) <= 0)
         {
             POSDetails.returnedAmnt = 0;
-        }else
+        }
+        else
         {
             POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
         }
 
         var cashPay = PaymentTable.FirstOrDefault(x => x.paymentType == "Cash");
 
-        if (cashPay == null)
+        if (cashPay != null && NewPayment.paymentType == "Cash")
         {
-            NewPayment.id = Guid.NewGuid().ToString();
-            PaymentTable.Add(NewPayment);
+            cashPay.amount += NewPayment.amount;
+            cashPay.paymentRef = NewPayment.paymentRef;
             NewPayment = new PosPaymentDTO();
             return;
         }
-
-        cashPay.amount += NewPayment.amount;
+        NewPayment.id = Guid.NewGuid().ToString();
+        PaymentTable.Add(NewPayment);
+        NewPayment = new PosPaymentDTO();
     }
 
     // Enter Payment
@@ -680,7 +680,7 @@
         }
     }
 
-    // Remove Payment 
+    // Remove Payment
     private void RemovePayment(string paymentId)
     {
         var result = PaymentTable.FirstOrDefault(x => x.id == paymentId);

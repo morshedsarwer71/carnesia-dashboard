@@ -39,7 +39,7 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
     public class PosPaymentDTO
     {
         public string id { get; set; }
-        public string paymentType { get; set; }
+        public string paymentType { get; set; } = "Cash";
         public string paymentRef { get; set; }
         public decimal amount { get; set; }
     }
