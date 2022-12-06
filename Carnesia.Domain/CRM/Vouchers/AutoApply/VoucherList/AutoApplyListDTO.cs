@@ -19,5 +19,9 @@ namespace Carnesia.Domain.CRM.Vouchers.AutoApply.VoucherList
         public string description { get; set; }
         public bool isEnabled { get; set; }
         public bool isDeliveryCharge { get; set; }
-    }
+		public DateTime createdAt { get; set; }
+		public DateTime updatedAt { get; set; }
+		public string updatedBy { get; set; }
+		public string createdBy { get; set; }
+	}
 }
