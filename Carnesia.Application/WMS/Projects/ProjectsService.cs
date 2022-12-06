@@ -102,11 +102,11 @@ namespace Carnesia.Application.WMS.Projects
 			}
 		}
 
-		public async Task<string> CompleteSkuProject(string pCode, string sku)
+		public async Task<string> CompleteSkuProject(string pCode, string sku, string bin)
 		{
             try
             {
-                var result = await _httpClient.GetStringAsync($"cyclecount/completeskuaudit/{sku}/{pCode}");
+                var result = await _httpClient.GetStringAsync($"cyclecount/completeskuaudit/{bin}/{sku}/{pCode}");
                 return result;
             }
             catch (Exception)

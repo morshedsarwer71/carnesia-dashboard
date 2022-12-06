@@ -53,12 +53,12 @@
 		</MudTable>
 
 		<div class="d-flex justify-end mt-3">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Bin)" OnClick="Complete">Submit</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Bin) || String.IsNullOrEmpty(SKU)" OnClick="Complete">Submit</MudButton>
 		</div>
 	</MudContainer>
 </MudPaper>
 
-@code {
+	@code {
 	[Parameter]
 	public string projectcode { get; set; }
 
@@ -125,6 +125,7 @@
 				Elements = result.productDetails;
 				Snackbar.Add(result.message, Severity.Success);
 				Loading = false;
+				UID = String.Empty;
 				return;
 			}
 			Snackbar.Add(result.message, Severity.Error);
@@ -155,7 +156,7 @@
 		Loading = true;
 		try
 		{
-			var result = await _projects.CompleteBinProject(projectcode, Bin);
+			var result = await _projects.CompleteSkuProject(projectcode, SKU, Bin);
 
 			if (result == "Success")
 			{
