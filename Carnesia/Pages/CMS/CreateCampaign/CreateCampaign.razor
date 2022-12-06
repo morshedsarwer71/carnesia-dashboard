@@ -1,9 +1,11 @@
 ﻿@page "/create-campaign"
 @using Carnesia.Domain.CMS.Campaign
+@using Carnesia.Domain.CRM.Vouchers.StoreVoucher.CreateStoreVoucher;
 @using Carnesia.Shared.CMS.CreateCampaign
 @inject IProducts _products
 @inject ICreateCampaign _campaign
 @inject IBase64 _base64
+@inject IStore _store
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
@@ -34,8 +36,16 @@
                     <MudItem sm="6">
                         <MudTimePicker Label="End Time" @bind-Time="EndTime" />
                     </MudItem>
-                    <MudItem sm="12">
-                        <MudTextField Lines="5" @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!"/>
+                <MudItem sm="6">
+                    <MudSelect T="string" Label="Stores" MultiSelection="true" @bind-Value="value" Required="true">
+                        @foreach (var store in stores)
+                        {
+                            <MudSelectItem T="string" Value="@store">@store</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                    <MudItem sm="6">
+                        <MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!"/>
                     </MudItem>
                 </MudGrid>
 
@@ -113,6 +123,12 @@
 </MudPaper>
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStoresName();
+    }
+
     // New Date Time
     public static string TodayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
@@ -137,6 +153,37 @@
     private string EndDate { get; set; } = TodayDate;
     private TimeSpan? StartTime = new TimeSpan();
     private TimeSpan? EndTime = new TimeSpan();
+
+    // Stores
+    private string? value { get; set; }
+
+    private string[] stores = new string[] { };
+
+    // Store List
+    private List<CreateStoreVoucherStoreDTO> Stores = new List<CreateStoreVoucherStoreDTO>();
+
+    // Get All Stores
+    private async Task GetStoresName()
+    {
+        stores = await _store.GetStoreNameAsString();
+    }
+
+    // Get Store Id
+    private async Task GetStoreIds()
+    {
+        string[] storeList = value.Split(", ");
+        foreach (var store in storeList)
+        {
+            var temp_Store = await _store.GetStore(store);
+
+            var Store = new CreateStoreVoucherStoreDTO()
+                {
+                    storeId = temp_Store.storeId
+                };
+
+            Stores.Add(Store);
+        }
+    }
 
     // Remove Products
     private void RemoveProduct(AddCampaignProductDTO product)
@@ -296,8 +343,11 @@
         FormData.startDate = $"{StartDate}T{StartTime}.000Z";
         FormData.endDate = $"{EndDate}T{EndTime}.000Z";
 
+        await GetStoreIds();
+
         NewCampaign.campaignProductsDTOs = Products;
         NewCampaign.createCampaignDTO = FormData;
+        NewCampaign.campaignStoresDTOs = Stores;
 
         try
         {
@@ -313,6 +363,8 @@
 				EndTime = new TimeSpan();
 				FormData = new AddCampaignDetailsDTO();
                 NewCampaign = new AddCampaignDTO();
+                value = null;
+                Stores = new List<CreateStoreVoucherStoreDTO>();
 				return;
 			}
             Snackbar.Add("Something Went Wrong!", Severity.Error);
