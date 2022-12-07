@@ -1,0 +1,97 @@
+﻿@page "/profile"
+@using Carnesia.Domain.Profile
+@inject IProfile _iprofile
+@inject ISnackbar _snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        @*   <div class="mb-15 border-2 ms-auto me-auto" style="width: fit-content;">
+        <MudText Class="px-15 py-2" Typo="Typo.h6">Store Name</MudText>
+        </div>*@
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    @*<MudTextField Label="Name" T="String" ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
+                    <MudTextField @bind-Value="User[0].firstName" Label="First Name" ReadOnly="true" Variant="Variant.Text" />
+                </MudItem>
+            </MudGrid>
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    @*<MudTextField Label="Name" T="String" ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
+                    <MudTextField @bind-Value="User[0].lastName" Label="Last Name" ReadOnly="true" Variant="Variant.Text" />
+                </MudItem>
+            </MudGrid>
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    @*<MudTextField T="String" Label="Phone Number"  ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
+                    <MudTextField @bind-Value="User[0].phoneNumber" Label="Phone Number" ReadOnly="true" Variant="Variant.Text" />
+                </MudItem>
+            </MudGrid>
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    @*<MudTextField T="String" Label="Email"  ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
+                    <MudTextField @bind-Value="User[0].email" Label="Email" ReadOnly="true" Variant="Variant.Text" />
+                </MudItem>
+            </MudGrid>
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    <MudTextField Label="Current password" T="String" InputType="InputType.Password" Required="true" RequiredError="Password is required!" />
+                </MudItem>
+            </MudGrid>
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    <MudTextField Label="New password" T="String" InputType="InputType.Password" Required="true" RequiredError="Password is required!" />
+                </MudItem>
+            </MudGrid>
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    <MudTextField Label="Retype new password" T="String" InputType="InputType.Password" Required="true" RequiredError="Password is required!" />
+                </MudItem>
+            </MudGrid>
+
+            <MudGrid Class="justify-center">
+                <MudItem sm="6" Class="d-flex justify-end mt-3">
+                    @* <MudButton Variant="Variant.Filled" StartIcon="@Icons.Outlined.Lock" Color="Color.Secondary">Change Password</MudButton>*@
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Change Password</MudButton>
+                </MudItem>
+            </MudGrid>
+            @* <div class="d-flex justify-end mt-6">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Submit</MudButton>
+            </div>*@
+        </MudForm>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Form Refs
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    private List<ProfileDTO> User = new List<ProfileDTO>();
+
+    protected  async override Task OnInitializedAsync()
+    {
+       //Get Profile
+        User = await _iprofile.GetProfile();
+    }
+
+ //   public ChangePasswordDTO password = new ChangePasswordDTO();
+	//private async Task ChangePassword()
+	//{
+	//	var res = await _iprofile.ChagePassword(password);
+	//	if (res)
+	//	{
+	//		_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+	//		_snackbar.Add("Vendor added successfully!", Severity.Success);
+	//		form.Reset();
+	//	}
+	//	else
+	//	{
+	//		_snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+	//		_snackbar.Add("Error", Severity.Error);
+	//	}
+	//}
+
+    //public string ReadOnly { get; set; } = "Read Only";
+}
