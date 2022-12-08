@@ -7,12 +7,29 @@
 
 <MudPaper Class="py-16 px-3 ma-2">
 	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem md="4">
+				<MudTextField T="String" Label="Voucher Code" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem md="4">
+				<MudSelect T="String" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("All")" />
+					<MudSelectItem Value="@("Enabled")" />
+					<MudSelectItem Value="@("Disabled")" />
+				</MudSelect>
+			</MudItem>
+			<MudItem md="2">
+				<div>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				</div>
+			</MudItem>
+		</MudGrid>
 		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<VoucherListDTO,bool>(FilterFuncInitial)">
-			<ToolBarContent>
+			@*<ToolBarContent>
 				<MudSpacer />
 				<MudSpacer />
 				<MudTextField Immediate="true" @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
-			</ToolBarContent>
+			</ToolBarContent>*@
 			<HeaderContent>
 				<MudTh>Code</MudTh>
 				<MudTh>Start Date</MudTh>
