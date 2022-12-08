@@ -10,6 +10,6 @@ namespace Carnesia.Application.Profile
     public interface IProfile
     {
         Task<List<ProfileDTO>> GetProfile();
-        //Task<bool> ChagePassword(ChangePasswordDTO password);
+        Task<bool> ChagePassword(ChangePasswordDTO password);
     }
 }

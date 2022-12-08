@@ -18,19 +18,19 @@ namespace Carnesia.Application.Profile
         }
 
         //ChangePasswordDTO Password
-        //public Task<bool> ChagePassword(ChangePasswordDTO password)
-        //{
-        //    try
-        //    {
-        //        var response = await _httpClient.GetAsync($"Authentication/changepassword/{password.oldPassword}/{password.newPassword}");
-        //        if (response.IsSuccessStatusCode) return true;
-        //        return false;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-        //}
+        public async Task<bool> ChagePassword(ChangePasswordDTO password)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"Authentication/changepassword/{password.oldPassword}/{password.newPassword}");
+                if (response.IsSuccessStatusCode) return true;
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
         //Get Profile
         public async Task<List<ProfileDTO>> GetProfile()
