@@ -33,12 +33,12 @@ namespace Carnesia.Application.Profile
         }
 
         //Get Profile
-        public async Task<List<ProfileDTO>> GetProfile()
+        public async Task<ProfileDTO> GetProfile()
         {
             {
                 try
                 {
-                    var response = await _httpClient.GetFromJsonAsync<List<ProfileDTO>>("Authentication/get-user");
+                    var response = await _httpClient.GetFromJsonAsync<ProfileDTO>("Authentication/get-user");
                     return response;
                 }
                 catch (Exception)

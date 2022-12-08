@@ -8,25 +8,31 @@
         <MudGrid Class="justify-center">
             <MudItem sm="6">
                 @*<MudTextField Label="Name" T="String" ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
-                <MudTextField @bind-Value="User[0].firstName" Label="First Name" ReadOnly="true" Variant="Variant.Text" />
+                <MudTextField @bind-Value="User.firstName" Label="First Name" ReadOnly="true" Variant="Variant.Text" />
             </MudItem>
         </MudGrid>
         <MudGrid Class="justify-center">
             <MudItem sm="6">
                 @*<MudTextField Label="Name" T="String" ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
-                <MudTextField @bind-Value="User[0].lastName" Label="Last Name" ReadOnly="true" Variant="Variant.Text" />
+                <MudTextField @bind-Value="User.lastName" Label="Last Name" ReadOnly="true" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
+         <MudGrid Class="justify-center">
+            <MudItem sm="6">
+                @*<MudTextField Label="Name" T="String" ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
+                <MudTextField @bind-Value="User.username" Label="User Name" ReadOnly="true" Variant="Variant.Text" />
             </MudItem>
         </MudGrid>
         <MudGrid Class="justify-center">
             <MudItem sm="6">
                 @*<MudTextField T="String" Label="Phone Number"  ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
-                <MudTextField @bind-Value="User[0].phoneNumber" Label="Phone Number" ReadOnly="true" Variant="Variant.Text" />
+                <MudTextField @bind-Value="User.phoneNumber" Label="Phone Number" ReadOnly="true" Variant="Variant.Text" />
             </MudItem>
         </MudGrid>
         <MudGrid Class="justify-center">
             <MudItem sm="6">
                 @*<MudTextField T="String" Label="Email"  ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
-                <MudTextField @bind-Value="User[0].email" Label="Email" ReadOnly="true" Variant="Variant.Text" />
+                <MudTextField @bind-Value="User.email" Label="Email" ReadOnly="true" Variant="Variant.Text" />
             </MudItem>
         </MudGrid>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
@@ -61,7 +67,7 @@
     string[] errors = { };
     MudForm form;
 
-    private List<ProfileDTO> User = new List<ProfileDTO>();
+    private ProfileDTO User = new ProfileDTO();
 
     protected async override Task OnInitializedAsync()
     {
