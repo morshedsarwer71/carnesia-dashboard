@@ -10,5 +10,11 @@ namespace Carnesia.Domain.CMS.ComboProducts
     {
         public AddComboDetailsDTO comboProductDTO { get; set; }
         public List<AddComboProductDTO> comboProductTags { get; set; }
+        public List<ComboStoreIdsDTO> comboProductStores { get; set; }
+    }
+
+    public class ComboStoreIdsDTO
+    {
+        public int storeId { get; set; }
     }
 }

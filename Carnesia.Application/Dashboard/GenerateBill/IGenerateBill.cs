@@ -15,5 +15,6 @@ namespace Carnesia.Application.Dashboard.GenerateBill
         Task<GenerateBillPosResponseDTO> NewPOS(GenerateBillPOSDTO pos);
         Task<GenerateBillCustomerCreateResponseDTO> CreateCustomer(GenerateBillCreateCustomerDTO customer);
         Task<GenerateBillInvoiceDTO> GetInvoiceData(string trnCode);
+        Task<GenerateBillComboDetailsDTO> GetComboDetails(string bcCode);
     }
 }

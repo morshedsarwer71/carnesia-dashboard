@@ -50,11 +50,11 @@ namespace Carnesia.Application.CMS.Services.Combo
             }
         }
 
-        public async Task<List<ComboListDTO>> GetAllCombos()
+        public async Task<List<ComboListDTO>> GetAllCombos(string BcType)
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<List<ComboListDTO>>("ComboProduct");
+                var result = await _httpClient.GetFromJsonAsync<List<ComboListDTO>>($"ComboProduct/bytype/{BcType}");
 
                 return result;
             }

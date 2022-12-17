@@ -10,7 +10,7 @@ namespace Carnesia.Application.CMS.Services.Combo
     public interface ICombo
     {
         Task<bool> CreateCombo(AddComboDTO combo);
-        Task<List<ComboListDTO>> GetAllCombos();
+        Task<List<ComboListDTO>> GetAllCombos(string BcType);
         Task<ComboListDTO> GetComboById(int id);
         Task<bool> RemoveProduct(int id);
         Task<bool> AddProduct(AddComboProductDTO product);
