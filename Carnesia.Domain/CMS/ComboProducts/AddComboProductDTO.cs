@@ -9,6 +9,7 @@ namespace Carnesia.Domain.CMS.ComboProducts
     public class AddComboProductDTO
     {
         public int productId { get; set; }
+        public int quantity { get; set; }
         public decimal discountAmount { get; set; }
         public decimal regularPrice { get; set; }
         public string productName { get; set; }

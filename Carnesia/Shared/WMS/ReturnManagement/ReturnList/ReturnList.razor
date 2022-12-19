@@ -15,10 +15,12 @@
                 <MudTh>Return Number</MudTh>
                 <MudTh>Supplier</MudTh>
                 <MudTh>Quantity</MudTh>
+                <MudTh>Return Value</MudTh>
                 <MudTh>Amount</MudTh>
                 <MudTh>Status</MudTh>
                 <MudTh>Updated on</MudTh>
                 <MudTh>Updated by</MudTh>
+                <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Created on">@context.CreationDate</MudTd>
@@ -27,10 +29,15 @@
                 <MudTd DataLabel="Return Number">@context.ReturnNumber</MudTd>
                 <MudTd DataLabel="Supplier">@context.Supplier</MudTd>
                 <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
+                <MudTd DataLabel="Return Value">@context.ReturnValue</MudTd>
                 <MudTd DataLabel="Amount">@context.Amount</MudTd>
                 <MudTd DataLabel="Status">@context.Status</MudTd>
                 <MudTd DataLabel="Updated on">@context.UpdateDate</MudTd>
                 <MudTd DataLabel="Updated by">@context.UpdatedBy</MudTd>
+                <MudTd DataLabel="Action">
+					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details"/>
+					<MudIconButton Icon="@Icons.Filled.Edit" Color="Color.Success" aria-label="Edit" />
+				</MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />

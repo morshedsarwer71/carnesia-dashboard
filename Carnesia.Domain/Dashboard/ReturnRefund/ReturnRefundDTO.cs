@@ -17,5 +17,18 @@ namespace Carnesia.Domain.Dashboard.ReturnRefund
         public string? imageUrl { get; set; }
         public decimal sellingPrice { get; set; }
         public decimal returnPrice { get; set; }
+        public List<ReturnRefundPaymentDTO> payments { get; set; }
     }
+	public class ReturnRefundPaymentDTO
+    {
+		public int id { get; set; }
+		public string trnCode { get; set; }
+		public string paymentType { get; set; }
+		public string? paymentRef { get; set; }
+		public decimal amount { get; set; }
+		public string? refundPaymentRef { get; set; }
+		public decimal refundAmount { get; set; }
+		public decimal takenRefundAmount { get; set; }
+	}
+
 }

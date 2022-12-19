@@ -1,118 +1,134 @@
 ﻿@page "/create-campaign"
 @using Carnesia.Domain.CMS.Campaign
+@using Carnesia.Domain.CRM.Vouchers.StoreVoucher.CreateStoreVoucher;
 @using Carnesia.Shared.CMS.CreateCampaign
 @inject IProducts _products
 @inject ICreateCampaign _campaign
 @inject IBase64 _base64
+@inject IStore _store
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
 
 <MudPaper Class="py-16 px-3 ma-2">
-	<MudContainer Fixed="true">
-		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudGrid Class="justify-center">
-                    <MudItem sm="6">
-                        <MudTextField @bind-Value="FormData.campaignName" Label="Campaign Name" Required="true" RequiredError="Campaign name is required!"/>
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudSelect @bind-Value="FormData.platformType" Label="Platform" Required="true" RequiredError="Platform type is required!" AnchorOrigin="Origin.BottomCenter">
-                            <MudSelectItem Value="@("App")" />
-                            <MudSelectItem Value="@("Web")" />
-                            <MudSelectItem Value="@("General")" />
-                        </MudSelect>
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudTimePicker Label="End Time" @bind-Time="EndTime" />
-                    </MudItem>
-                    <MudItem sm="12">
-                        <MudTextField Lines="5" @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!"/>
-                    </MudItem>
-                </MudGrid>
+    <MudContainer Fixed="true">
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    <MudTextField @bind-Value="FormData.campaignName" Label="Campaign Name" Required="true" RequiredError="Campaign name is required!" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudSelect @bind-Value="FormData.platformType" Label="Platform" Required="true" RequiredError="Platform type is required!" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="@("App")" />
+                        <MudSelectItem Value="@("Web")" />
+                        <MudSelectItem Value="@("General")" />
+                    </MudSelect>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="StartDate" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="EndDate" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTimePicker Label="End Time" @bind-Time="EndTime" />
+                </MudItem>
+                @*<MudItem sm="6">
+                    <MudSelect T="string" Label="Stores" MultiSelection="true" @bind-Value="value" Required="true">
+                        @foreach (var store in stores)
+                        {
+                            <MudSelectItem T="string" Value="@store">@store</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>*@
+                <MudItem xs="12">
+                    <MudTextField Lines="5" @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
+                </MudItem>
+            </MudGrid>
 
-                <div class="d-flex justify-end my-5">
-                    <a href="./BulkCampaignProducts.xlsx" download target="_top">
-			            <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
-                            Download CSV Template
+            <div class="d-flex justify-end my-5">
+                <a href="./BulkCampaignProducts.xlsx" download target="_top">
+                    <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
+                        Download CSV Template
+                    </MudButton>
+                </a>
+
+                <InputFile id="fileInput" hidden accept=".xlsx" OnChange="UploadFile" />
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Filled.CloudUpload"
+                           Class="me-3"
+                           for="fileInput">
+                    Upload File
+                </MudButton>
+                <MudButton Class="me-3" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenProductModal">Add Product</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenComboModal">Add Combo</MudButton>
+            </div>
+
+            <MudTable Items="@Products" Hover="true" Dense="true" Loading="Loading" LoadingProgressColor="Color.Info">
+                <HeaderContent>
+                    @*<MudTh>Product Name</MudTh>*@
+                    <MudTh>SKU</MudTh>
+                    <MudTh>Stock</MudTh>
+                    <MudTh>Regular Price</MudTh>
+                    <MudTh>Discount Type</MudTh>
+                    <MudTh>Discount Amount</MudTh>
+                    <MudTh>After Discount</MudTh>
+                    <MudTh>Max Order Quantity</MudTh>
+                    <MudTh>Is Combo</MudTh>
+                    <MudTh>Action</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    @*<MudTd DataLabel="Product Name">@context.productName</MudTd>*@
+                    <MudTd DataLabel="SKU">@context.sku</MudTd>
+                    <MudTd DataLabel="Stock">@context.stock</MudTd>
+                    <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
+                    <MudTd DataLabel="Discount Type">@context.discType</MudTd>
+                    <MudTd DataLabel="Discount Amount">@context.discAmount</MudTd>
+                    <MudTd DataLabel="After Discount">@context.discPrice</MudTd>
+                    <MudTd DataLabel="Max Order Quantity">@context.maxOrderQty</MudTd>
+                    <MudTd DataLabel="Is Combo">@context.isCombo</MudTd>
+                    <MudTd DataLabel="Action">
+                        <MudButton OnClick="() => RemoveProduct(context)">
+                            <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
                         </MudButton>
-                    </a>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
 
-			        <InputFile id="fileInput" hidden accept=".xlsx" OnChange="UploadFile"/>
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Filled.CloudUpload"
-                               Class="me-3"
-                               for="fileInput">
-                        Upload File
-                    </MudButton>
-                    <MudButton Class="me-3" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenProductModal" >Add Product</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Add" OnClick="OpenComboModal" >Add Combo</MudButton>
-                </div>
+            <div class="mt-5">
+                <InputFile id="fileInputImage" hidden accept=".webp" OnChange="UploadImage" />
 
-                <MudTable Items="@Products" Hover="true" Dense="true" Loading="Loading" LoadingProgressColor="Color.Info">
-                    <HeaderContent>
-                        @*<MudTh>Product Name</MudTh>*@
-                        <MudTh>SKU</MudTh>
-                        <MudTh>Stock</MudTh>
-                        <MudTh>Regular Price</MudTh>
-                        <MudTh>Discount Type</MudTh>
-                        <MudTh>Discount Amount</MudTh>
-                        <MudTh>After Discount</MudTh>
-                        <MudTh>Max Order Quantity</MudTh>
-                        <MudTh>Is Combo</MudTh>
-                        <MudTh>Action</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        @*<MudTd DataLabel="Product Name">@context.productName</MudTd>*@
-                        <MudTd DataLabel="SKU">@context.sku</MudTd>
-                        <MudTd DataLabel="Stock">@context.stock</MudTd>
-                        <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
-                        <MudTd DataLabel="Discount Type">@context.discType</MudTd>
-                        <MudTd DataLabel="Discount Amount">@context.discAmount</MudTd>
-                        <MudTd DataLabel="After Discount">@context.discPrice</MudTd>
-                        <MudTd DataLabel="Max Order Quantity">@context.maxOrderQty</MudTd>
-                        <MudTd DataLabel="Is Combo">@context.isCombo</MudTd>
-                        <MudTd DataLabel="Action">
-                            <MudButton OnClick="() => RemoveProduct(context)" >
-                                <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
-                            </MudButton>
-                        </MudTd>
-                    </RowTemplate>
-                </MudTable>
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Filled.CloudUpload"
+                           for="fileInputImage">
+                    Upload Images
+                </MudButton>
+                <MudText Class="mt-1">1080 * 420(.webp only. Max 100Kb)</MudText>
+            </div>
 
-                <div class="mt-5">
-                    <InputFile id="fileInputImage" hidden accept=".webp" OnChange="UploadImage" />
+            <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;" />
 
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Filled.CloudUpload"
-                               for="fileInputImage">
-                        Upload Images
-                    </MudButton>
-                    <MudText Class="mt-1">1080 * 420(.webp only. Max 100Kb)</MudText>
-                </div>
-
-                <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
-
-                <div class="d-flex align-center justify-space-between mt-6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="CreateNewCampaign" Class="ml-auto">Submit</MudButton>
-                </div>
+            <div class="d-flex align-center justify-space-between mt-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="CreateNewCampaign" Class="ml-auto">Submit</MudButton>
+            </div>
         </MudForm>
-	</MudContainer>
+    </MudContainer>
 </MudPaper>
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStoresName();
+    }
+
     // New Date Time
     public static string TodayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
@@ -137,6 +153,37 @@
     private string EndDate { get; set; } = TodayDate;
     private TimeSpan? StartTime = new TimeSpan();
     private TimeSpan? EndTime = new TimeSpan();
+
+    // Stores
+    private string? value { get; set; }
+
+    private string[] stores = new string[] { };
+
+    // Store List
+    private List<CreateStoreVoucherStoreDTO> Stores = new List<CreateStoreVoucherStoreDTO>();
+
+    // Get All Stores
+    private async Task GetStoresName()
+    {
+        stores = await _store.GetStoreNameAsString();
+    }
+
+    // Get Store Id
+    private async Task GetStoreIds()
+    {
+        string[] storeList = value.Split(", ");
+        foreach (var store in storeList)
+        {
+            var temp_Store = await _store.GetStore(store);
+
+            var Store = new CreateStoreVoucherStoreDTO()
+                {
+                    storeId = temp_Store.storeId
+                };
+
+            Stores.Add(Store);
+        }
+    }
 
     // Remove Products
     private void RemoveProduct(AddCampaignProductDTO product)
@@ -175,13 +222,13 @@
     }
 
     // Upload .xlsx
-    private async Task UploadFile (InputFileChangeEventArgs e)
+    private async Task UploadFile(InputFileChangeEventArgs e)
     {
         Loading = true;
         try
         {
             BulkProducts.Clear();
-            BulkProducts =  await _campaign.UploadXLSXFile(e);
+            BulkProducts = await _campaign.UploadXLSXFile(e);
             await BulkProductsAdd();
             Loading = false;
         }
@@ -207,7 +254,7 @@
         {
             AddCampaignProductDTO newProduct = dialog.Data as AddCampaignProductDTO;
 
-            bool isThere = Products.Any( x=> x.sku == newProduct.sku);
+            bool isThere = Products.Any(x => x.sku == newProduct.sku);
 
             if (isThere)
             {
@@ -246,7 +293,7 @@
         {
             AddCampaignProductDTO newProduct = dialog.Data as AddCampaignProductDTO;
 
-            bool isThere = Products.Any( x=> x.comboId == newProduct.comboId);
+            bool isThere = Products.Any(x => x.comboId == newProduct.comboId);
 
             if (isThere)
             {
@@ -268,7 +315,7 @@
         {
             FormData.base64Attch = await _base64.ConvertToBase64(102000, 1080, 420, e);
         }
-        catch(Exception error)
+        catch (Exception error)
         {
             Snackbar.Add(error.Message, Severity.Error);
         }
@@ -296,25 +343,30 @@
         FormData.startDate = $"{StartDate}T{StartTime}.000Z";
         FormData.endDate = $"{EndDate}T{EndTime}.000Z";
 
+        //await GetStoreIds();
+
         NewCampaign.campaignProductsDTOs = Products;
         NewCampaign.createCampaignDTO = FormData;
+        //NewCampaign.campaignStoresDTOs = Stores;
 
         try
         {
             var result = await _campaign.CreateCampaign(NewCampaign);
             if (result)
-			{
-				Snackbar.Add("New Campaign Created Successfully!", Severity.Success);
-				form.Reset();
-				Products.Clear();
-				StartDate = TodayDate;
-				EndDate = TodayDate;
-				StartTime = new TimeSpan();
-				EndTime = new TimeSpan();
-				FormData = new AddCampaignDetailsDTO();
+            {
+                Snackbar.Add("New Campaign Created Successfully!", Severity.Success);
+                form.Reset();
+                Products.Clear();
+                StartDate = TodayDate;
+                EndDate = TodayDate;
+                StartTime = new TimeSpan();
+                EndTime = new TimeSpan();
+                FormData = new AddCampaignDetailsDTO();
                 NewCampaign = new AddCampaignDTO();
-				return;
-			}
+                value = null;
+                Stores = new List<CreateStoreVoucherStoreDTO>();
+                return;
+            }
             Snackbar.Add("Something Went Wrong!", Severity.Error);
         }
         catch (Exception)

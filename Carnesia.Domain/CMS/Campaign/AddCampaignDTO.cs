@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Carnesia.Domain.CRM.Vouchers.StoreVoucher.CreateStoreVoucher;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,6 @@ namespace Carnesia.Domain.CMS.Campaign
     {
         public AddCampaignDetailsDTO createCampaignDTO { get; set; }
         public List<AddCampaignProductDTO> campaignProductsDTOs { get; set; }
+        //public List<CreateStoreVoucherStoreDTO> campaignStoresDTOs { get; set; }
     }
 }

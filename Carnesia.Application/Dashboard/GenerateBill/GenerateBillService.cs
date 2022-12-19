@@ -35,7 +35,22 @@ namespace Carnesia.Application.Dashboard.GenerateBill
             }
         }
 
-        public async Task<GenerateBillCustomerInfoDTO> GetCustomerInfo(string phoneOrId)
+		public async Task<GenerateBillComboDetailsDTO> GetComboDetails(string bcCode)
+		{
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<GenerateBillComboDetailsDTO>($"Pos/combobogo/{bcCode}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+		}
+
+		public async Task<GenerateBillCustomerInfoDTO> GetCustomerInfo(string phoneOrId)
         {
             try
             {

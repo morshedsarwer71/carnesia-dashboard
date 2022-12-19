@@ -24,7 +24,7 @@ namespace Carnesia.Application.WMS.Projects
         Task<ProjectsDetailsHeadDTO> AddProductToPoDetails(string pCode, string po, string uid, string bin);
 
         Task<string> CompleteBinProject (string pCode, string bin);
-        Task<string> CompleteSkuProject (string pCode, string sku);
+        Task<string> CompleteSkuProject (string pCode, string sku, string bin);
         Task<string> CompletePoProject (string pCode, string po);
 
         Task<ProjectsDetailsHeadDTO> GetBinDetailsBySKU(string pCode, string sku, string bin);

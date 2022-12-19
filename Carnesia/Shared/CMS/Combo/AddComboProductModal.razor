@@ -6,6 +6,7 @@
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudAutocomplete T="string" Label="Product SKU" SearchFunc="@ProductSKUSearch" Value="FormData.sku" ValueChanged="(string s) => GetProductData(s)" Required="true" ResetValueOnEmptyText="true" />
                 <MudNumericField @bind-Value="FormData.regularPrice" Label="Regular Price" Variant="Variant.Text" Required="true" ReadOnly="true"/>
+                <MudNumericField @bind-Value="FormData.quantity" Label="Quantity" Variant="Variant.Text" Required="true"/>
                 <MudSelect @bind-Value="FormData.discountType" Label="Discount Type" Required="true" AnchorOrigin="Origin.BottomCenter">
                     <MudSelectItem Value="@("Cash")" />
                     <MudSelectItem Value="@("Percent")" />

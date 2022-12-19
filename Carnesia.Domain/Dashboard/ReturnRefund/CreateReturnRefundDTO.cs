@@ -11,6 +11,7 @@ namespace Carnesia.Domain.Dashboard.ReturnRefund
         public PosDetails pos { get; set; }
         public List<PosItem> items { get; set; }
         public List<PosUID> posUID { get; set; }
+        public List<ReturnRefundPaymentDTO> refunds { get; set; }
     }
 
     public class PosUID

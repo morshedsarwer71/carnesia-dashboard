@@ -1,0 +1,51 @@
+﻿@using Carnesia.Domain.CRM.Vouchers.StoreVoucher.CreateStoreVoucher
+@using Carnesia.Domain.WMS.Store.Models
+@inject IStore _store
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudSelect T="int" Label="Store" @bind-Value="FormData.storeId" AnchorOrigin="Origin.BottomCenter" Required="true">
+                <MudSelectItem Value="0">Select Store</MudSelectItem>
+                @foreach (var item in Stores)
+                {
+                    <MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+                }
+            </MudSelect>
+
+            <div class="d-flex justify-end my-5">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success || FormData.storeId == 0)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+            </div>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public CreateStoreVoucherStoreDTO FormData { get; set; } = new CreateStoreVoucherStoreDTO();
+
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+    }
+
+    // Stores
+    private List<StoreDTO> Stores = new List<StoreDTO>();
+
+    // Get Stores
+    private async Task GetStores()
+    {
+        Stores = await _store.GetStoresAsync();
+    }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<CreateStoreVoucherStoreDTO>(FormData));
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+}

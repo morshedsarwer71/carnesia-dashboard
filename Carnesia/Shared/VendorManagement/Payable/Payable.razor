@@ -1,0 +1,102 @@
+﻿@using Carnesia.Domain.Vendor.Models
+@using Carnesia.Domain.Common.POCO
+
+<MudPaper Class="px-3 py-16 ma-2">
+	<MudContainer Fixed="true">
+		<MudGrid Class="justify-center align-baseline mb-5">
+			<MudItem md="3">
+				@*<MudAutocomplete T="string" Label="Select DO" />*@
+                <MudSelect T="string" Label="Vendor Name" AnchorOrigin="Origin.BottomCenter">
+					@*<MudSelectItem Value="@("Delivered")" />
+					<MudSelectItem Value="@("Failed")" />
+					<MudSelectItem Value="@("Cancelled")" />
+					<MudSelectItem Value="@("Lost")" />*@
+					
+				</MudSelect>
+			</MudItem>
+			<MudItem md="3">
+				@*<MudTextField T="string" Label="Scan TO" Variant="Variant.Text" />*@
+                <MudSelect T="string" Label="Vendor Initial" AnchorOrigin="Origin.BottomCenter">
+					@*<MudSelectItem Value="@("Delivered")" />
+					<MudSelectItem Value="@("Failed")" />
+					<MudSelectItem Value="@("Cancelled")" />
+					<MudSelectItem Value="@("Lost")" />*@
+					
+				</MudSelect>
+			</MudItem>
+			<MudItem md="3">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			</MudItem>
+		</MudGrid>
+
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            <HeaderContent>
+                @*<MudTh>Sl</MudTh>*@
+                <MudTh>Vendor Name</MudTh>
+                <MudTh>Initial</MudTh>
+                <MudTh>Owner</MudTh>
+                <MudTh>Phone Number</MudTh>
+                <MudTh>View All</MudTh>
+                <MudTh>Payment Processing</MudTh>
+                <MudTh>Invoice Count</MudTh>
+                <MudTh># of PO Raised</MudTh>
+                <MudTh>PO QTY.</MudTh>
+                <MudTh>Received QTY.</MudTh>
+                <MudTh>Curent Inventory QTY.</MudTh>
+                <MudTh>PO Amount</MudTh>
+                <MudTh>Curent Inventory Value</MudTh>
+                <MudTh>Received Amount</MudTh>
+                <MudTh>Sold</MudTh>
+                <MudTh>Returned Amount</MudTh>
+                <MudTh>Lost</MudTh>
+                <MudTh>Paid</MudTh>
+                <MudTh>View Products</MudTh>
+                <MudTh>Download UID Status_All</MudTh>
+                <MudTh>Payable</MudTh>
+             
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Vendor Name">@context.vendorName</MudTd>
+                <MudTd DataLabel="Initial">@context.initial</MudTd>
+                <MudTd DataLabel="Owner">@context.owner</MudTd>
+                <MudTd DataLabel="Phone Number">@context.phoneNumber</MudTd>
+                <MudTd DataLabel="View All">@context.viewAll</MudTd>
+                <MudTd DataLabel="Payment Processing">@context.paymentProcessing</MudTd>
+                <MudTd DataLabel="Invoice Count">@context.invoiceCount</MudTd>
+                <MudTd DataLabel="# of PO Raised">@context.poRaised</MudTd>
+                <MudTd DataLabel="PO QTY.">@context.poQty</MudTd>
+                <MudTd DataLabel="Received QTY.">@context.recieveQty</MudTd>
+                <MudTd DataLabel="Curent Inventory QTY.">@context.currInvenQty</MudTd>
+                <MudTd DataLabel="PO Amount">@context.poAmnt</MudTd>
+                <MudTd DataLabel="Curent Inventory Value">@context.currInvenValue</MudTd>
+                <MudTd DataLabel="Received Amount">@context.recieveAmnt</MudTd>
+                <MudTd DataLabel="Sold">@context.sold</MudTd>
+                <MudTd DataLabel="Returned Amount">@context.returnAmnt</MudTd>
+                <MudTd DataLabel="Lost">@context.lost</MudTd>
+                <MudTd DataLabel="Paid">@context.paid</MudTd>
+                <MudTd DataLabel="View Products">@context.viewProduct</MudTd>
+                <MudTd DataLabel="Download UID Status_All">@context.downloadUID</MudTd>
+                <MudTd DataLabel="Payable">@context.payable</MudTd>
+      
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+	</MudContainer>
+</MudPaper>
+
+@code {
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private IEnumerable<PayableDTO> Elements = new List<PayableDTO>();
+ }

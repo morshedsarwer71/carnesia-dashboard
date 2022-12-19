@@ -1,5 +1,5 @@
 ﻿@layout PrintLayout
-@page "/invoice-print-2/{trncode}"
+@page "/invoice-print/{trncode}"
 
 @using Carnesia.Domain.Dashboard.GenerateBill
 @inject IGenerateBill _generateBill
@@ -29,7 +29,7 @@
 	<h4>District: @Invoice.district</h4>
 	<h4>Area: @Invoice.area</h4>
 	<br />
-	<h3 style="font-weight: 600;">Payment: @Invoice.paymentType</h3>
+	@*<h3 style="font-weight: 600;">Payment: @Invoice.paymentType</h3>*@
 	<table style="width: 100%; border-collapse: collapse;">
 		<tr style="font-size: 14px;">
 			<th style="width: 60%" class="table-cell">Product Name & SKU</th>
@@ -54,6 +54,81 @@
 				</tr>
 			}
 		}
+		@if (Combos.Count > 0)
+		{
+			foreach (var item in Combos)
+			{
+				<tr style="font-size: 10px;">
+					<td class="table-cell">
+						<p>@item.name</p>
+						<p>Type-@item.bcType</p>
+						<p>Code-@item.bcCode</p>
+					</td>
+					<td class="table-cell">@item.price</td>
+					<td class="table-cell">@item.quantity</td>
+					@*<td class="table-cell">0</td>*@
+					<td class="table-cell">@item.totalPrice</td>
+				</tr>
+				foreach (var product in item.products)
+				{
+					<tr style="font-size: 10px;">
+						<td class="table-cell">
+							<p>@product.productName</p>
+							<p>SKU-@product.sku</p>
+						</td>
+						<td class="table-cell">Under @item.bcType</td>
+						<td class="table-cell">@product.quantity</td>
+						@*<td class="table-cell">0</td>*@
+						<td class="table-cell">Under @item.bcType</td>
+					</tr>
+					
+				}
+			}
+		}
+	</table>
+	
+	<table style="width: 100%; border-collapse: collapse;">
+		<tr style="font-size: 14px;">
+			<th style="width: 60%" class="table-cell">Payment Method</th>
+			<th class="table-cell">Ref</th>
+			<th class="table-cell">Amount</th>
+		</tr>
+		@if (Payments.Count > 0)
+		{
+			foreach (var item in Payments)
+			{
+				<tr style="font-size: 10px;">
+					<td class="table-cell">
+						@item.paymentType
+					</td>
+					<td class="table-cell">
+						@item.paymentRef
+					</td>
+					<td class="table-cell">
+						@item.amount
+					</td>
+				</tr>
+			}
+			
+		}
+		<tr style="font-size: 10px;">
+			<td class="table-cell">
+			</td>
+			<td class="table-cell">Collected:</td>
+			<td class="table-cell">@Payments.Sum(x => x.amount)</td>
+		</tr>
+		<tr style="font-size: 10px;">
+			<td class="table-cell">
+			</td>
+			<td class="table-cell">Returned:</td>
+			<td class="table-cell">@Invoice.returnedAmnt</td>
+		</tr>
+		<tr style="font-size: 10px;">
+			<td class="table-cell">
+			</td>
+			<td class="table-cell">Total:</td>
+			<td class="table-cell">@(Payments.Sum(x => x.amount) - Invoice.returnedAmnt)</td>
+		</tr>
 	</table>
 
 	<div style="text-align:end; margin-top: 10px;">
@@ -65,10 +140,12 @@
 		@*<h5>Vat(@Invoice.vat %): @Invoice.vatAmount</h5>*@
 		<h5>Grand Total: @Invoice.grandTotal</h5>
 	</div>
-	
-	<h5 style="text-align: center;">Thank you for your business! Any Faulty Product Changes or
-refund should be made with in 3 days and product Should be
-intact.</h5>
+
+	<h5 style="text-align: center;">
+		Thank you for your business! Any Faulty Product Changes or
+		refund should be made with in 3 days and product Should be
+		intact.
+	</h5>
 
 	<div style="text-align:center; margin-top: 10px;">
 		<h5>www.carnesia.com</h5>
@@ -87,6 +164,8 @@ intact.</h5>
 	{
 		await GetInvoice();
 		Items = Invoice.items;
+		Payments = Invoice.payments;
+		Combos = Invoice.comboItems;
 	}
 
 	// Invoice Data
@@ -94,9 +173,12 @@ intact.</h5>
 
 	// Items
 	private List<GenerateBillInvoiceItemDTO> Items = new List<GenerateBillInvoiceItemDTO>();
+	private List<GenerateBillPaymentsDTO> Payments = new List<GenerateBillPaymentsDTO>();
+	private List<GenerateBillComboDTO> Combos = new List<GenerateBillComboDTO>();
 
 	private async Task GetInvoice()
 	{
 		Invoice = await _generateBill.GetInvoiceData(trncode);
 	}
 }
+

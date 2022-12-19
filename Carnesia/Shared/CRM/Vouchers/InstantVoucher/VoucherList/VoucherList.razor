@@ -21,6 +21,10 @@
 				<MudTh>Discount Amount</MudTh>
 				<MudTh>Up To</MudTh>
 				<MudTh>Description</MudTh>
+				<MudTh>Created By</MudTh>
+				<MudTh>Created At</MudTh>
+				<MudTh>Updated By</MudTh>
+				<MudTh>Updated At</MudTh>
 				<MudTh>Enable</MudTh>
 				<MudTh>Action</MudTh>
 			</HeaderContent>
@@ -33,6 +37,10 @@
 				<MudTd DataLabel="Discount Amount">@context.discAmntOrPercent</MudTd>
 				<MudTd DataLabel="Up To">@context.upToDiscAmnt</MudTd>
 				<MudTd DataLabel="Description">@context.description</MudTd>
+				<MudTd DataLabel="Created By">@context.createdBy</MudTd>
+				<MudTd DataLabel="Created At">@context.createdAt</MudTd>
+				<MudTd DataLabel="Updated By">@context.updatedBy</MudTd>
+				<MudTd DataLabel="Updated At">@context.updatedAt</MudTd>
 				<MudTd DataLabel="Enable">
 					<MudSwitch @bind-Checked="@context.isEnable" Color="Color.Primary" @onclick="(() => ToggleEnable(context.instantVId))"/>
 				</MudTd>

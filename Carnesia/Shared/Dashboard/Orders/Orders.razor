@@ -61,7 +61,18 @@
 				<MudTd DataLabel="Address">@context.address</MudTd>
 				<MudTd DataLabel="Order Value(SP)">@context.orderValue</MudTd>
 				<MudTd DataLabel="Store">@context.store</MudTd>
-				<MudTd DataLabel="Payment Methode">@context.paymentMethod</MudTd>
+				<MudTd DataLabel="Payment Methode">
+					<MudList Dense="true">
+						<MudListItem Dense="true" Text="Payment Methode">
+							<NestedList>
+								@foreach (var item in context.paymentMethod)
+								{
+									<MudListItem Dense="true" Text="@item.PaymentType" Value="@item.PaymentType" />
+								}
+							</NestedList>
+						</MudListItem>
+					</MudList>
+				</MudTd>
 				<MudTd DataLabel="Status">@context.status</MudTd>
 				<MudTd DataLabel="Return Received Amount">@context.returnAmount</MudTd>
 				<MudTd DataLabel="Order Created By">@context.orderCreatBy</MudTd>

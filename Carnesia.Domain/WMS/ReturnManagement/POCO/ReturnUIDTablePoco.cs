@@ -9,6 +9,7 @@ namespace Carnesia.Domain.WMS.ReturnManagement.POCO
     public class ReturnUIDTablePoco
     {
         public int POID { get; set; }
+        public int ProductCode { get; set; }
         public int SKU { get; set; }
         public int ReturnQTY { get; set; }
         public decimal LiftingPrice { get; set; }

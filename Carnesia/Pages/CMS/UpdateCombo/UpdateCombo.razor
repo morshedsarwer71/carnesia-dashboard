@@ -16,7 +16,7 @@
                         <MudTextField @bind-Value="FormData.comboProductName" Label="Combo Name" Required="true" RequiredError="Combo name is required!"/>
                     </MudItem>
                     <MudItem sm="6">
-                        <MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Required="true" ResetValueOnEmptyText="true" />
+                    <MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Disabled="@(FormData.bcType == "Combo")" Required="@(FormData.bcType == "Bogo")" ResetValueOnEmptyText="true" />
                     </MudItem>
                     <MudItem sm="6">
                         <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.startDate" />
@@ -49,6 +49,7 @@
                     <HeaderContent>
                         <MudTh>SKU</MudTh>
                         <MudTh>Regular Price</MudTh>
+                        <MudTh>Quantity</MudTh>
                         <MudTh>Discount Type</MudTh>
                         <MudTh>Discount Ammount</MudTh>
                         <MudTh>After Discount</MudTh>
@@ -57,6 +58,7 @@
                     <RowTemplate>
                         <MudTd DataLabel="SKU">@context.sku</MudTd>
                         <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
+                        <MudTd DataLabel="Quantity">@context.quantity</MudTd>
                         <MudTd DataLabel="Discount Type">@context.discountType</MudTd>
                         <MudTd DataLabel="Discount Ammount">@context.discountAmount</MudTd>
                         <MudTd DataLabel="After Discount">@context.afterDiscAmount</MudTd>
@@ -224,6 +226,10 @@
     // Update Combo Details
     private async Task UpdateDetails()
     {
+        if (FormData.bcType == "Bogo")
+        {
+            FormData.productId = await _products.GetProductIdBySku(FormData.sku);
+        }
         try
         {
 

@@ -17,6 +17,7 @@
 		<MudTable Items="@Elements" Breakpoint="Breakpoint.Sm">
 			<HeaderContent>
 				<MudTh>PO ID</MudTh>
+				<MudTh>Product Code</MudTh>
 				<MudTh>SKU</MudTh>
 				<MudTh>Product Name</MudTh>
 				<MudTh>Vendor Name</MudTh>
@@ -26,6 +27,7 @@
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="PO ID">@context.POID</MudTd>
+				<MudTd DataLabel="Product Code">@context.ProductCode</MudTd>
 				<MudTd DataLabel="SKU">@context.SKU</MudTd>
 				<MudTd DataLabel="Product Name">@context.ProductName</MudTd>
 				<MudTd DataLabel="Vendor Name">@context.VendorName</MudTd>

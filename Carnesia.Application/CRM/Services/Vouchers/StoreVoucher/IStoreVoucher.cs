@@ -15,6 +15,8 @@ namespace Carnesia.Application.CRM.Services.Vouchers.StoreVoucher
         Task<VoucherListDTO> GetVoucherById(int id);
         Task<bool> UpdateVoucher(UpdateStoreVoucherDTO voucher);
         Task DeleteVoucher(int id);
+        Task<bool> DeleteVoucherStore(int id);
+        Task<bool> AddNewStore(int id, CreateStoreVoucherStoreDTO storeId);
         Task<bool> ToggleUse(int id);
     }
 }
