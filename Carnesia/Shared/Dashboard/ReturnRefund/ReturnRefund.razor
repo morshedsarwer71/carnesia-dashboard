@@ -45,7 +45,7 @@
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
                 <MudTd DataLabel="Sold Quantity">@context.soldQty</MudTd>
                 @*<MudTd DataLabel="Image">
-                <MudImage Src="@($"https://localhost:7090/{context.imageURL}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                <MudImage Src="@($"https://oshud.com/{context.imageURL}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>*@
                 <MudTd DataLabel="Received">@context.soldQty</MudTd>
                 <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
@@ -115,7 +115,7 @@
                         <MudTextField @bind-Value="@context.refundPaymentRef" />
                     </MudTd>
                     <MudTd DataLabel="New Refund Amount">
-                        <MudNumericField @bind-Value="@context.takenRefundAmount" Max="@context.amount" Min="1" />
+                        <MudNumericField @bind-Value="@context.takenRefundAmount" Max="context.amount - context.refundAmount" Min="1" />
                     </MudTd>
                 </RowEditingTemplate>
             </MudTable>
@@ -217,6 +217,12 @@
 
             var isThere = Elements.Any(x => x.productCode == result.productCode);
 
+            if (!String.IsNullOrEmpty(result.error))
+            {
+                Snackbar.Add(result.error, Severity.Error);
+                return;
+            }
+
             if (isThere)
             {
                 var itemIndex = Elements.FindIndex(x => x.productCode == result.productCode);
@@ -249,9 +255,10 @@
 
 
         }
-        catch (Exception)
+        catch (Exception e)
         {
             Snackbar.Add("Something Went Wrong!", Severity.Error);
+            Console.WriteLine(e.Message);
         }
     }
 

@@ -1,6 +1,4 @@
-﻿@page "/generate-bill"
-
-@using Carnesia.Domain.Dashboard.GenerateBill
+﻿@using Carnesia.Domain.Dashboard.GenerateBill
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Shared.Dashboard.GenerateBillV2
 @inject IJSRuntime JSRuntime
@@ -213,7 +211,7 @@
 
             <MudGrid>
                 <MudItem sm="6">
-                    <MudNumericField Value="POSDetails.returnedAmnt" Label="Return Amount" ReadOnly="true" />
+                    <MudNumericField Value="POSDetails.returnedAmnt" Label="Change Amount" ReadOnly="true" />
                 </MudItem>
                 <MudItem sm="6">
                     <MudNumericField Value="POSDetails.tobeCollected" Label="Collected Amount" ReadOnly="true" />

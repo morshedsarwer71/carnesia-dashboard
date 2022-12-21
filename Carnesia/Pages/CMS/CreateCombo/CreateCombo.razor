@@ -47,13 +47,13 @@
 					<MudAutocomplete Label="Parent Bogo Product" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Disabled="@(FormData.bcType == "Combo")" Required="@(FormData.bcType == "Bogo")" ResetValueOnEmptyText="true" />
 				</MudItem>
 				<MudItem sm="6">
-					<MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" ReadOnly="true" />
+					<MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" Required="true" RequiredError="Regular price is required!" />
 				</MudItem>
 				<MudItem sm="6">
-					<MudNumericField Label="Combo/Bogo Price" @bind-Value="FormData.comboPrice" Required="true" />
+					<MudNumericField Label="Combo/Bogo Price" @bind-Value="FormData.comboPrice" Required="true" RequiredError="Combo/Bogo price is required!" />
 				</MudItem>
 				<MudItem sm="6">
-					<MudNumericField Label="Sell Quantity" @bind-Value="FormData.sellQuantity" Required="true" />
+					<MudNumericField Label="Sell Quantity" @bind-Value="FormData.sellQuantity" Required="true" RequiredError="Sell quantity is required!" />
 				</MudItem>
 				<MudItem sm="6">
 					<MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
@@ -197,7 +197,6 @@
 	private void RemoveProduct(AddComboProductDTO product)
 	{
 		Products.Remove(product);
-		FormData.regularPrice = Products.Sum(x => x.regularPrice);
 	}
 
 	// Add Product Modal
@@ -231,8 +230,6 @@
 			}
 
 			Products.Add(newProduct);
-
-			FormData.regularPrice = Products.Sum(x => x.regularPrice);
 		}
 	}
 
