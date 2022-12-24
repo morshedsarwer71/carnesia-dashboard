@@ -132,5 +132,76 @@ namespace Carnesia.Application.CMS.Services.Combo
                 throw;
             }
         }
+
+        public async Task<bool> CreateNewBogoComboBanner(CreateBogoComboBannerDTO banner)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("BogoCombo/combolandingbanner", banner);
+
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<BogoComboBannerDTO>> GetAllBanners()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<BogoComboBannerDTO>>("BogoCombo/combolandingbanner");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> ToggleBannerPublish(int Id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"BogoCombo/combolandingbanner/togglepublish/{Id}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> ToggleBannerHome(int Id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"BogoCombo/combolandingbanner/togglehome/{Id}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteBanner(int Id)
+        {
+            try
+            {
+                var result = await _httpClient.DeleteAsync($"BogoCombo/combolandingbanner/{Id}");
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

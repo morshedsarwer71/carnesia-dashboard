@@ -32,7 +32,7 @@
                 <MudTd DataLabel="Name">@context.name</MudTd>
                 <MudTd DataLabel="URL">@context.url</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imagePath)" Src="@($"https://oshud.com/{context.imagePath}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.imagePath)" Src="@($"https://cscpguide.com/{context.imagePath}")" Alt="@context.name" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Publish">
                     <MudSwitch @bind-Checked="context.isPublish" Color="Color.Primary" @onclick="(() => PublishUnpublish(context.id)) " />
