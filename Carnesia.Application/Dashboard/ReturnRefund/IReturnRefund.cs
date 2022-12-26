@@ -9,7 +9,7 @@ namespace Carnesia.Application.Dashboard.ReturnRefund
 {
     public interface IReturnRefund
     {
-        Task<string> IssueReturnRefund(CreateReturnRefundDTO items);
+        Task<bool> IssueReturnRefund(CreateReturnRefundDTO items);
         Task<ReturnRefundDTO> GetItem(string trncode, string uid);
     }
 }

@@ -7,316 +7,363 @@
 @inject NavigationManager NavigationManager
 
 <MudPaper Class="py-16 px-3 ma-10">
-	<MudContainer Fixed="true">
-		<MudGrid Class="align-baseline mb-5">
-			<MudItem md="3">
-				<MudTextField @bind-Value="Filter.trnCode" Label="Order Id" Variant="Variant.Text" />
-			</MudItem>
-			<MudItem md="3">
-				<MudTextField @bind-Value="Filter.customerName" Label="Customer Name" Variant="Variant.Text" />
-			</MudItem>
-			<MudItem md="3">
-				<MudTextField @bind-Value="Filter.phoneNumber" Label="Customer Phone Number" Variant="Variant.Text" />
-			</MudItem>
-			<MudItem md="3">
-				<MudSelect @bind-Value="Filter.area" Label="Shipphing Area" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("Inside Dhaka")" />
-					<MudSelectItem Value="@("Dhaka Suburb")" />
-					<MudSelectItem Value="@("Outside Dhaka")" />
-					<MudSelectItem Value="@("Inside CTG City")" />
-					<MudSelectItem Value="@("Outside CTG City")" />
-				</MudSelect>
-			</MudItem>
-			@*<MudItem md="3">
-				<MudSelect @bind-Value="Filter.i" Label="Select Agent" AnchorOrigin="Origin.BottomCenter">
-					@foreach (var item in Agents)
-					{
-						<MudSelectItem Value="item.id">@item.name</MudSelectItem>
-					}
-				</MudSelect>
-			</MudItem>*@
-			<MudItem xs="12" Class="d-flex justify-end">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetOrdersByFilter">Filter</MudButton>
-			</MudItem>
-		</MudGrid>
+    <MudContainer Fixed="true">
+        <MudGrid Class="align-baseline mb-5">
+            <MudItem md="3">
+                <MudTextField @bind-Value="Filter.trnCode" Label="Order Id" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem md="3">
+                <MudTextField @bind-Value="Filter.customerName" Label="Customer Name" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem md="3">
+                <MudTextField @bind-Value="Filter.phoneNumber" Label="Customer Phone Number" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem md="3">
+                <MudSelect @bind-Value="Filter.area" Label="Shipphing Area" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("Inside Dhaka")" />
+                    <MudSelectItem Value="@("Dhaka Suburb")" />
+                    <MudSelectItem Value="@("Outside Dhaka")" />
+                    <MudSelectItem Value="@("Inside CTG City")" />
+                    <MudSelectItem Value="@("Outside CTG City")" />
+                </MudSelect>
+            </MudItem>
+            @*<MudItem md="3">
+            <MudSelect @bind-Value="Filter.i" Label="Select Agent" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var item in Agents)
+            {
+            <MudSelectItem Value="item.id">@item.name</MudSelectItem>
+            }
+            </MudSelect>
+            </MudItem>*@
+            <MudItem xs="12" Class="d-flex justify-end">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetOrdersByFilter">Filter</MudButton>
+            </MudItem>
+        </MudGrid>
 
-		<MudGrid Class="justify-center align-baseline mb-5">
-			<MudItem md="3">
-				<MudSelect @bind-Value="AssignAgent.agentId" Label="Select Agent" AnchorOrigin="Origin.BottomCenter">
-					@foreach (var item in Agents)
-					{
-						<MudSelectItem Value="item.id">@item.name</MudSelectItem>
-					}
-				</MudSelect>
-			</MudItem>
-			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(AssignAgent.agentId) || SelectedItems.Count <= 0" OnClick="AssignagentSubmit">Assign</MudButton>
-			</MudItem>
-		</MudGrid>
+        <MudGrid Class="justify-center align-baseline mb-5">
+            <MudItem md="3">
+                <MudSelect @bind-Value="AssignAgent.agentId" Label="Select Agent" AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var item in Agents)
+                    {
+                        <MudSelectItem Value="item.id">@item.name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem md="3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(AssignAgent.agentId) || SelectedItems.Count <= 0" OnClick="AssignagentSubmit">Assign</MudButton>
+            </MudItem>
+        </MudGrid>
 
-		<MudTable RowsPerPage="25" Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true" Loading="tableLoading" LoadingProgressColor="Color.Info">
-			<HeaderContent>
-				<MudTh></MudTh>
-				<MudTh>Order Id</MudTh>
-				<MudTh>Order Date</MudTh>
-				<MudTh>Order Value</MudTh>
-				<MudTh>Payment Method</MudTh>
-				<MudTh>To Be Collected</MudTh>
-				<MudTh>Customer Name</MudTh>
-				<MudTh>Customer Phone</MudTh>
-				<MudTh>Shipping Address</MudTh>
-				<MudTh>Status</MudTh>
-				<MudTh>Source</MudTh>
-				<MudTh>Assign To</MudTh>
-				<MudTh>Action</MudTh>
-				@*<MudTh>Print</MudTh>*@
-			</HeaderContent>
-			<RowTemplate>
-				<MudTd DataLabel="">
-					@if (!context.ShowDetails)
-					{
-						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.orderId)" />
-					}
-					else if (context.ShowDetails)
-					{
-						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.orderId)" />
-					}
-				</MudTd>
-				<MudTd DataLabel="Order Id">@context.trnCode</MudTd>
-				<MudTd DataLabel="Order Date">@context.orderDate</MudTd>
-				<MudTd DataLabel="Order Value">@context.orderValue</MudTd>
-				<MudTd DataLabel="Payment Method">@context.paymentMethod</MudTd>
-				<MudTd DataLabel="To Be Collected">@context.tobeCollected</MudTd>
-				<MudTd DataLabel="Customer Name">@context.customerName</MudTd>
-				<MudTd DataLabel="Customer Phone">@context.phoneNumber</MudTd>
-				<MudTd DataLabel="Shipping Address">@context.address</MudTd>
-				<MudTd DataLabel="Status">@context.paymentStatus</MudTd>
-				<MudTd DataLabel="Source">@context.source</MudTd>
-				<MudTd DataLabel="Assign To">@context.assignto</MudTd>
-				<MudTd DataLabel="Action" Class="d-flex flex-column align-center">
-					<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToOrderEdit(context.trnCode)">Edit</MudButton>
-					<MudButton Variant="Variant.Text" Color="Color.Success" OnClick="() => OpenVerifyDialog(context.orderId)">Verify</MudButton>
-					<MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => OpenCancelDialog(context.orderId)">Cancel</MudButton>
-				</MudTd>
-				@*<MudTd DataLabel="Print">
-					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
-					</MudTd>*@
-			</RowTemplate>
-			<ChildRowContent>
-				@if (context.ShowDetails)
-				{
-					<td colspan="14">
-						<MudCard Elevation="0">
-							<MudCardContent Class="pa-0">
-								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
-									<HeaderContent>
-										<MudTh>Product Code</MudTh>
-										<MudTh>SKU</MudTh>
-										<MudTh>Product Name</MudTh>
-										<MudTh>Quantity</MudTh>
-										<MudTh>Price</MudTh>
-										<MudTh>Amount</MudTh>
-									</HeaderContent>
-									<RowTemplate>
-										<MudTd DataLabel="Product Code">@DetailsContext.productCode</MudTd>
-										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
-										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
-										<MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>
-										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
-										<MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
-									</RowTemplate>
-									<FooterContent>
-										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
-											<MudTd colspan="1" Style="text-align: end;">@context.products.total</MudTd>
-										</MudTFootRow>
-										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end;">Discount:</MudTd>
-											<MudTd colspan="1" Style="text-align: end;">@context.products.discount</MudTd>
-										</MudTFootRow>
-										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end;">Shipping Price:</MudTd>
-											<MudTd colspan="1" Style="text-align: end;">@context.products.shippingPrice</MudTd>
-										</MudTFootRow>
-										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-											<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@context.products.grandTotal</MudTd>
-										</MudTFootRow>
-									</FooterContent>
-								</MudTable>
-							</MudCardContent>
-						</MudCard>
-					</td>
-				}
-			</ChildRowContent>
-			<PagerContent>
-				<MudTablePager PageSizeOptions="new int[]{50, 100}" />
-			</PagerContent>
-		</MudTable>
-	</MudContainer>
+        <MudTable RowsPerPage="25" Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true" Loading="tableLoading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh></MudTh>
+                <MudTh>Order Id</MudTh>
+                <MudTh>Order Date</MudTh>
+                <MudTh>Order Value</MudTh>
+                <MudTh>Payment Method</MudTh>
+                <MudTh>To Be Collected</MudTh>
+                <MudTh>Customer Name</MudTh>
+                <MudTh>Customer Phone</MudTh>
+                <MudTh>Shipping Address</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Source</MudTh>
+                <MudTh>Assign To</MudTh>
+                <MudTh>Action</MudTh>
+                @*<MudTh>Print</MudTh>*@
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="">
+                    @if (!context.ShowDetails)
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.orderId)" />
+                    }
+                    else if (context.ShowDetails)
+                    {
+                        <MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.orderId)" />
+                    }
+                </MudTd>
+                <MudTd DataLabel="Order Id">@context.trnCode</MudTd>
+                <MudTd DataLabel="Order Date">@context.orderDate</MudTd>
+                <MudTd DataLabel="Order Value">@context.orderValue</MudTd>
+                <MudTd DataLabel="Payment Method">@context.paymentMethod</MudTd>
+                <MudTd DataLabel="To Be Collected">@context.tobeCollected</MudTd>
+                <MudTd DataLabel="Customer Name">@context.customerName</MudTd>
+                <MudTd DataLabel="Customer Phone">@context.phoneNumber</MudTd>
+                <MudTd DataLabel="Shipping Address">@context.address</MudTd>
+                <MudTd DataLabel="Status">@context.paymentStatus</MudTd>
+                <MudTd DataLabel="Source">@context.source</MudTd>
+                <MudTd DataLabel="Assign To">@context.assignto</MudTd>
+                <MudTd DataLabel="Action" Class="d-flex flex-column align-center">
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => NavigateToOrderEdit(context.trnCode)">Edit</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Success" OnClick="() => OpenVerifyDialog(context.orderId)">Verify</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => OpenCancelDialog(context.orderId)">Cancel</MudButton>
+                </MudTd>
+                @*<MudTd DataLabel="Print">
+                <MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
+                </MudTd>*@
+            </RowTemplate>
+            <ChildRowContent>
+                @if (context.ShowDetails)
+                {
+                    <td colspan="14">
+                        <MudCard Elevation="0">
+                            <MudCardContent Class="pa-0">
+                                <MudTable Items="@context.products.orderProducts" Context="DetailsContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
+                                    <HeaderContent>
+                                        <MudTh></MudTh>
+                                        <MudTh>Product Code</MudTh>
+                                        <MudTh>SKU</MudTh>
+                                        <MudTh>Product Name</MudTh>
+                                        <MudTh>Quantity</MudTh>
+                                        <MudTh>Price</MudTh>
+                                        <MudTh>Amount</MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate>
+                                        <MudTd DataLabel="">
+                                            @if (!DetailsContext.showComboProducts)
+                                            {
+                                                <MudIconButton Disabled="!DetailsContext.isCombo" Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowCombos(DetailsContext.productCode, context.products.orderProducts)" />
+                                            }
+                                            else if (DetailsContext.showComboProducts)
+                                            {
+                                                <MudIconButton Disabled="!DetailsContext.isCombo" Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowCombos(DetailsContext.productCode, context.products.orderProducts)" />
+                                            }
+                                        </MudTd>
+                                        <MudTd DataLabel="Product Code">@DetailsContext.productCode</MudTd>
+                                        <MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
+                                        <MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
+                                        <MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>
+                                        <MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
+                                        <MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
+                                    </RowTemplate>
+                                    <ChildRowContent>
+                                        @if (DetailsContext.showComboProducts)
+                                        {
+                                            <td colspan="7">
+                                                <MudCard Elevation="0">
+                                                    <MudCardContent Class="pa-0">
+                                                        <MudTable Items="@DetailsContext.combosProducts" Context="ComboContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
+                                                            <HeaderContent>
+                                                                <MudTh>Product Code</MudTh>
+                                                                <MudTh>SKU</MudTh>
+                                                                <MudTh>Product Name</MudTh>
+                                                                <MudTh>Quantity</MudTh>
+                                                            </HeaderContent>
+                                                            <RowTemplate>
+                                                                <MudTd DataLabel="Product Code">@ComboContext.productCode</MudTd>
+                                                                <MudTd DataLabel="SKU">@ComboContext.sku</MudTd>
+                                                                <MudTd DataLabel="Product Name">@ComboContext.productName</MudTd>
+                                                                <MudTd DataLabel="Quantity">@ComboContext.quantity</MudTd>
+                                                            </RowTemplate>
+                                                        </MudTable>
+                                                    </MudCardContent>
+                                                </MudCard>
+                                            </td>
+                                        }
+                                    </ChildRowContent>
+                                    <FooterContent>
+                                        <MudTFootRow>
+                                            <MudTd colspan="6" Style="text-align: end;">Total:</MudTd>
+                                            <MudTd colspan="1" Style="text-align: end;">@context.products.total</MudTd>
+                                        </MudTFootRow>
+                                        <MudTFootRow>
+                                            <MudTd colspan="6" Style="text-align: end;">Discount:</MudTd>
+                                            <MudTd colspan="1" Style="text-align: end;">@context.products.discount</MudTd>
+                                        </MudTFootRow>
+                                        <MudTFootRow>
+                                            <MudTd colspan="6" Style="text-align: end;">Shipping Price:</MudTd>
+                                            <MudTd colspan="1" Style="text-align: end;">@context.products.shippingPrice</MudTd>
+                                        </MudTFootRow>
+                                        <MudTFootRow>
+                                            <MudTd colspan="6" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+                                            <MudTd colspan="1" Style="text-align: end; font-weight: 600;">@context.products.grandTotal</MudTd>
+                                        </MudTFootRow>
+                                    </FooterContent>
+                                </MudTable>
+                            </MudCardContent>
+                        </MudCard>
+                    </td>
+                }
+            </ChildRowContent>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
 </MudPaper>
 
 @code {
-	// Table Loading
-	private bool tableLoading { get; set; }
+    // Table Loading
+    private bool tableLoading { get; set; }
 
-	// Page On Load
-	protected override async Task OnInitializedAsync()
-	{
-		await GetOrders();
-		await GetAgents();
-	}
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetOrders();
+        await GetAgents();
+    }
 
-	// Table Content
-	private List<PendingOrderDTO> Elements = new List<PendingOrderDTO>();
-	private HashSet<PendingOrderDTO> SelectedItems = new HashSet<PendingOrderDTO>();
+    // Table Content
+    private List<PendingOrderDTO> Elements = new List<PendingOrderDTO>();
+    private HashSet<PendingOrderDTO> SelectedItems = new HashSet<PendingOrderDTO>();
 
-	// Filter Order
-	private PendingOrderFilterDTO Filter = new PendingOrderFilterDTO();
+    // Filter Order
+    private PendingOrderFilterDTO Filter = new PendingOrderFilterDTO();
 
-	// Get Orders
-	private async Task GetOrders()
-	{
-		tableLoading = true;
-		try
-		{
-			Elements = await _pendingOrder.GetAllPendingOrders();
-			tableLoading = false;
-		}
-		catch(Exception e)
-		{
-			tableLoading = false;
-			Console.WriteLine(e.Message);
-		}
-	}
+    // Get Orders
+    private async Task GetOrders()
+    {
+        tableLoading = true;
+        try
+        {
+            Elements = await _pendingOrder.GetAllPendingOrders();
+            foreach (var item in Elements)
+            {
+                item.products.orderProducts.AddRange(item.products.orderCombos);
+            }
+            tableLoading = false;
+        }
+        catch (Exception e)
+        {
+            tableLoading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
 
-	private async Task GetOrdersByFilter()
-	{
-		tableLoading = true;
-		try
-		{
-			Elements = await _pendingOrder.GetPendingOrdersByFilter(Filter);
-			tableLoading = false;
-		}
-		catch(Exception e)
-		{
-			Console.WriteLine(e.Message);
-			tableLoading = false;
-		}
-	}
+    private async Task GetOrdersByFilter()
+    {
+        tableLoading = true;
+        try
+        {
+            Elements = await _pendingOrder.GetPendingOrdersByFilter(Filter);
+            tableLoading = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            tableLoading = false;
+        }
+    }
 
-	// Assign Agent
-	private AssignAgentDTO AssignAgent = new AssignAgentDTO();
+    // Assign Agent
+    private AssignAgentDTO AssignAgent = new AssignAgentDTO();
 
-	private async Task AssignagentSubmit()
-	{
-		var tempOrder = new List<OrderIdsDTO>();
-		foreach (var item in SelectedItems)
-		{
-			tempOrder.Add(new OrderIdsDTO { orderId = item.orderId });
-		}
-		AssignAgent.orders = tempOrder;
-		try
-		{
-			var result = await _pendingOrder.AssignAgent(AssignAgent);
+    private async Task AssignagentSubmit()
+    {
+        var tempOrder = new List<OrderIdsDTO>();
+        foreach (var item in SelectedItems)
+        {
+            tempOrder.Add(new OrderIdsDTO { orderId = item.orderId });
+        }
+        AssignAgent.orders = tempOrder;
+        try
+        {
+            var result = await _pendingOrder.AssignAgent(AssignAgent);
 
-			if (result)
-			{
-				Snackbar.Add("Agent Assigned Successfully!", Severity.Success);
-				await GetOrders();
-				return;
-			}
-			Snackbar.Add("Agent Assigned Failed!", Severity.Error);
-		}
-		catch (Exception)
-		{
-			Snackbar.Add("Agent Assigned Failed!", Severity.Error);
-		}
-	}
+            if (result)
+            {
+                Snackbar.Add("Agent Assigned Successfully!", Severity.Success);
+                await GetOrders();
+                return;
+            }
+            Snackbar.Add("Agent Assigned Failed!", Severity.Error);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Agent Assigned Failed!", Severity.Error);
+        }
+    }
 
-	// Agents
-	private List<AgentDTO> Agents = new List<AgentDTO>();
+    // Agents
+    private List<AgentDTO> Agents = new List<AgentDTO>();
 
-	// Get Agents
-	private async Task GetAgents()
-	{
-		Agents = await _pendingOrder.GetAgents();
-	}
+    // Get Agents
+    private async Task GetAgents()
+    {
+        Agents = await _pendingOrder.GetAgents();
+    }
 
-	// Show Details
-	private void ShowBtnPress(int orderId)
-	{
-		PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
-		tmpElements.ShowDetails = !tmpElements.ShowDetails;
-	}
+    // Show Details
+    private void ShowBtnPress(int orderId)
+    {
+        PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
+        tmpElements.ShowDetails = !tmpElements.ShowDetails;
+    }
 
-	// Cancel Modal
-	private async Task OpenCancelDialog(int orderId)
-	{
-		var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
-		var dialog = await DialogService.Show<CancelModal>("Cancel Item?", options).Result;
+    // Show Combo Details
+    private void ShowCombos(string productCode, List<PendingOrderProductsDTO> products)
+    {
+        PendingOrderProductsDTO tmpElements = products.First(f => f.productCode == productCode);
+        tmpElements.showComboProducts = !tmpElements.showComboProducts;
+    }
 
-		if (!dialog.Cancelled)
-		{
-			try
-			{
-				var result = await _pendingOrder.CancelOrder(orderId);
+    // Cancel Modal
+    private async Task OpenCancelDialog(int orderId)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
+        var dialog = await DialogService.Show<CancelModal>("Cancel Item?", options).Result;
 
-				if (result)
-				{
-					Snackbar.Add("Order Cancelled Successfully!", Severity.Success);
-					await GetOrders();
-					return;
-				}
-				Snackbar.Add("Order Cancelled Failed!", Severity.Error);
-			}
-			catch (Exception)
-			{
-				Snackbar.Add("Something Went Wrong!", Severity.Error);
-				throw;
-			}
-		}
-	}
+        if (!dialog.Cancelled)
+        {
+            try
+            {
+                var result = await _pendingOrder.CancelOrder(orderId);
 
-	// Verify Modal
-	private async Task OpenVerifyDialog(int orderId)
-	{
-		var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
-		var dialog = await DialogService.Show<VerifyOrder>("Verify Item?", options).Result;
+                if (result)
+                {
+                    Snackbar.Add("Order Cancelled Successfully!", Severity.Success);
+                    await GetOrders();
+                    return;
+                }
+                Snackbar.Add("Order Cancelled Failed!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
 
-		if (!dialog.Cancelled)
-		{
-			try
-			{
-				var result = await _pendingOrder.VerifyOrder(orderId);
+    // Verify Modal
+    private async Task OpenVerifyDialog(int orderId)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth = true, CloseButton = true };
+        var dialog = await DialogService.Show<VerifyOrder>("Verify Item?", options).Result;
 
-				if (result)
-				{
-					Snackbar.Add("Order verified Successfully!", Severity.Success);
-					await GetOrders();
-					return;
-				}
-				Snackbar.Add("Order verified Failed!", Severity.Error);
-			}
-			catch (Exception)
-			{
-				Snackbar.Add("Something Went Wrong!", Severity.Error);
-				throw;
-			}
-		}
-	}
+        if (!dialog.Cancelled)
+        {
+            try
+            {
+                var result = await _pendingOrder.VerifyOrder(orderId);
 
-	// Edit Order Modal
-	private void OpenEditOrderDialog()
-	{
-		var options = new DialogOptions { CloseOnEscapeKey = false, MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
-		DialogService.Show<CancelModal>("Edit Order", options);
-	}
+                if (result)
+                {
+                    Snackbar.Add("Order verified Successfully!", Severity.Success);
+                    await GetOrders();
+                    return;
+                }
+                Snackbar.Add("Order verified Failed!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Something Went Wrong!", Severity.Error);
+                throw;
+            }
+        }
+    }
 
-	// Navigate To Order Edit
-	private void NavigateToOrderEdit(string trncode)
-	{
-		NavigationManager.NavigateTo($"order-edit/{trncode}");
-	}
+    // Edit Order Modal
+    private void OpenEditOrderDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = false, MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
+        DialogService.Show<CancelModal>("Edit Order", options);
+    }
+
+    // Navigate To Order Edit
+    private void NavigateToOrderEdit(string trncode)
+    {
+        NavigationManager.NavigateTo($"order-edit/{trncode}");
+    }
 
 }
