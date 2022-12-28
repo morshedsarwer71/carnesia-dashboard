@@ -37,6 +37,7 @@ namespace Carnesia.Application.Dashboard.ReturnRefund
             try
             {
                 var result = await _httpClient.PostAsJsonAsync("Pos/posreturn", items);
+
                 return result.IsSuccessStatusCode;
             }
             catch (Exception)

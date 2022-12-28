@@ -295,14 +295,12 @@
         try
         {
             var result = await _returnRefund.IssueReturnRefund(Return);
-
             if (result)
             {
                 Snackbar.Add("Success!", Severity.Success);
                 return;
             }
             Snackbar.Add("Failed!", Severity.Error);
-            
         }
         catch (Exception)
         {
