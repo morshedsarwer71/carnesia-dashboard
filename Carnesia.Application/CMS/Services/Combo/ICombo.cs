@@ -21,5 +21,6 @@ namespace Carnesia.Application.CMS.Services.Combo
         Task<string> ToggleBannerPublish(int Id);
         Task<string> ToggleBannerHome(int Id);
         Task<bool> DeleteBanner(int Id);
+        Task<bool> ToggleCombo(int Id);
     }
 }

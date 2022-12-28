@@ -124,7 +124,7 @@
     // Get All Combo
     private async Task GetCombos()
     {
-        Elements = await _combo.GetAllCombos("Combo");
+        Elements = await _combo.GetAllCombos("Clearance");
     }
 
     // Table Search
@@ -164,11 +164,11 @@
 
             if (result)
             {
-                Snackbar.Add("Combo toggled successfully!", Severity.Success);
+                Snackbar.Add("Clearance toggled successfully!", Severity.Success);
                 await GetCombos();
                 return;
             }
-            Snackbar.Add("Combo toggle failed", Severity.Error);
+            Snackbar.Add("Clearance toggle failed", Severity.Error);
         }
         catch (Exception)
         {

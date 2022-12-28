@@ -41,10 +41,11 @@
 					<MudSelect @bind-Value="FormData.bcType" Label="Combo/Bogo Type" Immediate="true" AnchorOrigin="Origin.BottomCenter">
 						<MudSelectItem Value="@("Bogo")" />
 						<MudSelectItem Value="@("Combo")" />
+						<MudSelectItem Value="@("Clearance")" />
 					</MudSelect>
 				</MudItem>
 				<MudItem sm="6">
-					<MudAutocomplete Label="Parent Bogo Product" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Disabled="@(FormData.bcType == "Combo")" Required="@(FormData.bcType == "Bogo")" ResetValueOnEmptyText="true" />
+					<MudAutocomplete Label="Parent Bogo Product" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Disabled="@(FormData.bcType == "Combo" || FormData.bcType == "Clearance")" Required="@(FormData.bcType == "Bogo")" ResetValueOnEmptyText="true" />
 				</MudItem>
 				<MudItem sm="6">
 					<MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" Required="true" RequiredError="Regular price is required!" />

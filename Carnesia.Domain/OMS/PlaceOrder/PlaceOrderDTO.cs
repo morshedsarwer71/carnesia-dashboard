@@ -32,5 +32,6 @@ namespace Carnesia.Domain.OMS.PlaceOrder
         public int deliveryAddressID { get; set; }
         public decimal deliveryPrice { get; set; }
         public List<ProductTableDTO> orderProductsDTOs { get; set; }
+        public List<PlaceOrderComboProductTableDTO> bogoComboDtos { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace Carnesia.Domain.OMS.PlaceOrder
         public int id { get; set; }
         public int productId { get; set; }
         public string sku { get; set; }
+        public string bcCode { get; set; }
         public bool isCampaign { get; set; }
         public bool isCombo { get; set; } = false;
         public int campaignId { get; set; }

@@ -39,6 +39,23 @@
 			</MudItem>
 		</MudGrid>
 
+		<MudGrid Class="justify-center mt-3">
+			<MudItem sm="4">
+				<MudTextField Label="Combo/Bogo Code" @bind-Value="BcCode" />
+			</MudItem>
+			<MudItem sm="4">
+				<MudNumericField @bind-Value="BcQuantity" Min="1" />
+			</MudItem>
+		</MudGrid>
+
+		<MudGrid Class="justify-center my-5">
+			<MudItem sm="8">
+				<div class="d-flex justify-end">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(BcCode)" OnClick="AddComboProduct">Add Combo/Bogo</MudButton>
+				</div>
+			</MudItem>
+		</MudGrid>
+
 		@*<MudGrid Class="justify-center">
 			<MudItem sm="4">
 				<MudTextField Label="Combo SKU" @bind-Value="FormData.sku" />
@@ -47,14 +64,6 @@
 				<MudNumericField @bind-Value="FormData.qty" Min="1" />
 			</MudItem>
 		</MudGrid>*@
-
-		<MudGrid Class="justify-center my-5">
-			<MudItem sm="8">
-				<div class="d-flex justify-end">
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(FormData.sku)">Add Combo</MudButton>
-				</div>
-			</MudItem>
-		</MudGrid>
 
 		<MudTable Items="@Elements" Dense="true" Hover="true" Striped="true" CustomFooter="true" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
@@ -66,7 +75,7 @@
 				<MudTh>Action</MudTh>
 			</HeaderContent>
 			<RowTemplate>
-				<MudTd DataLabel="SKU">@context.sku</MudTd>
+				<MudTd DataLabel="SKU">@(context.sku + context.bcCode)</MudTd>
 				<MudTd DataLabel="Product Name">@context.name</MudTd>
 				<MudTd DataLabel="Quantity">@context.productQuantity</MudTd>
 				<MudTd DataLabel="Price">@Math.Round(context.salesPrice, 2)</MudTd>
@@ -154,6 +163,10 @@
 		//await GetProductAsSKU();
 	}
 
+	// Combo Search
+	private string BcCode { get; set; }
+	private int BcQuantity { get; set; } = 1;
+
 	// Form Ref
 	bool success;
 	string[] errors = { };
@@ -198,6 +211,7 @@
 
 	// Table Content
 	private List<ProductTableDTO> Elements = new List<ProductTableDTO>();
+	private List<PlaceOrderComboProductTableDTO> Combos = new List<PlaceOrderComboProductTableDTO>();
 	private PlaceOrderDetailsDTO PlacedOrderDetails = new PlaceOrderDetailsDTO();
 
 	// Get Order
@@ -216,6 +230,28 @@
 			addressId = OrderDetails.deliveryAddressID;
 
 			Elements = OrderDetails.orderProductsDTOs;
+
+			foreach (var item in OrderDetails.bogoComboDtos)
+			{
+				Elements.Add(new ProductTableDTO
+					{
+						productQuantity = item.quantity,
+						bcCode = item.bcCode,
+						isCombo = true,
+						name = item.name,
+						salesPrice = item.price,
+					});
+
+				Combos.Add(new PlaceOrderComboProductTableDTO
+					{
+						bcCode = item.bcCode,
+						bcType = item.bcType,
+						comboCode = item.comboCode,
+						name = item.name,
+						price = item.price,
+						quantity = item.quantity
+					});
+			}
 
 
 
@@ -309,9 +345,74 @@
 		}
 	}
 
+	// Add Combo
+	private async Task AddComboProduct()
+	{
+		try
+		{
+			var result = await _placeOrder.GetComboByBcCode(BcCode);
+
+			if (result.message != "Success!")
+			{
+				Snackbar.Add(result.message, Severity.Error);
+				return;
+			}
+
+			var isThere = Elements.FirstOrDefault(x => x.bcCode == result.bcCode && x.isCombo == true);
+
+			if (isThere != null)
+			{
+				var isThereCombo = Combos.FirstOrDefault(x => x.bcCode == result.bcCode);
+
+				isThereCombo.quantity += BcQuantity;
+				isThere.productQuantity += BcQuantity;
+				subTotal = Math.Round(Elements.Sum(x => x.productQuantity * x.salesPrice));
+				Snackbar.Add("Product Updated Successfully!", Severity.Success);
+				ResetCoupon();
+				CheckAutoApply();
+				BcCode = String.Empty;
+				BcQuantity = 1;
+				return;
+			}
+
+			var tempProduct = new ProductTableDTO
+				{
+					productQuantity = BcQuantity,
+					bcCode = result.bcCode,
+					isCombo = true,
+					name = result.name,
+					salesPrice = result.price,
+				};
+
+			result.quantity = BcQuantity;
+
+			Combos.Add(result);
+			Elements.Add(tempProduct);
+			BcCode = String.Empty;
+			BcQuantity = 1;
+			subTotal = Math.Round(Elements.Sum(x => x.productQuantity * x.salesPrice));
+			Snackbar.Add("Product Added Successfully!", Severity.Success);
+			ResetCoupon();
+			CheckAutoApply();
+			return;
+
+		}
+		catch (Exception e)
+		{
+
+			Console.WriteLine(e.Message);
+			Snackbar.Add("Internal Server Error!", Severity.Error);
+		}
+	}
+
 	// Remove Product
 	private void RemoveProduct(ProductTableDTO product)
 	{
+		if (product.isCombo)
+		{
+			Combos.RemoveAll(x => x.bcCode == product.bcCode);
+		}
+
 		Elements.Remove(product);
 		subTotal = Math.Round(Elements.Sum(x => x.productQuantity * x.salesPrice));
 		ResetCoupon();
@@ -425,11 +526,14 @@
 		UpdateOrderDetails.promoPrice = discount + AutoAmount;
 		UpdateOrderDetails.afterPromoPrice = subTotal - discount + AutoApply.amount;
 
+		var tempProducts = new List<ProductTableDTO>();
+		tempProducts.AddRange(Elements.Where(x => x.isCombo == false));
 
 		UpdateOrderDetails.totalPrice = subTotal;
 		UpdateOrderDetails.zoneId = OrderDetails.zoneId;
 		UpdateOrderDetails.deliveryAddressID = OrderDetails.deliveryAddressID;
-		UpdateOrderDetails.orderProductsDTOs = Elements;
+		UpdateOrderDetails.orderProductsDTOs = tempProducts;
+		UpdateOrderDetails.bogoComboDtos = Combos;
 		UpdateOrderDetails.voucherCode = Coupon.coupon;
 
 		try

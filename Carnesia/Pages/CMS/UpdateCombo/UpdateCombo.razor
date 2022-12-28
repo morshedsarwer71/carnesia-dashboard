@@ -9,87 +9,90 @@
 @inject ICombo _combo
 
 <MudPaper Class="ma-2 pa-16">
-	<MudContainer Fixed="true">
-		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudGrid Class="mb-5">
-                    <MudItem sm="6">
-                        <MudTextField @bind-Value="FormData.comboProductName" Label="Combo Name" Required="true" RequiredError="Combo name is required!"/>
-                    </MudItem>
-                    <MudItem sm="6">
-                    <MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Disabled="@(FormData.bcType == "Combo")" Required="@(FormData.bcType == "Bogo")" ResetValueOnEmptyText="true" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.startDate" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.endDate" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudTimePicker Label="End Time" @bind-Time="EndTime" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" />
-                    </MudItem>
-                    <MudItem sm="6">
-                        <MudNumericField Label="Combo Price" @bind-Value="FormData.comboPrice" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudTextField @bind-Value="FormData.description" Label="Description" Lines="5" Required="true" RequiredError="Description is required!"/>
-                    </MudItem>
-                </MudGrid>
+    <MudContainer Fixed="true">
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid Class="mb-5">
+                <MudItem sm="6">
+                    <MudTextField @bind-Value="FormData.comboProductName" Label="Combo Name" Required="true" RequiredError="Combo name is required!" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Disabled="@(FormData.bcType == "Combo" || FormData.bcType == "Clearance")" Required="@(FormData.bcType == "Bogo")" ResetValueOnEmptyText="true" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.startDate" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTimePicker Label="Start Time" @bind-Time="StartTime" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudDatePicker Label="End Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.endDate" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTimePicker Label="End Time" @bind-Time="EndTime" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudNumericField Label="Combo Price" @bind-Value="FormData.comboPrice" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudNumericField Label="Sell Quantity" @bind-Value="FormData.sellQuantity" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
+                </MudItem>
+            </MudGrid>
 
-                <div class="my-5 d-flex justify-end">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenProductModal" >Add Product</MudButton>
-                </div>
+            <div class="my-5 d-flex justify-end">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenProductModal">Add Product</MudButton>
+            </div>
 
-                <MudTable Items="@FormData.products" Hover="true" Dense="true">
-                    <HeaderContent>
-                        <MudTh>SKU</MudTh>
-                        <MudTh>Regular Price</MudTh>
-                        <MudTh>Quantity</MudTh>
-                        <MudTh>Discount Type</MudTh>
-                        <MudTh>Discount Ammount</MudTh>
-                        <MudTh>After Discount</MudTh>
-                        <MudTh>Action</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="SKU">@context.sku</MudTd>
-                        <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
-                        <MudTd DataLabel="Quantity">@context.quantity</MudTd>
-                        <MudTd DataLabel="Discount Type">@context.discountType</MudTd>
-                        <MudTd DataLabel="Discount Ammount">@context.discountAmount</MudTd>
-                        <MudTd DataLabel="After Discount">@context.afterDiscAmount</MudTd>
-                        <MudTd DataLabel="Action">
-                            <MudButton OnClick="() => RemoveProduct(context.id)" >
-                                <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
-                            </MudButton>
-                        </MudTd>
-                    </RowTemplate>
-                </MudTable>
+            <MudTable Items="@FormData.products" Hover="true" Dense="true">
+                <HeaderContent>
+                    <MudTh>SKU</MudTh>
+                    <MudTh>Regular Price</MudTh>
+                    <MudTh>Quantity</MudTh>
+                    <MudTh>Discount Type</MudTh>
+                    <MudTh>Discount Ammount</MudTh>
+                    <MudTh>After Discount</MudTh>
+                    <MudTh>Action</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="SKU">@context.sku</MudTd>
+                    <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
+                    <MudTd DataLabel="Quantity">@context.quantity</MudTd>
+                    <MudTd DataLabel="Discount Type">@context.discountType</MudTd>
+                    <MudTd DataLabel="Discount Ammount">@context.discountAmount</MudTd>
+                    <MudTd DataLabel="After Discount">@context.afterDiscAmount</MudTd>
+                    <MudTd DataLabel="Action">
+                        <MudButton OnClick="() => RemoveProduct(context.id)">
+                            <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+                        </MudButton>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
 
-                <div class="mt-5">
-                    <InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
+            <div class="mt-5">
+                <InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
 
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Filled.CloudUpload"
-                               for="fileInput">
-                        Upload Images
-                    </MudButton>
-                    <MudText Class="mt-1">600 * 600(Max 50Kb)</MudText>
-                </div>
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Filled.CloudUpload"
+                           for="fileInput">
+                    Upload Images
+                </MudButton>
+                <MudText Class="mt-1">600 * 600(Max 50Kb)</MudText>
+            </div>
 
-                <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
+            <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;" />
 
-                <div class="d-flex align-center justify-space-between"> 
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="UpdateDetails">Update</MudButton>
-                </div>
+            <div class="d-flex align-center justify-space-between">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="UpdateDetails">Update</MudButton>
+            </div>
         </MudForm>
-	</MudContainer>
+    </MudContainer>
 </MudPaper>
 
 @code {
@@ -130,7 +133,7 @@
     }
 
     // Product SKU List
-    private string[] ProductSKU = new string[]{};
+    private string[] ProductSKU = new string[] { };
 
     // Autocomplite Search Func for ParentCat
     private async Task<IEnumerable<string>> ProductSKUSearch(string value)
@@ -145,7 +148,7 @@
         {
             FormData.base64Attch = await _base64.ConvertToBase64(153600, 1080, 420, e);
         }
-        catch(Exception error)
+        catch (Exception error)
         {
             Snackbar.Add(error.Message, Severity.Error);
         }
@@ -182,9 +185,9 @@
     {
         var parameters = new DialogParameters();
         parameters.Add("FormData", new AddComboProductDTO()
-        {
-            comboCode = FormData.comboCode
-        });
+            {
+                comboCode = FormData.comboCode
+            });
 
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
         var dialog = await DialogService.Show<AddComboProductModal>("Add New Product", parameters, options).Result;
@@ -235,7 +238,7 @@
 
             var comboDetails = new ComboListDTO()
                 {
-                    comboProductName =  FormData.comboProductName,
+                    comboProductName = FormData.comboProductName,
                     productId = FormData.productId,
                     regularPrice = FormData.regularPrice,
                     comboPrice = FormData.comboPrice,
@@ -255,6 +258,7 @@
                 return;
             }
             Snackbar.Add("Something Went Wrong!", Severity.Error);
-        }catch(Exception){ throw; }
+        }
+        catch (Exception) { throw; }
     }
 }

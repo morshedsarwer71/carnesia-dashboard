@@ -4,6 +4,7 @@
 @inject ICombo _combo
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 
 <MudPaper Class="py-16 px-3 ma-2">
     <MudContainer Fixed="true">
@@ -27,6 +28,7 @@
                 <MudTh>Created At</MudTh>
                 <MudTh>Updated By</MudTh>
                 <MudTh>Updated AT</MudTh>
+                <MudTh>Publish</MudTh>
                 <MudTh>Action</MudTh>
             </HeaderContent>
             <RowTemplate>
@@ -44,7 +46,7 @@
                 <MudTd DataLabel="Combo Type">@context.bcType</MudTd>
                 <MudTd DataLabel="BC COde">@context.bcCode</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://localhost:7090/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://cscpguide.com/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Start Date">@context.startDate</MudTd>
                 <MudTd DataLabel="End Date">@context.endDate</MudTd>
@@ -54,6 +56,18 @@
                 <MudTd DataLabel="Created At">@context.createdAt</MudTd>
                 <MudTd DataLabel="Updated By">@context.updatedBy</MudTd>
                 <MudTd DataLabel="Updated At">@context.updatedAt</MudTd>
+                <MudTd DataLabel="Publish">
+                    @if (context.isPublish)
+                    {
+
+                        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="() => TogglePublish(context.comboId)">Enabled</MudButton>
+
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => TogglePublish(context.comboId)">Disabled</MudButton>
+                    }
+                </MudTd>
                 <MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => NavigateToUpdate(context.comboId)">
                         Edit
@@ -139,6 +153,27 @@
     private void NavigateToUpdate(int id)
     {
         NavigationManager.NavigateTo($"update-combo/{id}");
+    }
+
+    //Toggle Publish
+    private async Task TogglePublish(int Id)
+    {
+        try
+        {
+            var result = await _combo.ToggleCombo(Id);
+
+            if (result)
+            {
+                Snackbar.Add("Bogo toggled successfully!", Severity.Success);
+                await GetCombos();
+                return;
+            }
+            Snackbar.Add("Bogo toggle failed", Severity.Error);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Internal server error!", Severity.Error);
+        }
     }
 
     // Show Details

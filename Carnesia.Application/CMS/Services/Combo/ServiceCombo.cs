@@ -203,5 +203,20 @@ namespace Carnesia.Application.CMS.Services.Combo
                 throw;
             }
         }
+
+        public async Task<bool> ToggleCombo(int Id)
+        {
+            try
+            {
+                var result = await _httpClient.GetAsync($"BogoCombo/togglecombo/{Id}");
+
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace Carnesia.Application.OMS.Services.PlaceOrder
         Task<string[]> GetProductsAsSku();
         Task<List<ProductTableDTO>> GetAllProducts();
         Task<ProductTableDTO> GetProductBySKU(string sku);
+        Task<PlaceOrderComboProductTableDTO> GetComboByBcCode(string bccode);
         Task<PlaceOrderCouponDTO> ApplyCoupon(string coupon, string platform);
         Task<PlaceOrderResponseDTO> PlaceOrder(PlaceOrderDTO order);
         Task<PlaceOrderDetailsDTO> GetOrderByTrnCode(string trnCode);

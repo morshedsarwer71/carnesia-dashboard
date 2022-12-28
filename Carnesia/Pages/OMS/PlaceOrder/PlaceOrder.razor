@@ -12,565 +12,651 @@
 @inject IDialogService DialogService
 
 <MudPaper Class="px-2 py-16 ma-2">
-	<MudContainer Fixed="true">
-		<MudGrid Class="justify-center mb-5">
-			<MudItem md="3">
-				<MudSelect @bind-Value="source" Label="Source" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("FB")" />
-					<MudSelectItem Value="@("Phone")" />
-					<MudSelectItem Value="@("WhatsApp")" />
-				</MudSelect>
-			</MudItem>
-		</MudGrid>
+    <MudContainer Fixed="true">
+        <MudGrid Class="justify-center mb-5">
+            <MudItem md="3">
+                <MudSelect @bind-Value="source" Label="Source" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("FB")" />
+                    <MudSelectItem Value="@("Phone")" />
+                    <MudSelectItem Value="@("WhatsApp")" />
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
 
-		<MudDivider />
+        <MudDivider />
 
-		<MudGrid Class="justify-center">
-			@*<MudItem sm="4">
-				<MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" />
-				</MudItem>*@
-			<MudItem sm="4">
-				<MudTextField Label="SKU" @bind-Value="FormData.sku" />
-			</MudItem>
-			<MudItem sm="4">
-				<MudNumericField @bind-Value="FormData.qty" Min="1" />
-			</MudItem>
-		</MudGrid>
+        <MudGrid Class="justify-center">
+            @*<MudItem sm="4">
+            <MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" />
+            </MudItem>*@
+            <MudItem sm="4">
+                <MudTextField Label="SKU" @bind-Value="FormData.sku" />
+            </MudItem>
+            <MudItem sm="4">
+                <MudNumericField @bind-Value="FormData.qty" Min="1" />
+            </MudItem>
+        </MudGrid>
 
-		<MudGrid Class="justify-center my-5">
-			<MudItem sm="8">
-				<div class="d-flex justify-end">
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(FormData.sku)" OnClick="AddProduct">Add Product</MudButton>
-				</div>
-			</MudItem>
-		</MudGrid>
+        <MudGrid Class="justify-center my-5">
+            <MudItem sm="8">
+                <div class="d-flex justify-end">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(FormData.sku)" OnClick="AddProduct">Add Product</MudButton>
+                </div>
+            </MudItem>
+        </MudGrid>
 
-		@*<MudGrid Class="justify-center">
-			<MudItem sm="4">
-				<MudTextField Label="Combo SKU" @bind-Value="FormData.sku" />
-			</MudItem>
-			<MudItem sm="4">
-				<MudNumericField @bind-Value="FormData.qty" Min="1" />
-			</MudItem>
-		</MudGrid>*@
+        <MudGrid Class="justify-center mt-3">
+            <MudItem sm="4">
+                <MudTextField Label="Combo/Bogo Code" @bind-Value="BcCode" />
+            </MudItem>
+            <MudItem sm="4">
+                <MudNumericField @bind-Value="BcQuantity" Min="1" />
+            </MudItem>
+        </MudGrid>
 
-		<MudGrid Class="justify-center my-5">
-			<MudItem sm="8">
-				<div class="d-flex justify-end">
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(FormData.sku)">Add Combo</MudButton>
-				</div>
-			</MudItem>
-		</MudGrid>
+        <MudGrid Class="justify-center my-5">
+            <MudItem sm="8">
+                <div class="d-flex justify-end">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(BcCode)" OnClick="AddComboProduct">Add Combo/Bogo</MudButton>
+                </div>
+            </MudItem>
+        </MudGrid>
 
-		<MudTable Items="@Elements" Dense="true" Hover="true" Striped="true" CustomFooter="true">
-			<HeaderContent>
-				<MudTh>SKU</MudTh>
-				<MudTh>Product Name</MudTh>
-				<MudTh>Quantity</MudTh>
-				<MudTh>Price</MudTh>
-				<MudTh>Amount</MudTh>
-				<MudTh>Action</MudTh>
-			</HeaderContent>
-			<RowTemplate>
-				<MudTd DataLabel="SKU">@context.sku</MudTd>
-				<MudTd DataLabel="Product Name">@context.name</MudTd>
-				<MudTd DataLabel="Quantity">@context.quantity</MudTd>
-				<MudTd DataLabel="Price">@Math.Round(context.salesPrice, 2)</MudTd>
-				<MudTd DataLabel="Amount">@Math.Round(context.salesPrice * context.quantity, 2)</MudTd>
-				<MudTd DataLabel="Action">
-					<MudButton OnClick="() => RemoveProduct(context)">
-						<MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
-					</MudButton>
-				</MudTd>
-			</RowTemplate>
-			<FooterContent>
-				<MudTFootRow>
-					<MudTd colspan="5" Style="text-align: end;">Total:</MudTd>
-					<MudTd colspan="1" Style="text-align: end;">@subTotal</MudTd>
-				</MudTFootRow>
-				<MudTFootRow>
-					<MudTd colspan="5" Style="text-align: end;">Shipping:</MudTd>
-					<MudTd colspan="1" Style="text-align: end;">@(isFreeOrder ? 0 : shipping)</MudTd>
-				</MudTFootRow>
-				<MudTFootRow>
-					<MudTd colspan="5" Style="text-align: end;">Coupon Used:</MudTd>
-					<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
-				</MudTFootRow>
-				<MudTFootRow>
-					<MudTd colspan="5" Style="text-align: end;">Auto Apply:</MudTd>
-					<MudTd colspan="1" Style="text-align: end;">@Math.Round(AutoAmount, 2)</MudTd>
-				</MudTFootRow>
-				<MudTFootRow>
-					<MudTd colspan="5" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-					<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + (isFreeOrder ? 0 : shipping) - discount - AutoAmount), 2)</MudTd>
-				</MudTFootRow>
-			</FooterContent>
-		</MudTable>
+        @*<MudGrid Class="justify-center">
+        <MudItem sm="4">
+        <MudTextField Label="Combo SKU" @bind-Value="FormData.sku" />
+        </MudItem>
+        <MudItem sm="4">
+        <MudNumericField @bind-Value="FormData.qty" Min="1" />
+        </MudItem>
+        </MudGrid>*@
 
-		<MudText Typo="Typo.body1" Align="Align.Center" Class="my-3">@AutoText</MudText>
+        <MudTable Items="@Elements" Dense="true" Hover="true" Striped="true" CustomFooter="true">
+            <HeaderContent>
+                <MudTh>SKU</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Quantity</MudTh>
+                <MudTh>Price</MudTh>
+                <MudTh>Amount</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="SKU">@(context.sku + context.bcCode)</MudTd>
+                    <MudTd DataLabel="Product Name">@context.name</MudTd>
+                    <MudTd DataLabel="Quantity">@context.quantity</MudTd>
+                    <MudTd DataLabel="Price">@Math.Round(context.salesPrice, 2)</MudTd>
+                    <MudTd DataLabel="Amount">@Math.Round(context.salesPrice * context.quantity, 2)</MudTd>
+                    <MudTd DataLabel="Action">
+                        <MudButton OnClick="() => RemoveProduct(context)">
+                            <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+                        </MudButton>
+                    </MudTd>
+                </RowTemplate>
+                <FooterContent>
+                    <MudTFootRow>
+                        <MudTd colspan="5" Style="text-align: end;">Total:</MudTd>
+                        <MudTd colspan="1" Style="text-align: end;">@subTotal</MudTd>
+                    </MudTFootRow>
+                    <MudTFootRow>
+                        <MudTd colspan="5" Style="text-align: end;">Shipping:</MudTd>
+                        <MudTd colspan="1" Style="text-align: end;">@(isFreeOrder ? 0 : shipping)</MudTd>
+                    </MudTFootRow>
+                    <MudTFootRow>
+                        <MudTd colspan="5" Style="text-align: end;">Coupon Used:</MudTd>
+                        <MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
+                    </MudTFootRow>
+                    <MudTFootRow>
+                        <MudTd colspan="5" Style="text-align: end;">Auto Apply:</MudTd>
+                        <MudTd colspan="1" Style="text-align: end;">@Math.Round(AutoAmount, 2)</MudTd>
+                    </MudTFootRow>
+                    <MudTFootRow>
+                        <MudTd colspan="5" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+                        <MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal + (isFreeOrder ? 0 : shipping) - discount - AutoAmount), 2)</MudTd>
+                    </MudTFootRow>
+                </FooterContent>
+            </MudTable>
 
-		<MudGrid Class="justify-center">
-			<MudItem sm="4">
-				<MudTextField @bind-Value="Coupon.coupon" Label="Coupon" />
-			</MudItem>
-			<MudItem sm="4">
-				<MudSelect @bind-Value="Coupon.platform" Label="Coupon Platform" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("App")" />
-					<MudSelectItem Value="@("General")" />
-					<MudSelectItem Value="@("Web")" />
-				</MudSelect>
-			</MudItem>
-		</MudGrid>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="my-3">@AutoText</MudText>
 
-		<MudGrid Class="justify-center">
-			<MudItem sm="8">
-				<div class="d-flex justify-end">
-					@if (discount <= 0)
-					{
+            <MudGrid Class="justify-center">
+                <MudItem sm="4">
+                    <MudTextField @bind-Value="Coupon.coupon" Label="Coupon" />
+                </MudItem>
+                <MudItem sm="4">
+                    <MudSelect @bind-Value="Coupon.platform" Label="Coupon Platform" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="@("App")" />
+                        <MudSelectItem Value="@("General")" />
+                        <MudSelectItem Value="@("Web")" />
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
 
-						<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Coupon.coupon) || String.IsNullOrEmpty(Coupon.platform)" OnClick="ApplyCoupon">Add Coupon</MudButton>
-					}
-					else
-					{
+            <MudGrid Class="justify-center">
+                <MudItem sm="8">
+                    <div class="d-flex justify-end">
+                        @if (discount <= 0)
+                    {
 
-						<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetCoupon">Reset</MudButton>
-					}
-				</div>
-			</MudItem>
-		</MudGrid>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Coupon.coupon) || String.IsNullOrEmpty(Coupon.platform)" OnClick="ApplyCoupon">Add Coupon</MudButton>
+                    }
+                    else
+                    {
 
-		<MudGrid Class="align-baseline">
-			<MudItem sm="6">
-				<MudTextField @bind-Value="customerPhoneNumber" Label="Phone or Id" Immediate="true" OnKeyPress="GetCustomer" />
-			</MudItem>
-			<MudItem sm="6">
-				<div class="d-flex justify-end align-baseline">
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCustomerModal">Add Customer</MudButton>
-				</div>
-			</MudItem>
-		</MudGrid>
-		<br />
-		<MudDivider />
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetCoupon">Reset</MudButton>
+                    }
+                </div>
+            </MudItem>
+        </MudGrid>
 
-		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-			<MudGrid>
-				<MudItem sm="6">
-					<MudTextField @bind-Value="Customer.name" Label="Customer Name" Disabled="true" />
-				</MudItem>
-				<MudItem sm="6">
-					<MudTextField @bind-Value="Customer.comment" Label="Comment" />
-				</MudItem>
-			</MudGrid>
-		</MudForm>
+        <MudGrid Class="align-baseline">
+            <MudItem sm="6">
+                <MudTextField @bind-Value="customerPhoneNumber" Label="Phone or Id" Immediate="true" OnKeyPress="GetCustomer" />
+            </MudItem>
+            <MudItem sm="6">
+                <div class="d-flex justify-end align-baseline">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCustomerModal">Add Customer</MudButton>
+                </div>
+            </MudItem>
+        </MudGrid>
+        <br />
+        <MudDivider />
 
-		<div class="d-flex justify-end mt-5">
-			@if (AddressID <= 0)
-			{
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Customer.id)" OnClick="AddCustomerAddressModal">Add Address</MudButton>
-			}
-			else
-			{
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PlaceNewOrder" Disabled="disableSubmit">Place Order</MudButton>
-			}
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid>
+                <MudItem sm="6">
+                    <MudTextField @bind-Value="Customer.name" Label="Customer Name" Disabled="true" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTextField @bind-Value="Customer.comment" Label="Comment" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
 
-		</div>
+        <div class="d-flex justify-end mt-5">
+            @if (AddressID <= 0)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Customer.id)" OnClick="AddCustomerAddressModal">Add Address</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PlaceNewOrder" Disabled="disableSubmit">Place Order</MudButton>
+            }
 
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
+        </div>
 
-	</MudContainer>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+
+    </MudContainer>
 </MudPaper>
 
 @code {
 
-	//// Page On Load
-	//protected override async Task OnInitializedAsync()
-	//{
-	//	//await GetProductAsSKU();
-	//}
+    //// Page On Load
+    //protected override async Task OnInitializedAsync()
+    //{
+    //	//await GetProductAsSKU();
+    //}
 
-	// Source
-	private string source { get; set; }
+    // Source
+    private string source { get; set; }
 
-	// Disable Place Order
-	private bool disableSubmit { get; set; }
+    // Disable Place Order
+    private bool disableSubmit { get; set; }
 
-	// Zone Id
-	private int ZoneId { get; set; }
-	private int AddressID { get; set; }
+    // Zone Id
+    private int ZoneId { get; set; }
+    private int AddressID { get; set; }
 
-	// Shipping, Subtotal, Discount
-	private decimal subTotal { get; set; }
-	private decimal shipping { get; set; }
-	private decimal discount { get; set; }
+    // Shipping, Subtotal, Discount
+    private decimal subTotal { get; set; }
+    private decimal shipping { get; set; }
+    private decimal discount { get; set; }
 
-	// Form Ref
-	bool success;
-	string[] errors = { };
-	MudForm form;
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
 
-	// Table Content
-	private List<ProductTableDTO> Elements = new List<ProductTableDTO>();
-	private ProductTableDTO BeforeEdit;
+    // Table Content
+    private List<ProductTableDTO> Elements = new List<ProductTableDTO>();
+    private List<PlaceOrderComboProductTableDTO> Combos = new List<PlaceOrderComboProductTableDTO>();
+    private ProductTableDTO BeforeEdit;
 
-	// Coupon
-	private CouponDTO Coupon = new CouponDTO();
-	private PlaceOrderCouponDTO CouponDetails = new PlaceOrderCouponDTO();
+    // Coupon
+    private CouponDTO Coupon = new CouponDTO();
+    private PlaceOrderCouponDTO CouponDetails = new PlaceOrderCouponDTO();
 
-	// Apply Coupon
-	private async Task ApplyCoupon()
-	{
-		try
-		{
-			CouponDetails = await _placeOrder.ApplyCoupon(Coupon.coupon, Coupon.platform);
+    // Apply Coupon
+    private async Task ApplyCoupon()
+    {
+        try
+        {
+            CouponDetails = await _placeOrder.ApplyCoupon(Coupon.coupon, Coupon.platform);
 
-			if (CouponDetails.message != null)
-			{
-				Snackbar.Add(CouponDetails.message, Severity.Error);
-				return;
-			}
+            if (CouponDetails.message != null)
+            {
+                Snackbar.Add(CouponDetails.message, Severity.Error);
+                return;
+            }
 
-			if (subTotal < CouponDetails.minCartAmmount)
-			{
-				Snackbar.Add($"Minimum cart amount is {CouponDetails.minCartAmmount}tk!", Severity.Error);
-				return;
-			}
+            if (subTotal < CouponDetails.minCartAmmount)
+            {
+                Snackbar.Add($"Minimum cart amount is {CouponDetails.minCartAmmount}tk!", Severity.Error);
+                return;
+            }
 
-			if (CouponDetails.discountType == "Cash")
-			{
-				discount = CouponDetails.percentageOrAmount;
-				Snackbar.Add("Coupon applied successfully!", Severity.Success);
-				return;
-			}
+            if (CouponDetails.discountType == "Cash")
+            {
+                discount = CouponDetails.percentageOrAmount;
+                Snackbar.Add("Coupon applied successfully!", Severity.Success);
+                return;
+            }
 
-			decimal tempDiscount = (subTotal / 100) * CouponDetails.percentageOrAmount;
+            decimal tempDiscount = (subTotal / 100) * CouponDetails.percentageOrAmount;
 
-			discount = tempDiscount > CouponDetails.uptoDiscountAmount ? CouponDetails.uptoDiscountAmount : tempDiscount;
-			Snackbar.Add("Coupon applied successfully!", Severity.Success);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-			Snackbar.Add($"Internal server error!", Severity.Error);
-		}
-	}
+            discount = tempDiscount > CouponDetails.uptoDiscountAmount ? CouponDetails.uptoDiscountAmount : tempDiscount;
+            Snackbar.Add("Coupon applied successfully!", Severity.Success);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Snackbar.Add($"Internal server error!", Severity.Error);
+        }
+    }
 
-	// Reset Coupon
-	private void ResetCoupon()
-	{
-		CouponDetails = new PlaceOrderCouponDTO();
-		Coupon = new CouponDTO();
-		discount = 0;
-	}
+    // Reset Coupon
+    private void ResetCoupon()
+    {
+        CouponDetails = new PlaceOrderCouponDTO();
+        Coupon = new CouponDTO();
+        discount = 0;
+    }
 
-	// Product Search Form
-	private ProductSearchDTO FormData = new ProductSearchDTO();
+    // Product Search Form
+    private ProductSearchDTO FormData = new ProductSearchDTO();
 
-	// Add Product To List
-	private async Task AddProduct()
-	{
-		try
-		{
-			var result = await _placeOrder.GetProductBySKU(FormData.sku);
+    // Combo Search
+    private string BcCode { get; set; }
+    private int BcQuantity { get; set; } = 1;
 
-			if (result.message == "Product not found or stock out!")
-			{
-				Snackbar.Add(result.message, Severity.Error);
-				return;
-			}
+    // Add Product To List
+    private async Task AddProduct()
+    {
+        try
+        {
+            var result = await _placeOrder.GetProductBySKU(FormData.sku);
 
-			var isThere = Elements.FirstOrDefault(x => x.sku == result.sku);
+            if (result.message == "Product not found or stock out!")
+            {
+                Snackbar.Add(result.message, Severity.Error);
+                return;
+            }
 
-			if (result.stock < FormData.qty)
-			{
-				Snackbar.Add($"Stock avaiable {result.stock} pieces only!", Severity.Error);
-				return;
-			}
+            var isThere = Elements.FirstOrDefault(x => x.sku == result.sku);
 
-			if (isThere != null)
-			{
-				if (result.stock < (FormData.qty + isThere.quantity))
-				{
-					Snackbar.Add($"Stock avaiable {result.stock} pieces only!", Severity.Error);
-					return;
-				}
+            if (result.stock < FormData.qty)
+            {
+                Snackbar.Add($"Stock avaiable {result.stock} pieces only!", Severity.Error);
+                return;
+            }
 
-				isThere.quantity += FormData.qty;
-				isThere.productQuantity += FormData.qty;
-				FormData = new ProductSearchDTO();
-				subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
-				Snackbar.Add("Product Updated Successfully!", Severity.Success);
-				ResetCoupon();
-				await CheckAutoApply();
-				await CheckAutoApplyValue();
-				return;
-			}
-			result.quantity = FormData.qty;
-			result.productQuantity = FormData.qty;
-			result.productId = result.id;
-			result.productPrice = result.salesPrice;
-			Elements.Add(result);
-			FormData = new ProductSearchDTO();
-			subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
-			Snackbar.Add("Product Added Successfully!", Severity.Success);
-			ResetCoupon();
-			await CheckAutoApply();
-			await CheckAutoApplyValue();
-			return;
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-			Snackbar.Add("Internal Server Error!", Severity.Error);
-		}
-	}
+            if (isThere != null)
+            {
+                if (result.stock < (FormData.qty + isThere.quantity))
+                {
+                    Snackbar.Add($"Stock avaiable {result.stock} pieces only!", Severity.Error);
+                    return;
+                }
 
-	// Check AutoApply
-	private string AutoText { get; set; }
+                isThere.quantity += FormData.qty;
+                isThere.productQuantity += FormData.qty;
+                FormData = new ProductSearchDTO();
+                subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
+                Snackbar.Add("Product Updated Successfully!", Severity.Success);
+                ResetCoupon();
+                await CheckAutoApply();
+                await CheckAutoApplyValue();
+                return;
+            }
+            result.quantity = FormData.qty;
+            result.productQuantity = FormData.qty;
+            result.productId = result.id;
+            result.productPrice = result.salesPrice;
+            Elements.Add(result);
+            FormData = new ProductSearchDTO();
+            subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
+            Snackbar.Add("Product Added Successfully!", Severity.Success);
+            ResetCoupon();
+            await CheckAutoApply();
+            await CheckAutoApplyValue();
+            return;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal Server Error!", Severity.Error);
+        }
+    }
 
-	private decimal AutoAmount { get; set; }
-	private int AutoId { get; set; }
-	private bool isFreeOrder { get; set; }
+    // Add Combo
+    private async Task AddComboProduct()
+    {
+        try
+        {
+            var result = await _placeOrder.GetComboByBcCode(BcCode);
 
-	private async Task CheckAutoApply()
-	{
-		try
-		{
-			AutoText = await _placeOrder.AutoApplyMSG(Math.Round(Elements.Sum(x => x.quantity * x.salesPrice)));
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-		}
-	}
+            if (result.message != "Success!")
+            {
+                Snackbar.Add(result.message, Severity.Error);
+                return;
+            }
 
-	private async Task CheckAutoApplyValue()
-	{
-		try
-		{
-			var result = await _placeOrder.AutoApplyValue(Math.Round(Elements.Sum(x => x.quantity * x.salesPrice)));
+            var isThere = Elements.FirstOrDefault(x => x.bcCode == result.bcCode && x.isCombo == true);
 
-			if (result == null)
-			{
-				AutoAmount = 0;
-				AutoId = 0;
-				isFreeOrder = false;
-				return;
-			}
+            if (isThere != null)
+            {
+                var isThereCombo = Combos.FirstOrDefault(x => x.bcCode == result.bcCode);
 
-			if (result != null)
-			{
-				AutoAmount = result.amount;
-				AutoId = result.id;
-				isFreeOrder = result.isDeliveryCharge;
-				return;
-			}
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-		}
-	}
+                isThereCombo.quantity += BcQuantity;
+                isThere.quantity += BcQuantity;
+                subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
+                Snackbar.Add("Product Updated Successfully!", Severity.Success);
+                ResetCoupon();
+                await CheckAutoApply();
+                await CheckAutoApplyValue();
+                BcCode = String.Empty;
+                BcQuantity = 1;
+                return;
+            }
 
-	// Remove Product
-	private async Task RemoveProduct(ProductTableDTO product)
-	{
-		Elements.Remove(product);
-		subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
-		ResetCoupon();
-		await CheckAutoApply();
-		await CheckAutoApplyValue();
-		Snackbar.Add("Product Removed Successfully!", Severity.Success);
-	}
+            var tempProduct = new ProductTableDTO
+                {
+                    quantity = BcQuantity,
+                    bcCode = result.bcCode,
+                    isCombo = true,
+                    name = result.name,
+                    salesPrice = result.price,
+                };
 
-	//Customer Data
-	private GenerateBillCustomerInfoDTO Customer = new GenerateBillCustomerInfoDTO();
+            result.quantity = BcQuantity;
 
-	private string customerPhoneNumber { get; set; }
+            Combos.Add(result);
+            Elements.Add(tempProduct);
+            BcCode = String.Empty;
+            BcQuantity = 1;
+            subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
+            Snackbar.Add("Product Added Successfully!", Severity.Success);
+            ResetCoupon();
+            await CheckAutoApply();
+            await CheckAutoApplyValue();
+            return;
 
-	private async Task GetCustomer(KeyboardEventArgs e)
-	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
-		{
-			if (!String.IsNullOrEmpty(customerPhoneNumber))
-			{
-				try
-				{
-					var result = await _generateBill.GetCustomerInfo(customerPhoneNumber);
+        }
+        catch (Exception e)
+        {
 
-					if (!String.IsNullOrEmpty(result.error))
-					{
-						Snackbar.Add(result.error, Severity.Error);
-						return;
-					}
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal Server Error!", Severity.Error);
+        }
+    }
 
-					Snackbar.Add("Customer added!", Severity.Success);
+    // Check AutoApply
+    private string AutoText { get; set; }
 
-					Customer = result;
-				}
-				catch (Exception)
-				{
-					throw;
-				}
-			}
-		}
-	}
+    private decimal AutoAmount { get; set; }
+    private int AutoId { get; set; }
+    private bool isFreeOrder { get; set; }
 
-	// Create Customer
-	private async Task OpenCustomerModal()
-	{
-		var parameters = new DialogParameters();
-		parameters.Add("FormData", new GenerateBillCreateCustomerDTO());
+    private async Task CheckAutoApply()
+    {
+        try
+        {
+            AutoText = await _placeOrder.AutoApplyMSG(Math.Round(Elements.Sum(x => x.quantity * x.salesPrice)));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
 
-		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<CreateCustomerModal>("Create New Customer", parameters, options).Result;
+    private async Task CheckAutoApplyValue()
+    {
+        try
+        {
+            var result = await _placeOrder.AutoApplyValue(Math.Round(Elements.Sum(x => x.quantity * x.salesPrice)));
 
-		if (dialog.Data != null)
-		{
-			GenerateBillCreateCustomerDTO newCustomer = dialog.Data as GenerateBillCreateCustomerDTO;
+            if (result == null)
+            {
+                AutoAmount = 0;
+                AutoId = 0;
+                isFreeOrder = false;
+                return;
+            }
 
-			try
-			{
-				var result = await _generateBill.CreateCustomer(newCustomer);
+            if (result != null)
+            {
+                AutoAmount = result.amount;
+                AutoId = result.id;
+                isFreeOrder = result.isDeliveryCharge;
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
 
-				if (result.customerId != null)
-				{
-					Snackbar.Add(result.message, Severity.Success);
-					customerPhoneNumber = result.customerId.ToString();
-					return;
-				}
-				Snackbar.Add(result.message, Severity.Error);
-			}
-			catch (Exception)
-			{
-				Snackbar.Add("Internal Server Error!", Severity.Error);
-				throw;
-			}
-		}
-	}
+    // Remove Product
+    private async Task RemoveProduct(ProductTableDTO product)
+    {
 
-	// Add Customer Address
-	private async Task AddCustomerAddressModal()
-	{
-		var parameters = new DialogParameters();
-		parameters.Add("FormData", new CustomerDeliveryAddressDTO { customerID = Customer.id });
+        if (product.isCombo)
+        {
+            Combos.RemoveAll(x => x.bcCode == product.bcCode);
+        }
 
-		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<PlaceOrderAddCustomerAddressModal>("Add Customer Address", parameters, options).Result;
+        Elements.Remove(product);
+        subTotal = Math.Round(Elements.Sum(x => x.quantity * x.salesPrice));
+        ResetCoupon();
+        await CheckAutoApply();
+        await CheckAutoApplyValue();
+        Snackbar.Add("Product Removed Successfully!", Severity.Success);
+    }
 
-		if (dialog.Data != null)
-		{
-			CustomerDeliveryAddressDTO newAddress = dialog.Data as CustomerDeliveryAddressDTO;
+    //Customer Data
+    private GenerateBillCustomerInfoDTO Customer = new GenerateBillCustomerInfoDTO();
 
-			try
-			{
-				var result = await _zones.CreateCustomerAddress(newAddress);
+    private string customerPhoneNumber { get; set; }
 
-				if (result > 0)
-				{
-					Snackbar.Add("Customer address added successfully!", Severity.Success);
-					ZoneId = newAddress.zone;
-					AddressID = result;
-					shipping = newAddress.shipping;
-					return;
-				}
-				Snackbar.Add("Address creation faild!", Severity.Error);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.Message);
-				Snackbar.Add("Internal Server Error!", Severity.Error);
-			}
-		}
-	}
+    private async Task GetCustomer(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(customerPhoneNumber))
+            {
+                try
+                {
+                    var result = await _generateBill.GetCustomerInfo(customerPhoneNumber);
 
-	// Place Order
-	private PlaceOrderDTO NewOrder = new PlaceOrderDTO();
+                    if (!String.IsNullOrEmpty(result.error))
+                    {
+                        Snackbar.Add(result.error, Severity.Error);
+                        return;
+                    }
 
-	private async Task PlaceNewOrder()
-	{
-		if (String.IsNullOrEmpty(source))
-		{
-			Snackbar.Add("Please add source!", Severity.Error);
-			return;
-		}
+                    Snackbar.Add("Customer added!", Severity.Success);
 
-		if (Elements.Count <= 0)
-		{
-			Snackbar.Add("Please add products!", Severity.Error);
-			return;
-		}
+                    Customer = result;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+    }
 
-		if (String.IsNullOrEmpty(Customer.id))
-		{
-			Snackbar.Add("Please add customer!", Severity.Error);
-			return;
-		}
+    // Create Customer
+    private async Task OpenCustomerModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new GenerateBillCreateCustomerDTO());
 
-		var orderDetails = new PlaceOrderDetailsDTO
-			{
-				address = Customer.address,
-				autoApplyAmnt = AutoAmount,
-				autoApplyId = AutoId,
-				customerId = Customer.id,
-				deliveryPrice = isFreeOrder ? 0 : shipping,
-				grandTotalPrice = subTotal + (isFreeOrder ? 0 : shipping) - discount - AutoAmount,
-				instructions = Customer.comment,
-				paymentType = 1,
-				source = source,
-				zoneId = ZoneId,
-				voucherCode = Coupon.coupon,
-				totalPrice = subTotal,
-				deliveryAddressID = AddressID,
-				afterPromoPrice = subTotal - discount - AutoAmount,
-				promoPrice = discount + AutoAmount,
-				deliveryType = 1,
-				orderProductsDTOs = Elements
-			};
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<CreateCustomerModal>("Create New Customer", parameters, options).Result;
 
-		NewOrder.createOrderDTO = orderDetails;
+        if (dialog.Data != null)
+        {
+            GenerateBillCreateCustomerDTO newCustomer = dialog.Data as GenerateBillCreateCustomerDTO;
 
-		disableSubmit = true;
+            try
+            {
+                var result = await _generateBill.CreateCustomer(newCustomer);
 
-		try
-		{
-			var result = await _placeOrder.PlaceOrder(NewOrder);
+                if (result.customerId != null)
+                {
+                    Snackbar.Add(result.message, Severity.Success);
+                    customerPhoneNumber = result.customerId.ToString();
+                    return;
+                }
+                Snackbar.Add(result.message, Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Internal Server Error!", Severity.Error);
+                throw;
+            }
+        }
+    }
 
-			if (result.sslUrl == "Success")
-			{
-				Snackbar.Add("Order placed successfully!", Severity.Success);
-				ResetCoupon();
-				return;
-			}
+    // Add Customer Address
+    private async Task AddCustomerAddressModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new CustomerDeliveryAddressDTO { customerID = Customer.id });
 
-			Snackbar.Add(result.sslUrl, Severity.Error);
-			disableSubmit = false;
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-			Snackbar.Add("Internal server error!", Severity.Error);
-			disableSubmit = false;
-		}
-	}
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<PlaceOrderAddCustomerAddressModal>("Add Customer Address", parameters, options).Result;
 
-	// Product Search Class
-	public class ProductSearchDTO
-	{
-		public string sku { get; set; }
-		public int qty { get; set; } = 1;
-	}
+        if (dialog.Data != null)
+        {
+            CustomerDeliveryAddressDTO newAddress = dialog.Data as CustomerDeliveryAddressDTO;
 
-	// Coupon Class
-	public class CouponDTO
-	{
-		public string coupon { get; set; }
-		public string platform { get; set; }
-	}
+            try
+            {
+                var result = await _zones.CreateCustomerAddress(newAddress);
+
+                if (result > 0)
+                {
+                    Snackbar.Add("Customer address added successfully!", Severity.Success);
+                    ZoneId = newAddress.zone;
+                    AddressID = result;
+                    shipping = newAddress.shipping;
+                    return;
+                }
+                Snackbar.Add("Address creation faild!", Severity.Error);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Snackbar.Add("Internal Server Error!", Severity.Error);
+            }
+        }
+    }
+
+    // Place Order
+    private PlaceOrderDTO NewOrder = new PlaceOrderDTO();
+
+    private async Task PlaceNewOrder()
+    {
+        if (String.IsNullOrEmpty(source))
+        {
+            Snackbar.Add("Please add source!", Severity.Error);
+            return;
+        }
+
+        if (Elements.Count <= 0)
+        {
+            Snackbar.Add("Please add products!", Severity.Error);
+            return;
+        }
+
+        if (String.IsNullOrEmpty(Customer.id))
+        {
+            Snackbar.Add("Please add customer!", Severity.Error);
+            return;
+        }
+
+        var tempProducts = new List<ProductTableDTO>();
+        tempProducts.AddRange(Elements.Where(x => x.isCombo == false));
+
+        var orderDetails = new PlaceOrderDetailsDTO
+            {
+                address = Customer.address,
+                autoApplyAmnt = AutoAmount,
+                autoApplyId = AutoId,
+                customerId = Customer.id,
+                deliveryPrice = isFreeOrder ? 0 : shipping,
+                grandTotalPrice = subTotal + (isFreeOrder ? 0 : shipping) - discount - AutoAmount,
+                instructions = Customer.comment,
+                paymentType = 1,
+                source = source,
+                zoneId = ZoneId,
+                voucherCode = Coupon.coupon,
+                totalPrice = subTotal,
+                deliveryAddressID = AddressID,
+                afterPromoPrice = subTotal - discount - AutoAmount,
+                promoPrice = discount + AutoAmount,
+                deliveryType = 1,
+                orderProductsDTOs = tempProducts,
+                bogoComboDtos = Combos
+            };
+
+        NewOrder.createOrderDTO = orderDetails;
+
+        disableSubmit = true;
+
+        try
+        {
+            var result = await _placeOrder.PlaceOrder(NewOrder);
+
+            if (result.sslUrl == "Success")
+            {
+                Snackbar.Add("Order placed successfully!", Severity.Success);
+                ResetCoupon();
+                return;
+            }
+
+            Snackbar.Add(result.sslUrl, Severity.Error);
+            disableSubmit = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal server error!", Severity.Error);
+            disableSubmit = false;
+        }
+    }
+
+    // Product Search Class
+    public class ProductSearchDTO
+    {
+        public string sku { get; set; }
+        public int qty { get; set; } = 1;
+    }
+
+    // Coupon Class
+    public class CouponDTO
+    {
+        public string coupon { get; set; }
+        public string platform { get; set; }
+    }
 }

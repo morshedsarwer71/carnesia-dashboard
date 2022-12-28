@@ -9,6 +9,7 @@
             <MudButton Color="Color.Primary" Variant="CurrentPage == BogoList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BogoList)">
                 @BogoList
             </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ClearanceList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ClearanceList)">@ClearanceList</MudButton>
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
@@ -21,11 +22,16 @@ else if (CurrentPage == BogoList)
 {
     <BogoList />
 }
+else if (CurrentPage == ClearanceList)
+{
+    <ClearanceList />
+}
 
 @code {
     // Pages 
     private string ComboListA = "Combo List";
     private string BogoList = "Bogo List";
+    private string ClearanceList = "Clearance List";
 
     // Current Page 
     private string CurrentPage { get; set; } = "Combo List";

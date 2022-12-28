@@ -11,6 +11,7 @@ namespace Carnesia.Domain.CMS.ComboProducts
         public int comboId { get; set; }
         public string comboProductName { get; set; }
         public int productId { get; set; }
+        public int sellQuantity { get; set; }
         public string sku { get; set; }
         public string comboCode { get; set; }
         public decimal regularPrice { get; set; }
@@ -31,6 +32,7 @@ namespace Carnesia.Domain.CMS.ComboProducts
 		public string bcCode { get; set; }
 		public bool ShowDetailsStore { get; set; }
 		public bool ShowDetailsProduct { get; set; }
+		public bool isPublish { get; set; }
 		public List<ComboProductDTO> products { get; set; }
 		public List<ComboStoreListDTO> stores { get; set; }
     }
