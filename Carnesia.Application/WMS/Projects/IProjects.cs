@@ -18,6 +18,7 @@ namespace Carnesia.Application.WMS.Projects
         Task<ProjectsDetailsHeadDTO> GetBinDetails(string pCode, string bin);
         Task<ProjectsDetailsHeadDTO> GetSkuDetails(string pCode, string sku);
         Task<ProjectsDetailsHeadDTO> GetPoDetails(string pCode, string po);
+        Task<ProjectsDetailsHeadDTO> GetPoAuditBin(string pCode, string po, string bin);
 
         Task<ProjectsDetailsHeadDTO> AddProductToBinDetails(string pCode, string bin, string uid);
         Task<ProjectsDetailsHeadDTO> AddProductToSkuDetails(string pCode, string sku, string uid, string bin);
@@ -25,7 +26,7 @@ namespace Carnesia.Application.WMS.Projects
 
         Task<string> CompleteBinProject (string pCode, string bin);
         Task<string> CompleteSkuProject (string pCode, string sku, string bin);
-        Task<string> CompletePoProject (string pCode, string po);
+        Task<string> CompletePoProject (string pCode, string po, string bin);
 
         Task<ProjectsDetailsHeadDTO> GetBinDetailsBySKU(string pCode, string sku, string bin);
     }

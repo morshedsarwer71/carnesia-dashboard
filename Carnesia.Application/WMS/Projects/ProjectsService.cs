@@ -74,11 +74,11 @@ namespace Carnesia.Application.WMS.Projects
             }
         }
 
-		public async Task<string> CompletePoProject(string pCode, string po)
+		public async Task<string> CompletePoProject(string pCode, string po, string bin)
 		{
             try
             {
-                var result = await _httpClient.GetStringAsync($"cyclecount/completepoaudit/{po}/{pCode}");
+                var result = await _httpClient.GetStringAsync($"cyclecount/completepoaudit/{bin}/{po}/{pCode}");
                 return result;
             }
             catch (Exception)
@@ -157,7 +157,21 @@ namespace Carnesia.Application.WMS.Projects
             }
         }
 
-        public async Task<ProjectsDetailsHeadDTO> GetPoDetails(string pCode, string po)
+		public async Task<ProjectsDetailsHeadDTO> GetPoAuditBin(string pCode, string po, string bin)
+		{
+            try
+            {
+				var result = await _httpClient.GetFromJsonAsync<ProjectsDetailsHeadDTO>($"cyclecount/poauditbin/{po}/{bin}/{pCode}");
+				return result;
+			}
+            catch (Exception)
+            {
+
+                throw;
+            }
+		}
+
+		public async Task<ProjectsDetailsHeadDTO> GetPoDetails(string pCode, string po)
 		{
             try
             {
