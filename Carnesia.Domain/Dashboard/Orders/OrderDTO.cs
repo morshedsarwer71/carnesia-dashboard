@@ -31,8 +31,8 @@ namespace Carnesia.Domain.Dashboard.Orders
     {
         public string phoneNumber { get; set; }
         public string trnCode { get; set; }
-        public string customerId { get; set; }
-        public DateTime? fromDate { get; set; }
-        public DateTime? toDate { get; set; }
+        public int customerId { get; set; }
+        public DateTime? fromDate { get; set; } = DateTime.Now;
+        public DateTime? toDate { get; set; } = DateTime.Now;
     }
 }

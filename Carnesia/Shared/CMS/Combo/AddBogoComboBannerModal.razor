@@ -1,0 +1,68 @@
+﻿@using Carnesia.Domain.CMS.ComboProducts
+@inject IBase64 _base64
+
+<MudDialog>
+	<DialogContent>
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudTextField @bind-Value="FormData.name" Label="Banner Name" Immediate="true" Required="true" RequiredError="Banner Name is required!" />
+
+			<InputFile id="banner-image" OnChange="@ValidateImage" hidden accept=".webp" />
+			<MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload" for="banner-image" Class="mt-5">
+				Upload Banner
+			</MudButton>
+			<MudText>475 * 280(.webp only. Max 200Kb)</MudText>
+
+			<br />
+			<MudText Color="Color.Error">@ImageError</MudText>
+			<MudImage Src="@($"data:image/webp;base64,{FormData.base64}")" Alt="" Elevation="25" Class="rounded-lg mt-5" Style="width:20%" />
+
+			<div class="d-flex justify-end my-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="CreateBanner">Submit</MudButton>
+			</div>
+		</MudForm>
+	</DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public CreateBogoComboBannerDTO FormData { get; set; } = new CreateBogoComboBannerDTO();
+
+    // Form Ref
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+	// Image Error
+	private string ImageError { get; set; }
+
+	// Image Validation
+	private async Task ValidateImage(InputFileChangeEventArgs ImageFile)
+	{
+		ImageError = String.Empty;
+		try
+		{
+			FormData.base64 = await _base64.ConvertToBase64(204000, 475, 280, ImageFile);
+		}
+		catch (Exception e)
+		{
+			ImageError = e.Message;
+		}
+	}
+
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<CreateBogoComboBannerDTO>(FormData));
+
+	// Create Brand
+	private void CreateBanner()
+	{
+		if (String.IsNullOrEmpty(FormData.base64))
+		{
+			ImageError = "Please upload an image!";
+			return;
+		}
+
+		Submit();
+	}
+}

@@ -14,5 +14,6 @@ namespace Carnesia.Domain.OMS.PendingOrder
         public decimal shippingPrice { get; set; }
         public bool ShowDetails { get; set; }
         public List<PendingOrderProductsDTO> orderProducts { get; set; }
+        public List<PendingOrderProductsDTO> orderCombos { get; set; }
     }
 }

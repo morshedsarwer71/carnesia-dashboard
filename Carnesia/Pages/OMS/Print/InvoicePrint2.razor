@@ -54,6 +54,37 @@
 				</tr>
 			}
 		}
+		@if (Combos.Count > 0)
+		{
+			foreach (var item in Combos)
+			{
+				<tr style="font-size: 10px;">
+					<td class="table-cell">
+						<p>@item.name</p>
+						<p>Type-@item.bcType</p>
+						<p>Code-@item.bcCode</p>
+					</td>
+					<td class="table-cell">@item.price</td>
+					<td class="table-cell">@item.quantity</td>
+					@*<td class="table-cell">0</td>*@
+					<td class="table-cell">@item.totalPrice</td>
+				</tr>
+				foreach (var product in item.products)
+				{
+					<tr style="font-size: 10px;">
+						<td class="table-cell">
+							<p>@product.productName</p>
+							<p>SKU-@product.sku</p>
+						</td>
+						<td class="table-cell">Under @item.bcType</td>
+						<td class="table-cell">@product.quantity</td>
+						@*<td class="table-cell">0</td>*@
+						<td class="table-cell">Under @item.bcType</td>
+					</tr>
+					
+				}
+			}
+		}
 	</table>
 	
 	<table style="width: 100%; border-collapse: collapse;">
@@ -89,7 +120,7 @@
 		<tr style="font-size: 10px;">
 			<td class="table-cell">
 			</td>
-			<td class="table-cell">Returned:</td>
+			<td class="table-cell">Change Amount:</td>
 			<td class="table-cell">@Invoice.returnedAmnt</td>
 		</tr>
 		<tr style="font-size: 10px;">
@@ -134,6 +165,7 @@
 		await GetInvoice();
 		Items = Invoice.items;
 		Payments = Invoice.payments;
+		Combos = Invoice.comboItems;
 	}
 
 	// Invoice Data
@@ -142,6 +174,7 @@
 	// Items
 	private List<GenerateBillInvoiceItemDTO> Items = new List<GenerateBillInvoiceItemDTO>();
 	private List<GenerateBillPaymentsDTO> Payments = new List<GenerateBillPaymentsDTO>();
+	private List<GenerateBillComboDTO> Combos = new List<GenerateBillComboDTO>();
 
 	private async Task GetInvoice()
 	{

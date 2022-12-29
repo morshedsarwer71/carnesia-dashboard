@@ -1,0 +1,221 @@
+﻿@page "/bogo-combo-banner"
+
+@using Carnesia.Domain.CMS.ComboProducts
+@using Carnesia.Domain.Common.POCO;
+@using Carnesia.Shared.CMS.Combo;
+@using Carnesia.Shared.CommonComponents;
+@inject ICombo _combo
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <div class="d-flex justify-end mb-3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenBannerModal">Add Banner</MudButton>
+        </div>
+        <MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<BogoComboBannerDTO,bool>(FilterFuncInitial)">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>Image</MudTh>
+                <MudTh>Publish</MudTh>
+                <MudTh>Home</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Name">@context.name</MudTd>
+                <MudTd DataLabel="Image">
+                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://localhost:7090/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                </MudTd>
+                <MudTd DataLabel="Publish">
+                    @if (context.isPublish)
+                    {
+                        
+                        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="() => TogglePublish(context.id)">Enabled</MudButton>
+                        
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => TogglePublish(context.id)">Disabled</MudButton>
+                    }
+
+                </MudTd>
+                <MudTd DataLabel="Home">
+                    @if (context.isHome)
+                    {
+
+                        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="() => ToggleHome(context.id)">Enabled</MudButton>
+
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => ToggleHome(context.id)">Disabled</MudButton>
+                    }
+
+                </MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton OnClick="() => DeleteBanner(context.id)">
+                        <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error"/>
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+</MudPaper>
+
+@code {
+
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAllBanner();
+    }
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private List<BogoComboBannerDTO> Elements = new List<BogoComboBannerDTO>();
+
+    // Get Banners
+    private async Task GetAllBanner()
+    {
+        try
+        {
+            Elements = await _combo.GetAllBanners();
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+
+    // Add Banner Modal
+    private async Task OpenBannerModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new CreateBogoComboBannerDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddBogoComboBannerModal>("Add New Banner", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            CreateBogoComboBannerDTO newBanner = dialog.Data as CreateBogoComboBannerDTO;
+
+            try
+            {
+                var result = await _combo.CreateNewBogoComboBanner(newBanner);
+
+                if (result)
+                {
+                    Snackbar.Add("New Banner Created Successfully!", Severity.Success);
+                    await GetAllBanner();
+                    return;
+                }
+                Snackbar.Add("Banner Creation Failed!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Internal server error!", Severity.Error);
+            }
+        }
+    }
+
+    //Toggle Publish
+    private async Task TogglePublish(int Id)
+    {
+        try
+        {
+            var result = await _combo.ToggleBannerPublish(Id);
+
+            if (result == "Banner toggled successfully!")
+            {
+                Snackbar.Add(result, Severity.Success);
+                await GetAllBanner();
+                return;
+            }
+            Snackbar.Add(result, Severity.Error);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Internal server error!", Severity.Error);
+        }
+    }
+
+    //Toggle Home
+    private async Task ToggleHome(int Id)
+    {
+        try
+        {
+            var result = await _combo.ToggleBannerHome(Id);
+
+            if (result == "Banner toggled successfully!")
+            {
+                Snackbar.Add(result, Severity.Success);
+                await GetAllBanner();
+                return;
+            }
+            Snackbar.Add(result, Severity.Error);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Internal server error!", Severity.Error);
+        }
+    }
+
+    // Delete Banner
+    private async Task DeleteBanner(int BannerId)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<DeleteConfirmationModal>("Delete Confirmation", options).Result;
+
+        if (!dialog.Cancelled)
+        {
+            try
+            {
+                await _combo.DeleteBanner(BannerId);
+                Snackbar.Add("Banner Deleted Successfully!", Severity.Success);
+                await GetAllBanner();
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Internal Server Error!", Severity.Error);
+            }
+        }
+    }
+
+    // Table Search
+    private bool FilterFuncInitial(BogoComboBannerDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+    private bool FilterFunc(BogoComboBannerDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    // Show Image
+    private void ShowImage(string url)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ImageUrl", url);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        DialogService.Show<ShowImageModal>("Image", parameters, options);
+    }
+}

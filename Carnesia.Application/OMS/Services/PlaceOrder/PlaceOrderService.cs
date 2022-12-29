@@ -93,7 +93,21 @@ namespace Carnesia.Application.OMS.Services.PlaceOrder
             }
         }
 
-        public async Task<PlaceOrderDetailsDTO> GetOrderByTrnCode(string trnCode)
+		public async Task<PlaceOrderComboProductTableDTO> GetComboByBcCode(string bccode)
+		{
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<PlaceOrderComboProductTableDTO>($"BogoCombo/getcombodetailsplaceorder/{bccode}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+		}
+
+		public async Task<PlaceOrderDetailsDTO> GetOrderByTrnCode(string trnCode)
         {
             try
             {

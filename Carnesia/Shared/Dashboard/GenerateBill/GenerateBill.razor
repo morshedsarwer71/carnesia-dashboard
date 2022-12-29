@@ -1,5 +1,6 @@
 ﻿@using Carnesia.Domain.Dashboard.GenerateBill
 @using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.Dashboard.GenerateBillV2
 @inject IJSRuntime JSRuntime
 @inject IDialogService DialogService
 @inject IGenerateBill _generateBill
@@ -7,570 +8,797 @@
 @inject IJSRuntime IJS
 
 <MudPaper Class="pa-16 ma-2">
-	<MudContainer Fixed="true">
-		@*onkeydown="@KeyCombo"*@
-		<div @ref="generateBill" tabindex="0">
-			<div class="d-flex justify-end mt-5">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCustomerModal">Create Customer</MudButton>
-			</div>
-			<MudGrid Class="justify-space-between mb-5">
-				<MudItem sm="4">
-					<MudTextField @bind-Value="uid" Placeholder="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
-				</MudItem>
-				<MudItem sm="4">
-					<MudTextField @bind-Value="customerPhoneNumber" Placeholder="Customer Phone Number" Immediate="true" Variant="Variant.Text" OnKeyPress="GetCustomer" />
-				</MudItem>
-			</MudGrid>
-			<MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
-				<HeaderContent>
-					<MudTh>Product Name & SKU</MudTh>
-					<MudTh>MRP</MudTh>
-					<MudTh>Selling Price</MudTh>
-					<MudTh>Quantity</MudTh>
-					<MudTh>Subtotal Value</MudTh>
-					<MudTh>Remove</MudTh>
-				</HeaderContent>
-				<RowTemplate>
-					<MudTd DataLabel="BrandProduct Name & SKU">@context.nameAndSKU</MudTd>
-					<MudTd DataLabel="MRP">@context.mrp</MudTd>
-					<MudTd DataLabel="Selling Price">@Math.Round(context.price, 2)</MudTd>
-					<MudTd DataLabel="Quantity">@context.quantity</MudTd>
-					<MudTd DataLabel="Subtotal Value">@Math.Round(context.totalPrice, 2)</MudTd>
-					<MudTd DataLabel="Remove">
-						<MudButton OnClick="() => RemoveProduct(context)">
-							<MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
-						</MudButton>
-					</MudTd>
-				</RowTemplate>
-				<FooterContent>
-					<MudTFootRow>
-						<MudTd colspan="5" Style="text-align: end;">Total:</MudTd>
-						<MudTd colspan="1" Style="text-align: end;">@subTotal</MudTd>
-					</MudTFootRow>
-					<MudTFootRow>
-						<MudTd colspan="5" Style="text-align: end;">Item:</MudTd>
-						<MudTd colspan="1" Style="text-align: end;">@TableItems</MudTd>
-					</MudTFootRow>
-					<MudTFootRow>
-						<MudTd colspan="5" Style="text-align: end;">Quantity:</MudTd>
-						<MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.quantity))</MudTd>
-					</MudTFootRow>
-					<MudTFootRow>
-						<MudTd colspan="5" Style="text-align: end;">Discount Value:</MudTd>
-						<MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
-					</MudTFootRow>
-					<MudTFootRow>
-						<MudTd colspan="5" Style="text-align: end;">Credit:</MudTd>
-						<MudTd colspan="1" Style="text-align: end;">@Math.Round(usedCredit, 2)</MudTd>
-					</MudTFootRow>
-					<MudTFootRow>
-						<MudTd colspan="5" Style="text-align: end;">Reward Value:</MudTd>
-						<MudTd colspan="1" Style="text-align: end;">0</MudTd>
-					</MudTFootRow>
-					@*<MudTFootRow>
-						<MudTd colspan="5" Style="text-align: end;">Vat(5%):</MudTd>
-						<MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
-						</MudTFootRow>*@
-					<MudTFootRow>
-						<MudTd colspan="5" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-						<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal - usedCredit - discount + vatAmount), 2)</MudTd>
-					</MudTFootRow>
-				</FooterContent>
-			</MudTable>
+    <MudContainer Fixed="true">
+        @*onkeydown="@KeyCombo"*@
+        <div @ref="generateBill" tabindex="0">
+            <div class="d-flex justify-end mt-5">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCustomerModal">Create Customer</MudButton>
+            </div>
+            <MudGrid Class="justify-space-between mb-5">
+                <MudItem sm="4">
+                    <MudTextField @bind-Value="uid" Placeholder="Scan UID/Combo Id" Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
+                </MudItem>
+                <MudItem sm="4">
+                    <MudTextField @bind-Value="customerPhoneNumber" Placeholder="Customer Phone Number" Immediate="true" Variant="Variant.Text" OnKeyPress="GetCustomer" />
+                </MudItem>
+            </MudGrid>
+            <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
+                <HeaderContent>
+                    <MudTh></MudTh>
+                    <MudTh>Product Name & SKU</MudTh>
+                    <MudTh>MRP</MudTh>
+                    <MudTh>Selling Price</MudTh>
+                    <MudTh>Quantity</MudTh>
+                    <MudTh>Subtotal Value</MudTh>
+                    <MudTh>Remove</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="">
+                        @if (!context.showDetails)
+                        {
+                            <MudIconButton Disabled="!context.isCombo" Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowComboProducts(context.productCode)" />
+                        }
+                        else if (context.showDetails)
+                        {
+                            <MudIconButton Disabled="!context.isCombo" Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowComboProducts(context.productCode)" />
+                        }
+                    </MudTd>
+                    <MudTd DataLabel="BrandProduct Name & SKU">@context.nameAndSKU</MudTd>
+                    <MudTd DataLabel="MRP">@context.mrp</MudTd>
+                    <MudTd DataLabel="Selling Price">@Math.Round(context.price, 2)</MudTd>
+                    <MudTd DataLabel="Quantity">@context.quantity</MudTd>
+                    <MudTd DataLabel="Subtotal Value">@Math.Round(context.totalPrice, 2)</MudTd>
+                    <MudTd DataLabel="Remove">
+                        <MudButton OnClick="() => RemoveProduct(context)">
+                            <MudIcon Icon="@Icons.Filled.Delete" Color="Color.Error" />
+                        </MudButton>
+                    </MudTd>
+                </RowTemplate>
+                <ChildRowContent>
+                    @if (context.showDetails)
+                    {
+                        <td colspan="7">
+                            <MudCard Elevation="0">
+                                <MudCardContent Class="pa-0">
+                                    <MudTable Items="@context.products" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+                                        <HeaderContent>
+                                            <MudTh>Name</MudTh>
+                                            <MudTh>SKU</MudTh>
+                                            <MudTh>Quantity</MudTh>
+                                        </HeaderContent>
+                                        <RowTemplate>
+                                            <MudTd DataLabel="Name">@DetailsContext.productName</MudTd>
+                                            <MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
+                                            <MudTd DataLabel="Quantity">@DetailsContext.scanned</MudTd>
+                                        </RowTemplate>
+                                    </MudTable>
+                                </MudCardContent>
+                            </MudCard>
+                        </td>
+                    }
+                </ChildRowContent>
+                <FooterContent>
+                    <MudTFootRow>
+                        <MudTd colspan="6" Style="text-align: end;">Total:</MudTd>
+                        <MudTd colspan="1" Style="text-align: end;">@subTotal</MudTd>
+                    </MudTFootRow>
+                    <MudTFootRow>
+                        <MudTd colspan="6" Style="text-align: end;">Item:</MudTd>
+                        <MudTd colspan="1" Style="text-align: end;">@TableItems</MudTd>
+                    </MudTFootRow>
+                    <MudTFootRow>
+                        <MudTd colspan="6" Style="text-align: end;">Quantity:</MudTd>
+                        <MudTd colspan="1" Style="text-align: end;">@(Elements.Sum(e => e.quantity))</MudTd>
+                        </MudTFootRow>
+                        <MudTFootRow>
+                            <MudTd colspan="6" Style="text-align: end;">Discount Value:</MudTd>
+                            <MudTd colspan="1" Style="text-align: end;">@Math.Round(discount, 2)</MudTd>
+                        </MudTFootRow>
+                        <MudTFootRow>
+                            <MudTd colspan="6" Style="text-align: end;">Credit:</MudTd>
+                            <MudTd colspan="1" Style="text-align: end;">@Math.Round(usedCredit, 2)</MudTd>
+                        </MudTFootRow>
+                        <MudTFootRow>
+                            <MudTd colspan="6" Style="text-align: end;">Reward Value:</MudTd>
+                            <MudTd colspan="1" Style="text-align: end;">0</MudTd>
+                        </MudTFootRow>
+                        @*<MudTFootRow>
+                    <MudTd colspan="5" Style="text-align: end;">Vat(5%):</MudTd>
+                    <MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
+                    </MudTFootRow>*@
+                        <MudTFootRow>
+                            <MudTd colspan="6" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+                            <MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal - usedCredit - discount + vatAmount), 2)</MudTd>
+                        </MudTFootRow>
+                    </FooterContent>
+                </MudTable>
 
-			<MudGrid>
-				<MudItem sm="6">
-					<MudGrid Class="align-baseline">
-						<MudItem sm="9">
-							<MudNumericField @bind-Value="Customer.creditValue" Placeholder="Creadit Value" Immediate="true" Variant="Variant.Text" />
-						</MudItem>
-						<MudItem sm="3">
-							@if (usedCredit <= 0)
-							{
-								<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UseCredit">Use</MudButton>
-							}
-							else
-							{
-								<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetCredit">Reset</MudButton>
-							}
-						</MudItem>
-					</MudGrid>
-				</MudItem>
-				<MudItem sm="6">
-					<MudGrid Class="align-baseline">
-						<MudItem sm="9">
-							<MudTextField T="string" Placeholder="Reward Points" Immediate="true" Variant="Variant.Text" />
-						</MudItem>
-						<MudItem sm="3">
-							<MudButton Variant="Variant.Filled" Color="Color.Primary">Use</MudButton>
-						</MudItem>
-					</MudGrid>
-				</MudItem>
-				<MudItem sm="6">
-					<MudGrid Class="align-baseline">
-						<MudItem sm="9">
-							<MudTextField T="string" Placeholder="Membership ID" Immediate="true" Variant="Variant.Text" />
-						</MudItem>
-						<MudItem sm="3">
-							<MudButton Variant="Variant.Filled" Color="Color.Primary">Apply</MudButton>
-						</MudItem>
-					</MudGrid>
-				</MudItem>
-				<MudItem sm="6">
-					<MudGrid Class="align-baseline">
-						<MudItem sm="9">
-							<MudTextField @bind-Value="Coupon" Placeholder="Coupon Code" Immediate="true" Variant="Variant.Text" />
-						</MudItem>
-						<MudItem sm="3">
-							@if (discount <= 0)
-							{
-								<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetDiscount">Apply</MudButton>
-							}
-							else
-							{
-								<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetCoupon">Reset</MudButton>
-							}
+                <MudGrid>
+                    <MudItem sm="6">
+                        <MudGrid Class="align-baseline">
+                            <MudItem sm="9">
+                                <MudNumericField @bind-Value="Customer.creditValue" Placeholder="Creadit Value" Immediate="true" Variant="Variant.Text" />
+                            </MudItem>
+                            <MudItem sm="3">
+                                @if (usedCredit <= 0)
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UseCredit">Use</MudButton>
+                            }
+                            else
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetCredit">Reset</MudButton>
+                            }
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudGrid Class="align-baseline">
+                        <MudItem sm="9">
+                            <MudTextField T="string" Placeholder="Reward Points" Immediate="true" Variant="Variant.Text" />
+                        </MudItem>
+                        <MudItem sm="3">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary">Use</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudGrid Class="align-baseline">
+                        <MudItem sm="9">
+                            <MudTextField T="string" Placeholder="Membership ID" Immediate="true" Variant="Variant.Text" />
+                        </MudItem>
+                        <MudItem sm="3">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary">Apply</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem sm="6">
+                    <MudGrid Class="align-baseline">
+                        <MudItem sm="9">
+                            <MudTextField @bind-Value="Coupon" Placeholder="Coupon Code" Immediate="true" Variant="Variant.Text" />
+                        </MudItem>
+                        <MudItem sm="3">
+                            @if (discount <= 0)
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetDiscount">Apply</MudButton>
+                            }
+                            else
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ResetCoupon">Reset</MudButton>
+                            }
 
-						</MudItem>
-					</MudGrid>
-				</MudItem>
-				<MudItem sm="6">
-					<MudSelect @bind-Value="POSDetails.paymentType" Label="Payment Type" AnchorOrigin="Origin.BottomCenter">
-						<MudSelectItem Value="@("Cash")" />
-						<MudSelectItem Value="@("Card")" />
-						<MudSelectItem Value="@("Bkash")" />
-						<MudSelectItem Value="@("Nagad")" />
-					</MudSelect>
-				</MudItem>
-				<MudItem sm="6">
-					<MudTextField @bind-Value="POSDetails.refNumber" Label="Payment Reference" />
-				</MudItem>
-				<MudItem sm="6">
-					<MudNumericField Value="POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount)" Label="Return Amount" ReadOnly="true" />
-				</MudItem>
-				<MudItem sm="6">
-					<MudNumericField @bind-Value="POSDetails.tobeCollected" Label="Collected Amount" Immediate="true" Disabled="subTotal <= 0" />
-				</MudItem>
-			</MudGrid>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
 
-			<div class="mt-5">
-				<MudText>Name: @Customer.name</MudText>
-				<MudText>Phone Number: @Customer.phone</MudText>
-				<MudText>Address: @Customer.address</MudText>
-			</div>
+            <MudGrid>
+                <MudItem xs="4">
+                    <MudSelect @bind-Value="NewPayment.paymentType" Label="Payment Type" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="@("Cash")" />
+                        <MudSelectItem Value="@("Card")" />
+                        <MudSelectItem Value="@("Bkash")" />
+                        <MudSelectItem Value="@("Nagad")" />
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudNumericField @bind-Value="NewPayment.amount" Immediate="true" Label="Amount" />
+                </MudItem>
+                <MudItem xs="4">
+                    <MudTextField @bind-Value="NewPayment.paymentRef" Immediate="true" Label="Payment Reference" OnKeyPress="EnterPayment" />
+                </MudItem>
+            </MudGrid>
 
-			<div class="mt-5 mx-auto" style="width: fit-content;">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCommentModal">Add Comment</MudButton>
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePOS" Disabled="disableGenerate">Generate Bill</MudButton>
-				@*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GotoPrint" Disabled="String.IsNullOrEmpty(trnCode)">Print Invoice</MudButton>*@
-			</div>
-		</div>
-	</MudContainer>
+            <div class="d-flex justify-end my-3">
+                <MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="AddPayment">Add Payment</MudButton>
+            </div>
+
+            <MudTable Class="mb-3" Items="@PaymentTable" Hover="true" Dense="true">
+                <HeaderContent>
+                    <MudTh>Payment Type</MudTh>
+                    <MudTh>Amount</MudTh>
+                    <MudTh>Reference</MudTh>
+                    <MudTh>Action</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Payment Type">@context.paymentType</MudTd>
+                    <MudTd DataLabel="Amount">@context.amount</MudTd>
+                    <MudTd DataLabel="Reference">@context.paymentRef</MudTd>
+                    <MudTd DataLabel="Action">
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemovePayment(context.id)">Remove</MudButton>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+
+            <MudGrid>
+                <MudItem sm="6">
+                    <MudNumericField Value="POSDetails.returnedAmnt" Label="Change Amount" ReadOnly="true" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudNumericField Value="POSDetails.tobeCollected" Label="Collected Amount" ReadOnly="true" />
+                </MudItem>
+            </MudGrid>
+
+            <div class="mt-5">
+                <MudText>Name: @Customer.name</MudText>
+                <MudText>Phone Number: @Customer.phone</MudText>
+                <MudText>Address: @Customer.address</MudText>
+            </div>
+
+            <div class="mt-5 mx-auto" style="width: fit-content;">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCommentModal">Add Comment</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePOS" Disabled="disableGenerate">Generate Bill</MudButton>
+                @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GotoPrint" Disabled="String.IsNullOrEmpty(trnCode)">Print Invoice</MudButton>*@
+            </div>
+        </div>
+    </MudContainer>
 </MudPaper>
 
 @code {
-	// Div Ref
-	protected ElementReference generateBill;
+    // Div Ref
+    protected ElementReference generateBill;
 
-	// Disable Generate
-	private bool disableGenerate { get; set; }
+    // Disable Generate
+    private bool disableGenerate { get; set; }
 
-	// Invoke Focus
-	protected async override Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			await JSRuntime.InvokeVoidAsync("SetFocusToElement", generateBill);
-		}
-	}
+    // Invoke Focus
+    //protected async override Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //	if (firstRender)
+    //	{
+    //		await JSRuntime.InvokeVoidAsync("SetFocusToElement", generateBill);
+    //	}
+    //}
 
-	// TRN Code
-	private string trnCode { get; set; }
+    // TRN Code
+    private string trnCode { get; set; }
 
-	// New Pos
-	private GenerateBillPOSDTO POSData = new GenerateBillPOSDTO();
+    // New Pos
+    private GenerateBillPOSDTO POSData = new GenerateBillPOSDTO();
 
-	// Reward Section
-	private string Coupon { get; set; }
-	private string MembershipID { get; set; }
+    // Reward Section
+    private string Coupon { get; set; }
+    private string MembershipID { get; set; }
 
-	// Comment
-	private string Comment { get; set; }
+    // Comment
+    private string Comment { get; set; }
 
-	// For Value Calculation
-	private decimal subTotal { get; set; }
-	private decimal vatAmount { get; set; }
-	private decimal discount { get; set; }
-	private decimal backupCredit { get; set; }
-	private decimal usedCredit { get; set; }
+    // For Value Calculation
+    private decimal subTotal { get; set; }
+    private decimal vatAmount { get; set; }
+    private decimal discount { get; set; }
+    private decimal backupCredit { get; set; }
+    private decimal usedCredit { get; set; }
 
-	// Table Items
-	private int TableItems { get; set; }
+    // Table Items
+    private int TableItems { get; set; }
 
-	//Customer Data
-	private GenerateBillCustomerInfoDTO Customer = new GenerateBillCustomerInfoDTO();
+    //Customer Data
+    private GenerateBillCustomerInfoDTO Customer = new GenerateBillCustomerInfoDTO();
 
-	private string customerPhoneNumber { get; set; }
+    private string customerPhoneNumber { get; set; }
 
-	private async Task GetCustomer(KeyboardEventArgs e)
-	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
-		{
-			if (!String.IsNullOrEmpty(customerPhoneNumber))
-			{
-				try
-				{
-					var result = await _generateBill.GetCustomerInfo(customerPhoneNumber);
+    private async Task GetCustomer(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(customerPhoneNumber))
+            {
+                try
+                {
+                    var result = await _generateBill.GetCustomerInfo(customerPhoneNumber);
 
-					if (!String.IsNullOrEmpty(result.error))
-					{
-						Snackbar.Add(result.error, Severity.Error);
-						return;
-					}
+                    if (!String.IsNullOrEmpty(result.error))
+                    {
+                        Snackbar.Add(result.error, Severity.Error);
+                        return;
+                    }
 
-					Snackbar.Add("Customer added!", Severity.Success);
+                    Snackbar.Add("Customer added!", Severity.Success);
 
-					Customer = result;
-					backupCredit = Customer.creditValue;
-				}
-				catch (Exception)
-				{
-					throw;
-				}
-			}
-		}
-	}
+                    Customer = result;
+                    backupCredit = Customer.creditValue;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+    }
 
-	// Use Credit
-	private void UseCredit()
-	{
-		if (Customer.creditValue > subTotal)
-		{
-			Snackbar.Add("Credit value greater than total!", Severity.Error);
-			return;
-		}
-		usedCredit = Customer.creditValue;
-		//GetVat();
-	}
+    // Use Credit
+    private void UseCredit()
+    {
+        if (Customer.creditValue > subTotal)
+        {
+            Snackbar.Add("Credit value greater than total!", Severity.Error);
+            return;
+        }
+        usedCredit = Customer.creditValue;
+        //GetVat();
+    }
 
-	private void ResetCredit()
-	{
-		Customer.creditValue = backupCredit;
-		usedCredit = 0;
-		//GetVat();
-	}
+    private void ResetCredit()
+    {
+        Customer.creditValue = backupCredit;
+        usedCredit = 0;
+        //GetVat();
+    }
 
-	// Table Customaization
-	private TableCommon tableCommon = new TableCommon();
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
 
-	// Table Content
-	private List<GenerateBillUIDDataDTO> Elements = new List<GenerateBillUIDDataDTO>();
+    // Table Content
+    private List<GenerateBillUIDDataDTO> Elements = new List<GenerateBillUIDDataDTO>();
 
-	// UID Collection
-	private List<GenerateBillUIDCollectionDTO> UIDCollection = new List<GenerateBillUIDCollectionDTO>();
+    // UID Collection
+    private List<GenerateBillUIDCollectionDTO> UIDCollection = new List<GenerateBillUIDCollectionDTO>();
 
-	// Scan UID
-	private string uid { get; set; }
+    // Scan UID
+    private string uid { get; set; }
 
-	private async Task AddProduct(KeyboardEventArgs e)
-	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
-		{
-			if (!String.IsNullOrEmpty(uid))
-			{
-				bool isThere = UIDCollection.Any(x => x.uid == uid);
+    private async Task AddProduct(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(uid))
+            {
 
-				if (isThere)
-				{
-					Snackbar.Add("UID already in cart", Severity.Error);
-					return;
-				}
-				await CheckInList(uid);
-				subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
-				TableItems = Elements.Count();
-			}
-		}
-	}
+                if (uid.Contains("CO") || uid.Contains("BO"))
+                {
+                    await OpenComboModal(uid);
+                    subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
+                    TableItems = Elements.Count();
+                    return;
+                }
 
-	// Get Key Combo
-	//protected async Task KeyCombo(KeyboardEventArgs e)
-	//{
-	//	if (e.CtrlKey && e.Key == "F1")
-	//	{
-	//		await GeneratePOS();
-	//	}
+                bool isThere = UIDCollection.Any(x => x.uid == uid);
 
-	//	if (e.CtrlKey && e.Key == "F2")
-	//	{
-	//		await PrintInvoice();
-	//	}
-	//}
+                if (isThere)
+                {
+                    Snackbar.Add("UID already in cart", Severity.Error);
+                    return;
+                }
+                await CheckInList(uid);
+                subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
+                TableItems = Elements.Count();
+            }
+        }
+    }
 
-	// Generate POS
-	//private async Task GeneratePOS()
-	//{
-	//	Console.WriteLine("Bill Generated");
-	//}
+    // Get Key Combo
+    //protected async Task KeyCombo(KeyboardEventArgs e)
+    //{
+    //	if (e.CtrlKey && e.Key == "F1")
+    //	{
+    //		await GeneratePOS();
+    //	}
 
-	// Print Invoice
-	private async Task PrintInvoice()
-	{
-		Console.WriteLine("Print Invoice");
-	}
+    //	if (e.CtrlKey && e.Key == "F2")
+    //	{
+    //		await PrintInvoice();
+    //	}
+    //}
 
-	// Create Customer
-	private async Task OpenCustomerModal()
-	{
-		var parameters = new DialogParameters();
-		parameters.Add("FormData", new GenerateBillCreateCustomerDTO());
+    // Generate POS
+    //private async Task GeneratePOS()
+    //{
+    //	Console.WriteLine("Bill Generated");
+    //}
 
-		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<CreateCustomerModal>("Create New Customer", parameters, options).Result;
+    // Print Invoice
+    private async Task PrintInvoice()
+    {
+        Console.WriteLine("Print Invoice");
+    }
 
-		if (dialog.Data != null)
-		{
-			GenerateBillCreateCustomerDTO newCustomer = dialog.Data as GenerateBillCreateCustomerDTO;
+    // Create Customer
+    private async Task OpenCustomerModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new GenerateBillCreateCustomerDTO());
 
-			try
-			{
-				var result = await _generateBill.CreateCustomer(newCustomer);
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<CreateCustomerModal>("Create New Customer", parameters, options).Result;
 
-				if (result.customerId != null)
-				{
-					Snackbar.Add(result.message, Severity.Success);
-					customerPhoneNumber = result.customerId.ToString();
-					return;
-				}
-				Snackbar.Add(result.message, Severity.Error);
-			}
-			catch (Exception)
-			{
-				Snackbar.Add("Internal Server Error!", Severity.Error);
-				throw;
-			}
-		}
-	}
+        if (dialog.Data != null)
+        {
+            GenerateBillCreateCustomerDTO newCustomer = dialog.Data as GenerateBillCreateCustomerDTO;
 
-	// Add Comment
-	private async Task OpenCommentModal()
-	{
-		var parameters = new DialogParameters();
-		parameters.Add("comment", Comment);
+            try
+            {
+                var result = await _generateBill.CreateCustomer(newCustomer);
 
-		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<GenerateBillAddCommentModal>("Add Comment", parameters, options).Result;
+                if (result.customerId != null)
+                {
+                    Snackbar.Add(result.message, Severity.Success);
+                    customerPhoneNumber = result.customerId.ToString();
+                    return;
+                }
+                Snackbar.Add(result.message, Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Internal Server Error!", Severity.Error);
+                throw;
+            }
+        }
+    }
 
-		if (dialog.Data != null)
-		{
-			Comment = dialog.Data as string;
-		}
-	}
+    // Show Combo Modal
+    private async Task OpenComboModal(string bcCode)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ComboId", bcCode);
+        parameters.Add("UidCollection", UIDCollection);
+        parameters.Add("ComboDetails", new GenerateBillComboDetailsDTO());
 
-	// UID Scan
-	//private async Task ScanUid(KeyboardEventArgs e)
-	//{
-	//	uid = s;
-	//	if (s.Length == 15)
-	//	{
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = false, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
+        var dialog = await DialogService.Show<GenerateBillAddComboModal>($"Add {bcCode}", parameters, options).Result;
 
-	//		try
-	//		{
-	//			bool isThere = UIDCollection.Any(x => x.uid == s);
+        if (dialog.Data != null)
+        {
+            GenerateBillComboDetailsDTO newComboDetails = dialog.Data as GenerateBillComboDetailsDTO;
 
-	//			if (isThere)
-	//			{
-	//				Snackbar.Add("UID already in cart", Severity.Error);
-	//				return;
-	//			}
+            UIDCollection.AddRange(newComboDetails.uids);
 
-	//			await CheckInList(s);
+            var isThere = Elements.FirstOrDefault(x => x.productCode == newComboDetails.comboCode);
 
-	//			subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
-	//			TableItems = Elements.Count();
-	//			//GetVat();
-	//		}
-	//		catch (Exception)
-	//		{
-	//			throw;
-	//		}
-	//	}
-	//}
+            if (isThere != null)
+            {
+                isThere.quantity += 1;
+                isThere.totalPrice = isThere.quantity * isThere.price;
+                uid = String.Empty;
+                return;
+            }
 
-	// Check if Already in List
-	private async Task CheckInList(string s)
-	{
-		try
-		{
-			var result = await _generateBill.GetProductByUid(s);
-			if (result.error != "Success")
-			{
-				Snackbar.Add(result.error, Severity.Error);
-				return;
-			}
-			bool isThere = Elements.Any(x => x.productCode == result.productCode);
-			if (isThere)
-			{
-				var productIndex = Elements.FindIndex(x => x.productCode == result.productCode);
+            var newProduct = new GenerateBillUIDDataDTO
+                {
+                    products = newComboDetails.products,
+                    nameAndSKU = newComboDetails.name,
+                    productCode = newComboDetails.comboCode,
+                    mrp = newComboDetails.regularPrice,
+                    price = newComboDetails.salesPrice,
+                    isCombo = true,
+                    bcType = newComboDetails.bcType
+                };
 
-				Elements[productIndex].quantity += 1;
-				Elements[productIndex].totalPrice = Elements[productIndex].quantity * Elements[productIndex].price;
-				var tempUIDIn = new GenerateBillUIDCollectionDTO() { uid = s, productCode = result.productCode };
-				UIDCollection.Add(tempUIDIn);
-				uid = String.Empty;
+            newProduct.quantity = 1;
+            newProduct.totalPrice = newProduct.quantity * newProduct.price;
 
-				ResetCoupon();
-				ResetCredit();
-				return;
-			}
-			result.quantity = 1;
-			result.totalPrice = result.quantity * result.price;
+            Elements.Add(newProduct);
+            uid = String.Empty;
+        }
+    }
 
-			Elements.Add(result);
-			var tempUID = new GenerateBillUIDCollectionDTO() { uid = s, productCode = result.productCode };
-			UIDCollection.Add(tempUID);
-			uid = String.Empty;
+    // Add Comment
+    private async Task OpenCommentModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("comment", Comment);
 
-			ResetCoupon();
-			ResetCredit();
-		}
-		catch (Exception)
-		{
-			throw;
-		}
-	}
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<GenerateBillAddCommentModal>("Add Comment", parameters, options).Result;
 
-	// Get Discount
-	private async Task GetDiscount()
-	{
-		try
-		{
-			if (String.IsNullOrEmpty(Customer.id))
-			{
-				Snackbar.Add("Please add customer first!", Severity.Error);
-				return;
-			}
-			var result = await _generateBill.GetDiscount(Coupon, subTotal, Customer.customerId);
-			if (result == 0)
-			{
-				Snackbar.Add("Coupon not applicable", Severity.Error);
-				return;
-			}
-			Snackbar.Add("Coupon applied", Severity.Success);
-			discount = result;
-			//GetVat();
-		}
-		catch (Exception)
-		{
-			throw;
-		}
-	}
+        if (dialog.Data != null)
+        {
+            Comment = dialog.Data as string;
+        }
+    }
 
-	// Reset Discount
-	private void ResetCoupon()
-	{
-		Coupon = String.Empty;
-		discount = 0;
-		// GetVat();
-	}
+    // UID Scan
+    //private async Task ScanUid(KeyboardEventArgs e)
+    //{
+    //	uid = s;
+    //	if (s.Length == 15)
+    //	{
 
-	// Get Vat
-	private void GetVat()
-	{
-		vatAmount = ((subTotal - discount - usedCredit) / 100) * 5;
-	}
+    //		try
+    //		{
+    //			bool isThere = UIDCollection.Any(x => x.uid == s);
 
-	// Generate POS
-	private GenerateBillPOSTDetailsDTO POSDetails = new GenerateBillPOSTDetailsDTO();
+    //			if (isThere)
+    //			{
+    //				Snackbar.Add("UID already in cart", Severity.Error);
+    //				return;
+    //			}
 
-	private async Task AssignData()
-	{
-		if (String.IsNullOrEmpty(POSDetails.paymentType))
-		{
-			Snackbar.Add("Please add payment type!", Severity.Error);
-			return;
-		}
-		POSDetails.items = TableItems;
-		POSDetails.quantities = Elements.Sum(e => e.quantity);
-		POSDetails.customerId = Customer.customerId;
-		POSDetails.discount = discount;
-		POSDetails.vatAmount = vatAmount;
-		POSDetails.total = subTotal;
-		POSDetails.grandTotal = subTotal - discount - usedCredit + vatAmount;
-		POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
-		POSDetails.creditValue = usedCredit;
-		POSDetails.membershipId = MembershipID;
-		POSDetails.couponCode = Coupon;
-		POSDetails.comment = Comment;
+    //			await CheckInList(s);
 
-		POSData.pos = POSDetails;
-		POSData.items = Elements;
-		POSData.posUID = UIDCollection;
-	}
+    //			subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
+    //			TableItems = Elements.Count();
+    //			//GetVat();
+    //		}
+    //		catch (Exception)
+    //		{
+    //			throw;
+    //		}
+    //	}
+    //}
 
-	private async Task GeneratePOS()
-	{
-		try
-		{
-			disableGenerate = true;
-			await AssignData();
-			var result = await _generateBill.NewPOS(POSData);
+    // Check if Already in List
+    private async Task CheckInList(string s)
+    {
+        try
+        {
+            var result = await _generateBill.GetProductByUid(s);
+            if (result.error != "Success")
+            {
+                Snackbar.Add(result.error, Severity.Error);
+                return;
+            }
+            bool isThere = Elements.Any(x => x.productCode == result.productCode);
+            if (isThere)
+            {
+                var productIndex = Elements.FindIndex(x => x.productCode == result.productCode);
 
-			if (result.trnCode != null)
-			{
-				trnCode = result.trnCode;
-				Snackbar.Add(result.message, Severity.Success);
-				await GotoPrint(result.trnCode);
-				return;
-			}
-			Snackbar.Add(result.message, Severity.Error);
-			disableGenerate = false;
-		}
-		catch (Exception e)
-		{
-			disableGenerate = false;
-			Console.WriteLine(e.Message);
-			Snackbar.Add("Error", Severity.Error);
-			throw;
-		}
-	}
+                Elements[productIndex].quantity += 1;
+                Elements[productIndex].totalPrice = Elements[productIndex].quantity * Elements[productIndex].price;
+                var tempUIDIn = new GenerateBillUIDCollectionDTO() { uid = s, productCode = result.productCode };
+                UIDCollection.Add(tempUIDIn);
+                uid = String.Empty;
 
-	// Remove Product
-	private void RemoveProduct(GenerateBillUIDDataDTO product)
-	{
-		UIDCollection.RemoveAll(x => x.productCode == product.productCode);
+                ResetCoupon();
+                ResetCredit();
+                return;
+            }
+            result.quantity = 1;
+            result.totalPrice = result.quantity * result.price;
 
-		Elements.Remove(product);
+            Elements.Add(result);
+            var tempUID = new GenerateBillUIDCollectionDTO() { uid = s, productCode = result.productCode };
+            UIDCollection.Add(tempUID);
+            uid = String.Empty;
 
-		subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
-		TableItems = Elements.Count();
-		//GetVat();
-	}
+            ResetCoupon();
+            ResetCredit();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
 
-	// Goto Print
-	private async Task GotoPrint(string TRNCODE)
-	{
-		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print/{TRNCODE}", "_blank" });
-	}
+    // Get Discount
+    private async Task GetDiscount()
+    {
+        try
+        {
+            if (String.IsNullOrEmpty(Customer.id))
+            {
+                Snackbar.Add("Please add customer first!", Severity.Error);
+                return;
+            }
+            var result = await _generateBill.GetDiscount(Coupon, subTotal, Customer.customerId);
+            if (result == 0)
+            {
+                Snackbar.Add("Coupon not applicable", Severity.Error);
+                return;
+            }
+            Snackbar.Add("Coupon applied", Severity.Success);
+            discount = result;
+            //GetVat();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
 
-	// Reset Fields
-	private void ResetFields()
-	{
-		POSDetails = new GenerateBillPOSTDetailsDTO();
-		POSData = new GenerateBillPOSDTO();
-		Customer = new GenerateBillCustomerInfoDTO();
-		Elements.Clear();
-		UIDCollection.Clear();
-		disableGenerate = false;
-		Coupon = String.Empty;
-		uid = String.Empty;
-		customerPhoneNumber = String.Empty;
-		MembershipID = String.Empty;
-		Comment = String.Empty;
-		subTotal = 0;
-		vatAmount = 0;
-		discount = 0;
-		backupCredit = 0;
-		usedCredit = 0;
-		TableItems = 0;
-	}
+    // Reset Discount
+    private void ResetCoupon()
+    {
+        Coupon = String.Empty;
+        discount = 0;
+        // GetVat();
+    }
+
+    // Get Vat
+    private void GetVat()
+    {
+        vatAmount = ((subTotal - discount - usedCredit) / 100) * 5;
+    }
+
+    // Generate POS
+    private GenerateBillPOSTDetailsDTO POSDetails = new GenerateBillPOSTDetailsDTO();
+    private List<GenerateBillComboProductDTO> NewComboItems = new List<GenerateBillComboProductDTO>();
+    //public List<GenerateBillUIDCollectionDTO> normalProducts = new List<GenerateBillUIDCollectionDTO>();
+    private async Task AssignData()
+    {
+        if (String.IsNullOrEmpty(POSDetails.paymentType))
+        {
+            Snackbar.Add("Please add payment type!", Severity.Error);
+            return;
+        }
+        POSDetails.items = TableItems;
+        POSDetails.quantities = Elements.Sum(e => e.quantity);
+        POSDetails.customerId = Customer.customerId;
+        POSDetails.discount = discount;
+        POSDetails.vatAmount = vatAmount;
+        POSDetails.total = subTotal;
+        POSDetails.grandTotal = subTotal - discount - usedCredit + vatAmount;
+        POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
+        POSDetails.creditValue = usedCredit;
+        POSDetails.membershipId = MembershipID;
+        POSDetails.couponCode = Coupon;
+        POSDetails.comment = Comment;
+
+
+
+
+        foreach (var item in Elements)
+        {
+            if (item.isCombo)
+            {
+                var tempCombo = new GenerateBillComboProductDTO
+                    {
+                        comboCode = item.productCode,
+                        bcType = item.bcType,
+                        price = item.price,
+                        quantity = item.quantity,
+                        totalPrice = Math.Round(item.price * item.quantity, 2)
+                    };
+                NewComboItems.Add(tempCombo);
+
+            }
+        }
+
+        POSData.comboItems = NewComboItems;
+
+        Elements.RemoveAll(x => x.isCombo == true);
+
+        POSData.pos = POSDetails;
+        POSData.items = Elements;
+        POSData.posUID = UIDCollection;
+        POSData.posPayment = PaymentTable;
+    }
+
+    private async Task GeneratePOS()
+    {
+        if (Math.Round(PaymentTable.Sum(x => x.amount), 2) < Math.Round((subTotal - usedCredit - discount + vatAmount), 2))
+        {
+            Snackbar.Add("Please collect exact or greater amount than grand total!", Severity.Error);
+            return;
+        }
+        try
+        {
+            disableGenerate = true;
+            await AssignData();
+            var result = await _generateBill.NewPOS(POSData);
+
+            if (result.trnCode != null)
+            {
+                trnCode = result.trnCode;
+                Snackbar.Add(result.message, Severity.Success);
+                await GotoPrint(result.trnCode);
+                return;
+            }
+            Snackbar.Add(result.message, Severity.Error);
+            disableGenerate = false;
+        }
+        catch (Exception e)
+        {
+            disableGenerate = false;
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Error", Severity.Error);
+            throw;
+        }
+    }
+
+    // Remove Product
+    private void RemoveProduct(GenerateBillUIDDataDTO product)
+    {
+        UIDCollection.RemoveAll(x => x.productCode == product.productCode);
+
+        Elements.Remove(product);
+
+        subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
+        TableItems = Elements.Count();
+        //GetVat();
+    }
+
+    // Goto Print
+    private async Task GotoPrint(string TRNCODE)
+    {
+        await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print/{TRNCODE}", "_blank" });
+    }
+
+    // Reset Fields
+    private void ResetFields()
+    {
+        POSDetails = new GenerateBillPOSTDetailsDTO();
+        POSData = new GenerateBillPOSDTO();
+        Customer = new GenerateBillCustomerInfoDTO();
+        NewComboItems = new List<GenerateBillComboProductDTO>();
+        Elements.Clear();
+        UIDCollection.Clear();
+        disableGenerate = false;
+        Coupon = String.Empty;
+        uid = String.Empty;
+        customerPhoneNumber = String.Empty;
+        MembershipID = String.Empty;
+        Comment = String.Empty;
+        subTotal = 0;
+        vatAmount = 0;
+        discount = 0;
+        backupCredit = 0;
+        usedCredit = 0;
+        TableItems = 0;
+    }
+
+    // Temp Table
+
+    private List<PosPaymentDTO> PaymentTable = new List<PosPaymentDTO>();
+
+    // New Payment
+    private PosPaymentDTO NewPayment = new PosPaymentDTO();
+
+    // Add New Payment
+    private void AddPayment()
+    {
+        if (String.IsNullOrEmpty(NewPayment.paymentType) || NewPayment.amount <= 0)
+        {
+            Snackbar.Add("Payment type and Amount is required!", Severity.Error);
+            return;
+        }
+
+        POSDetails.tobeCollected += NewPayment.amount;
+
+        if (POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount) <= 0 || (subTotal - discount - usedCredit + vatAmount) <= 0)
+        {
+            POSDetails.returnedAmnt = 0;
+        }
+        else
+        {
+            POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
+        }
+
+        var cashPay = PaymentTable.FirstOrDefault(x => x.paymentType == "Cash");
+
+        if (cashPay != null && NewPayment.paymentType == "Cash")
+        {
+            cashPay.amount += NewPayment.amount;
+            cashPay.paymentRef = NewPayment.paymentRef;
+            NewPayment = new PosPaymentDTO();
+            return;
+        }
+        NewPayment.id = Guid.NewGuid().ToString();
+        PaymentTable.Add(NewPayment);
+        NewPayment = new PosPaymentDTO();
+    }
+
+    // Enter Payment
+    private async Task EnterPayment(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            AddPayment();
+        }
+    }
+
+    // Remove Payment
+    private void RemovePayment(string paymentId)
+    {
+        var result = PaymentTable.FirstOrDefault(x => x.id == paymentId);
+
+        POSDetails.tobeCollected -= result.amount;
+
+        if (POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount) <= 0 || (subTotal - discount - usedCredit + vatAmount) <= 0)
+        {
+            POSDetails.returnedAmnt = 0;
+        }
+        else
+        {
+            POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
+        }
+
+        PaymentTable.Remove(result);
+    }
+
+    // Show Details
+    private void ShowComboProducts(string id)
+    {
+        GenerateBillUIDDataDTO tmpElements = Elements.First(f => f.productCode == id);
+        tmpElements.showDetails = !tmpElements.showDetails;
+    }
 }

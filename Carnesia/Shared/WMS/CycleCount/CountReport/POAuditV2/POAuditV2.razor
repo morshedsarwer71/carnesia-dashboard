@@ -157,7 +157,7 @@
 		Loading = true;
 		try
 		{
-			var result = await _projects.CompleteBinProject(projectcode, Bin);
+			var result = await _projects.CompletePoProject(projectcode, PO, Bin);
 
 			if (result == "Success")
 			{
@@ -199,7 +199,7 @@
 		Loading = true;
 		try
 		{
-			var result = await _projects.GetBinDetails(projectcode, Bin);
+			var result = await _projects.GetPoAuditBin(projectcode, PO, Bin);
 
 			if (result.message == "Success")
 			{

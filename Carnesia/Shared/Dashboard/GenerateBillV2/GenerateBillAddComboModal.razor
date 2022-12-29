@@ -1,44 +1,188 @@
-﻿<MudDialog DisableSidePadding="true">
-	<DialogContent>
-		<div Style="max-height: 90vh; overflow-y: scroll">
-			<MudGrid>
-				<MudItem xs="6">
-					<MudSelect T="string" Label="Combo/Bogo" AnchorOrigin="Origin.BottomCenter">
-					</MudSelect>
-				</MudItem>
-				<MudItem xs="6">
-					<MudNumericField T="int" Min="1" Label="Quantity" />
-				</MudItem>
-			</MudGrid>
+﻿@using Carnesia.Domain.Dashboard.GenerateBill
+@inject IGenerateBill _generateBill
 
-			<div class="d-flex justify-end">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
-			</div>
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <div Style="min-height: 40vh; max-height: 90vh; overflow-y: scroll; padding: 10px;">
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudTextField Label="Scan UID" @bind-Value="uid" Immediate="true" OnKeyPress="AddProduct" />
+                </MudItem>
+            </MudGrid>
 
-			<MudGrid>
-				<MudItem xs="6">
-					<MudTextField Label="Scan UID" T="string" />
-				</MudItem>
-			</MudGrid>
+            <table class="mt-3" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <th class="table-cell">Product Code</th>
+                    <th class="table-cell">SKU</th>
+                    <th class="table-cell">Product Name</th>
+                    @*<th class="table-cell">Price</th>*@
+                    <th class="table-cell">To Be Scanned</th>
+                    <th class="table-cell">Scanned</th>
+                </tr>
+                @*@if (ComboDetails.products.Count > 0)
+                {*@
+                @foreach (var item in Products)
+                {
+                    <tr>
+                        <td class="table-cell">
+                            <p>@item.productCode</p>
+                        </td>
+                        <td class="table-cell">
+                            <p>@item.sku</p>
+                        </td>
+                        <td class="table-cell">@item.productName</td>
+                        <td class="table-cell">@item.tobeScan</td>
+                        @*<td class="table-cell">0</td>*@
+                        <td class="table-cell">@item.scanned</td>
+                    </tr>
+                }
+                @*}*@
+            </table>
 
-			<table class="mt-3" style="width: 100%; border-collapse: collapse;">
-				<tr>
-					<th class="table-cell">SKU</th>
-					<th class="table-cell">Product Name</th>
-					<th class="table-cell">Price</th>
-					<th class="table-cell">To Be Scanned</th>
-					<th class="table-cell">Scanned</th>
-				</tr>
-			</table>
+            <div class="d-flex justify-end mt-5">
+                <MudButton Class="mr-1" Variant="Variant.Outlined" Color="Color.Error" OnClick="() => ShowClose = true">Close</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="Products.Sum(x => x.tobeScan) != 0" OnClick="SubmitCombo">Submit</MudButton>
+            </div>
 
-			<div class="d-flex justify-end mt-5">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
-			</div>
-		</div>
-	</DialogContent>
+            @if (!String.IsNullOrEmpty(ErrorText))
+            {
+                <div class="mt-5">
+                    <MudText Color="Color.Error" Typo="Typo.body1" Align="Align.Center">@ErrorText</MudText>
+                </div>
+            }
+
+            @if (ShowClose)
+            {
+                <div class="mt-5">
+                    <p style="text-align: center; font-size: 18px;">Are you sure you want to close? All of your progress will be lost.</p>
+                    <div class="d-flex justify-center">
+                        <MudButton Class="mr-1" Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => ShowClose = false">No</MudButton>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel">Yes</MudButton>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </DialogContent>
 </MudDialog>
 
 @code {
-	[CascadingParameter]
-	MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string ComboId { get; set; }
+    [Parameter] public List<GenerateBillUIDCollectionDTO> UidCollection { get; set; }
+    [Parameter] public GenerateBillComboDetailsDTO ComboDetails { get; set; }
+
+    public List<GenerateBillComboProductDetailsDTO> Products = new List<GenerateBillComboProductDetailsDTO>();
+    public List<GenerateBillUIDCollectionDTO> UIDS = new List<GenerateBillUIDCollectionDTO>();
+
+    // Error
+    private string ErrorText { get; set; }
+
+    // UID
+    private string uid { get; set; }
+
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCombo();
+    }
+
+    // Get Combo Details
+    private async Task GetCombo()
+    {
+        try
+        {
+            ComboDetails = await _generateBill.GetComboDetails(ComboId);
+            Products = ComboDetails.products;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    // Get Product
+    private async Task AddProduct(KeyboardEventArgs e)
+    {
+        ErrorText = String.Empty;
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(uid))
+            {
+                bool isThereMain = UidCollection.Any(x => x.uid == uid);
+                bool isThereTemp = UIDS.Any(x => x.uid == uid);
+
+                if (isThereTemp || isThereMain)
+                {
+                    ErrorText = "UID already in cart!";
+                    return;
+                }
+
+                await GetProductByUID(uid);
+            }
+        }
+    }
+
+    // Get Product Data By UID
+    private async Task GetProductByUID(string s)
+    {
+        try
+        {
+            var result = await _generateBill.GetProductByUid(s);
+            if (result.error != "Success")
+            {
+                ErrorText = result.error;
+                return;
+            }
+
+            var isThere = Products.FirstOrDefault(x => x.productCode == result.productCode);
+
+            if (isThere == null)
+            {
+                ErrorText = "This product is not required for this Combo/Bogo!";
+                return;
+            }
+
+            if (isThere.tobeScan == 0)
+            {
+                ErrorText = "Don't need this product anymore!";
+                return;
+            }
+
+            isThere.tobeScan -= 1;
+            isThere.scanned += 1;
+
+            UIDS.Add(new GenerateBillUIDCollectionDTO
+                {
+                    uid = s,
+                    productCode = ComboDetails.comboCode,
+                    isBogoCombo = true,
+                });
+
+            uid = String.Empty;
+
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    // Submit Combo
+    private async Task SubmitCombo()
+    {
+        ComboDetails.products = Products;
+        ComboDetails.uids = UIDS;
+
+        Submit();
+    }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok<GenerateBillComboDetailsDTO>(ComboDetails));
+    void Cancel() => MudDialog.Cancel();
+    private bool ShowClose { get; set; }
+
 }

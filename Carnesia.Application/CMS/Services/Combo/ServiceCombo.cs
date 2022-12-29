@@ -50,11 +50,11 @@ namespace Carnesia.Application.CMS.Services.Combo
             }
         }
 
-        public async Task<List<ComboListDTO>> GetAllCombos()
+        public async Task<List<ComboListDTO>> GetAllCombos(string BcType)
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<List<ComboListDTO>>("ComboProduct");
+                var result = await _httpClient.GetFromJsonAsync<List<ComboListDTO>>($"ComboProduct/bytype/{BcType}");
 
                 return result;
             }
@@ -125,6 +125,92 @@ namespace Carnesia.Application.CMS.Services.Combo
             {
                 var result = await _httpClient.GetFromJsonAsync<List<CombosInTimeDTO>>("ComboProduct/getcombos");
                 return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> CreateNewBogoComboBanner(CreateBogoComboBannerDTO banner)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("BogoCombo/combolandingbanner", banner);
+
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<BogoComboBannerDTO>> GetAllBanners()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<BogoComboBannerDTO>>("BogoCombo/combolandingbanner");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> ToggleBannerPublish(int Id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"BogoCombo/combolandingbanner/togglepublish/{Id}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> ToggleBannerHome(int Id)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync($"BogoCombo/combolandingbanner/togglehome/{Id}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteBanner(int Id)
+        {
+            try
+            {
+                var result = await _httpClient.DeleteAsync($"BogoCombo/combolandingbanner/{Id}");
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> ToggleCombo(int Id)
+        {
+            try
+            {
+                var result = await _httpClient.GetAsync($"BogoCombo/togglecombo/{Id}");
+
+                return result.IsSuccessStatusCode;
             }
             catch (Exception)
             {

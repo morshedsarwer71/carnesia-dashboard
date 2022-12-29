@@ -1,95 +1,44 @@
 ﻿@page "/combo-list"
 
-@using Carnesia.Domain.CMS.ComboProducts
-@using Carnesia.Domain.Common.POCO
-@using Carnesia.Shared.CommonComponents
-@inject ICombo _combo
-@inject IDialogService DialogService
-@inject NavigationManager NavigationManager
+@using Carnesia.Shared.CMS.Combo
 
-<MudPaper Class="py-16 px-3 ma-2">
-	<MudContainer Fixed="true">
-		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<ComboListDTO,bool>(FilterFuncInitial)">
-            <ToolBarContent>
-                <MudSpacer />
-                <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
-            </ToolBarContent>
-            <HeaderContent>
-                <MudTh>Comnbo Name</MudTh>
-                <MudTh>Image</MudTh>
-                <MudTh>Start Date</MudTh>
-                <MudTh>End Date</MudTh>
-                <MudTh>Regular Price</MudTh>
-                <MudTh>Combo Price</MudTh>
-                <MudTh>Action</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Combo Name">@context.comboProductName</MudTd>
-                <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://localhost:7090/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
-                </MudTd>
-                <MudTd DataLabel="Start Date">@context.startDate</MudTd>
-                <MudTd DataLabel="End Date">@context.endDate</MudTd>
-                <MudTd DataLabel="Regular Price">@context.regularPrice</MudTd>
-                <MudTd DataLabel="Combo Price">@context.comboPrice</MudTd>
-                <MudTd DataLabel="Action">
-                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => NavigateToUpdate(context.comboId)">
-                        Edit
-                    </MudButton>
-                </MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
-	</MudContainer>
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ComboListA ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ComboListA)">@ComboListA</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BogoList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BogoList)">
+                @BogoList
+            </MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ClearanceList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ClearanceList)">@ClearanceList</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
 </MudPaper>
 
+@if (CurrentPage == ComboListA)
+{
+    <ComboListA />
+}
+else if (CurrentPage == BogoList)
+{
+    <BogoList />
+}
+else if (CurrentPage == ClearanceList)
+{
+    <ClearanceList />
+}
+
 @code {
-	// Page On Load
-	protected override async Task OnInitializedAsync()
-	{
-		await GetCombos();
-	}
+    // Pages 
+    private string ComboListA = "Combo List";
+    private string BogoList = "Bogo List";
+    private string ClearanceList = "Clearance List";
 
-    // Table Customaization
-    private TableCommon tableCommon = new TableCommon();
+    // Current Page 
+    private string CurrentPage { get; set; } = "Combo List";
 
-	// Combo List
-	private List<ComboListDTO> Elements = new List<ComboListDTO>();
-
-	// Get All Combo
-	private async Task GetCombos()
-	{
-		Elements = await _combo.GetAllCombos();
-	}
-
-    // Table Search
-    private bool FilterFuncInitial(ComboListDTO element) => FilterFunc(element, tableCommon.SearchTerm);
-
-    private bool FilterFunc(ComboListDTO element, string searchString)
+    // Change Current Page
+    void ChangePage(string pageName)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
-            return true;
-        if (element.comboProductName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        return false;
-    }
-
-    // Show Image
-    private void ShowImage(string url)
-    {
-        var parameters = new DialogParameters();
-        parameters.Add("ImageUrl", url);
-
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        DialogService.Show<ShowImageModal>("Image", parameters, options);
-    }
-
-    // Navigate To Combo Update 
-    private void NavigateToUpdate(int id)
-    {
-        NavigationManager.NavigateTo($"update-combo/{id}");
+        CurrentPage = pageName;
     }
 }

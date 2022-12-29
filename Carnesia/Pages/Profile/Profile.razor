@@ -1,0 +1,104 @@
+﻿@page "/profile"
+@using Carnesia.Domain.Profile
+@inject IProfile _iprofile
+@inject ISnackbar _snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudGrid Class="justify-center">
+            <MudItem sm="6">
+                @*<MudTextField Label="Name" T="String" ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
+                <MudTextField @bind-Value="User.firstName" Label="First Name" ReadOnly="true" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
+        <MudGrid Class="justify-center">
+            <MudItem sm="6">
+                @*<MudTextField Label="Name" T="String" ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
+                <MudTextField @bind-Value="User.lastName" Label="Last Name" ReadOnly="true" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
+         <MudGrid Class="justify-center">
+            <MudItem sm="6">
+                @*<MudTextField Label="Name" T="String" ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
+                <MudTextField @bind-Value="User.username" Label="User Name" ReadOnly="true" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
+        <MudGrid Class="justify-center">
+            <MudItem sm="6">
+                @*<MudTextField T="String" Label="Phone Number"  ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
+                <MudTextField @bind-Value="User.phoneNumber" Label="Phone Number" ReadOnly="true" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
+        <MudGrid Class="justify-center">
+            <MudItem sm="6">
+                @*<MudTextField T="String" Label="Email"  ReadOnly="true" Immediate="true" Variant="Variant.Text"/>*@
+                <MudTextField @bind-Value="User.email" Label="Email" ReadOnly="true" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    <MudTextField Label="Current password" @bind-Value="password.oldPassword" InputType="InputType.Password" Required="true" RequiredError="Password is required!" />
+                </MudItem>
+            </MudGrid>
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    <MudTextField Label="New password" @bind-Value="password.newPassword" InputType="InputType.Password" Required="true" RequiredError="Password is required!" />
+                </MudItem>
+            </MudGrid>
+            <MudGrid Class="justify-center">
+                <MudItem sm="6">
+                    <MudTextField Label="Retype new password" @bind-Value="password.retypePassword" InputType="InputType.Password" Required="true" RequiredError="Password is required!" />
+                </MudItem>
+            </MudGrid>
+
+            <MudGrid Class="justify-center">
+                <MudItem sm="6" Class="d-flex justify-end mt-3">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="ChangePassword" Class="ml-auto">Change Password</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Form Refs
+    bool success;
+    string[] errors = { };
+    MudForm form;
+
+    private ProfileDTO User = new ProfileDTO();
+
+    protected async override Task OnInitializedAsync()
+    {
+        //Get Profile
+        User = await _iprofile.GetProfile();
+    }
+
+    public ChangePasswordDTO password = new ChangePasswordDTO();
+
+
+    private async Task ChangePassword()
+    {
+        if (password.newPassword != password.retypePassword)
+        {
+            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            _snackbar.Add("Password did not match", Severity.Error);
+        }
+        else
+        {
+            var res = await _iprofile.ChagePassword(password);
+            if (res)
+            {
+                _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+                _snackbar.Add("Password changed successfully!", Severity.Success);
+                form.Reset();
+            }
+            else
+            {
+                _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+                _snackbar.Add("Old password did not match", Severity.Error);
+            }
+        }
+    }
+}

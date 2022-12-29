@@ -9,7 +9,7 @@
 	<MudContainer Fixed="true">
 		<MudText Typo="Typo.h5">Bin Name: @(ProjectsDetails.binName)</MudText>
 		<MudText Typo="Typo.h6">Project Code: @(ProjectsDetails.projectCode)</MudText>
-		<MudText Typo="Typo.h6">Last Count Date: @(ProjectsDetails.lastCountDate)</MudText>
+			<MudText Typo="Typo.h6">Last Count Date: @(ProjectsDetails.lastCountDate?.ToString("dd/MM/yyyy"))</MudText>
 
 		<MudGrid Class="justify-center">
 			<MudItem sm="8">

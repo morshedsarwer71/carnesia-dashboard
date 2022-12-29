@@ -32,6 +32,7 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
         public string paymentType { get; set; }
         public List<GenerateBillInvoiceItemDTO> items { get; set; }
         public List<GenerateBillPaymentsDTO> payments { get; set; }
+        public List<GenerateBillComboDTO> comboItems { get; set; }
     }
 
     public class GenerateBillInvoiceItemDTO
@@ -50,4 +51,22 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
 		public string? paymentRef { get; set; }
 		public decimal amount { get; set; }
 	}
+
+    public class GenerateBillComboDTO
+    {
+        public string bcCode { get; set; }
+        public string bcType { get; set; }
+        public string name { get; set; }
+        public decimal price { get; set; }
+        public int quantity { get; set; }
+        public decimal totalPrice { get; set; }
+        public List<GenerateBillComboProductsDTO> products { get; set; }
+    }
+
+    public class GenerateBillComboProductsDTO
+    {
+        public string productName { get; set; }
+        public string sku { get; set; }
+        public int quantity { get; set; }
+    }
 }

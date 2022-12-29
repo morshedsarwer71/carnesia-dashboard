@@ -32,14 +32,13 @@ namespace Carnesia.Application.Dashboard.ReturnRefund
             }
         }
 
-        public async Task<string> IssueReturnRefund(CreateReturnRefundDTO items)
+        public async Task<bool> IssueReturnRefund(CreateReturnRefundDTO items)
         {
             try
             {
                 var result = await _httpClient.PostAsJsonAsync("Pos/posreturn", items);
 
-                var json = await result.Content.ReadAsStringAsync();
-                return json;
+                return result.IsSuccessStatusCode;
             }
             catch (Exception)
             {

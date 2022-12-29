@@ -10,6 +10,7 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
     {
         public GenerateBillPOSTDetailsDTO pos { get; set; }
         public List<GenerateBillUIDDataDTO> items { get; set; }
+        public List<GenerateBillComboProductDTO> comboItems { get; set; }
         public List<GenerateBillUIDCollectionDTO> posUID { get; set; }
         public List<PosPaymentDTO> posPayment { get; set; }
 	}
