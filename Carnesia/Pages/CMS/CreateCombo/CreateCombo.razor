@@ -45,19 +45,19 @@
 					</MudSelect>
 				</MudItem>
 				<MudItem sm="6">
-					<MudAutocomplete Label="Parent Bogo Product" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Disabled="@(FormData.bcType == "Combo" || FormData.bcType == "Clearance")" Required="@(FormData.bcType == "Bogo")" ResetValueOnEmptyText="true" />
+					<MudNumericField Label="Sell Quantity" @bind-Value="FormData.sellQuantity" Required="true" RequiredError="Sell quantity is required!" />
 				</MudItem>
+				@*<MudItem sm="6">
+					<MudAutocomplete Label="Parent Bogo Product" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Disabled="@(FormData.bcType == "Combo" || FormData.bcType == "Clearance")" Required="@(FormData.bcType == "Bogo")" ResetValueOnEmptyText="true" />
+				</MudItem>*@
 				<MudItem sm="6">
 					<MudNumericField Label="Regular Price" @bind-Value="FormData.regularPrice" Required="true" RequiredError="Regular price is required!" />
 				</MudItem>
 				<MudItem sm="6">
 					<MudNumericField Label="Combo/Bogo Price" @bind-Value="FormData.comboPrice" Required="true" RequiredError="Combo/Bogo price is required!" />
 				</MudItem>
-				<MudItem sm="6">
-					<MudNumericField Label="Sell Quantity" @bind-Value="FormData.sellQuantity" Required="true" RequiredError="Sell quantity is required!" />
-				</MudItem>
-				<MudItem sm="6">
-					<MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
+				<MudItem xs="12">
+					<MudTextField @bind-Value="FormData.description" Lines="5" Label="Description" Required="true" RequiredError="Description is required!" />
 				</MudItem>
 			</MudGrid>
 
@@ -122,7 +122,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await GetStoresName();
-		ProductSKU = await _products.GetProductsAsSKU();
+		//ProductSKU = await _products.GetProductsAsSKU();
 	}
 	// Form Ref
 	bool success;
@@ -173,13 +173,13 @@
 	private AddComboDetailsDTO FormData = new AddComboDetailsDTO();
 
 	// Product SKU List
-	private string[] ProductSKU = new string[] { };
+	//private string[] ProductSKU = new string[] { };
 
 	// Autocomplite Search Func for ParentCat
-	private async Task<IEnumerable<string>> ProductSKUSearch(string value)
-	{
-		return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-	}
+	//private async Task<IEnumerable<string>> ProductSKUSearch(string value)
+	//{
+	//	return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+	//}
 
 	// Upload Image
 	private async Task UploadImage(InputFileChangeEventArgs e)
@@ -239,11 +239,11 @@
 
 	private async Task CreateNewCombo()
 	{
-		if (String.IsNullOrEmpty(FormData.sku) && FormData.bcType == "Bogo")
-		{
-			Snackbar.Add("Parent Bogo Product is required!", Severity.Error);
-			return;
-		}
+		//if (String.IsNullOrEmpty(FormData.sku) && FormData.bcType == "Bogo")
+		//{
+		//	Snackbar.Add("Parent Bogo Product is required!", Severity.Error);
+		//	return;
+		//}
 
 		if (Products.Count() <= 0)
 		{
@@ -263,10 +263,10 @@
 			return;
 		}
 
-		if(FormData.bcType == "Bogo")
-		{
-			FormData.productId = await _products.GetProductIdBySku(FormData.sku);
-		}
+		//if(FormData.bcType == "Bogo")
+		//{
+		//	FormData.productId = await _products.GetProductIdBySku(FormData.sku);
+		//}
 
 		FormData.startDate = $"{StartDate}T{StartTime}.000Z";
 		FormData.endDate = $"{EndDate}T{EndTime}.000Z";
@@ -296,7 +296,7 @@
 				return;
 			}
 
-			Snackbar.Add("Something Went Wrong!", Severity.Error);
+			Snackbar.Add("Combo/Bogo Creation Failed!", Severity.Error);
 		}
 		catch (Exception)
 		{

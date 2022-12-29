@@ -10,8 +10,8 @@ namespace Carnesia.Domain.CMS.ComboProducts
     public class AddComboDetailsDTO
     {
         public string comboProductName { get; set; }
-        public string sku { get; set; }
-        public int productId { get; set; }
+        //public string sku { get; set; }
+        //public int productId { get; set; }
         public int sellQuantity { get; set; }
         public decimal regularPrice { get; set; }
         public int comboPrice { get; set; }

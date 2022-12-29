@@ -16,8 +16,11 @@
                     <MudTextField @bind-Value="FormData.comboProductName" Label="Combo Name" Required="true" RequiredError="Combo name is required!" />
                 </MudItem>
                 <MudItem sm="6">
-                    <MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Disabled="@(FormData.bcType == "Combo" || FormData.bcType == "Clearance")" Required="@(FormData.bcType == "Bogo")" ResetValueOnEmptyText="true" />
+                    <MudNumericField Label="Sell Quantity" @bind-Value="FormData.sellQuantity" />
                 </MudItem>
+                @*<MudItem sm="6">
+                    <MudAutocomplete Label="Product SKU" SearchFunc="@ProductSKUSearch" @bind-Value="FormData.sku" Disabled="@(FormData.bcType == "Combo" || FormData.bcType == "Clearance")" Required="@(FormData.bcType == "Bogo")" ResetValueOnEmptyText="true" />
+                </MudItem>*@
                 <MudItem sm="6">
                     <MudDatePicker Label="Start Date" DateFormat="yyyy-MM-dd" @bind-Text="FormData.startDate" />
                 </MudItem>
@@ -36,11 +39,8 @@
                 <MudItem sm="6">
                     <MudNumericField Label="Combo Price" @bind-Value="FormData.comboPrice" />
                 </MudItem>
-                <MudItem sm="6">
-                    <MudNumericField Label="Sell Quantity" @bind-Value="FormData.sellQuantity" />
-                </MudItem>
-                <MudItem sm="6">
-                    <MudTextField @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
+                <MudItem xs="12">
+                    <MudTextField Lines="5" @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
                 </MudItem>
             </MudGrid>
 
@@ -99,7 +99,7 @@
     // Page On Load
     protected override async Task OnInitializedAsync()
     {
-        ProductSKU = await _products.GetProductsAsSKU();
+        //ProductSKU = await _products.GetProductsAsSKU();
         await GetCombo();
         await SetTime();
     }
@@ -133,13 +133,13 @@
     }
 
     // Product SKU List
-    private string[] ProductSKU = new string[] { };
+    //private string[] ProductSKU = new string[] { };
 
     // Autocomplite Search Func for ParentCat
-    private async Task<IEnumerable<string>> ProductSKUSearch(string value)
-    {
-        return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
+    //private async Task<IEnumerable<string>> ProductSKUSearch(string value)
+    //{
+    //    return string.IsNullOrEmpty(value) ? ProductSKU : ProductSKU.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    //}
 
     // Upload Image
     private async Task UploadImage(InputFileChangeEventArgs e)
@@ -229,17 +229,17 @@
     // Update Combo Details
     private async Task UpdateDetails()
     {
-        if (FormData.bcType == "Bogo")
-        {
-            FormData.productId = await _products.GetProductIdBySku(FormData.sku);
-        }
+        //if (FormData.bcType == "Bogo")
+        //{
+        //    FormData.productId = await _products.GetProductIdBySku(FormData.sku);
+        //}
         try
         {
 
             var comboDetails = new ComboListDTO()
                 {
                     comboProductName = FormData.comboProductName,
-                    productId = FormData.productId,
+                    //productId = FormData.productId,
                     regularPrice = FormData.regularPrice,
                     comboPrice = FormData.comboPrice,
                     description = FormData.description,
