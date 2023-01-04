@@ -58,6 +58,13 @@
 			<MudItem sm="3">
 				<MudTextField @bind-Value="Filter.productName" Label="Product Name" />
 			</MudItem>
+			<MudItem sm="3">
+				<MudSelect @bind-Value="Filter.costProfitType" Label="Cost Profit Type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">All</MudSelectItem>
+					<MudSelectItem Value="1">Revenue</MudSelectItem>
+					<MudSelectItem Value="2">Profit</MudSelectItem>
+				</MudSelect>
+			</MudItem>
 		</MudGrid>
 
 		<div class="d-flex justify-end my-5">

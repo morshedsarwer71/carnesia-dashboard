@@ -42,5 +42,6 @@ namespace Carnesia.Domain.MIS.Analytics
         public string productCode { get; set; }
         public string productName { get; set; }
         public int outletId { get; set; }
+        public int costProfitType { get; set; }
     }
 }
