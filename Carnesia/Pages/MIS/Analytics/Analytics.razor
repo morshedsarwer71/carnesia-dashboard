@@ -58,6 +58,13 @@
 			<MudItem sm="3">
 				<MudTextField @bind-Value="Filter.productName" Label="Product Name" />
 			</MudItem>
+			<MudItem sm="3">
+				<MudSelect @bind-Value="Filter.costProfitType" Label="Cost Profit Type" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">All</MudSelectItem>
+					<MudSelectItem Value="1">Revenue</MudSelectItem>
+					<MudSelectItem Value="2">Profit</MudSelectItem>
+				</MudSelect>
+			</MudItem>
 		</MudGrid>
 
 		<div class="d-flex justify-end my-5">
@@ -149,7 +156,7 @@
 				<MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
 				<MudTd DataLabel="Revenue After Discount">@context.afterDiscount</MudTd>
 				<MudTd DataLabel="Cost">@context.cost</MudTd>
-				<MudTd DataLabel="Gross Profit">@context.grosProfit</MudTd>
+				<MudTd DataLabel="Gross Profit">@(context.grosProfit)</MudTd>
 			</RowTemplate>
 			<FooterContent>
 				<MudTFootRow>
@@ -164,7 +171,7 @@
 					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.totalDiscount)</MudTd>
 					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.afterDiscount)</MudTd>
 					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.cost)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.grosProfit)</MudTd>
+						<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.grosProfit)</MudTd>
 				</MudTFootRow>
 			</FooterContent>
 		</MudTable>

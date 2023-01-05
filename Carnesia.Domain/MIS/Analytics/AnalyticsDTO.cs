@@ -27,6 +27,7 @@ namespace Carnesia.Domain.MIS.Analytics
         public decimal cost { get; set; }
         public decimal grosProfit { get; set; }
         public string date { get; set; }
+        public DateTime SalesDate { get; set; }
         public string platform { get; set; }
         public DateTime orderDate { get; set; }
     }
@@ -42,5 +43,6 @@ namespace Carnesia.Domain.MIS.Analytics
         public string productCode { get; set; }
         public string productName { get; set; }
         public int outletId { get; set; }
+        public int costProfitType { get; set; }
     }
 }
