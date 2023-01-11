@@ -20,7 +20,7 @@ namespace Carnesia.Domain.CMS.ChildProduct
         public bool isPublish { get; set; } = true;
         public bool isHasFreeProd { get; set; } = false;
         public bool isNewArrival { get; set; } = false;
-        public int? productPoints { get; set; }
+        public int productPoints { get; set; }
         public string description { get; set; } = "Description";
         public bool isSize { get; set; }
         public string? colorCode { get; set; }
