@@ -8,7 +8,7 @@
 @inject IJSRuntime IJS
 
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 @*		<div>
 			<MudButton Variant="Variant.Filled" Color="Color.Primary">Create Run</MudButton>
@@ -159,15 +159,25 @@
 							<MudCardContent Class="pa-0">
 								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Hover="true" Elevation="0">
 									<HeaderContent>
+										<MudTh></MudTh>
 										<MudTh>Product Code</MudTh>
 										<MudTh>SKU</MudTh>
 										<MudTh>Product Name</MudTh>
 										<MudTh>Quantity</MudTh>
 										<MudTh>Price</MudTh>
 										<MudTh>Amount</MudTh>
-										<MudTh>Status</MudTh>
 									</HeaderContent>
 									<RowTemplate>
+										<MudTd DataLabel="">
+											@if (!DetailsContext.showComboProducts)
+											{
+												<MudIconButton Disabled="!DetailsContext.isCombo" Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowCombos(DetailsContext.productCode, context.products.orderProducts)" />
+											}
+											else if (DetailsContext.showComboProducts)
+											{
+												<MudIconButton Disabled="!DetailsContext.isCombo" Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowCombos(DetailsContext.productCode, context.products.orderProducts)" />
+											}
+										</MudTd>
 										<MudTd DataLabel="Product Code">@DetailsContext.productCode</MudTd>
 										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
 										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
@@ -175,6 +185,31 @@
 										<MudTd DataLabel="Selling Price">@DetailsContext.mrp</MudTd>
 										<MudTd DataLabel="Subtotal">@DetailsContext.totalMrp</MudTd>
 									</RowTemplate>
+									<ChildRowContent>
+										@if (DetailsContext.showComboProducts)
+										{
+											<td colspan="7">
+												<MudCard Elevation="0">
+													<MudCardContent Class="pa-0">
+														<MudTable Items="@DetailsContext.combosProducts" Context="ComboContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
+															<HeaderContent>
+																<MudTh>Product Code</MudTh>
+																<MudTh>SKU</MudTh>
+																<MudTh>Product Name</MudTh>
+																<MudTh>Quantity</MudTh>
+															</HeaderContent>
+															<RowTemplate>
+																<MudTd DataLabel="Product Code">@ComboContext.productCode</MudTd>
+																<MudTd DataLabel="SKU">@ComboContext.sku</MudTd>
+																<MudTd DataLabel="Product Name">@ComboContext.productName</MudTd>
+																<MudTd DataLabel="Quantity">@ComboContext.quantity</MudTd>
+															</RowTemplate>
+														</MudTable>
+													</MudCardContent>
+												</MudCard>
+											</td>
+										}
+									</ChildRowContent>
 								</MudTable>
 							</MudCardContent>
 						</MudCard>
@@ -208,6 +243,10 @@
 	{
 		Loading = true;
 		Elements = await _dispatch.GetOrders();
+		foreach (var item in Elements)
+		{
+			item.products.orderProducts.AddRange(item.products.orderCombos);
+		}
 		Loading = false;
 	}
 
@@ -218,6 +257,10 @@
 		try
 		{
 			Elements = await _dispatch.GetOrdersByFilter(Filter);
+			foreach (var item in Elements)
+			{
+				item.products.orderProducts.AddRange(item.products.orderCombos);
+			}
 			Loading = false;
 		}
 		catch (Exception e)
@@ -284,6 +327,13 @@
 	{
 		PendingOrderDTO tmpElements = Elements.First(f => f.orderId == orderId);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+	}
+
+	// Show Combo Details
+	private void ShowCombos(string productCode, List<PendingOrderProductsDTO> products)
+	{
+		PendingOrderProductsDTO tmpElements = products.First(f => f.productCode == productCode);
+		tmpElements.showComboProducts = !tmpElements.showComboProducts;
 	}
 
 	// Goto Print

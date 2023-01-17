@@ -51,8 +51,12 @@
 
     protected async override Task OnInitializedAsync()
     {
-        //Get Profile
-        Profile = await _iprofile.GetProfile();
+
+        if (await _storage.ContainKeyAsync("access_token"))
+        {
+            //Get Profile
+            Profile = await _iprofile.GetProfile();
+        }
 
         //Navigate
         base.OnInitialized();

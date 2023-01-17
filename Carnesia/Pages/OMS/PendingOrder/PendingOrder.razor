@@ -236,6 +236,10 @@
         try
         {
             Elements = await _pendingOrder.GetPendingOrdersByFilter(Filter);
+            foreach (var item in Elements)
+            {
+                item.products.orderProducts.AddRange(item.products.orderCombos);
+            }
             tableLoading = false;
         }
         catch (Exception e)
