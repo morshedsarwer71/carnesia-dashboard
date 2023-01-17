@@ -13,6 +13,7 @@ namespace Carnesia.Domain.OMS.PickPack
         public string? expiryDate { get; set; }
         public string? expStatus { get; set; }
         public List<pickPackProductsDTO>? pickPacks { get; set; }
+        public List<pickPackProductsDTO>? combos { get; set; }
     }
 
     public class pickPackProductsDTO
@@ -24,5 +25,6 @@ namespace Carnesia.Domain.OMS.PickPack
         public int totalQty { get; set; }
         public int totalPickedQty { get; set; }
         public int totalReturnQty { get; set; }
+        public bool isCombo { get; set; }
     }
 }
