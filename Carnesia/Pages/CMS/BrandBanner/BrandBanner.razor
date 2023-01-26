@@ -35,7 +35,7 @@
 				</MudTd>
 				<MudTd DataLabel="Brand Name">@context.name</MudTd>
 				<MudTd DataLabel="Image">
-					<MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://cscpguide.com/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+					<MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://oshud.com/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
 				</MudTd>
 				<MudTd DataLabel="Action">
 					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddBanner(context.brandId)">Add Banner</MudButton>
@@ -57,7 +57,7 @@
 									<RowTemplate>
 										<MudTd DataLabel="Name">@DetailsContext.name</MudTd>
 										<MudTd DataLabel="Image">
-											<MudImage @onclick="() => ShowImage(DetailsContext.bannerUrl)" Src="@($"https://cscpguide.com/{DetailsContext.bannerUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
+											<MudImage @onclick="() => ShowImage(DetailsContext.bannerUrl)" Src="@($"https://oshud.com/{DetailsContext.bannerUrl}")" Alt="@DetailsContext.name" Elevation="25" Class="rounded-lg" Style="width:50px" />
 										</MudTd>
 										<MudTd DataLabel="URL">@DetailsContext.url</MudTd>
 										<MudTd DataLabel="Action">

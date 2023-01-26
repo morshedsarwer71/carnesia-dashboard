@@ -17,7 +17,23 @@ namespace Carnesia.Application.OMS.Services.ReceiveReturn
 		{
 			_httpClient = httpClient;
 		}
-		public async Task<PickPackDTO> GetOrderDetails(string orderId)
+
+        public async Task<string> CommitReturn(string orderId)
+        {
+			try
+			{
+				var result = await _httpClient.GetStringAsync($"Oms/commitreturn/{orderId}");
+
+				return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+        }
+
+        public async Task<PickPackDTO> GetOrderDetails(string orderId)
 		{
 			try
 			{

@@ -1,0 +1,75 @@
+﻿<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true" >
+        <MudGrid Class="justify-center">
+            <MudItem sm="3">
+                <MudDatePicker Label="From Date" @bind-Date="date" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudDatePicker Label="To Date" @bind-Date="date" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect T="string" Label="Store" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("Central Warehouse")" />
+                    <MudSelectItem Value="@("Dhanmondi")" />
+                    <MudSelectItem Value="@("Mirpur")" />
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+        <MudGrid Class="justify-center mt-3">
+            <MudItem sm="9">
+                <div class="d-flex justify-end">
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled">View Orders</MudButton>
+                </div>
+            </MudItem>
+        </MudGrid>
+
+        <MudGrid Class="justify-center mt-5 align-baseline">
+            <MudItem sm="3">
+                <MudSelect T="string" Label="Download Type" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("Order")" />
+                    <MudSelectItem Value="@("Item With Order")" />
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <div >
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled">Download CSV</MudButton>
+                </div>
+            </MudItem>
+        </MudGrid>
+
+        <MudGrid Class="mt-5">
+            <MudItem sm="6">
+                <MudSelect T="string" Label="Payment Methode" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("Bkash")" />
+                    <MudSelectItem Value="@("Nagad")" />
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="6">
+                <MudSelect T="string" Label="Bank Name(If Any)" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("The City Bank Limited")" />
+                    <MudSelectItem Value="@("Mutual Trust Bank Limited")" />
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="6">
+                <MudSelect T="string" Label="Charge Type" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("Courier Charge")" />
+                    <MudSelectItem Value="@("MFS")" />
+                    <MudSelectItem Value="@("POS Machine")" />
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="6">
+                <MudTextField T="string" Label="Bnak/MFS Charge Amount" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="6">
+                <MudTextField T="string" Label="Received" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
+        <div class="d-flex justify-end mt-3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Submit & Create Invoice</MudButton>
+        </div>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    private DateTime? date = DateTime.Today;
+}

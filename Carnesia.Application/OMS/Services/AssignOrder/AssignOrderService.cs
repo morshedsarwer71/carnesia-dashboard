@@ -33,6 +33,20 @@ namespace Carnesia.Application.OMS.Services.AssignOrder
             }
         }
 
+        public async Task<bool> CreateCourier(CourierDTO courier)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("Oms/courier", courier);
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<CourierDTO>> GetCouriers()
         {
             try

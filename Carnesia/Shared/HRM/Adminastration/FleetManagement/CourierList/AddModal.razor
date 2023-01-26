@@ -1,24 +1,27 @@
-﻿<MudDialog>
+﻿@using Carnesia.Domain.OMS.AssignDelivery.Dispatch;
+<MudDialog>
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                    <MudTextField T="string" Label="Courier Name" Required="true" RequiredError="Courier Name is required!"/>
-                    <MudTextField T="string" Label="Business KAM" Required="true" RequiredError="Business KAM is required!"/>
-                    <MudTextField T="string" Label="Business KAM Contact" Required="true" RequiredError="Business KAM Contact is required!"/>
-                    <MudTextField T="string" Label="Operation KAM" Required="true" RequiredError="Operation KAM is required!"/>
-                    <MudTextField T="string" Label="Operation KAM Contact" Required="true" RequiredError="Operation KAM Contact is required!"/>
+            <MudTextField @bind-Value="FormData.name" Label="Courier Name" Required="true" RequiredError="Courier Name is required!" />
+            <MudTextField @bind-Value="FormData.businessKAM" Label="Business KAM" Required="true" RequiredError="Business KAM is required!" />
+            <MudTextField @bind-Value="FormData.businessKAMPhone" Label="Business KAM Contact" Required="true" RequiredError="Business KAM Contact is required!" />
+            <MudTextField @bind-Value="FormData.operationKAM" Label="Operation KAM" Required="true" RequiredError="Operation KAM is required!" />
+            <MudTextField @bind-Value="FormData.operationKAMPhone" Label="Operation KAM Contact" Required="true" RequiredError="Operation KAM Contact is required!" />
 
-                    <div class="d-flex justify-end my-5">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
-                    </div>
-            </MudForm>
+            <div class="d-flex justify-end my-5">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+            </div>
+        </MudForm>
     </DialogContent>
 </MudDialog>
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public CourierDTO FormData { get; set; } = new CourierDTO();
 
     // Submit Close
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Submit() => MudDialog.Close(DialogResult.Ok<CourierDTO>(FormData));
 
     // Form Ref
     bool success;

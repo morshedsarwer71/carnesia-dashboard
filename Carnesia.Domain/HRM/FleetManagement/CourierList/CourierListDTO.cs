@@ -8,12 +8,12 @@ namespace Carnesia.Domain.HRM.FleetManagement.CourierList
 {
     public class CourierListDTO
     {
-        public string EnlistDate { get; set; }
-        public string CourierName { get; set; }
-        public string BusinessKAM { get; set; }
-        public string BusinessKAMContact { get; set; }
-        public string OperationKAM { get; set; }
-        public string OperationKAMContact { get; set; }
+		public int id { get; set; }
+		public string name { get; set; }
+		public string businessKAM { get; set; }
+		public string businessKAMPhone { get; set; }
+		public string operationKAM { get; set; }
+		public string operationKAMPhone { get; set; }
         public bool Active { get; set; }
-    }
+	}
 }

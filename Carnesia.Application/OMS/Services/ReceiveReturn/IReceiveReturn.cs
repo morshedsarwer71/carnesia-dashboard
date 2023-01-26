@@ -12,6 +12,7 @@ namespace Carnesia.Application.OMS.Services.ReceiveReturn
 	{
 		Task<PickPackDTO> GetOrderDetails(string orderId);
 		Task<PickPackDTO> ReturnItem(string orderId, string uid, bool returnType);
+		Task<string> CommitReturn(string orderId);
 		Task<List<PendingReturnDTO>> GetPendingReturns();
 		Task<List<PendingReturnDTO>> GetPendingReturnsByFilter(PendingReturnsFilterDTO filter);
 	}

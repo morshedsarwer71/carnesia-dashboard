@@ -1,36 +1,38 @@
-﻿@using Carnesia.Domain.HRM.FleetManagement.CourierList
-@using Carnesia.Domain.Common.POCO
+﻿@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.OMS.AssignDelivery.Dispatch;
 @inject IDialogService DialogService
+@inject IAssignOrder _assignOrder
+@inject ISnackbar Snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
-		<div class="mb-5">
-			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Info" OnClick="OpenAddModal">Add New Courier</MudButton>
+		<div class="mb-5 d-flex justify-end">
+			<MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.Add" Color="Color.Primary" OnClick="OpenAddModal">Add New Courier</MudButton>
 		</div>
 
-		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
-            <ToolBarContent>
+		<MudTable RowsPerPage="25" Loading="Loading" LoadingProgressColor="Color.Info" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+            @*<ToolBarContent>
                 <MudSpacer />
                 <MudSpacer />
-                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"                   Class="mt-0"/>
-            </ToolBarContent>
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+            </ToolBarContent>*@
             <HeaderContent>
-                <MudTh>Enlist Date</MudTh>
+                @*<MudTh>Enlist Date</MudTh>*@
                 <MudTh>Courier Name</MudTh>
                 <MudTh>Business KAM</MudTh>
                 <MudTh>Business KAM Contact</MudTh>
                 <MudTh>Operation KAM</MudTh>
                 <MudTh>Operation KAM Contact</MudTh>
-                <MudTh>Action</MudTh>
+                @*<MudTh>Action</MudTh>*@
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Enlist Date">@context.EnlistDate</MudTd>
-                <MudTd DataLabel="Courier Name">@context.CourierName</MudTd>
-                <MudTd DataLabel="Business KAM">@context.BusinessKAM</MudTd>
-                <MudTd DataLabel="Business KAM Contact">@context.BusinessKAMContact</MudTd>
-                <MudTd DataLabel="Operation KAM">@context.OperationKAM</MudTd>
-                <MudTd DataLabel="Operation KAM Contact">@context.OperationKAMContact</MudTd>
-                <MudTd DataLabel="Action">
+                @*<MudTd DataLabel="Enlist Date">@context.EnlistDate</MudTd>*@
+                <MudTd DataLabel="Courier Name">@context.name</MudTd>
+                <MudTd DataLabel="Business KAM">@context.businessKAM</MudTd>
+                <MudTd DataLabel="Business KAM Contact">@context.businessKAMPhone</MudTd>
+                <MudTd DataLabel="Operation KAM">@context.operationKAM</MudTd>
+                <MudTd DataLabel="Operation KAM Contact">@context.operationKAMPhone</MudTd>
+                @*<MudTd DataLabel="Action">
                     <MudButton Variant="Variant.Filled" Color="Color.Warning">Edit</MudButton>
                     @if(context.Active)
                     {
@@ -40,7 +42,7 @@
                     {
                         <MudButton Variant="Variant.Filled" Color="Color.Success">Reactive</MudButton>
                     }
-                </MudTd>
+                </MudTd>*@
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />
@@ -57,17 +59,61 @@
 </MudPaper>
 
 @code {
-	// Table Customaization
-	private TableCommon tableCommon = new TableCommon();
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCouriers();
+    }
 
-	// Table Content
-	private IEnumerable<CourierListDTO> Elements = new List<CourierListDTO>();
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Table Content
+    private IEnumerable<CourierDTO> Elements = new List<CourierDTO>();
+
+    // Get Couriers
+    private async Task GetCouriers()
+    {
+        Loading = true;
+        Elements = await _assignOrder.GetCouriers();
+        Loading = false;
+    }
 
     // Add Modal
-    private void OpenAddModal()
+    private async Task OpenAddModal()
     {
-		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-        DialogService.Show<AddModal>("Add New Courier", options);
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new CourierDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddModal>("Add New Courier", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            CourierDTO newCourier = dialog.Data as CourierDTO;
+
+            try
+            {
+                var result = await _assignOrder.CreateCourier(newCourier);
+
+                if (result)
+                {
+                    Snackbar.Add("New Courier Created Successfully!", Severity.Success);
+                    await GetCouriers();
+                    return;
+                }
+
+                Snackbar.Add("New Courier Creation Failed!", Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Internal server error!", Severity.Error);
+                throw;
+            }
+        }
     }
 
     // Edit Modal
