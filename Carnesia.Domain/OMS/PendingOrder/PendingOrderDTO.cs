@@ -9,6 +9,7 @@ namespace Carnesia.Domain.OMS.PendingOrder
     public class PendingOrderDTO
     {
         public int orderId { get; set; }
+        public bool reviewTaken { get; set; }
         public string orderDate { get; set; }
         public string trnCode { get; set; }
         public string? trackingCode { get; set; }

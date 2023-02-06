@@ -17,6 +17,7 @@ namespace Carnesia.Domain.CMS.ComboProducts
         public decimal regularPrice { get; set; }
         public decimal comboPrice { get; set; }
         public string description { get; set; }
+        public string richDescription { get; set; }
         public string imageUrl { get; set; }
         public bool isApproved { get; set; }
         public string startDate { get; set; }

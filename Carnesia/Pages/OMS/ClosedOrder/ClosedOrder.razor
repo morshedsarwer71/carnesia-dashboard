@@ -101,7 +101,7 @@
 				<MudTd DataLabel="Status">@context.status</MudTd>
 				<MudTd DataLabel="Assign To">@context.assignto</MudTd>
 				<MudTd DataLabel="Action">
-					<MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="OpenFeedbackDialog">Take Rating</MudButton>
+					<MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="() => TakeFeedback(context.trnCode)">Take Rating</MudButton>
 				</MudTd>
 				<MudTd DataLabel="Rating">@context.ratting</MudTd>
 			</RowTemplate>
@@ -280,10 +280,13 @@
 	}
 
 	// Modal
-	private void OpenFeedbackDialog()
+	private async Task TakeFeedback(string TrnCode)
 	{
+		var parameters = new DialogParameters();
+		parameters.Add("TrnCode", TrnCode);
+
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true };
-		DialogService.Show<FeedBackModal>("Feedback Details", options);
+		var dialog = await DialogService.Show<FeedBackModal>("Customer Feedback", parameters, options).Result;
 	}
 
 	// Show Combo Details

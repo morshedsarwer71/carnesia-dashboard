@@ -15,5 +15,8 @@ namespace Carnesia.Application.OMS.Services.ReceiveReturn
 		Task<string> CommitReturn(string orderId);
 		Task<List<PendingReturnDTO>> GetPendingReturns();
 		Task<List<PendingReturnDTO>> GetPendingReturnsByFilter(PendingReturnsFilterDTO filter);
+		Task<PickPackDTO> GetComboProducts(string TrnCode, string BcCode);
+		Task<PickPackDTO> CheckUID(string TrnCode, string BcCode, string UID);
+		Task<bool> SubmitComboReturn(string TrnCode, string BcCode, List<string> uids);
 	}
 }

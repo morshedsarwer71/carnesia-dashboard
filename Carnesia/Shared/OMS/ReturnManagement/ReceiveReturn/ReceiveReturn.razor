@@ -53,18 +53,22 @@
                     <MudText Typo="Typo.h6">Bogo/Combo Products</MudText>
                 </ToolBarContent>
                 <HeaderContent>
-                    <MudTh>SKU</MudTh>
+                    <MudTh>Code</MudTh>
                     <MudTh>Product Name</MudTh>
+                    <MudTh>Type</MudTh>
                     <MudTh>Quantity</MudTh>
-                    <MudTh>Picked Qty</MudTh>
                     <MudTh>Returned Qty</MudTh>
+                    <MudTh>Return</MudTh>
                 </HeaderContent>
                 <RowTemplate>
-                    <MudTd DataLabel="SKU">@context.sku</MudTd>
+                    <MudTd DataLabel="Code">@context.productCode</MudTd>
                     <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                    <MudTd DataLabel="Type">@context.sku</MudTd>
                     <MudTd DataLabel="Quantity">@context.totalQty</MudTd>
-                    <MudTd DataLabel="Picked Qty">@context.totalPickedQty</MudTd>
                     <MudTd DataLabel="Returned Qty">@context.totalReturnQty</MudTd>
+                    <MudTd DataLabel="Return">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenComboReturnModal(context.productCode)">Return</MudButton>
+                    </MudTd>
                 </RowTemplate>
             </MudTable>
         }
@@ -173,9 +177,28 @@
         }
         catch (Exception)
         {
-            
+
             throw;
         }
+    }
+
+    // Open Return Modal
+    private async Task OpenComboReturnModal(string bccode)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("BcCode", bccode);
+        parameters.Add("TrnCode", orderIdShow);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = false, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
+        var dialog = await DialogService.Show<ComboReturnModal>($"Return {bccode}", parameters, options).Result;
+
+        if (!dialog.Cancelled)
+        {
+            Snackbar.Add("Combo returned successfully!", Severity.Success);
+
+            await GetOrderDetails();
+
+    }
     }
 
     // Confirmation Modal

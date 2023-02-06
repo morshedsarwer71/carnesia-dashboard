@@ -9,6 +9,7 @@ namespace Carnesia.Domain.OMS.PickPack
     public class PickPackDTO
     {
         public string message { get; set; }
+        public string image { get; set; }
         public string? instructions { get; set; }
         public string? expiryDate { get; set; }
         public string? expStatus { get; set; }

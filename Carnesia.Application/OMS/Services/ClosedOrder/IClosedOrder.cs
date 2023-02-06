@@ -12,5 +12,6 @@ namespace Carnesia.Application.OMS.Services.ClosedOrder
     {
         Task<List<PendingOrderDTO>> GetClosedOrders(ClosedOrderFilterDTO orderFilter);
         Task<bool> AssignAgent(AssignAgentDTO agent);
+        Task<bool> TakeFeedBack(CustomerFeedbackDTO feedback);
     }
 }

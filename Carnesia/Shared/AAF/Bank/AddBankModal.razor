@@ -1,0 +1,51 @@
+﻿@using Carnesia.Domain.AAF.Bank;
+@inject IBank _bank
+
+<MudDialog>
+	<DialogContent>
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudTextField @bind-Value="FormData.bankName" Label="Bank Name" Immediate="true" Required="true" RequiredError="Bank Name is required!" />
+			<MudTextField @bind-Value="FormData.accountNumber" Label="Account Number" Immediate="true" Required="true" RequiredError="Account Number is required!" />
+			<MudTextField @bind-Value="FormData.contactNumber" Label="Contact Number" Immediate="true" Required="true" RequiredError="Contact Number is required!" />
+			<MudTextField @bind-Value="FormData.bankAddress" Label="Bank Address" Immediate="true" Required="true" RequiredError="Bak Address is required!" />
+			<div class="d-flex justify-end my-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+			</div>
+		</MudForm>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	[Parameter]
+	public BankDTO FormData { get; set; } = new BankDTO();
+
+	// On Page Load
+	protected override async Task OnInitializedAsync()
+	{
+		if (FormData.id > 0)
+		{
+			await GetBank();
+		}
+	}
+
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+
+	// Get Bank
+	private async Task GetBank()
+	{
+		var result = await _bank.GetBank(FormData.id);
+
+		if (result != null)
+		{
+			FormData = result;
+		}
+	}
+
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<BankDTO>(FormData));
+}

@@ -6,14 +6,11 @@
     <MudContainer Fixed="true">
         <MudText Typo="Typo.h3">Order ID: @orderIdShow</MudText>
 
-        @*		<MudGrid Class="justify-center">
-        <MudItem sm="6">
-        <MudSelect @bind-Value="isCombo" Label="Product Type" AnchorOrigin="Origin.BottomCenter">
-        <MudSelectItem Value="0">General Product</MudSelectItem>
-        <MudSelectItem Value="1">Combo</MudSelectItem>
-        </MudSelect>
-        </MudItem>
-        </MudGrid>*@
+        @if (!String.IsNullOrEmpty(Picklist.image))
+        {
+            <MudImage Src="@($"https://localhost:7090/{Picklist.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
+        }
+        
         <MudGrid Class="justify-center">
             <MudItem sm="3">
                 <MudTextField @bind-Value="orderId" Immediate="true" Label="Order ID" OnKeyPress="orderEnter" />

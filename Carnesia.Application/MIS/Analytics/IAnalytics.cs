@@ -10,6 +10,7 @@ namespace Carnesia.Application.MIS.Analytics
 	public interface IAnalytics
 	{
 		Task<AnalyticsDTO> GetAnalyticsByFilter(AnalyticsFilterDTO filter);
+		Task<AnalyticsDTO> GetProductReportByFilter(AnalyticsFilterDTO filter);
 		Task<List<AnalyticsDetailsDTO>> GetwebDetailsByDate(string date);
 	}
 }

@@ -25,8 +25,10 @@ namespace Carnesia.Domain.MIS.Analytics
         public decimal totalDiscount { get; set; }
         public decimal afterDiscount { get; set; }
         public decimal cost { get; set; }
+        public decimal cancellationAmount { get; set; }
         public decimal grosProfit { get; set; }
         public string date { get; set; }
+        public DateTime salesDate { get; set; }
         public string platform { get; set; }
         public DateTime orderDate { get; set; }
     }
@@ -38,7 +40,8 @@ namespace Carnesia.Domain.MIS.Analytics
         public int storeId { get; set; }
         public int brandId { get; set; }
         public int catId { get; set; }
-        public string sku { get; set; }
+		public int supplierId { get; set; }
+		public string sku { get; set; }
         public string productCode { get; set; }
         public string productName { get; set; }
         public int outletId { get; set; }

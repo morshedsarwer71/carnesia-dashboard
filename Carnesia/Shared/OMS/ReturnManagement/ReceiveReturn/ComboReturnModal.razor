@@ -1,0 +1,169 @@
+﻿@using Carnesia.Domain.OMS.PickPack;
+@inject IReceiveReturn _receiveReturn
+@inject ISnackbar Snackbar
+
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <div Style="min-height: 40vh; max-height: 90vh; overflow-y: scroll; padding: 10px;">
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudTextField Label="Scan UID" @bind-Value="uid" Immediate="true" OnKeyPress="AddUid" />
+                </MudItem>
+            </MudGrid>
+
+            <table class="mt-3" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <th class="table-cell">Product Code</th>
+                    <th class="table-cell">SKU</th>
+                    <th class="table-cell">Product Name</th>
+                    <th class="table-cell">Quantity</th>
+                    <th class="table-cell">Scanned</th>
+                </tr>
+                @foreach (var item in Products)
+                {
+                    <tr>
+                        <td class="table-cell">
+                            <p>@item.productCode</p>
+                        </td>
+                        <td class="table-cell">
+                            <p>@item.sku</p>
+                        </td>
+                        <td class="table-cell">@item.productName</td>
+                        <td class="table-cell">@item.totalQty</td>
+                        @*<td class="table-cell">0</td>*@
+                        <td class="table-cell">@item.totalReturnQty</td>
+                    </tr>
+                }
+            </table>
+
+            @if (!String.IsNullOrEmpty(ErrorText))
+            {
+                <div class="mt-5">
+                    <MudText Color="Color.Error" Typo="Typo.body1" Align="Align.Center">@ErrorText</MudText>
+                </div>
+            }
+
+            <div class="d-flex justify-end mt-5">
+                <MudButton Class="mr-1" Variant="Variant.Outlined" Color="Color.Error" OnClick="Cancel">Close</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="ProductData.combos.Sum(x => x.totalQty) == ProductData.combos.Sum(x => x.totalReturnQty)" OnClick="SubmitReturn">Submit</MudButton>
+            </div>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string BcCode { get; set; }
+    [Parameter] public string TrnCode { get; set; }
+
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetProducts();
+    }
+
+    // Error
+    private string ErrorText { get; set; }
+
+    // UID
+    private string uid { get; set; }
+
+    // UIDS
+    private List<string> UIDS = new List<string>();
+
+    // Product Data
+    private PickPackDTO ProductData = new PickPackDTO();
+    private List<pickPackProductsDTO> Products = new List<pickPackProductsDTO>();
+
+    // Get Product
+    private async Task GetProducts()
+    {
+        try
+        {
+            ProductData = await _receiveReturn.GetComboProducts(TrnCode, BcCode);
+
+            if (ProductData.message != "Success")
+            {
+                ErrorText = ProductData.message;
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    // Check UID
+    private async Task AddUid(KeyboardEventArgs e)
+    {
+        ErrorText = String.Empty;
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(uid))
+            {
+                bool isThereTemp = UIDS.Any(x => x == uid);
+
+                if (isThereTemp)
+                {
+                    ErrorText = "UID already scanned for this session!";
+                    return;
+                }
+
+                await CheckUID();
+            }
+        }
+    }
+
+    private async Task CheckUID()
+    {
+        try
+        {
+            var result = await _receiveReturn.CheckUID(TrnCode, BcCode, uid);
+
+            if (result.message != "Success")
+            {
+                ErrorText = result.message;
+                return;
+            }
+
+            UIDS.Add(uid);
+            var product = Products.FirstOrDefault(x => x.productCode == result.instructions);
+
+            product.totalReturnQty += 1;
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    // Submit Combo
+    private async Task SubmitReturn()
+    {
+        try
+        {
+            var result = await _receiveReturn.SubmitComboReturn(TrnCode, BcCode, UIDS);
+
+            if (result == false)
+            {
+                ErrorText = "Failed to submit the return!";
+                return;
+            }
+            Submit();
+        }
+        catch (Exception)
+        {
+            
+            throw;
+        }
+    }
+
+    // Submit Close
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}
