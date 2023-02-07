@@ -1,0 +1,112 @@
+﻿@using Carnesia.Domain.AAF.Receivable.Ecommerce
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudGrid>
+            <MudItem sm="3">
+                <MudSelect T="string" Label="Courier" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("E-Courier")" />
+                    <MudSelectItem Value="@("Pathao")" />
+                    <MudSelectItem Value="@("Paperfly")" />
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <MudDatePicker Label="From Date" @bind-Date="date" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudDatePicker Label="To Date" @bind-Date="date" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField T="string" Label="Last Status Updated On(DR)" Variant="Variant.Text"/>
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect T="string" Label="Receiving Status" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("All")" />
+                    <MudSelectItem Value="@("Received")" />
+                    <MudSelectItem Value="@("Pending")" />
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField T="string" Label="Scan Run Number" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField T="string" Label="Scan Order Id" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField T="string" Label="Scan Tracking Id" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
+        <div class="d-flex justify-end mt-3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+        </div>
+
+        <MudTable RowsPerPage="25" Items="@Elements" MultiSelection="true" @bind-SelectedItems="SelectedItems" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh></MudTh>
+                <MudTh>Order Id</MudTh>
+                <MudTh>Order Date</MudTh>
+                <MudTh>Amount</MudTh>
+                <MudTh>Payment Method</MudTh>
+                <MudTh>Payment Status</MudTh>
+                <MudTh>To Be Collected</MudTh>
+                <MudTh>Receivable</MudTh>
+                <MudTh>Amount Received</MudTh>
+                <MudTh>Customer Name</MudTh>
+                <MudTh>Customer Phone</MudTh>
+                <MudTh>Address</MudTh>
+                <MudTh>Verified On</MudTh>
+                <MudTh>Dispatched On</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Hub</MudTh>
+                <MudTh>Location</MudTh>
+                <MudTh>Run Number</MudTh>
+                <MudTh>Last Updated On</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="">
+                    @*@if (!context.ShowDetails)
+                    {
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.orderId)" />
+                    }
+                    else if (context.ShowDetails)
+                    {
+                            <MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.orderId)" />
+                    }*@
+                </MudTd>
+                <MudTd DataLabel="Order Id">@context.trnCode</MudTd>
+                <MudTd DataLabel="Order Date">@context.orderDate</MudTd>
+                <MudTd DataLabel="Amount">@context.amount</MudTd>
+                <MudTd DataLabel="Payment Method">@context.paymentMethod</MudTd>
+                <MudTd DataLabel="Payment Status">@context.paymentStatus</MudTd>
+                <MudTd DataLabel="To Be Collected">@context.tobeCollected</MudTd>
+                <MudTd DataLabel="Receivable">@context.receivable</MudTd>
+                <MudTd DataLabel="Amount Received">@context.amountReceived</MudTd>
+                <MudTd DataLabel="Customer Name">@context.customerName</MudTd>
+                <MudTd DataLabel="Customer Phone">@context.phoneNumber</MudTd>
+                <MudTd DataLabel="Address">@context.address</MudTd>
+                <MudTd DataLabel="Verified On">@context.verifiedDate</MudTd>
+                <MudTd DataLabel="Dispatched On">@context.dispatchedDate</MudTd>
+                <MudTd DataLabel="Status">@context.status</MudTd>
+                <MudTd DataLabel="Hub">@context.hub</MudTd>
+                <MudTd DataLabel="Location">@context.location</MudTd>
+                <MudTd DataLabel="Run Number">@context.runNumber</MudTd>
+                <MudTd DataLabel="Last Updated On">@context.lastUpdateDate</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    private DateTime? date = DateTime.Today;
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Elements
+    private List<EcommerceListDTO> Elements = new List<EcommerceListDTO>();
+
+    private HashSet<EcommerceListDTO> SelectedItems = new HashSet<EcommerceListDTO>();
+}

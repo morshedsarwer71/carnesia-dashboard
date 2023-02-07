@@ -12,7 +12,11 @@ namespace Carnesia.Application.OMS.Services.ReceiveReturn
 	{
 		Task<PickPackDTO> GetOrderDetails(string orderId);
 		Task<PickPackDTO> ReturnItem(string orderId, string uid, bool returnType);
+		Task<string> CommitReturn(string orderId);
 		Task<List<PendingReturnDTO>> GetPendingReturns();
 		Task<List<PendingReturnDTO>> GetPendingReturnsByFilter(PendingReturnsFilterDTO filter);
+		Task<PickPackDTO> GetComboProducts(string TrnCode, string BcCode);
+		Task<PickPackDTO> CheckUID(string TrnCode, string BcCode, string UID);
+		Task<bool> SubmitComboReturn(string TrnCode, string BcCode, List<string> uids);
 	}
 }

@@ -9,6 +9,7 @@ namespace Carnesia.Domain.OMS.PendingOrder
     public class PendingOrderDTO
     {
         public int orderId { get; set; }
+        public bool reviewTaken { get; set; }
         public string orderDate { get; set; }
         public string trnCode { get; set; }
         public string? trackingCode { get; set; }
@@ -38,7 +39,7 @@ namespace Carnesia.Domain.OMS.PendingOrder
         public string trnCode { get; set; }
         public string customerName { get; set; }
         public string phoneNumber { get; set; }
-        public string area { get; set; }
-        public int statusId { get; set; }
+        public string area { get; set; } = "All";
+		public int statusId { get; set; }
     }
 }

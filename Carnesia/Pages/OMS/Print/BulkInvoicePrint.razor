@@ -59,6 +59,37 @@
 					</tr>
 				}
 			}
+			@if (item.comboItems.Count > 0)
+			{
+				foreach (var comboProduct in item.comboItems)
+				{
+					<tr style="font-size: 10px;">
+						<td class="table-cell">
+							<p>@comboProduct.name</p>
+							<p>Type-@comboProduct.bcType</p>
+							<p>Code-@comboProduct.bcCode</p>
+						</td>
+						<td class="table-cell">@comboProduct.price</td>
+						<td class="table-cell">@comboProduct.quantity</td>
+						@*<td class="table-cell">0</td>*@
+						<td class="table-cell">@comboProduct.totalPrice</td>
+					</tr>
+					foreach (var product in comboProduct.products)
+					{
+						<tr style="font-size: 10px;">
+							<td class="table-cell">
+								<p>@product.productName</p>
+								<p>SKU-@product.sku</p>
+							</td>
+							<td class="table-cell">Under @comboProduct.bcType</td>
+							<td class="table-cell">@product.quantity</td>
+							@*<td class="table-cell">0</td>*@
+							<td class="table-cell">Under @comboProduct.bcType</td>
+						</tr>
+
+					}
+				}
+			}
 		</table>
 
 		<div style="text-align:end; margin-top: 10px;">

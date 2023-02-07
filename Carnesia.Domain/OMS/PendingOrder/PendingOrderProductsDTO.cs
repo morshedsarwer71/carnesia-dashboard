@@ -13,6 +13,7 @@ namespace Carnesia.Domain.OMS.PendingOrder
         public string productName { get; set; }
         public decimal mrp { get; set; }
         public int quantity { get; set; }
+        public int returnedQuantity { get; set; }
         public decimal totalMrp { get; set; }
         public bool showComboProducts { get; set; }
         public bool isCombo { get; set; }

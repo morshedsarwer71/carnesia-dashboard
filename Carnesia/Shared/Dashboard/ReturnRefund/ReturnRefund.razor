@@ -23,16 +23,12 @@
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetPRoduct">Get</MudButton>
             </MudItem>
         </MudGrid>
-        @*<div class="d-flex justify-center my-5">
-        <MudImage Src="https://cdn.pixabay.com/photo/2022/06/29/10/58/fox-7291456_960_720.jpg" Alt="Fox" Style="width: 30%;" />
-        </div>*@
         <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
             <HeaderContent>
                 <MudTh>Product Code</MudTh>
                 <MudTh>Product SKU</MudTh>
                 <MudTh>Product Name</MudTh>
                 <MudTh>Sold Quantity</MudTh>
-                @*<MudTh>Image</MudTh>*@
                 <MudTh>Received</MudTh>
                 <MudTh>Selling Price</MudTh>
                 <MudTh>Return Price</MudTh>
@@ -44,9 +40,6 @@
                 <MudTd DataLabel="Product SKU">@context.sku</MudTd>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
                 <MudTd DataLabel="Sold Quantity">@context.soldQty</MudTd>
-                @*<MudTd DataLabel="Image">
-                <MudImage Src="@($"https://localhost:7090/{context.imageURL}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
-                </MudTd>*@
                 <MudTd DataLabel="Received">@context.soldQty</MudTd>
                 <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
                 <MudTd DataLabel="Return Price">@Math.Round(context.returnPrice, 2)</MudTd>

@@ -1,0 +1,39 @@
+﻿@page "/receivable"
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == Outlet ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Outlet)">@Outlet</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == Ecommerce ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Ecommerce)">@Ecommerce</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == Invoices ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Invoices)">@Invoices</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if (CurrentPage == Outlet)
+{
+    <Carnesia.Shared.AAF.Receivable.Outlet.Outlet/>
+}
+else if (CurrentPage == Ecommerce)
+{
+    <Carnesia.Shared.AAF.Receivable.Ecommerce.Ecommerce/>
+}
+else if (CurrentPage == Invoices)
+{
+    <Carnesia.Shared.AAF.Receivable.Invoice.Invoice/>
+}
+
+@code {
+    private string Outlet = "Outlet";
+    private string Ecommerce = "E-Commerce";
+    private string Invoices = "Invoices";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Outlet";
+
+    // Change Current Page
+    void ChangePage(string pageName)
+    {
+        CurrentPage = pageName;
+    }
+}

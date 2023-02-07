@@ -11,6 +11,7 @@ namespace Carnesia.Application.OMS.Services.AssignOrder
     public interface IAssignOrder
     {
         Task<List<CourierDTO>> GetCouriers();
+        Task<bool> CreateCourier(CourierDTO courier);
         Task<PickPackDTO> AssignCourier(AssignCourierDTO courierData);
     }
 }

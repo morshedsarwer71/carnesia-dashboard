@@ -73,11 +73,9 @@
 				<MudTh>Customer Phone</MudTh>
 				<MudTh>Shipping Address</MudTh>
 				<MudTh>Status</MudTh>
-				@*<MudTh>Hub</MudTh>*@
 				<MudTh>Assign To</MudTh>
 				<MudTh>Action</MudTh>
 				<MudTh>Rating</MudTh>
-				@*<MudTh>Print</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
 				<MudTd DataLabel="">
@@ -101,15 +99,11 @@
 				<MudTd DataLabel="Customer Phone">@context.phoneNumber</MudTd>
 				<MudTd DataLabel="Shipping Address">@context.address</MudTd>
 				<MudTd DataLabel="Status">@context.status</MudTd>
-				@*<MudTd DataLabel="Hub">nanana</MudTd>*@
 				<MudTd DataLabel="Assign To">@context.assignto</MudTd>
 				<MudTd DataLabel="Action">
-					<MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="OpenFeedbackDialog">Take Rating</MudButton>
+					<MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="() => TakeFeedback(context.trnCode)">Take Rating</MudButton>
 				</MudTd>
 				<MudTd DataLabel="Rating">@context.ratting</MudTd>
-				@*<MudTd DataLabel="Print">
-					<MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
-				</MudTd>*@
 			</RowTemplate>
 			<ChildRowContent>
 				@if (context.ShowDetails)
@@ -119,6 +113,7 @@
 							<MudCardContent Class="pa-0">
 								<MudTable Items="@context.products.orderProducts" Context="DetailsContext" Hover="true" Elevation="0" CustomFooter="true">
 									<HeaderContent>
+										<MudTh></MudTh>
 										<MudTh>Product Code</MudTh>
 										<MudTh>SKU</MudTh>
 										<MudTh>Product Name</MudTh>
@@ -127,28 +122,63 @@
 										<MudTh>Amount</MudTh>
 									</HeaderContent>
 									<RowTemplate>
+										<MudTd DataLabel="">
+											@if (!DetailsContext.showComboProducts)
+											{
+												<MudIconButton Disabled="!DetailsContext.isCombo" Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowCombos(DetailsContext.productCode, context.products.orderProducts)" />
+											}
+											else if (DetailsContext.showComboProducts)
+											{
+												<MudIconButton Disabled="!DetailsContext.isCombo" Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowCombos(DetailsContext.productCode, context.products.orderProducts)" />
+											}
+										</MudTd>
 										<MudTd DataLabel="Product Code">@DetailsContext.productCode</MudTd>
 										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
 										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
 										<MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>
 										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
-										<MudTd Style="text-align: right" DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
+										<MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
 									</RowTemplate>
+									<ChildRowContent>
+                                        @if (DetailsContext.showComboProducts)
+                                        {
+                                            <td colspan="7">
+                                                <MudCard Elevation="0">
+                                                    <MudCardContent Class="pa-0">
+                                                        <MudTable Items="@DetailsContext.combosProducts" Context="ComboContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
+                                                            <HeaderContent>
+                                                                <MudTh>Product Code</MudTh>
+                                                                <MudTh>SKU</MudTh>
+                                                                <MudTh>Product Name</MudTh>
+                                                                <MudTh>Quantity</MudTh>
+                                                            </HeaderContent>
+                                                            <RowTemplate>
+                                                                <MudTd DataLabel="Product Code">@ComboContext.productCode</MudTd>
+                                                                <MudTd DataLabel="SKU">@ComboContext.sku</MudTd>
+                                                                <MudTd DataLabel="Product Name">@ComboContext.productName</MudTd>
+                                                                <MudTd DataLabel="Quantity">@ComboContext.quantity</MudTd>
+                                                            </RowTemplate>
+                                                        </MudTable>
+                                                    </MudCardContent>
+                                                </MudCard>
+                                            </td>
+                                        }
+                                    </ChildRowContent>
 									<FooterContent>
 										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
+											<MudTd colspan="6" Style="text-align: end;">Total:</MudTd>
 											<MudTd colspan="1" Style="text-align: end;">@context.products.total</MudTd>
 										</MudTFootRow>
 										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end;">Discount:</MudTd>
+											<MudTd colspan="6" Style="text-align: end;">Discount:</MudTd>
 											<MudTd colspan="1" Style="text-align: end;">@context.products.discount</MudTd>
 										</MudTFootRow>
 										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end;">Shipping Price:</MudTd>
+											<MudTd colspan="6" Style="text-align: end;">Shipping Price:</MudTd>
 											<MudTd colspan="1" Style="text-align: end;">@context.products.shippingPrice</MudTd>
 										</MudTFootRow>
 										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+											<MudTd colspan="6" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
 											<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@context.products.grandTotal</MudTd>
 										</MudTFootRow>
 									</FooterContent>
@@ -190,6 +220,10 @@
 		try
 		{
 			Elements = await _closedOrder.GetClosedOrders(OrderFilter);
+			foreach (var item in Elements)
+			{
+				item.products.orderProducts.AddRange(item.products.orderCombos);
+			}
 			Loading = false;
 		}
 		catch(Exception e)
@@ -246,9 +280,19 @@
 	}
 
 	// Modal
-	private void OpenFeedbackDialog()
+	private async Task TakeFeedback(string TrnCode)
 	{
+		var parameters = new DialogParameters();
+		parameters.Add("TrnCode", TrnCode);
+
 		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true };
-		DialogService.Show<FeedBackModal>("Feedback Details", options);
+		var dialog = await DialogService.Show<FeedBackModal>("Customer Feedback", parameters, options).Result;
+	}
+
+	// Show Combo Details
+	private void ShowCombos(string productCode, List<PendingOrderProductsDTO> products)
+	{
+		PendingOrderProductsDTO tmpElements = products.First(f => f.productCode == productCode);
+		tmpElements.showComboProducts = !tmpElements.showComboProducts;
 	}
 }

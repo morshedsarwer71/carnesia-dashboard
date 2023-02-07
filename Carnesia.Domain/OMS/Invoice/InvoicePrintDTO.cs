@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Carnesia.Domain.Dashboard.GenerateBill;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,8 @@ namespace Carnesia.Domain.OMS.Invoice
         public decimal shippingPrice { get; set; }
         public decimal duePayment { get; set; }
         public List<InvoicePrintProductsDTO> orderProducts { get; set; }
-    }
+		public List<GenerateBillComboDTO> comboItems { get; set; }
+	}
 
     public class InvoicePrintProductsDTO
     {

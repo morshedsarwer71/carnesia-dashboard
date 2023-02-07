@@ -344,7 +344,7 @@
             if (!String.IsNullOrEmpty(uid))
             {
 
-                if (uid.Contains("CO") || uid.Contains("BO"))
+                if (uid.Contains("CO") || uid.Contains("BO") || uid.Contains("CL"))
                 {
                     await OpenComboModal(uid);
                     subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);

@@ -59,6 +59,7 @@ using Carnesia.Application.Dashboard.ReturnRefund;
 using Carnesia.Application.Dashboard.CustomerProfile;
 using Carnesia.Application.Dashboard.Dashboard;
 using Carnesia.Application.MIS.Analytics;
+using Carnesia.Application.AAF.Bank;
 using Carnesia.Application.Report;
 using Carnesia.Application.Profile;
 
@@ -79,15 +80,9 @@ builder.Services.AddMudServices();
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7090/api/") });
-
-//meesagehandler
-
 builder.Services.AddHttpClient("RetailSuite", client =>
 {
-    //client.BaseAddress = new Uri("https://localhost:7090/api/");
-    client.BaseAddress = new Uri("https://localhost:7090/api/");
+    client.BaseAddress = new Uri("https://cscpguide.com/api/");
     client.Timeout = TimeSpan.FromMinutes(10);
 }).AddHttpMessageHandler<AuthorizationMessageHandler>();
 
@@ -163,5 +158,6 @@ builder.Services.AddScoped<IReport, ReportService>();
 builder.Services.AddScoped<IAnalytics, AnalyticsService>();
 builder.Services.AddScoped<IProjects, ProjectsService>();
 builder.Services.AddScoped<IProfile, ProfileService>();
+builder.Services.AddScoped<IBank, BankService>();
 builder.Services.AddSyncfusionBlazor(option => { option.IgnoreScriptIsolation = true; });
 await builder.Build().RunAsync();

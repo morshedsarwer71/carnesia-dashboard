@@ -48,18 +48,10 @@
 					<MudSelectItem Value="@("Inside Dhaka")" />
 					<MudSelectItem Value="@("Dhaka Suburb")" />
 					<MudSelectItem Value="@("Outside Dhaka")" />
+					<MudSelectItem Value="@("Inside CTG City")" />
+					<MudSelectItem Value="@("Outside CTG City")" />
 				</MudSelect>
 			</MudItem>
-			@*<MudItem lg="3" md="6">
-				<MudAutocomplete T="string" Label="Zone" ResetValueOnEmptyText="true" />
-			</MudItem>*@
-			@*<MudItem lg="3" md="6">
-				<MudSelect T="string" Label="Order type" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("Regular")" />
-					<MudSelectItem Value="@("Achomka")" />
-					<MudSelectItem Value="@("Big Sale")" />
-				</MudSelect>
-			</MudItem>*@
 			<MudItem lg="3" md="6">
 				<MudSelect @bind-Value="Filter.source" Label="Order Source" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="@("FB")" />
@@ -90,10 +82,6 @@
 					<MudSelectItem Value="13" >CA Assigned</MudSelectItem>
 					<MudSelectItem Value="15" >Cancelled</MudSelectItem>
 					<MudSelectItem Value="29" >Verified</MudSelectItem>
-					@*<MudSelectItem Value="@("Awaiting Pickup")" >Awaiting Pickup</MudSelectItem>*@
-					@*<MudSelectItem Value="@("Packed")" >Packed</MudSelectItem>*@
-					@*<MudSelectItem Value="@("Awaiting Dispatch")" >Awaiting Dispatch</MudSelectItem>*@
-					@*<MudSelectItem Value="@("Dispatched")" >Dispatched</MudSelectItem>*@
 					<MudSelectItem Value="23" >Delivered</MudSelectItem>
 					<MudSelectItem Value="16" >Returned</MudSelectItem>
 				</MudSelect>
@@ -184,6 +172,7 @@
 										<MudTh>SKU</MudTh>
 										<MudTh>Product Name</MudTh>
 										<MudTh>Quantity</MudTh>
+										<MudTh>Returned Quantity</MudTh>
 										<MudTh>Price</MudTh>
 										<MudTh>Amount</MudTh>
 									</HeaderContent>
@@ -192,24 +181,25 @@
 										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
 										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
 										<MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>
+										<MudTd DataLabel="Returned Quantity">@DetailsContext.returnedQuantity</MudTd>
 										<MudTd DataLabel="Price">@DetailsContext.mrp</MudTd>
 										<MudTd DataLabel="Amount">@DetailsContext.totalMrp</MudTd>
 									</RowTemplate>
 									<FooterContent>
 										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end;">Total:</MudTd>
+											<MudTd colspan="6" Style="text-align: end;">Total:</MudTd>
 											<MudTd colspan="1" Style="text-align: end;">@context.products.total</MudTd>
 										</MudTFootRow>
 										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end;">Discount:</MudTd>
+											<MudTd colspan="6" Style="text-align: end;">Discount:</MudTd>
 											<MudTd colspan="1" Style="text-align: end;">@context.products.discount</MudTd>
 										</MudTFootRow>
 										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end;">Shipping Price:</MudTd>
+											<MudTd colspan="6" Style="text-align: end;">Shipping Price:</MudTd>
 											<MudTd colspan="1" Style="text-align: end;">@context.products.shippingPrice</MudTd>
 										</MudTFootRow>
 										<MudTFootRow>
-											<MudTd colspan="4" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
+											<MudTd colspan="6" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
 											<MudTd colspan="1" Style="text-align: end; font-weight: 600;">@context.products.grandTotal</MudTd>
 										</MudTFootRow>
 									</FooterContent>

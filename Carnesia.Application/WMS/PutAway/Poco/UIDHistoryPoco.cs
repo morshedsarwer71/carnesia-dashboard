@@ -12,6 +12,7 @@ namespace Carnesia.Application.WMS.PutAway.Poco
         public string sku { get; set; }
         public string productCode { get; set; }
         public string productName { get; set; }
+        public string image { get; set; }
         public string? expDate { get; set; }
         public int age { get; set; }
         public IEnumerable<TrackUID> trackUIDs { get; set; }

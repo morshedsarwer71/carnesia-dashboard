@@ -1,6 +1,7 @@
 ﻿@layout PrintLayout
 @page "/invoice-print-web/{trncode}"
 
+@using Carnesia.Domain.Dashboard.GenerateBill;
 @using Carnesia.Domain.OMS.Invoice
 @inject HttpClient _httpclient
 @inject ISnackbar Snackbar
@@ -57,6 +58,37 @@
 				</tr>
 			}
 		}
+		@if (Combos.Count > 0)
+		{
+			foreach (var comboProduct in Combos)
+			{
+				<tr style="font-size: 10px;">
+					<td class="table-cell">
+						<p>@comboProduct.name</p>
+						<p>Type-@comboProduct.bcType</p>
+						<p>Code-@comboProduct.bcCode</p>
+					</td>
+					<td class="table-cell">@comboProduct.price</td>
+					<td class="table-cell">@comboProduct.quantity</td>
+					@*<td class="table-cell">0</td>*@
+					<td class="table-cell">@comboProduct.totalPrice</td>
+				</tr>
+				foreach (var product in comboProduct.products)
+				{
+					<tr style="font-size: 10px;">
+						<td class="table-cell">
+							<p>@product.productName</p>
+							<p>SKU-@product.sku</p>
+						</td>
+						<td class="table-cell">Under @comboProduct.bcType</td>
+						<td class="table-cell">@product.quantity</td>
+						@*<td class="table-cell">0</td>*@
+						<td class="table-cell">Under @comboProduct.bcType</td>
+					</tr>
+
+				}
+			}
+		}
 	</table>
 
 	<div style="text-align:end; margin-top: 10px;">
@@ -89,6 +121,7 @@ intact.</h5>
 	{
 		await GetOrder();
 		Items = Invoice.orderProducts;
+		Combos = Invoice.comboItems;
 	}
 
 
@@ -97,6 +130,7 @@ intact.</h5>
 
 	// Items
 	private List<InvoicePrintProductsDTO> Items = new List<InvoicePrintProductsDTO>();
+	private List<GenerateBillComboDTO> Combos = new List<GenerateBillComboDTO>();
 
 	// Get Order 
 	private async Task GetOrder()

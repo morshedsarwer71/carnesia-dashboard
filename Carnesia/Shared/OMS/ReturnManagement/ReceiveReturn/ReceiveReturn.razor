@@ -5,162 +5,206 @@
 @inject IDialogService DialogService
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
-	<MudContainer Fixed="true">
+    <MudContainer Fixed="true">
 
-		<MudText Typo="Typo.h3">Order ID: @orderIdShow</MudText>
+        <MudText Typo="Typo.h3">Order ID: @orderIdShow</MudText>
 
-		<MudGrid Class="justify-center">
-			<MudItem sm="4">
-				<MudTextField @bind-Value="orderId" Label="Scan Order ID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddOrder" />
-			</MudItem>
-			<MudItem sm="4">
-				<MudTextField @bind-Value="uid" Label="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddUID" />
-			</MudItem>
-			@*<MudItem sm="8">
-				<MudRadioGroup @bind-SelectedOption="ReturnType" Class="mt-3">
-					<MudRadio Option="false" Color="Color.Primary" Dense="true">Received</MudRadio>
-					<MudRadio Option="true" Color="Color.Primary" Dense="true">Damaged</MudRadio>
-				</MudRadioGroup>
-			</MudItem>*@
-			<MudItem sm="8">
-				<div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
-		</div>
-			</MudItem>
-		</MudGrid>
+        <MudGrid Class="justify-center">
+            <MudItem sm="4">
+                <MudTextField @bind-Value="orderId" Label="Scan Order ID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddOrder" />
+            </MudItem>
+            <MudItem sm="4">
+                <MudTextField @bind-Value="uid" Label="Scan UID" Immediate="true" Variant="Variant.Text" OnKeyPress="AddUID" />
+            </MudItem>
+            <MudItem sm="8">
+                <div class="d-flex justify-end mt-5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+                </div>
+            </MudItem>
+        </MudGrid>
 
-		
+        @if (Elements.Count > 0)
+        {
+            <MudTable Class="mt-5" Items="@Elements" Hover="true">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">General Products</MudText>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>SKU</MudTh>
+                    <MudTh>Product Name</MudTh>
+                    <MudTh>Quantity</MudTh>
+                    <MudTh>Picked Qty</MudTh>
+                    <MudTh>Returned Qty</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="SKU">@context.sku</MudTd>
+                    <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                    <MudTd DataLabel="Quantity">@context.totalQty</MudTd>
+                    <MudTd DataLabel="Picked Qty">@context.totalPickedQty</MudTd>
+                    <MudTd DataLabel="Returned Qty">@context.totalReturnQty</MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
 
+        @if (Combos.Count > 0)
+        {
+            <MudTable Class="mt-5" Items="@Combos" Hover="true">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Bogo/Combo Products</MudText>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>Code</MudTh>
+                    <MudTh>Product Name</MudTh>
+                    <MudTh>Type</MudTh>
+                    <MudTh>Quantity</MudTh>
+                    <MudTh>Returned Qty</MudTh>
+                    <MudTh>Return</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Code">@context.productCode</MudTd>
+                    <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                    <MudTd DataLabel="Type">@context.sku</MudTd>
+                    <MudTd DataLabel="Quantity">@context.totalQty</MudTd>
+                    <MudTd DataLabel="Returned Qty">@context.totalReturnQty</MudTd>
+                    <MudTd DataLabel="Return">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => OpenComboReturnModal(context.productCode)">Return</MudButton>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
 
-		@*<MudText Typo="Typo.h6" Class="mt-5">Order Info.</MudText>
-			<MudText>Order ID: 123456</MudText>
-			<MudText>Order Date: 12-Feb-2022 2:00:00 PM</MudText>
-			<MudText>Packing Date: 13-Feb-2022 12:00:00 PM</MudText>
-			<MudText>Dispatched Date: 13-Feb-2022 6:00:00 PM</MudText>
-			<MudText>SLA: Breached</MudText>*@
-
-		<MudTable Class="mt-5" Items="@Elements" Hover="true">
-			<HeaderContent>
-				<MudTh>SKU</MudTh>
-				<MudTh>Product Name</MudTh>
-				<MudTh>Quantity</MudTh>
-				@*<MudTh>Image</MudTh>*@
-				<MudTh>Picked Qty</MudTh>
-				<MudTh>Returned Qty</MudTh>
-				@*<MudTh>Received</MudTh>
-					<MudTh>Damaged</MudTh>
-					<MudTh>Missing</MudTh>*@
-			</HeaderContent>
-			<RowTemplate>
-				<MudTd DataLabel="SKU">@context.sku</MudTd>
-				<MudTd DataLabel="Product Name">@context.productName</MudTd>
-				<MudTd DataLabel="Quantity">@context.totalQty</MudTd>
-				@*<MudTd DataLabel="Image">
-					<MudImage Style="width: 150px;" Src="@context.Image" Alt="Product Image" Elevation="25" Class="rounded-lg" />
-					</MudTd>*@
-				<MudTd DataLabel="Picked Qty">@context.totalPickedQty</MudTd>
-				<MudTd DataLabel="Returned Qty">@context.totalReturnQty</MudTd>
-				@*<MudTd DataLabel="Received">@context.Received</MudTd>
-					<MudTd DataLabel="Damaged">@context.Damaged</MudTd>
-					<MudTd DataLabel="Missing">@context.Missing</MudTd>*@
-			</RowTemplate>
-		</MudTable>
-
-		<div class="d-flex justify-end mt-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
-		</div>
-	</MudContainer>
+        <div class="d-flex justify-end mt-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CommitReturn" Disabled="Elements.Count <= 0 && Combos.Count <= 0">Submit</MudButton>
+        </div>
+    </MudContainer>
 </MudPaper>
 
 @code {
-	// Order Id, UID
-	private string orderId { get; set; }
-	private string orderIdShow { get; set; }
-	private string uid { get; set; }
+    // Order Id, UID
+    private string orderId { get; set; }
+    private string orderIdShow { get; set; }
+    private string uid { get; set; }
 
-	// Return Type
-	private bool ReturnType { get; set; } = false;
+    // Return Type
+    private bool ReturnType { get; set; } = false;
 
-	// Table Content
-	private List<pickPackProductsDTO> Elements = new List<pickPackProductsDTO>();
+    // Table Content
+    private List<pickPackProductsDTO> Elements = new List<pickPackProductsDTO>();
+    private List<pickPackProductsDTO> Combos = new List<pickPackProductsDTO>();
 
-	// Press Enter
-	private async Task AddOrder(KeyboardEventArgs e)
-	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
-		{
-			if (!String.IsNullOrEmpty(orderId))
-			{
-				orderIdShow = orderId;
-				orderId = String.Empty;
+    // Press Enter
+    private async Task AddOrder(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(orderId))
+            {
+                orderIdShow = orderId;
+                orderId = String.Empty;
 
-				await GetOrderDetails();
-			}
-		}
-	}
+                await GetOrderDetails();
+            }
+        }
+    }
 
-	private async Task AddUID(KeyboardEventArgs e)
-	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
-		{
-			if (uid.Length == 15 && !String.IsNullOrEmpty(orderIdShow))
-			{
-				await ReceiveItem();
-			}
-		}
-	}
+    private async Task AddUID(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (uid.Length == 15 && !String.IsNullOrEmpty(orderIdShow))
+            {
+                await ReceiveItem();
+            }
+        }
+    }
 
-	// Get Order Details
-	private async Task GetOrderDetails()
-	{
-		try
-		{
-			var result = await _receiveReturn.GetOrderDetails(orderIdShow);
+    // Get Order Details
+    private async Task GetOrderDetails()
+    {
+        try
+        {
+            var result = await _receiveReturn.GetOrderDetails(orderIdShow);
 
-			if (result.message != "Success")
-			{
-				Snackbar.Add(result.message, Severity.Error);
-				return;
-			}
+            if (result.message != "Success")
+            {
+                Snackbar.Add(result.message, Severity.Error);
+                return;
+            }
 
-			Elements = result.pickPacks;
-			Snackbar.Add(result.message, Severity.Success);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-			Snackbar.Add("Internal server error!", Severity.Error);
-		}
-	}
+            Elements = result.pickPacks;
+            Combos = result.combos;
+            Snackbar.Add(result.message, Severity.Success);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal server error!", Severity.Error);
+        }
+    }
 
-	// Receive Item
-	private async Task ReceiveItem()
-	{
-		try
-		{
-			var result = await _receiveReturn.ReturnItem(orderIdShow, uid, ReturnType);
+    // Receive Item
+    private async Task ReceiveItem()
+    {
+        try
+        {
+            var result = await _receiveReturn.ReturnItem(orderIdShow, uid, ReturnType);
 
-			if (result.message != "Success")
-			{
-				Snackbar.Add(result.message, Severity.Error);
-				return;
-			}
+            if (result.message != "Success")
+            {
+                Snackbar.Add(result.message, Severity.Error);
+                return;
+            }
 
-			Elements = result.pickPacks;
-			Snackbar.Add(result.message, Severity.Success);
-			uid = String.Empty;
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-			Snackbar.Add("Internal server error!", Severity.Error);
-		}
-	}
+            Elements = result.pickPacks;
+            Snackbar.Add(result.message, Severity.Success);
+            uid = String.Empty;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal server error!", Severity.Error);
+        }
+    }
 
-	// Confirmation Modal
-	private void OpenDialog()
-	{
-		var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, };
-		DialogService.Show<ConfirmationModal>("Confirmation", options);
-	}
+    // Submit Return
+    private async Task CommitReturn()
+    {
+        try
+        {
+            var result = await _receiveReturn.CommitReturn(orderIdShow);
+
+            Snackbar.Add(result, Severity.Success);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    // Open Return Modal
+    private async Task OpenComboReturnModal(string bccode)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("BcCode", bccode);
+        parameters.Add("TrnCode", orderIdShow);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = false, MaxWidth = MaxWidth.Large, DisableBackdropClick = true };
+        var dialog = await DialogService.Show<ComboReturnModal>($"Return {bccode}", parameters, options).Result;
+
+        if (!dialog.Cancelled)
+        {
+            Snackbar.Add("Combo returned successfully!", Severity.Success);
+
+            await GetOrderDetails();
+
+    }
+    }
+
+    // Confirmation Modal
+    private void OpenDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, };
+        DialogService.Show<ConfirmationModal>("Confirmation", options);
+    }
 }

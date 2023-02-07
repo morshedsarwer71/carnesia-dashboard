@@ -17,7 +17,53 @@ namespace Carnesia.Application.OMS.Services.ReceiveReturn
 		{
 			_httpClient = httpClient;
 		}
-		public async Task<PickPackDTO> GetOrderDetails(string orderId)
+
+        public async Task<PickPackDTO> CheckUID(string TrnCode, string BcCode, string UID)
+        {
+			try
+			{
+				var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/checkcomboreturnuid/{TrnCode}/{UID}/{BcCode}");
+
+				return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+        }
+
+        public async Task<string> CommitReturn(string orderId)
+        {
+			try
+			{
+				var result = await _httpClient.GetStringAsync($"Oms/commitreturn/{orderId}");
+
+				return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+        }
+
+        public async Task<PickPackDTO> GetComboProducts(string TrnCode, string BcCode)
+        {
+			try
+			{
+				var result = await _httpClient.GetFromJsonAsync<PickPackDTO>($"Oms/returnproductscombo/{TrnCode}/{BcCode}");
+
+				return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+        }
+
+        public async Task<PickPackDTO> GetOrderDetails(string orderId)
 		{
 			try
 			{
@@ -75,5 +121,20 @@ namespace Carnesia.Application.OMS.Services.ReceiveReturn
 				throw;
 			}
 		}
-	}
+
+        public async Task<bool> SubmitComboReturn(string TrnCode, string BcCode, List<string> uids)
+        {
+			try
+			{
+				var result = await _httpClient.PostAsJsonAsync($"Oms/commitcomboreturn/{TrnCode}/{BcCode}", uids);
+
+				return result.IsSuccessStatusCode;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+        }
+    }
 }

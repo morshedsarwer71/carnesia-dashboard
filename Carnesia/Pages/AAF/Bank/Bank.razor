@@ -1,0 +1,175 @@
+﻿@page "/bank"
+@using Carnesia.Domain.AAF.Bank;
+@using Carnesia.Domain.Common.POCO;
+@using Carnesia.Shared.AAF.Bank;
+@inject IBank _bank
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <div class="d-flex justify-end mb-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenBankModal">Add Bank</MudButton>
+        </div>
+
+        <MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Filter="new Func<BankDTO,bool>(FilterFuncInitial)">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Bank Name</MudTh>
+                <MudTh>Account Number</MudTh>
+                <MudTh>Contact Number</MudTh>
+                <MudTh>Address</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Bank Name">@context.bankName</MudTd>
+                <MudTd DataLabel="Account Number">@context.accountNumber</MudTd>
+                <MudTd DataLabel="Contact Number">@context.contactNumber</MudTd>
+                <MudTd DataLabel="Address">@context.bankAddress</MudTd>
+                <MudTd DataLabel="Action">
+                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="() => OpenUpdateModal(context.id)">
+                        Edit
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBanks();
+    }
+
+    // Elements
+    private List<BankDTO> Elements = new List<BankDTO>();
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Search
+    private bool FilterFuncInitial(BankDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+    // Get All Banks
+    private async Task GetBanks()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _bank.GetBanks();
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    // Add Bank Modal
+    private async Task OpenBankModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new BankDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddBankModal>("Add New Bank", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            BankDTO newBank = dialog.Data as BankDTO;
+
+            try
+            {
+                var result = await _bank.CraeteBank(newBank);
+
+                if (result)
+                {
+                    Snackbar.Add("New Bank Created Successfully!", Severity.Success);
+                    await GetBanks();
+                    return;
+                }
+
+                Snackbar.Add("New Bank Creation Failed!", Severity.Error);
+            }
+            catch (Exception e)
+            {
+                Snackbar.Add("Internal server error!", Severity.Error);
+                Console.WriteLine(e.Message);
+            }
+        }
+    }
+
+    // Update Bank
+    private async Task OpenUpdateModal(int id)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new BankDTO()
+            {
+                id = id
+            });
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<AddBankModal>("Update Bank", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            BankDTO newBank = dialog.Data as BankDTO;
+
+            try
+            {
+                var result = await _bank.UpdateBank(newBank);
+                if (result)
+                {
+                    Snackbar.Add("Bank Updated Successfully!", Severity.Success);
+                    await GetBanks();
+                    return;
+                }
+
+                Snackbar.Add("Bank Update Failed!", Severity.Error);
+            }
+            catch (Exception e)
+            {
+                Snackbar.Add("Internal server error!", Severity.Error);
+                Console.WriteLine(e.Message);
+            }
+        }
+    }
+
+    private bool FilterFunc(BankDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.bankName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (element.bankAddress.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (element.accountNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (element.contactNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

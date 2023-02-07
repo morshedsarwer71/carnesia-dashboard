@@ -30,22 +30,23 @@ namespace Carnesia.Domain.OMS.OrderDetails
 
     public class OrderDetailsFilterDTO
     {
-        public string trnCode { get; set; }
+        public string? trnCode { get; set; }
         public DateTime? fromOrderDate { get; set; }
         public DateTime? toOrderDate { get; set; }
         public DateTime? fromPackingDate { get; set; }
         public DateTime? toPackingDate { get; set; }
         public DateTime? fromDispatchDate { get; set; }
         public DateTime? toDispatchDate { get; set; }
-        public string sortBy { get; set; }
-        public string source { get; set; }
-        public string customerName { get; set; }
-        public string sku { get; set; }
-        public string productName { get; set; }
-        public string productCode { get; set; }
-        public string shippingArea { get; set; }
-        public string phoneNumber { get; set; }
+        public string? sortBy { get; set; }
+        public string? source { get; set; }
+        public string? customerName { get; set; }
+        public string? sku { get; set; }
+        public string? productName { get; set; }
+        public string? productCode { get; set; }
+        public string? shippingArea { get; set; }
+        public string? phoneNumber { get; set; }
         public int courierId { get; set; }
         public int statusId { get; set; }
+        public int zoneId { get; set; }
     }
 }

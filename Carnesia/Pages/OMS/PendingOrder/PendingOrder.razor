@@ -20,6 +20,7 @@
             </MudItem>
             <MudItem md="3">
                 <MudSelect @bind-Value="Filter.area" Label="Shipphing Area" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("All")" />
                     <MudSelectItem Value="@("Inside Dhaka")" />
                     <MudSelectItem Value="@("Dhaka Suburb")" />
                     <MudSelectItem Value="@("Outside Dhaka")" />
@@ -27,14 +28,6 @@
                     <MudSelectItem Value="@("Outside CTG City")" />
                 </MudSelect>
             </MudItem>
-            @*<MudItem md="3">
-            <MudSelect @bind-Value="Filter.i" Label="Select Agent" AnchorOrigin="Origin.BottomCenter">
-            @foreach (var item in Agents)
-            {
-            <MudSelectItem Value="item.id">@item.name</MudSelectItem>
-            }
-            </MudSelect>
-            </MudItem>*@
             <MudItem xs="12" Class="d-flex justify-end">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetOrdersByFilter">Filter</MudButton>
             </MudItem>
@@ -69,7 +62,6 @@
                 <MudTh>Source</MudTh>
                 <MudTh>Assign To</MudTh>
                 <MudTh>Action</MudTh>
-                @*<MudTh>Print</MudTh>*@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="">
@@ -98,9 +90,6 @@
                     <MudButton Variant="Variant.Text" Color="Color.Success" OnClick="() => OpenVerifyDialog(context.orderId)">Verify</MudButton>
                     <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="() => OpenCancelDialog(context.orderId)">Cancel</MudButton>
                 </MudTd>
-                @*<MudTd DataLabel="Print">
-                <MudButton Variant="Variant.Filled" Color="Color.Info">Invoice</MudButton>
-                </MudTd>*@
             </RowTemplate>
             <ChildRowContent>
                 @if (context.ShowDetails)
@@ -236,6 +225,10 @@
         try
         {
             Elements = await _pendingOrder.GetPendingOrdersByFilter(Filter);
+            foreach (var item in Elements)
+            {
+                item.products.orderProducts.AddRange(item.products.orderCombos);
+            }
             tableLoading = false;
         }
         catch (Exception e)

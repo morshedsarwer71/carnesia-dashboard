@@ -1,54 +1,50 @@
-﻿<MudDialog>
+﻿@using Carnesia.Domain.OMS.ClosedOrder;
+@inject IClosedOrder _closedOrder
+
+
+<MudDialog>
 	<DialogContent>
 		<div Style="max-height: 90vh; overflow-y: scroll">
-			<MudGrid Class="border mb-5">
-				<MudItem xs="12" Class="border-b-2">
-					<MudGrid>
-						<MudItem xs="8">Delivery:</MudItem>
-						<MudItem xs="8">2</MudItem>
-					</MudGrid>
-				</MudItem>
-				<MudItem xs="12" Class="border-b-2">
-					<MudGrid>
-						<MudItem xs="8">Packaging:</MudItem>
-						<MudItem xs="8">3</MudItem>
-					</MudGrid>
-				</MudItem>
-				<MudItem xs="12" Class="border-b-2">
-					<MudGrid>
-						<MudItem xs="8">Product Quality:</MudItem>
-						<MudItem xs="8">3</MudItem>
-					</MudGrid>
-				</MudItem>
-				<MudItem xs="12" Class="border-b-2">
-					<MudGrid>
-						<MudItem xs="8">Customer Support:</MudItem>
-						<MudItem xs="8">2</MudItem>
-					</MudGrid>
-				</MudItem>
+			<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+				<MudNumericField Min="1" @bind-Value="FormData.delivery" Label="Delivery" Immediate="true" Required="true" RequiredError="Delivery is required!" />
+				<MudNumericField Min="1" @bind-Value="FormData.packaging" Label="Packaging" Immediate="true" Required="true" RequiredError="Packaging is required!" />
+				<MudNumericField Min="1" @bind-Value="FormData.productQuality" Label="Product Quality" Immediate="true" Required="true" RequiredError="Product Quality is required!" />
+				<MudNumericField Min="1" @bind-Value="FormData.customerSupport" Label="Customer Support" Immediate="true" Required="true" RequiredError="Customer Support is required!" />
+				<MudTextField @bind-Value="FormData.feedback" Lines="5" Label="FeedBack" Immediate="true" Required="true" RequiredError="FeedBack required!" />
 
-				<MudItem xs="12">
-					<MudGrid Style="font-weight: 600;">
-						<MudItem xs="8">Average:</MudItem>
-						<MudItem xs="8" Style="color: red;">2.5</MudItem>
-					</MudGrid>
-				</MudItem>
-			</MudGrid>
-
-			<MudGrid Class="border mb-5">
-				<MudItem xs="5">Customer Feedback:  </MudItem>
-				<MudItem xs="7">
-					Overall service and quality is good, customer is very much satisfied.
-				</MudItem>
-			</MudGrid>
-
-			<div class="d-flex justify-end">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
-			</div>
+				<div class="d-flex justify-end my-5">
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Submit</MudButton>
+				</div>
+			</MudForm>
 		</div>
 	</DialogContent>
 </MudDialog>
 
 @code {
 	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	[Parameter]
+	public string TrnCode { get; set; }
+	private CustomerFeedbackDTO FormData = new CustomerFeedbackDTO();
+
+	// Create New Feedback
+	private async Task NewFeedBack()
+	{
+		try
+		{
+			FormData.average = (FormData.delivery + FormData.packaging + FormData.productQuality + FormData.customerSupport) / 4;
+			FormData.trnCode = TrnCode;
+			var result = await _closedOrder.TakeFeedBack(FormData);
+		}
+		catch (Exception)
+		{
+			
+			throw;
+		}
+	}
+
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
 }

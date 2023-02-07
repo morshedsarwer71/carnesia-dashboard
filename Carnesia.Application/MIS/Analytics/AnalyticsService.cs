@@ -34,6 +34,24 @@ namespace Carnesia.Application.MIS.Analytics
 			}
 		}
 
+		public async Task<AnalyticsDTO> GetProductReportByFilter(AnalyticsFilterDTO filter)
+		{
+			try
+			{
+				var result = await _httpClient.PostAsJsonAsync("Oms/productreport", filter);
+
+				var json = await result.Content.ReadAsStringAsync();
+				var data = JsonConvert.DeserializeObject<AnalyticsDTO>(json);
+
+				return data;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
 		public async Task<List<AnalyticsDetailsDTO>> GetwebDetailsByDate(string date)
 		{
 			try

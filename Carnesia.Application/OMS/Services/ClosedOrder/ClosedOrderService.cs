@@ -49,5 +49,20 @@ namespace Carnesia.Application.OMS.Services.ClosedOrder
                 throw;
             }
         }
-    }
+
+		public async Task<bool> TakeFeedBack(CustomerFeedbackDTO feedback)
+		{
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("Oms/customerfeedback", feedback);
+
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+		}
+	}
 }
