@@ -8,16 +8,13 @@ namespace Carnesia.Domain.WMS.AllWarehouseStock
 {
     public class AllwarehouseStockDTO
     {
-        public string SKU { get; set; }
-        public string ProductName { get; set; }
         public string productCode { get; set; }
-        public decimal COGS { get; set; }
-        public decimal MRP { get; set; }
-        public decimal SellingPrice { get; set; }
-        public int CentralWH { get; set; }
-        public int DhanmondiWH { get; set; }
-        public int MirpurWH { get; set; }
-        public int TotalQTY { get; set; }
-        public decimal TotalCOGS { get; set; }
+        public string sku { get; set; }
+        public string productName { get; set; }
+        public decimal mrp { get; set; }
+        public decimal? sellingPrice { get; set; }
+        public int totalPhysicalQty { get; set; }
+        public int? totalVirualQty { get; set; }
+        public string storeName { get; set; }
     }
 }

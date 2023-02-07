@@ -41,6 +41,8 @@ using Carnesia.Application.WMS.StockTransfer.CreateTo;
 using Carnesia.Application.WMS.StockTransfer.ManageTo;
 using Carnesia.Application.WMS.BulkStockUpload;
 using Carnesia.Application.WMS.Projects;
+using Carnesia.Application.WMS.Report.WarehouseStock;
+using Carnesia.Application.WMS.Report.POReport;
 using Carnesia.Application.OMS.Services.Zones;
 using Carnesia.Application.OMS.Services.PendingOrder;
 using Carnesia.Application.OMS.Services.ClosedOrder;
@@ -82,7 +84,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddHttpClient("RetailSuite", client =>
 {
-    client.BaseAddress = new Uri("https://cscpguide.com/api/");
+    client.BaseAddress = new Uri("https://localhost:7090/api/");
     client.Timeout = TimeSpan.FromMinutes(10);
 }).AddHttpMessageHandler<AuthorizationMessageHandler>();
 
@@ -159,5 +161,7 @@ builder.Services.AddScoped<IAnalytics, AnalyticsService>();
 builder.Services.AddScoped<IProjects, ProjectsService>();
 builder.Services.AddScoped<IProfile, ProfileService>();
 builder.Services.AddScoped<IBank, BankService>();
+builder.Services.AddScoped<IWarehouseStock, WarehouseStockService>();
+builder.Services.AddScoped<IPOReport, POReportService>();
 builder.Services.AddSyncfusionBlazor(option => { option.IgnoreScriptIsolation = true; });
 await builder.Build().RunAsync();

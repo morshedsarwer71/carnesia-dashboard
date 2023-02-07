@@ -1,0 +1,219 @@
+﻿@page "/procurement-report"
+@using Carnesia.Domain.CMS.Brand;
+@using Carnesia.Domain.CMS.Category;
+@using Carnesia.Domain.Common.POCO;
+@using Carnesia.Domain.MIS.Analytics;
+@using Carnesia.Domain.MIS.ProcurmentReport;
+@using Carnesia.Domain.Vendor.Models;
+@using Carnesia.Domain.WMS.Store.Models;
+@using Carnesia.Shared.MIS.ProcurmentReport;
+@inject IAnalytics _analytics
+@inject IStore _store
+@inject IBrand _brand
+@inject ICategory _category
+@inject IVendor _vendor
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudGrid>
+            <MudItem sm="3">
+                <MudDatePicker @bind-Date="Filter.fromDate" Label="Sales From Date" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudDatePicker @bind-Date="Filter.toDate" Label="Sales To Date" />
+            </MudItem>
+            <MudItem lg="3">
+                <MudSelect @bind-Value="Filter.catId" Label="Category" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Category</MudSelectItem>
+                    @foreach (var item in Categories)
+                    {
+                        <MudSelectItem Value="item.chilId">@item.childCatName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem lg="3">
+                <MudSelect @bind-Value="Filter.brandId" Label="Brand" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Brand</MudSelectItem>
+                    @foreach (var item in Brands)
+                    {
+                        <MudSelectItem Value="item.brandId">@item.name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem lg="3">
+                <MudTextField @bind-Value="Filter.sku" Label="SKU" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem lg="3">
+                <MudTextField @bind-Value="Filter.productCode" Label="Product Code" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem lg="3">
+                <MudTextField @bind-Value="Filter.productName" Label="Product Name" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem lg="3">
+                <MudNumericField @bind-Value="Filter.soldQty" Label="Sold Qty" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem lg="3">
+                <MudSelect @bind-Value="Filter.soldQtyCondition" Label="Sold Condition" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("Greater Than")"/>
+                    <MudSelectItem Value="@("Less Than")"/>
+                </MudSelect>
+            </MudItem>
+            <MudItem lg="3">
+                <MudNumericField @bind-Value="Filter.currentStock" Label="Current Stock Qty" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem lg="3">
+                <MudSelect @bind-Value="Filter.currentStockCondition" Label="Current Stock Condition" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@("Greater Than")" />
+                    <MudSelectItem Value="@("Less Than")" />
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+        <div class="my-5 d-flex justify-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetProcurmentByFilter">Filter</MudButton>
+        </div>
+
+        @if (DisableButton)
+        {
+            <div class="d-flex justify-center">
+                <img style="width: 120px" src="shipping.gif" alt="loading..." />
+            </div>
+        }
+
+        <MudTable Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true" Loading="DisableButton" LoadingProgressColor="Color.Info" >
+            <HeaderContent>
+                <MudTh>Product Code</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>Stock</MudTh>
+                <MudTh>Sold Qty</MudTh>
+                <MudTh>Inbound Qty</MudTh>
+                <MudTh>Per Day Avg. Sale</MudTh>
+                <MudTh>Suggested Qty</MudTh>
+                <MudTh>Last Price</MudTh>
+                <MudTh>Min Price</MudTh>
+                <MudTh>Max Price</MudTh>
+                <MudTh>PO Details</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="SKU">@context.sku</MudTd>
+                <MudTd DataLabel="Stock">@context.stock</MudTd>
+                <MudTd DataLabel="Sold Qty">@context.soldQty</MudTd>
+                <MudTd DataLabel="Inbound Qty">@context.inboundedQty</MudTd>
+                <MudTd DataLabel="Per Day Avg. Sale">@context.perdayAvgSales</MudTd>
+                <MudTd DataLabel="Suggested Qty">@context.suggestgedQty</MudTd>
+                <MudTd DataLabel="Last Price">@context.lastPrice</MudTd>
+                <MudTd DataLabel="Min Price">@context.minPrice</MudTd>
+                <MudTd DataLabel="Max Price">@context.maxPrice</MudTd>
+                <MudTd DataLabel="PO Details">
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => ShowPODetails(context.productCode)">View</MudButton>
+                </MudTd>
+                
+            </RowTemplate>
+        </MudTable>
+
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+        await GetBrands();
+        await GetCategories();
+        await GetVendors();
+    }
+
+    // Disable Button
+    private bool DisableButton { get; set; }
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Elements
+    private List<ProcurmentReportDTO> Elements = new List<ProcurmentReportDTO>();
+
+    // Filter
+    private ProcurmentReportFilterDTO Filter = new ProcurmentReportFilterDTO();
+
+    // Get Procurment
+    private async Task GetProcurmentByFilter()
+    {
+        if (Filter.fromDate.HasValue == false || Filter.toDate.HasValue == false)
+        {
+            Snackbar.Add("Form Date and To Date are required!", Severity.Error);
+            return;
+        }
+
+
+        DisableButton = true;
+        try
+        {
+            Elements = await _analytics.GetProcurmentByFilter(Filter);
+            DisableButton = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            DisableButton = false;
+        }
+    }
+
+    // Stores
+    private List<StoreDTO> Stores = new List<StoreDTO>();
+    private IEnumerable<VendorDTO> Vendors = new List<VendorDTO>();
+
+    // Get Stores
+    private async Task GetStores()
+    {
+        Stores = await _store.GetStoresAsync();
+    }
+
+    // Get Vendors
+    private async Task GetVendors()
+    {
+        Vendors = await _vendor.GetVendorsAsync();
+
+        Console.WriteLine(Vendors.FirstOrDefault().name);
+    }
+
+    // Brands
+    private List<BrandDTO> Brands = new List<BrandDTO>();
+
+    // Get Brands
+    private async Task GetBrands()
+    {
+        Brands = await _brand.GetBrands();
+    }
+
+    // Categories
+    private List<OnlyChildCategoryDTO> Categories = new List<OnlyChildCategoryDTO>();
+
+    // Get Categories
+    private async Task GetCategories()
+    {
+        Categories = await _category.GetOnlyChildCategory();
+    }
+
+    // Show Web Details
+    private void ShowPODetails(string productCode)
+    {
+
+        var modalParam = new ProcurmentReportPoDetailsParamDTO
+            {
+                FromDate = Filter.fromDate,
+                ToDate = Filter.toDate,
+                productCode = productCode
+            };
+        var parameters = new DialogParameters();
+        parameters.Add("Param", modalParam);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, MaxWidth = MaxWidth.Large };
+        DialogService.Show<ProcurmentReportPoDetailsModal>("PO Details", parameters, options);
+    }
+
+}

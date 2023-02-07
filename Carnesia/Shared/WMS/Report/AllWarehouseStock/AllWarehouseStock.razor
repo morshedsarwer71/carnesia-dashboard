@@ -1,76 +1,171 @@
-﻿@using Carnesia.Domain.WMS.AllWarehouseStock
+﻿@using Carnesia.Domain.CMS.Brand;
+@using Carnesia.Domain.CMS.Category;
+@using Carnesia.Domain.Vendor.Models;
+@using Carnesia.Domain.WMS.AllWarehouseStock
+@using Carnesia.Domain.WMS.Store.Models;
+@inject IStore _store
+@inject IBrand _brand
+@inject ICategory _category
+@inject IVendor _vendor
+@inject IWarehouseStock _warehouse
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
-	<MudContainer Fixed="true">
-		<MudGrid Class="justify-center align-baseline mb-5">
-			<MudItem lg="3" md="6">
-				<MudAutocomplete T="string" Label="Warehouse" ResetValueOnEmptyText="true"/>
-			</MudItem>
-			<MudItem lg="3" md="6">
-				<MudTextField T="string" Label="SKU" Variant="Variant.Text"/>
-			</MudItem>
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudGrid Class="justify-center align-baseline mb-5">
             <MudItem lg="3" md="6">
-				<MudTextField T="string" Label="Word" Variant="Variant.Text"/>
-			</MudItem>
-			<MudItem lg="3" md="6">
-				<MudAutocomplete T="string" Label="Category" ResetValueOnEmptyText="true"/>
-			</MudItem>
-            <MudItem lg="3" md="6">
-				<MudTextField T="string" Label="Product Code" Variant="Variant.Text"/>
-			</MudItem>
-            <MudItem lg="3" md="6">
-				<MudAutocomplete T="string" Label="Brand" ResetValueOnEmptyText="true"/>
-			</MudItem>
-             <MudItem lg="3" md="6">
-                <MudSelect T="string" Label="Supplier" AnchorOrigin="Origin.BottomCenter">
-
+                <MudSelect @bind-Value="Filter.storeId" Label="Outlet" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Outlet</MudSelectItem>
+                    @foreach (var item in Stores)
+                    {
+                        <MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+                    }
                 </MudSelect>
             </MudItem>
-			<MudItem lg="3" md="6">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
-			</MudItem>
-            
-		</MudGrid>
+            <MudItem lg="3" md="6">
+                <MudTextField @bind-Value="Filter.sku" Label="SKU" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem lg="3" md="6">
+                <MudTextField @bind-Value="Filter.productName" Label="Product Name" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem lg="3" md="6">
+                <MudSelect @bind-Value="Filter.catId" Label="Category" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Category</MudSelectItem>
+                    @foreach (var item in Categories)
+                    {
+                        <MudSelectItem Value="item.chilId">@item.childCatName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem lg="3" md="6">
+                <MudTextField @bind-Value="Filter.productCode" Label="Product Code" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem lg="3" md="6">
+                <MudSelect @bind-Value="Filter.brandId" Label="Brand" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Brand</MudSelectItem>
+                    @foreach (var item in Brands)
+                    {
+                        <MudSelectItem Value="item.brandId">@item.name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem lg="3" md="6">
+                <MudSelect @bind-Value="Filter.vendorId" Label="Supplier" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Supplier</MudSelectItem>
+                    @foreach (var item in Vendors)
+                    {
+                        <MudSelectItem Value="item.vendorId">@item.name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem lg="3" md="6">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReport">Filter</MudButton>
+            </MudItem>
+        </MudGrid>
 
-        <div class="d-flex justify-end mb-5">
+        @*<div class="d-flex justify-end mb-5">
             <MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
-        </div>
+        </div>*@
 
-		<MudTable RowsPerPage="25" Items="@Elements" Hover="true">
+        <MudTable RowsPerPage="25" Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
-                <MudTh>Product Code</MudTh>
                 <MudTh>SKU</MudTh>
                 <MudTh>Product Name</MudTh>
-                <MudTh>COGS</MudTh>
+                <MudTh>Product Code</MudTh>
                 <MudTh>MRP</MudTh>
                 <MudTh>Selling Price</MudTh>
-                <MudTh>Central Warehouse-W101</MudTh>
-                <MudTh>Dhanmondi-W102</MudTh>
-                <MudTh>Mirpur-W103</MudTh>
-                <MudTh>Total Qty</MudTh>
-                <MudTh>Total COGS</MudTh>
+                <MudTh>Total Physical Qty</MudTh>
+                <MudTh>Total Virual Qty</MudTh>
+                <MudTh>Store Name</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="SKU">@context.productCode</MudTd>
-                <MudTd DataLabel="SKU">@context.SKU</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="COGS">@context.COGS</MudTd>
-                <MudTd DataLabel="MRP">@context.MRP</MudTd>
-                <MudTd DataLabel="Selling Price">@context.SellingPrice</MudTd>
-                <MudTd DataLabel="Central Warehouse-W101">@context.CentralWH</MudTd>
-                <MudTd DataLabel="Dhanmondi-W102">@context.DhanmondiWH</MudTd>
-                <MudTd DataLabel="Mirpur-W103">@context.MirpurWH</MudTd>
-                <MudTd DataLabel="Total Qty">@context.TotalQTY</MudTd>
-                <MudTd DataLabel="Total COGS">@context.TotalCOGS</MudTd>
+                <MudTd DataLabel="SKU">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="MRP">@context.mrp</MudTd>
+                <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
+                <MudTd DataLabel="Total Physical Qty">@context.totalPhysicalQty</MudTd>
+                <MudTd DataLabel="Total Virual Qty">@context.totalVirualQty</MudTd>
+                <MudTd DataLabel="Store Name">@context.storeName</MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />
             </PagerContent>
         </MudTable>
-	</MudContainer>
+    </MudContainer>
 </MudPaper>
 
 @code {
-	// Table Content
-	private IEnumerable<AllwarehouseStockDTO> Elements = new List<AllwarehouseStockDTO>();
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+        await GetBrands();
+        await GetCategories();
+        await GetVendors();
+    }
+
+    //Loading
+    private bool Loading { get; set; }
+
+    // Table Content
+    private List<AllwarehouseStockDTO> Elements = new List<AllwarehouseStockDTO>();
+
+    // Filter
+    private AllWarehouseStockFilterDTO Filter = new AllWarehouseStockFilterDTO();
+
+    // Get Report
+    private async Task GetReport()
+    {
+        Loading = true;
+        try
+        {
+            var result = await _warehouse.GetWarehouseStock(Filter);
+
+            Elements.AddRange(result);
+            Loading = false;
+            Filter.previous += 25;
+
+        }
+        catch (Exception e)
+        {
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    // Stores
+    private List<StoreDTO> Stores = new List<StoreDTO>();
+    private IEnumerable<VendorDTO> Vendors = new List<VendorDTO>();
+
+    // Get Stores
+    private async Task GetStores()
+    {
+        Stores = await _store.GetStoresAsync();
+    }
+
+    // Get Vendors
+    private async Task GetVendors()
+    {
+        Vendors = await _vendor.GetVendorsAsync();
+
+        Console.WriteLine(Vendors.FirstOrDefault().name);
+    }
+
+    // Brands
+    private List<BrandDTO> Brands = new List<BrandDTO>();
+
+    // Get Brands
+    private async Task GetBrands()
+    {
+        Brands = await _brand.GetBrands();
+    }
+
+    // Categories
+    private List<OnlyChildCategoryDTO> Categories = new List<OnlyChildCategoryDTO>();
+
+    // Get Categories
+    private async Task GetCategories()
+    {
+        Categories = await _category.GetOnlyChildCategory();
+    }
 }

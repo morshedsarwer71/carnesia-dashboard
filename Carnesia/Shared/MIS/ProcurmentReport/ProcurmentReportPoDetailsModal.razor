@@ -1,0 +1,57 @@
+﻿@using Carnesia.Domain.MIS.ProcurmentReport;
+@inject IAnalytics _analytics
+
+<MudDialog DisableSidePadding="true">
+	<DialogContent>
+		<div Style="max-height: 90vh; overflow-y: scroll">
+			<MudTable Items="@Elements" Dense="true" Hover="true" Bordered="true" Striped="true" CustomFooter="true" Loading="Loading" LoadingProgressColor="Color.Info">
+				<HeaderContent>
+					<MudTh>PO Date</MudTh>
+					<MudTh>Supplier Name</MudTh>
+					<MudTh>Last Price</MudTh>
+					<MudTh>Received Qty</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="PO Date">@context.poDate</MudTd>
+					<MudTd DataLabel="Supplier Name">@context.supplierName</MudTd>
+					<MudTd DataLabel="Last Price">@context.lastPrice</MudTd>
+					<MudTd DataLabel="Received Qty">@context.receivedQty</MudTd>
+				</RowTemplate>
+			</MudTable>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	[Parameter]
+	public ProcurmentReportPoDetailsParamDTO Param { get; set; } = new ProcurmentReportPoDetailsParamDTO();
+
+	// Loading
+	private bool Loading { get; set; } = true;
+
+	// Table Content
+	private List<ProcurmentReportPoDetailsDTO> Elements = new List<ProcurmentReportPoDetailsDTO>();
+
+	// Modal On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetData();
+	}
+
+	//Get Data
+	private async Task GetData()
+	{
+		try
+		{
+			Elements = await _analytics.GetProcurmentByFilter(Param);
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+}

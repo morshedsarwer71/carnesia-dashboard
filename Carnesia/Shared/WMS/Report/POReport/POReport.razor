@@ -1,56 +1,71 @@
-﻿@using Carnesia.Domain.WMS.POReport
+﻿@using Carnesia.Domain.Vendor.Models;
+@using Carnesia.Domain.WMS.POReport
+@using Carnesia.Domain.WMS.Store.Models;
+@inject IVendor _vendor
+@inject IStore _store
+@inject IPOReport _report
+@inject ISnackbar Snackbar
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
     <MudContainer Fixed="true">
-        <MudGrid Class="justify-center align-baseline mb-5">
+        <MudGrid Class="mb-5">
             <MudItem lg="3" md="6">
-                <MudAutocomplete T="string" Label="Warehouse" ResetValueOnEmptyText="true" />
+                <MudSelect @bind-Value="Filter.storeId" Label="Outlet" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Outlet</MudSelectItem>
+                    @foreach (var item in Stores)
+                    {
+                        <MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+                    }
+                </MudSelect>
             </MudItem>
-            <MudItem lg="3" md="6">
+            @*<MudItem lg="3" md="6">
                 <MudTextField T="string" Label="PO ID" Variant="Variant.Text" />
+            </MudItem>*@
+            <MudItem lg="3" md="6">
+                <MudDatePicker @bind-Date="Filter.poFromDate" Label="PO From Date" />
             </MudItem>
             <MudItem lg="3" md="6">
-                <MudDatePicker Label="PO From Date" />
-            </MudItem>
-            <MudItem lg="3" md="6">
-                <MudDatePicker Label="PO To Date" />
+                <MudDatePicker @bind-Date="Filter.poToDate" Label="PO To Date" />
             </MudItem>
 
             <MudItem lg="3" md="6">
-                <MudDatePicker Label="Receiving From Date" />
+                <MudDatePicker @bind-Date="Filter.recvFromDate" Label="Receiving From Date" />
             </MudItem>
             <MudItem lg="3" md="6">
-                <MudDatePicker Label="Receiving To Date" />
+                <MudDatePicker @bind-Date="Filter.recvToDate" Label="Receiving To Date" />
             </MudItem>
             <MudItem lg="3" md="6">
-                <MudTextField T="string" Label="SKU" Variant="Variant.Text" />
+                <MudTextField @bind-Value="Filter.sku" Label="SKU" Variant="Variant.Text" />
             </MudItem>
             <MudItem lg="3" md="6">
-                <MudTextField T="string" Label="Product Code" Variant="Variant.Text" />
+                <MudTextField @bind-Value="Filter.productCode" Label="Product Code" Variant="Variant.Text" />
             </MudItem>
             <MudItem lg="3" md="6">
-                <MudTextField T="string" Label="Word" Variant="Variant.Text" />
+                <MudTextField @bind-Value="Filter.productName" Label="Product Name" Variant="Variant.Text" />
             </MudItem>
             <MudItem lg="3" md="6">
-                <MudSelect T="string" Label="Supplier" AnchorOrigin="Origin.BottomCenter">
-
+                <MudSelect @bind-Value="Filter.vendorId" Label="Supplier" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Supplier</MudSelectItem>
+                    @foreach (var item in Vendors)
+                    {
+                        <MudSelectItem Value="item.vendorId">@item.name</MudSelectItem>
+                    }
                 </MudSelect>
             </MudItem>
         </MudGrid>
 
         <div class="my-5 d-flex justify-end">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReport">Filter</MudButton>
         </div>
 
-        <div class="d-flex justify-end mb-5">
+        @*<div class="d-flex justify-end mb-5">
             <MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
-        </div>
+        </div>*@
 
-        <MudTable RowsPerPage="25" Items="@Elements" Hover="true">
+        <MudTable RowsPerPage="25" Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh>Creation Date</MudTh>
                 <MudTh>Supplier</MudTh>
-                <MudTh>PO ID</MudTh>
                 <MudTh>Receiving Warehouse</MudTh>
                 <MudTh>SKU</MudTh>
                 <MudTh>Product Code</MudTh>
@@ -58,30 +73,23 @@
                 <MudTh>Lifting Price</MudTh>
                 <MudTh>PO Qty</MudTh>
                 <MudTh>Receiving Qty</MudTh>
-                <MudTh>Received Value</MudTh>
                 <MudTh>Not Arrived</MudTh>
                 <MudTh>UID Generated</MudTh>
-                <MudTh>UID Generate Left</MudTh>
                 <MudTh>Inscan Complete</MudTh>
-                <MudTh>Inscan Left</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Creation Date">@context.CreatedAt</MudTd>
-                <MudTd DataLabel="Supplier">@context.SupplierName</MudTd>
-                <MudTd DataLabel="PO ID">@context.POID</MudTd>
-                <MudTd DataLabel="Receiving Warehouse">@context.ReceivingWH</MudTd>
-                <MudTd DataLabel="SKU">@context.SKU</MudTd>
+                <MudTd DataLabel="Creation Date">@context.creationDate</MudTd>
+                <MudTd DataLabel="Supplier">@context.vendorName</MudTd>
+                <MudTd DataLabel="Receiving Warehouse">@context.recvWarehouse</MudTd>
+                <MudTd DataLabel="SKU">@context.sku</MudTd>
                 <MudTd DataLabel="Product Code">@context.productCode</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="Lifting Price">@context.LiftingPrice</MudTd>
-                <MudTd DataLabel="PO Qty">@context.POQTY</MudTd>
-                <MudTd DataLabel="Receiving Qty">@context.ReceivingQTY</MudTd>
-                <MudTd DataLabel="Received Value">@context.ReceivedValue</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
+                <MudTd DataLabel="PO Qty">@context.poQty</MudTd>
+                <MudTd DataLabel="Receiving Qty">@context.recvPoQty</MudTd>
                 <MudTd DataLabel="Not Arrived">@context.notArrived</MudTd>
-                <MudTd DataLabel="UID Generated">@context.uidGenerated</MudTd>
-                <MudTd DataLabel="UID Generate Left">@context.uidGenerateLeft</MudTd>
-                <MudTd DataLabel="Inscan Complete">@context.inscanComplete</MudTd>
-                <MudTd DataLabel="Inscan Left">@context.inscanLeft</MudTd>
+                <MudTd DataLabel="UID Generated">@context.uidgenerated</MudTd>
+                <MudTd DataLabel="Inscan Complete">@context.inScanComplete</MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />
@@ -91,6 +99,62 @@
 </MudPaper>
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+        await GetVendors();
+    }
+
     // Table Content
-    private IEnumerable<POReportDTO> Elements = new List<POReportDTO>();
+    private List<POReportDTO> Elements = new List<POReportDTO>();
+
+    // Filter 
+    private POReportFilterDTO Filter = new POReportFilterDTO();
+
+    //Loading
+    private bool Loading { get; set; }
+
+    // Get Report
+    private async Task GetReport()
+    {
+        if (Filter.poFromDate.HasValue == false || Filter.poToDate.HasValue == false)
+        {
+            Snackbar.Add("PO Form Date and To Date are required!", Severity.Error);
+            return;
+        }
+        Loading = true;
+        try
+        {
+            var result = await _report.GetPoReport(Filter);
+
+            Elements.AddRange(result);
+            Loading = false;
+            Filter.previous += 25;
+
+        }
+        catch (Exception e)
+        {
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    // Stores
+    private List<StoreDTO> Stores = new List<StoreDTO>();
+    private IEnumerable<VendorDTO> Vendors = new List<VendorDTO>();
+
+    // Get Stores
+    private async Task GetStores()
+    {
+        Stores = await _store.GetStoresAsync();
+    }
+
+    // Get Vendors
+    private async Task GetVendors()
+    {
+        Vendors = await _vendor.GetVendorsAsync();
+
+        Console.WriteLine(Vendors.FirstOrDefault().name);
+    }
 }
