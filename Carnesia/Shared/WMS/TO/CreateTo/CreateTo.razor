@@ -27,6 +27,11 @@
 				</MudSelect>
 			</MudItem>
 		</MudGrid>
+		<MudGrid Class="justify-center">
+			<MudItem xs="12" sm="12" md="6">
+				<MudTextField @bind-Value="reasone" Label="Reasone"/>
+			</MudItem>
+		</MudGrid>
 	</MudContainer>
 </MudPaper>
 
@@ -168,6 +173,9 @@
 	private int DestinationID { get; set; }
 	private int SourceID { get; set; }
 
+	// Reasone
+	private string reasone { get; set; }
+
 	// Input Class
 	public CreateToInputPoco createToInput = new CreateToInputPoco();
 
@@ -255,7 +263,7 @@
 	private async Task CreateNewTo(List<CreateToProductPoco> products)
 	{
 		DisableSubmit = true;
-		var toDetails = new CreateStockTransferPoco { fromStoreId = SourceID, toStoreId = DestinationID, totalSKUQty = products.Count };
+		var toDetails = new CreateStockTransferPoco { fromStoreId = SourceID, toStoreId = DestinationID, totalSKUQty = products.Count, reasone = reasone };
 		newTo.createStockTransferDTO = toDetails;
 		newTo.transferProductDTOs = products;
 		try

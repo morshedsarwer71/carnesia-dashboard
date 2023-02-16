@@ -5,6 +5,7 @@
 @inject IDialogService DialogService
 @inject IPurchaseOrder _order
 @inject IVendor _vendor
+@inject IJSRuntime IJS
 
 <MudPaper Class="py-16 px-3 ma-2" Elevation="1">
 	<MudContainer Fixed="true">
@@ -34,6 +35,7 @@
 
 		<MudTable RowsPerPage="25" Class="mt-10" Items="@poList" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
 			<HeaderContent>
+				<MudTh></MudTh>
 				<MudTh>Date</MudTh>
 				<MudTh>PO ID</MudTh>
 				<MudTh>Supplier</MudTh>
@@ -41,9 +43,20 @@
 				<MudTh>Amount</MudTh>
 				<MudTh>Status</MudTh>
 				<MudTh>Status Updated On</MudTh>
-				<MudTh>Action</MudTh>
+				<MudTh>Print</MudTh>
+				@*<MudTh>Action</MudTh>*@
 			</HeaderContent>
 			<RowTemplate>
+				<MudTd DataLabel="">
+					@if (!context.show)
+					{
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.poCode)" />
+					}
+					else if (context.show)
+					{
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.poCode)" />
+					}
+				</MudTd>
 				<MudTd DataLabel="Date">@context.orderDate</MudTd>
 				<MudTd DataLabel="PO Id">@context.poCode</MudTd>
 				<MudTd DataLabel="Supplier">@context.vendorName</MudTd>
@@ -51,11 +64,43 @@
 				<MudTd DataLabel="Amount">@context.totalAmount</MudTd>
 				<MudTd DataLabel="Status">@context.poStatus</MudTd>
 				<MudTd DataLabel="Status Updated On">@context.statusUpdateDate</MudTd>
-				<MudTd DataLabel="Action">
+				<MudTd DataLabel="Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GoToPrint(context.poCode)">Print</MudButton>
+				</MudTd>
+				@*<MudTd DataLabel="Action">
 					<MudIconButton Icon="@Icons.Filled.RemoveRedEye" Color="Color.Warning" aria-label="View Details" OnClick="() => ViewDetailsModal(context.poCode)" />
 					<MudIconButton Icon="@Icons.Filled.Edit" Color="Color.Success" aria-label="Edit" OnClick="() => OpenStatusDialog(context.poCode)" />
-				</MudTd>
+				</MudTd>*@
 			</RowTemplate>
+			<ChildRowContent>
+				@if (context.show)
+				{
+					<td colspan="8">
+						<MudCard Elevation="0">
+							<MudCardContent Class="pa-0">
+								<MudTable Items="@context.products" Context="DetailsContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
+									<HeaderContent>
+										<MudTh>Product Code</MudTh>
+										<MudTh>SKU</MudTh>
+										<MudTh>Product Name</MudTh>
+										<MudTh>PO Quantity</MudTh>
+										<MudTh>Lifting Price</MudTh>
+										<MudTh>Total Price</MudTh>
+									</HeaderContent>
+									<RowTemplate>
+										<MudTd DataLabel="Product Code">@DetailsContext.productCode</MudTd>
+										<MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
+										<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
+										<MudTd DataLabel="PO Quantity">@DetailsContext.poQuantity</MudTd>
+										<MudTd DataLabel="Lifting Price">@DetailsContext.liftingPrice</MudTd>
+										<MudTd DataLabel="Total Price">@DetailsContext.TotalPrice</MudTd>
+									</RowTemplate>
+								</MudTable>
+							</MudCardContent>
+						</MudCard>
+					</td>
+				}
+			</ChildRowContent>
 			<PagerContent>
 				<MudTablePager />
 			</PagerContent>
@@ -159,6 +204,17 @@
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth=true, CloseButton=true, MaxWidth=MaxWidth.Large };
         DialogService.Show<POListDetails>("", parameters,options);
     }
-	
 
+	// Show Details
+	private void ShowBtnPress(string pocode)
+	{
+		POListPoco tmpElements = poList.First(f => f.poCode == pocode);
+		tmpElements.show = !tmpElements.show;
+	}
+	
+	// Go To Print
+	private async Task GoToPrint(string poCode)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/polist-details-print/{poCode}", "_blank" });
+	}
 }

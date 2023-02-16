@@ -1,0 +1,65 @@
+﻿@page "/order-track"
+@using Carnesia.Domain.OMS.OrderTrack;
+@inject IPendingOrder _pending
+@inject ISnackbar Snackbar
+
+<MudPaper Class="ma-2 mx-3 my-16">
+    <MudContainer Fixed="true">
+        <MudGrid Class="justify-center mb-3">
+            <MudItem sm="3">
+                <MudTextField @bind-Value="OrderId" Label="Order Id"  />
+            </MudItem>
+            <MudItem sm="3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetHistory" Disabled="String.IsNullOrEmpty(OrderId)">Get</MudButton>
+            </MudItem>
+        </MudGrid>
+
+        @if (!String.IsNullOrEmpty(Elements.trnCode))
+        {
+            <MudText Typo="Typo.h3">Order ID: @Elements.trnCode</MudText>
+            <MudText Typo="Typo.h4">Customer Name: @Elements.customerName</MudText>
+            <MudText Typo="Typo.h4">Order Date: @Elements.orderDate</MudText>
+        }
+
+        <MudTable Items="@Elements.statuses" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>Status</MudTh>
+                <MudTh>Updated By</MudTh>
+                <MudTh>Updated On</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Status">@context.status</MudTd>
+                <MudTd DataLabel="Updated By">@context.updatedBy</MudTd>
+                <MudTd DataLabel="Updated On">@context.updatedOn</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Order Id
+    private string OrderId { get; set; }
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Content
+    private OrderTrackDTO Elements = new OrderTrackDTO();
+
+    // Get History
+    private async Task GetHistory()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _pending.GetOrderTrack(OrderId);
+            Loading = false;
+            Snackbar.Add(Elements.message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal Server Error!", Severity.Error);
+        }
+    }
+}

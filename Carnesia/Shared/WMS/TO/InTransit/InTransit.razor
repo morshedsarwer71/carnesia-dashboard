@@ -1,23 +1,26 @@
 ﻿@using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.WMS.AssignCarrier;
 @using Carnesia.Domain.WMS.InTransit
+@inject IManageTo _manageTo
+
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="3">
-				<MudTextField T="string" Label="Scan TO" Variant="Variant.Text"/>
+				<MudTextField @bind-Value="Filter.toCode" Label="Scan TO" Variant="Variant.Text"/>
 			</MudItem>
 			<MudItem md="3">
-				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("Delivered")" />
-					<MudSelectItem Value="@("Failed")" />
-					<MudSelectItem Value="@("Cancelled")" />
-					<MudSelectItem Value="@("Lost")" />
+				<MudSelect @bind-Value="Filter.status" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0" >All</MudSelectItem>
+					<MudSelectItem Value="28" >In Delivery</MudSelectItem>
+					<MudSelectItem Value="23" >Delivered</MudSelectItem>
+					@*<MudSelectItem Value="@("Lost")" />*@
 					
 				</MudSelect>
 			</MudItem>
 			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetCarriers">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -32,13 +35,13 @@
                 <MudTh>Status Updated on</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Created on">@context.CreationData</MudTd>
-                <MudTd DataLabel="TO ID">@context.TOID</MudTd>
-                <MudTd DataLabel="Source Warehouse">@context.SourceWH</MudTd>
-                <MudTd DataLabel="Destination Warehouse">@context.DestinationWH</MudTd>
-                <MudTd DataLabel="Attemted by">@context.AttemtedBy</MudTd>
-                <MudTd DataLabel="Status">@context.Status</MudTd>
-                <MudTd DataLabel="Status Updated on">@context.StatusUpdateDate</MudTd>
+                <MudTd DataLabel="Created on">@context.createdOn</MudTd>
+                <MudTd DataLabel="TO ID">@context.toCode</MudTd>
+                <MudTd DataLabel="Source Warehouse">@context.sourceWarehouse</MudTd>
+                <MudTd DataLabel="Destination Warehouse">@context.destinationWarehouse</MudTd>
+                <MudTd DataLabel="Attemted by">@context.attemtedBy</MudTd>
+                <MudTd DataLabel="Status">@context.status</MudTd>
+                <MudTd DataLabel="Status Updated on">@context.statusUpdatedOn</MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />
@@ -55,9 +58,32 @@
 </MudPaper>
 
 @code {
-	// Table Customization
-	private TableCommon tableCommon = new TableCommon();
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
 
-	// Table Content
-	private IEnumerable<InTransitDTO> Elements = new List<InTransitDTO>();
+    // Loading
+    private bool Loading { get; set; }
+
+    // Table Content
+    private List<AssignCarrierDTO> Elements = new List<AssignCarrierDTO>();
+
+    // Filter
+    private AssignCarrierFilterDTO Filter = new AssignCarrierFilterDTO();
+
+    // Get Carriers
+    private async Task GetCarriers()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _manageTo.GetCarriers(Filter);
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
 }

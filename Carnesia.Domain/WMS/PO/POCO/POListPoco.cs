@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Carnesia.Domain.WMS.PO.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,7 @@ namespace Carnesia.Domain.WMS.PO.POCO
         public decimal totalAmount { get; set; }
         public string poStatus { get; set; }
         public string? statusUpdateDate { get; set; }
+        public List<PoProductDTO> products { get; set; }
+        public bool show { get; set; }
     }
 }

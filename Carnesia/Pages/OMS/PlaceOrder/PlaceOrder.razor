@@ -10,6 +10,7 @@
 @inject IGenerateBill _generateBill
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject IJSRuntime IJS
 
 <MudPaper Class="px-2 py-16 ma-2">
     <MudContainer Fixed="true">
@@ -202,6 +203,25 @@
     //protected override async Task OnInitializedAsync()
     //{
     //	//await GetProductAsSKU();
+    //}
+
+    //[JSInvokable]
+    //public async Task OnBeforeUnload()
+    //{
+    //    await IJS.InvokeAsync<object>(
+    //        "confirm",
+    //        "Are you sure you want to leave?");
+    //}
+
+    //protected async override Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //    if (firstRender)
+    //    {
+    //        await IJS.InvokeAsync<object>(
+    //            "window.addEventListener",
+    //            "beforeunload",
+    //            DotNetObjectReference.Create(this).InvokeAsync("OnBeforeUnload"));
+    //    }
     //}
 
     // Source

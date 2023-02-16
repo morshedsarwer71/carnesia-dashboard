@@ -6,6 +6,7 @@
 @inject IAssignOrder _assignOrder
 @inject IPendingOrder _pendingOrder
 @inject IDialogService DialogService
+@inject IJSRuntime IJS
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
@@ -128,6 +129,7 @@
 				<MudTh>Verified On</MudTh>
 				<MudTh>Dispatched On</MudTh>
 				<MudTh>Status</MudTh>
+				<MudTh>Print</MudTh>
 				@*<MudTh>Hub</MudTh>
 				<MudTh>Run Number</MudTh>
 				<MudTh>Last Updated On</MudTh>*@
@@ -156,6 +158,9 @@
 				<MudTd DataLabel="Verified On">@context.verifiedDate</MudTd>
 				<MudTd DataLabel="Dispatched On">@context.dispatchDate</MudTd>
 				<MudTd DataLabel="Status">@context.status</MudTd>
+				<MudTd DataLabel="Print">
+					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.trnCode)">Invoice</MudButton>
+				</MudTd>
 				@*<MudTd DataLabel="Hub">@context.HUB</MudTd>*@
 				@*<MudTd DataLabel="Run Number">@context.ru</MudTd>*@
 				@*<MudTd DataLabel="Last Updated On">@context.up</MudTd>*@
@@ -270,4 +275,11 @@
 		var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Large, FullWidth=true, CloseButton=true  };
         DialogService.Show<TrackingModal>("", options);
     }
+
+	// Goto Print
+	private async Task GotoPrint(string TRNCODE)
+	{
+		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print-web/{TRNCODE}", "_blank" });
+	}
+
 }

@@ -1,0 +1,65 @@
+﻿@page "/sku-track"
+@using Carnesia.Domain.CMS.Products;
+@inject IProducts _product
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudGrid Class="mb-3 justify-center">
+            <MudItem sm="3">
+                <MudTextField @bind-Value="SKU" Variant="Variant.Text" Label="SKU" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetProduct" Disabled="String.IsNullOrEmpty(SKU)">Get</MudButton>
+            </MudItem>
+        </MudGrid>
+
+        <MudGrid>
+            <MudItem xs="6">
+                <MudText Typo="Typo.h3">SKU: @Elements.sku</MudText>
+                <MudText Typo="Typo.h6">Product Name: @Elements.productName</MudText>
+                <MudText Typo="Typo.h6">Product Code: @Elements.productCode</MudText>
+                <MudText Typo="Typo.h6">MRP: @Elements.mrp</MudText>
+                <MudText Typo="Typo.h6">Discount: @Elements.discount</MudText>
+                <MudText Typo="Typo.h6">Sales Price: @Elements.salesPrice</MudText>
+                <MudText Typo="Typo.h6">Is Campaign: @Elements.isCampaign</MudText>
+                <MudText Typo="Typo.h6">Campaign Stock: @Elements.campaignStock</MudText>
+                <MudText Typo="Typo.h6">Virtual Stock: @Elements.virtualStock</MudText>
+                <MudText Typo="Typo.h6">Physical Stock: @Elements.physicalStock</MudText>
+            </MudItem>
+            <MudItem xs="6">
+                @if (!String.IsNullOrEmpty(Elements.image))
+                {
+                    <MudImage Src="@($"https://localhost:7090/{Elements.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
+                }
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</MudPaper>
+
+@code {
+
+    //Sku
+    private string SKU { get; set; }
+
+    // Table Content
+    private TrackSkuDTO Elements = new TrackSkuDTO();
+
+    // Loading 
+    private bool Loading { get; set; }
+
+    // Get Products
+    private async Task GetProduct()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _product.GetTrackSku(SKU);
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Loading = false;
+        }
+    }
+}

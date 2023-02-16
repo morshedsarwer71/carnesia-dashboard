@@ -8,6 +8,10 @@ using System.Net.Http.Json;
 using Carnesia.Domain.WMS.OutScan;
 using Carnesia.Domain.WMS.ReceiveTo;
 using Carnesia.Domain.WMS.UpdateTO;
+using Carnesia.Domain.WMS.AssignCarrier;
+using Carnesia.Domain.WMS.InTransit;
+using Carnesia.Domain.MIS.Analytics;
+using Newtonsoft.Json;
 
 namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 {
@@ -34,7 +38,21 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 			}
 		}
 
-		public async Task CancelPicklist(string pickList)
+        public async Task<string> AssignToCarrier(string toCode, string carrier)
+        {
+			try
+			{
+				var result = await _httpClient.GetStringAsync($"StockTransfers/toassigncarrier/{carrier}/{toCode}");
+				return result;	
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+        }
+
+        public async Task CancelPicklist(string pickList)
         {
             try
             {
@@ -107,7 +125,40 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 			}
 		}
 
-		public async Task<OutUIDScanDTO> GetOutScan(string picklistID, string uid)
+        public async Task<List<AssignCarrierDTO>> GetCarriers()
+        {
+			try
+			{
+				var result = await _httpClient.GetFromJsonAsync<List<AssignCarrierDTO>>("StockTransfers/toassigncarrier");
+
+				return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+        }
+
+        public async Task<List<AssignCarrierDTO>> GetCarriers(AssignCarrierFilterDTO filter)
+        {
+			try
+			{
+				var result = await _httpClient.PostAsJsonAsync("StockTransfers/alltoassigncarrier", filter);
+
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<List<AssignCarrierDTO>>(json);
+
+				return data;
+            }
+			catch (Exception)
+			{
+
+				throw;
+			}
+        }
+
+        public async Task<OutUIDScanDTO> GetOutScan(string picklistID, string uid)
 		{
 			try
 			{
@@ -151,7 +202,22 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
             }
         }
 
-        public async Task<ReceiveToDTO> ReceiveToByToid(string toid)
+		public async Task<List<NotReceivedUIDS>> GetUnreceivedUids(string toid, string productCode)
+		{
+			try
+			{
+				var result = await _httpClient.GetFromJsonAsync<List<NotReceivedUIDS>>($"StockTransfers/unreceiveduids/{toid}/{productCode}");
+
+				return result;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<ReceiveToDTO> ReceiveToByToid(string toid)
         {
 			try
 			{
@@ -179,6 +245,7 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 				throw;
 			}
 		}
+
 
 		public async Task<bool> UpdateToProductQuantity(string toid, int qty, int id)
         {

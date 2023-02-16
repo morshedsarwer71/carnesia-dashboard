@@ -4,167 +4,186 @@
 @inject IManageTo _manageTo
 @inject ISnackbar Snackbar
 
+@inject IDialogService DialogService
+
 <MudPaper Class="px-3 py-16 ma-2">
-	<MudContainer Fixed="true">
-		<MudText Class="my-3" Typo="Typo.h3">To ID: @ToidShow</MudText>
-		<MudGrid Class="justify-center">
-			<MudItem sm="3">
-				<MudTextField @bind-Value="Toid" Immediate="true" OnKeyPress="ToidEnter" Label="TO ID" Variant="Variant.Text" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="UID" Immediate="true" OnKeyPress="UIDEnter" Label="UID" Variant="Variant.Text" />
-			</MudItem>
-		</MudGrid>
+    <MudContainer Fixed="true">
+        <MudText Class="my-3" Typo="Typo.h3">To ID: @ToidShow</MudText>
+        <MudGrid Class="justify-center">
+            <MudItem sm="3">
+                <MudTextField @bind-Value="Toid" Immediate="true" OnKeyPress="ToidEnter" Label="TO ID" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField @bind-Value="UID" Immediate="true" OnKeyPress="UIDEnter" Label="UID" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
 
-		<MudGrid Class="justify-center mb-3">
-			<MudItem sm="6" Class="d-flex justify-end">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(ToidShow) || String.IsNullOrEmpty(UID)" OnClick="AddProductsByUID">Add</MudButton>
-			</MudItem>
-		</MudGrid>
+        <MudGrid Class="justify-center mb-3">
+            <MudItem sm="6" Class="d-flex justify-end">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(ToidShow) || String.IsNullOrEmpty(UID)" OnClick="AddProductsByUID">Add</MudButton>
+            </MudItem>
+        </MudGrid>
 
-		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
-			<HeaderContent>
-				<MudTh>Product Code</MudTh>
-				<MudTh>SKU Code</MudTh>
-				<MudTh>Product Name</MudTh>
-				<MudTh>TO Quantity</MudTh>
-				<MudTh>Rcv. QTY</MudTh>
-				<MudTh>To Be Scanned</MudTh>
-			</HeaderContent>
-			<RowTemplate>
-				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
-				<MudTd DataLabel="SKU Code">@context.sku</MudTd>
-				<MudTd DataLabel="Product Name">@context.productName</MudTd>
-				<MudTd DataLabel="TO Quantity">@context.qty</MudTd>
-				<MudTd DataLabel="Rcv. QTY">@context.pickedQty</MudTd>
-				<MudTd DataLabel="To Be Scanned">@(context.qty - context.pickedQty)</MudTd>
-			</RowTemplate>
-			<PagerContent>
-				<MudTablePager />
-			</PagerContent>
-		</MudTable>
+        <MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>Product Code</MudTh>
+                <MudTh>SKU Code</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>TO Quantity</MudTh>
+                <MudTh>Rcv. QTY</MudTh>
+                <MudTh>To Be Scanned</MudTh>
+                <MudTh>Created By</MudTh>
+                <MudTh>Unreceived Uids</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="SKU Code">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="TO Quantity">@context.qty</MudTd>
+                <MudTd DataLabel="Rcv. QTY">@context.pickedQty</MudTd>
+                <MudTd DataLabel="To Be Scanned">@(context.qty - context.pickedQty)</MudTd>
+                <MudTd DataLabel="Created By">@context.createdBy</MudTd>
+                <MudTd DataLabel="Unreceived Uids">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ShowUnreceivedUids(ToidShow, context.productCode)">View</MudButton>
+                </MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
 
-		<div class="d-flex flex-wrap mt-4">
-			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
-			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
-			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
-		</div>
+            <div class="d-flex flex-wrap mt-4">
+                <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+                <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+                <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+                <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+            </div>
 
-		<div class="d-flex align-end flex-column">
-			<MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="Elements.Count <= 0" OnClick="CreateAcknowledgement">Acknowledgement</MudButton>
-		</div>
-	</MudContainer>
-</MudPaper>
+            <div class="d-flex align-end flex-column">
+                <MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="Elements.Count <= 0" OnClick="CreateAcknowledgement">Acknowledgement</MudButton>
+            </div>
+        </MudContainer>
+    </MudPaper>
 
-@code {
-	// Loading
-	private bool Loading { get; set; }
+    @code {
+    // Loading
+    private bool Loading { get; set; }
 
-	// Toid & Uid
-	private string Toid { get; set; }
-	private string ToidShow { get; set; }
-	private string UID { get; set; }
+    // Toid & Uid
+    private string Toid { get; set; }
+    private string ToidShow { get; set; }
+    private string UID { get; set; }
 
-	// Table Customization
-	private TableCommon tableCommon = new TableCommon();
+    // Table Customization
+    private TableCommon tableCommon = new TableCommon();
 
-	// Table Content
-	private List<ReceiveToProductDTO> Elements = new List<ReceiveToProductDTO>();
+    // Table Content
+    private List<ReceiveToProductDTO> Elements = new List<ReceiveToProductDTO>();
 
-	// Enter Press
-	private async Task ToidEnter(KeyboardEventArgs e)
-	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
-		{
-			if (!String.IsNullOrEmpty(Toid))
-			{
-				await AddProductsByToid();
-			}
-		}
-	}
+    // Enter Press
+    private async Task ToidEnter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(Toid))
+            {
+                await AddProductsByToid();
+            }
+        }
+    }
 
-	private async Task UIDEnter(KeyboardEventArgs e)
-	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
-		{
-			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(ToidShow))
-			{
-				await AddProductsByUID();
-			}
-		}
-	}
+    private async Task UIDEnter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(ToidShow))
+            {
+                await AddProductsByUID();
+            }
+        }
+    }
 
-	// Add Products
-	private async Task AddProductsByToid()
-	{
-		Loading = true;
-		try
-		{
-			var result = await _manageTo.ReceiveToByToid(Toid);
+    // Add Products
+    private async Task AddProductsByToid()
+    {
+        Loading = true;
+        try
+        {
+            var result = await _manageTo.ReceiveToByToid(Toid);
 
-			if (result.data != null)
-			{
-				Elements = result.data;
-				Snackbar.Add(result.message, Severity.Success);
-				ToidShow = Toid;
-				Toid = String.Empty;
-				Loading = false;
-				return;
-			}
-			Snackbar.Add(result.message, Severity.Error);
-			Loading = false;
-		}
-		catch (Exception e)
-		{
-			Snackbar.Add("Toid not found!", Severity.Error);
-			Console.WriteLine(e.Message);
-			Loading = false;
-		}
-	}
+            if (result.data != null)
+            {
+                Elements = result.data;
+                Snackbar.Add(result.message, Severity.Success);
+                ToidShow = Toid;
+                Toid = String.Empty;
+                Loading = false;
+                return;
+            }
+            Snackbar.Add(result.message, Severity.Error);
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("Toid not found!", Severity.Error);
+            Console.WriteLine(e.Message);
+            Loading = false;
+        }
+    }
 
-	private async Task AddProductsByUID()
-	{
-		Loading = true;
-		try
-		{
-			var result = await _manageTo.ReceiveToByUID(ToidShow, UID);
-			if (result.data != null)
-			{
-				Elements = result.data;
-				Snackbar.Add(result.message, Severity.Success);
-				UID = String.Empty;
-				Loading = false;
-				return;
-			}
-			Snackbar.Add(result.message, Severity.Error);
-			Loading = false;
-		}
-		catch (Exception e)
-		{
-			Snackbar.Add("Internal server error!", Severity.Error);
-			Console.WriteLine(e.Message);
-			Loading = false;
-		}
-	}
+    private async Task AddProductsByUID()
+    {
+        Loading = true;
+        try
+        {
+            var result = await _manageTo.ReceiveToByUID(ToidShow, UID);
+            if (result.data != null)
+            {
+                Elements = result.data;
+                Snackbar.Add(result.message, Severity.Success);
+                UID = String.Empty;
+                Loading = false;
+                return;
+            }
+            Snackbar.Add(result.message, Severity.Error);
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("Internal server error!", Severity.Error);
+            Console.WriteLine(e.Message);
+            Loading = false;
+        }
+    }
 
-	private async Task CreateAcknowledgement()
-	{
-		try
-		{
-			var result = await _manageTo.Acknowledgement(ToidShow);
+    // Unreceived Uids Modal
+    private void ShowUnreceivedUids(string toCode, string productCode)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ToCode", toCode);
+        parameters.Add("ProductCode", productCode);
 
-			if (result == "Success")
-			{
-				Snackbar.Add(result, Severity.Success);
-				return;
-			}
-			Snackbar.Add(result, Severity.Error);
-		}
-		catch(Exception e)
-		{
-			Snackbar.Add("Failed", Severity.Error);
-			Console.WriteLine(e.Message);
-		}
-	}
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, MaxWidth = MaxWidth.Large };
+        DialogService.Show<ReceiveToLeftUIDModal>("Unreceived Uids", parameters, options);
+    }
+
+    private async Task CreateAcknowledgement()
+    {
+        try
+        {
+            var result = await _manageTo.Acknowledgement(ToidShow);
+
+            if (result == "Success")
+            {
+                Snackbar.Add(result, Severity.Success);
+                return;
+            }
+            Snackbar.Add(result, Severity.Error);
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("Failed", Severity.Error);
+            Console.WriteLine(e.Message);
+        }
+    }
 }

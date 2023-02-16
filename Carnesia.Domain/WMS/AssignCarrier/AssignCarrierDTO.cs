@@ -8,12 +8,13 @@ namespace Carnesia.Domain.WMS.AssignCarrier
 {
     public class AssignCarrierDTO
     {
-        public string CreationData { get; set; }
-        public string TOID { get; set; }
-        public string SourceWH { get; set; }
-        public string DestinationWH { get; set; }
-        public string AttemtedBy { get; set; }
-        public string Status { get; set; }
-        public string StatusUpdateDate { get; set; }
+        public string createdBy { get; set; }
+        public string toCode { get; set; }
+        public string status { get; set; }
+        public string attemtedBy { get; set; }
+        public string sourceWarehouse { get; set; }
+        public string destinationWarehouse { get; set; }
+        public DateTime createdOn { get; set; }
+        public DateTime statusUpdatedOn { get; set; }
     }
 }

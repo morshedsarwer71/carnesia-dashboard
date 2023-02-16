@@ -1,0 +1,60 @@
+﻿@using Carnesia.Domain.WMS.ReceiveTo;
+@inject IManageTo _manage
+
+<MudDialog DisableSidePadding="true">
+	<DialogContent>
+		<div Style="max-height: 90vh; overflow-y: scroll">
+			<MudTable Items="@UIDS" Dense="true" Hover="true" Bordered="true" Striped="true" CustomFooter="true" Loading="Loading" LoadingProgressColor="Color.Info">
+				<HeaderContent>
+					<MudTh>Product Code</MudTh>
+					<MudTh>SKU</MudTh>
+					<MudTh>Product Name</MudTh>
+					<MudTh>UID</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+					<MudTd DataLabel="SKU">@context.sku</MudTd>
+					<MudTd DataLabel="Product Name">@context.productName</MudTd>
+					<MudTd DataLabel="UID">@context.uid</MudTd>
+				</RowTemplate>
+			</MudTable>
+		</div>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	[Parameter] public string ToCode { get; set; }
+	[Parameter] public string ProductCode { get; set; }
+
+	// Modal On Load
+	protected override async Task OnInitializedAsync()
+	{
+		await GetUids();
+	}
+
+	// Loading
+	private bool Loading { get; set; } = true;
+
+	// Table Content
+	private List<NotReceivedUIDS> UIDS = new List<NotReceivedUIDS>();
+
+
+	// Get Uids
+	private async Task GetUids()
+	{
+		Loading = true;
+		try
+		{
+			UIDS = await _manage.GetUnreceivedUids(ToCode, ProductCode);
+
+			Loading = false;
+		}
+		catch (Exception)
+		{
+			Loading = false;
+			throw;
+		}
+	}
+}

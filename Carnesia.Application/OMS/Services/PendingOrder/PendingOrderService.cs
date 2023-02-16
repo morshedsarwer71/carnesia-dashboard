@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 using Carnesia.Domain.OMS.OrderDetails;
+using Carnesia.Domain.OMS.OrderTrack;
 
 namespace Carnesia.Application.OMS.Services.PendingOrder
 {
@@ -50,11 +51,11 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
             }
         }
 
-        public async Task<List<AgentDTO>> GetAgents()
+        public async Task<List<AgentDTO>> GetAgents(string stuffType)
         {
             try
             {
-                var result = await _httpClient.GetFromJsonAsync<List<AgentDTO>>("Oms/agent");
+                var result = await _httpClient.GetFromJsonAsync<List<AgentDTO>>($"Oms/agent/{stuffType}");
 
                 return result;
             }
@@ -96,6 +97,20 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
 				throw;
 			}
 		}
+
+        public async Task<OrderTrackDTO> GetOrderTrack(string trncode)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<OrderTrackDTO>($"Oms/orderhistory/{trncode}");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
         public async Task<List<PendingOrderDTO>> GetPendingOrdersByFilter(PendingOrderFilterDTO filter)
         {

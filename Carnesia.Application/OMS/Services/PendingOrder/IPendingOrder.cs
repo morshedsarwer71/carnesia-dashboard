@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Carnesia.Domain.OMS.PendingOrder;
 using Carnesia.Domain.OMS.OrderDetails;
+using Carnesia.Domain.OMS.OrderTrack;
 
 namespace Carnesia.Application.OMS.Services.PendingOrder
 {
@@ -15,7 +16,8 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
         Task<bool> AssignAgent(AssignAgentDTO agent);
         Task<bool> CancelOrder(int orderId);
         Task<bool> VerifyOrder(int orderId);
-        Task<List<AgentDTO>> GetAgents();
+        Task<List<AgentDTO>> GetAgents(string stuffType);
         Task<List<PendingOrderDTO>> GetOrderDetails(OrderDetailsFilterDTO filter);
+        Task<OrderTrackDTO> GetOrderTrack(string trncode);
     }
 }

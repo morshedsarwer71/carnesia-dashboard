@@ -90,5 +90,20 @@ namespace Carnesia.Application.CMS.Services.Products
                 throw;
             }
         }
+
+        public async Task<TrackSkuDTO> GetTrackSku(string sku)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<TrackSkuDTO>($"Products/trackproduct/{sku}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ namespace Carnesia.Domain.WMS.PO.Models
         public int quantity { get; set; }
         public int poQuantity { get; set; }
         public decimal liftingPrice { get; set; }
+        //public decimal totalPrice { get; set; }
         public decimal TotalPrice { get; set; }
         public decimal total { get; set; }
     }

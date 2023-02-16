@@ -1,21 +1,31 @@
-﻿@using Carnesia.Domain.WMS.AssignCarrier
+﻿@using Carnesia.Domain.OMS.PendingOrder;
+@using Carnesia.Domain.WMS.AssignCarrier
 @using Carnesia.Domain.Common.POCO
+
+@inject IPendingOrder _pendingOrder
+@inject IManageTo _manageTo
+@inject ISnackbar Snackbar
 
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudGrid Class="justify-center align-baseline mb-5">
 			<MudItem md="3">
-				<MudAutocomplete T="string" Label="Select DO" />
+                <MudSelect @bind-Value="AgentId" Label="Select DO" AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var item in Agents)
+                    {
+                        <MudSelectItem Value="item.id">@item.name</MudSelectItem>
+                    }
+                </MudSelect>
 			</MudItem>
 			<MudItem md="3">
-				<MudTextField T="string" Label="Scan TO" Variant="Variant.Text" />
+				<MudTextField @bind-Value="ToCode" Label="Scan TO" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="3">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="TOAssignCarrier" Disabled="String.IsNullOrEmpty(AgentId) || String.IsNullOrEmpty(ToCode)">Add</MudButton>
 			</MudItem>
 		</MudGrid>
 
-		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped">
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh>Created on</MudTh>
                 <MudTh>TO ID</MudTh>
@@ -26,13 +36,13 @@
                 <MudTh>Status Updated on</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Created on">@context.CreationData</MudTd>
-                <MudTd DataLabel="TO ID">@context.TOID</MudTd>
-                <MudTd DataLabel="Source Warehouse">@context.SourceWH</MudTd>
-                <MudTd DataLabel="Destination Warehouse">@context.DestinationWH</MudTd>
-                <MudTd DataLabel="Attemted by">@context.AttemtedBy</MudTd>
-                <MudTd DataLabel="Status">@context.Status</MudTd>
-                <MudTd DataLabel="Status Updated on">@context.StatusUpdateDate</MudTd>
+                <MudTd DataLabel="Created on">@context.createdOn</MudTd>
+                <MudTd DataLabel="TO ID">@context.toCode</MudTd>
+                <MudTd DataLabel="Source Warehouse">@context.sourceWarehouse</MudTd>
+                <MudTd DataLabel="Destination Warehouse">@context.destinationWarehouse</MudTd>
+                <MudTd DataLabel="Attemted by">@context.attemtedBy</MudTd>
+                <MudTd DataLabel="Status">@context.status</MudTd>
+                <MudTd DataLabel="Status Updated on">@context.statusUpdatedOn</MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />
@@ -49,9 +59,74 @@
 </MudPaper>
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAgents();
+        await GetCarriers();
+    }
+
+    //Loading
+    private bool Loading { get; set; }
+
     // Table Customization
     private TableCommon tableCommon = new TableCommon();
 
     // Table Content
-    private IEnumerable<AssignCarrierDTO> Elements = new List<AssignCarrierDTO>();
- }
+    private List<AssignCarrierDTO> Elements = new List<AssignCarrierDTO>();
+
+
+
+    private async Task GetCarriers()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _manageTo.GetCarriers();
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    // Agents
+    private List<AgentDTO> Agents = new List<AgentDTO>();
+
+    // Get Agents
+    private async Task GetAgents()
+    {
+        Agents = await _pendingOrder.GetAgents("DO");
+    }
+
+    // Assign Carrier
+    private string AgentId { get; set; }
+    private string ToCode { get; set; }
+
+    private async Task TOAssignCarrier()
+    {
+        try
+        {
+            var result = await _manageTo.AssignToCarrier(ToCode, AgentId);
+
+            if (result == "Success")
+            {
+                Snackbar.Add("Success", Severity.Success);
+                await GetCarriers();
+                AgentId = String.Empty;
+                ToCode = String.Empty;
+                return;
+            }
+            Snackbar.Add(result, Severity.Error);
+        }
+        catch (Exception e)
+        {
+            
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal Server Error!", Severity.Error);
+        }
+    }
+}

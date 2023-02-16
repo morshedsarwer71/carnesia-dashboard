@@ -19,10 +19,19 @@ namespace Carnesia.Domain.WMS.ReceiveTo
         public object binName { get; set; }
         public string productCode { get; set; }
         public string productName { get; set; }
+        public string createdBy { get; set; }
         public int sourceStock { get; set; }
         public int destinationStock { get; set; }
         public int qty { get; set; }
         public int pickedQty { get; set; }
         public int toBeScanned { get; set; }
+    }
+
+    public class NotReceivedUIDS
+    {
+        public string uid { get; set; }
+        public string productName { get; set; }
+        public string productCode { get; set; }
+        public string sku { get; set; }
     }
 }

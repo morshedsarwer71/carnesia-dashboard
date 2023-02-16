@@ -16,5 +16,6 @@ namespace Carnesia.Application.CMS.Services.Products
         Task<int> GetProductIdBySku(string sku);
         Task<ProductsBySKUDTO> GetProductBySku(string sku);
         Task<List<ProductsDTO>> GetProductsSKUList();
+        Task<TrackSkuDTO> GetTrackSku(string sku);
     }
 }

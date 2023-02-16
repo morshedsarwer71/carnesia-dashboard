@@ -17,5 +17,6 @@ namespace Carnesia.Domain.WMS.TO.POCO
 		public int toStoreId { get; set; }
 		public int fromStoreId { get; set; }
 		public int totalSKUQty { get; set; }
+		public string reasone { get; set; }
 	}
 }
