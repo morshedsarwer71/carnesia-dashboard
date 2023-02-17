@@ -11,9 +11,17 @@
     <MudContainer Fixed="true">
         @*onkeydown="@KeyCombo"*@
         <div @ref="generateBill" tabindex="0">
-            <div class="d-flex justify-end mt-5">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCustomerModal">Create Customer</MudButton>
-            </div>
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.h5"> Stocks: @productStocks</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <div class="d-flex justify-end mt-5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCustomerModal">Create Customer</MudButton>
+                    </div>
+                </MudItem>
+            </MudGrid>
+
             <MudGrid Class="justify-space-between mb-5">
                 <MudItem sm="4">
                     <MudTextField @bind-Value="uid" Placeholder="Scan UID/Combo Id" Immediate="true" Variant="Variant.Text" OnKeyPress="AddProduct" />
@@ -240,15 +248,6 @@
     // Disable Generate
     private bool disableGenerate { get; set; }
 
-    // Invoke Focus
-    //protected async override Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //	if (firstRender)
-    //	{
-    //		await JSRuntime.InvokeVoidAsync("SetFocusToElement", generateBill);
-    //	}
-    //}
-
     // TRN Code
     private string trnCode { get; set; }
 
@@ -366,26 +365,6 @@
         }
     }
 
-    // Get Key Combo
-    //protected async Task KeyCombo(KeyboardEventArgs e)
-    //{
-    //	if (e.CtrlKey && e.Key == "F1")
-    //	{
-    //		await GeneratePOS();
-    //	}
-
-    //	if (e.CtrlKey && e.Key == "F2")
-    //	{
-    //		await PrintInvoice();
-    //	}
-    //}
-
-    // Generate POS
-    //private async Task GeneratePOS()
-    //{
-    //	Console.WriteLine("Bill Generated");
-    //}
-
     // Print Invoice
     private async Task PrintInvoice()
     {
@@ -486,35 +465,8 @@
         }
     }
 
-    // UID Scan
-    //private async Task ScanUid(KeyboardEventArgs e)
-    //{
-    //	uid = s;
-    //	if (s.Length == 15)
-    //	{
-
-    //		try
-    //		{
-    //			bool isThere = UIDCollection.Any(x => x.uid == s);
-
-    //			if (isThere)
-    //			{
-    //				Snackbar.Add("UID already in cart", Severity.Error);
-    //				return;
-    //			}
-
-    //			await CheckInList(s);
-
-    //			subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
-    //			TableItems = Elements.Count();
-    //			//GetVat();
-    //		}
-    //		catch (Exception)
-    //		{
-    //			throw;
-    //		}
-    //	}
-    //}
+    // Stocks
+    private int productStocks { get; set; }
 
     // Check if Already in List
     private async Task CheckInList(string s)
@@ -546,6 +498,9 @@
             result.totalPrice = result.quantity * result.price;
 
             Elements.Add(result);
+
+            productStocks = result.stocks;
+
             var tempUID = new GenerateBillUIDCollectionDTO() { uid = s, productCode = result.productCode };
             UIDCollection.Add(tempUID);
             uid = String.Empty;
@@ -668,8 +623,14 @@
 
             if (result.trnCode != null)
             {
+                await ResetFields();
+                StateHasChanged();
+
                 trnCode = result.trnCode;
                 Snackbar.Add(result.message, Severity.Success);
+
+
+
                 await GotoPrint(result.trnCode);
                 return;
             }
@@ -704,7 +665,7 @@
     }
 
     // Reset Fields
-    private void ResetFields()
+    private async Task ResetFields()
     {
         POSDetails = new GenerateBillPOSTDetailsDTO();
         POSData = new GenerateBillPOSDTO();

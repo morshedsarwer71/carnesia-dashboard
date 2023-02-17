@@ -14,253 +14,256 @@
 @inject IDialogService DialogService
 
 <MudPaper Class="px-3 py-16 ma-2">
-	<MudContainer Fixed="true">
-		<MudGrid>
-			<MudItem sm="3">
-				<MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudDatePicker Label="To Date" @bind-Date="Filter.toDate" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudSelect @bind-Value="Filter.outletId" Label="Outlet" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="0">All Outlet</MudSelectItem>
-					@foreach (var item in Stores)
-					{
-						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
-					}
-				</MudSelect>
-			</MudItem>
-			<MudItem sm="3">
-				<MudSelect @bind-Value="Filter.brandId" Label="Brand" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="0">All Brand</MudSelectItem>
-					@foreach (var item in Brands)
-					{
-						<MudSelectItem Value="item.brandId">@item.name</MudSelectItem>
-					}
-				</MudSelect>
-			</MudItem>
-			<MudItem sm="3">
-				<MudSelect @bind-Value="Filter.catId" Label="Category" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="0">All Category</MudSelectItem>
-					@foreach (var item in Categories)
-					{
-						<MudSelectItem Value="item.chilId">@item.childCatName</MudSelectItem>
-					}
-				</MudSelect>
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="Filter.sku" Label="SKU" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="Filter.productCode" Label="Product Code" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="Filter.productName" Label="Product Name" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudSelect @bind-Value="Filter.costProfitType" Label="Cost Profit Type" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="0">All</MudSelectItem>
-					<MudSelectItem Value="1">Revenue</MudSelectItem>
-					<MudSelectItem Value="2">Profit</MudSelectItem>
-				</MudSelect>
-			</MudItem>
-		</MudGrid>
+    <MudContainer Fixed="true">
+        <MudGrid>
+            <MudItem sm="3">
+                <MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudDatePicker Label="To Date" @bind-Date="Filter.toDate" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect @bind-Value="Filter.outletId" Label="Outlet" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Outlet</MudSelectItem>
+                    @foreach (var item in Stores)
+                    {
+                        <MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect @bind-Value="Filter.brandId" Label="Brand" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Brand</MudSelectItem>
+                    @foreach (var item in Brands)
+                    {
+                        <MudSelectItem Value="item.brandId">@item.name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect @bind-Value="Filter.catId" Label="Category" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Category</MudSelectItem>
+                    @foreach (var item in Categories)
+                    {
+                        <MudSelectItem Value="item.chilId">@item.childCatName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField @bind-Value="Filter.sku" Label="SKU" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField @bind-Value="Filter.productCode" Label="Product Code" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField @bind-Value="Filter.productName" Label="Product Name" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudSelect @bind-Value="Filter.costProfitType" Label="Cost Profit Type" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All</MudSelectItem>
+                    <MudSelectItem Value="1">Revenue</MudSelectItem>
+                    <MudSelectItem Value="2">Profit</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
 
-		<div class="d-flex justify-end my-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetAnalyticsByFilter" Disabled="DisableButton">Filter</MudButton>
-		</div>
+        <div class="d-flex justify-end my-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetAnalyticsByFilter" Disabled="DisableButton">Filter</MudButton>
+        </div>
 
-		@if (DisableButton)
-		{
-			<div class="d-flex justify-center">
-				<img style="width: 120px" src="shipping.gif" alt="loading..." />
-			</div>
-		}
+        @if (DisableButton)
+        {
+            <div class="d-flex justify-center">
+                <img style="width: 120px" src="shipping.gif" alt="loading..." />
+            </div>
+        }
 
-		<MudTable Items="@Elements.cmsRevenue" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
-			<HeaderContent>
-				<MudTh>Date</MudTh>
-				<MudTh>Business Unit</MudTh>
-				<MudTh>Transaction</MudTh>
-				<MudTh>Item Total</MudTh>
-				<MudTh>QTY Total</MudTh>
-				<MudTh>Revenue Total</MudTh>
-				<MudTh>Shipping Discount</MudTh>
-				<MudTh>Discount on Product</MudTh>
-				<MudTh>Total Discount</MudTh>
-				<MudTh>Revenue After Discount</MudTh>
-				<MudTh>Cost</MudTh>
-				<MudTh>Gross Profit</MudTh>
-			</HeaderContent>
-			<RowTemplate>
-				<MudTd DataLabel="Date">
-					<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => ShowWebDetails(context.date)">@context.date</MudButton>
-				</MudTd>
-				<MudTd DataLabel="Business Unit">@context.buisnessUnit</MudTd>
-				<MudTd DataLabel="Transaction">@context.numberOfTransaction</MudTd>
-				<MudTd DataLabel="Item Total">@context.itemTotal</MudTd>
-				<MudTd DataLabel="QTY Total">@context.qtyTotal</MudTd>
-				<MudTd DataLabel="Revenue Total">@context.revenueTotal</MudTd>
-				<MudTd DataLabel="Shipping Discount">@context.shippingDiscount</MudTd>
-				<MudTd DataLabel="Discount on Product">@context.productDiscount</MudTd>
-				<MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
-				<MudTd DataLabel="Revenue After Discount">@context.afterDiscount</MudTd>
-				<MudTd DataLabel="Cost">@context.cost</MudTd>
-				<MudTd DataLabel="Gross Profit">@context.grosProfit</MudTd>
-			</RowTemplate>
-			<FooterContent>
-				<MudTFootRow>
-					<MudTd></MudTd>
-					<MudTd Style="font-weight: 600;">Grand Total</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.numberOfTransaction)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.itemTotal)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.qtyTotal)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.revenueTotal)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.shippingDiscount)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.productDiscount)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.totalDiscount)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.afterDiscount)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.cost)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.grosProfit)</MudTd>
-				</MudTFootRow>
-			</FooterContent>
-		</MudTable>
+        @if (Filter.outletId <= 0)
+        {
+            <MudTable Items="@Elements.cmsRevenue" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
+                <HeaderContent>
+                    <MudTh>Date</MudTh>
+                    <MudTh>Business Unit</MudTh>
+                    <MudTh>Transaction</MudTh>
+                    <MudTh>Item Total</MudTh>
+                    <MudTh>QTY Total</MudTh>
+                    <MudTh>Revenue Total</MudTh>
+                    <MudTh>Shipping Discount</MudTh>
+                    <MudTh>Discount on Product</MudTh>
+                    <MudTh>Total Discount</MudTh>
+                    <MudTh>Revenue After Discount</MudTh>
+                    <MudTh>Cost</MudTh>
+                    <MudTh>Gross Profit</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Date">
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => ShowWebDetails(context.date)">@context.date</MudButton>
+                    </MudTd>
+                    <MudTd DataLabel="Business Unit">@context.buisnessUnit</MudTd>
+                    <MudTd DataLabel="Transaction">@context.numberOfTransaction</MudTd>
+                    <MudTd DataLabel="Item Total">@context.itemTotal</MudTd>
+                    <MudTd DataLabel="QTY Total">@context.qtyTotal</MudTd>
+                    <MudTd DataLabel="Revenue Total">@context.revenueTotal</MudTd>
+                    <MudTd DataLabel="Shipping Discount">@context.shippingDiscount</MudTd>
+                    <MudTd DataLabel="Discount on Product">@context.productDiscount</MudTd>
+                    <MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
+                    <MudTd DataLabel="Revenue After Discount">@context.afterDiscount</MudTd>
+                    <MudTd DataLabel="Cost">@context.cost</MudTd>
+                    <MudTd DataLabel="Gross Profit">@context.grosProfit</MudTd>
+                </RowTemplate>
+                <FooterContent>
+                    <MudTFootRow>
+                        <MudTd></MudTd>
+                        <MudTd Style="font-weight: 600;">Grand Total</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.numberOfTransaction)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.itemTotal)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.qtyTotal)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.revenueTotal)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.shippingDiscount)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.productDiscount)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.totalDiscount)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.afterDiscount)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.cost)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.grosProfit)</MudTd>
+                    </MudTFootRow>
+                </FooterContent>
+            </MudTable>
+        }
 
-		<MudTable Class="mt-5" Items="@Elements.posRevenue" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
-			<HeaderContent>
-				<MudTh>Date</MudTh>
-				<MudTh>Business Unit</MudTh>
-				<MudTh>Transaction</MudTh>
-				<MudTh>Item Total</MudTh>
-				<MudTh>QTY Total</MudTh>
-				<MudTh>Revenue Total</MudTh>
-				<MudTh>Shipping Discount</MudTh>
-				<MudTh>Discount on Product</MudTh>
-				<MudTh>Total Discount</MudTh>
-				<MudTh>Revenue After Discount</MudTh>
-				<MudTh>Cost</MudTh>
-				<MudTh>Gross Profit</MudTh>
-			</HeaderContent>
-			<RowTemplate>
-				<MudTd DataLabel="Date">
-					<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => OutletDetailsModal(context.date, context.storeId)">@context.date</MudButton>
-				</MudTd>
-				<MudTd DataLabel="Business Unit">@context.buisnessUnit</MudTd>
-				<MudTd DataLabel="Transaction">@context.numberOfTransaction</MudTd>
-				<MudTd DataLabel="Item Total">@context.itemTotal</MudTd>
-				<MudTd DataLabel="QTY Total">@context.qtyTotal</MudTd>
-				<MudTd DataLabel="Revenue Total">@context.revenueTotal</MudTd>
-				<MudTd DataLabel="Shipping Discount">@context.shippingDiscount</MudTd>
-				<MudTd DataLabel="Discount on Product">@context.productDiscount</MudTd>
-				<MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
-				<MudTd DataLabel="Revenue After Discount">@context.afterDiscount</MudTd>
-				<MudTd DataLabel="Cost">@context.cost</MudTd>
-				<MudTd DataLabel="Gross Profit">@(context.grosProfit)</MudTd>
-			</RowTemplate>
-			<FooterContent>
-				<MudTFootRow>
-					<MudTd></MudTd>
-					<MudTd Style="font-weight: 600;">Grand Total</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.numberOfTransaction)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.itemTotal)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.qtyTotal)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.revenueTotal)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.shippingDiscount)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.productDiscount)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.totalDiscount)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.afterDiscount)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.cost)</MudTd>
-						<MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.grosProfit)</MudTd>
-				</MudTFootRow>
-			</FooterContent>
-		</MudTable>
-	</MudContainer>
-</MudPaper>
+        <MudTable Class="mt-5" Items="@Elements.posRevenue" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
+            <HeaderContent>
+                <MudTh>Date</MudTh>
+                <MudTh>Business Unit</MudTh>
+                <MudTh>Transaction</MudTh>
+                <MudTh>Item Total</MudTh>
+                <MudTh>QTY Total</MudTh>
+                <MudTh>Revenue Total</MudTh>
+                <MudTh>Shipping Discount</MudTh>
+                <MudTh>Discount on Product</MudTh>
+                <MudTh>Total Discount</MudTh>
+                <MudTh>Revenue After Discount</MudTh>
+                <MudTh>Cost</MudTh>
+                <MudTh>Gross Profit</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Date">
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => OutletDetailsModal(context.date, context.storeId)">@context.date</MudButton>
+                </MudTd>
+                <MudTd DataLabel="Business Unit">@context.buisnessUnit</MudTd>
+                <MudTd DataLabel="Transaction">@context.numberOfTransaction</MudTd>
+                <MudTd DataLabel="Item Total">@context.itemTotal</MudTd>
+                <MudTd DataLabel="QTY Total">@context.qtyTotal</MudTd>
+                <MudTd DataLabel="Revenue Total">@context.revenueTotal</MudTd>
+                <MudTd DataLabel="Shipping Discount">@context.shippingDiscount</MudTd>
+                <MudTd DataLabel="Discount on Product">@context.productDiscount</MudTd>
+                <MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
+                <MudTd DataLabel="Revenue After Discount">@context.afterDiscount</MudTd>
+                <MudTd DataLabel="Cost">@context.cost</MudTd>
+                <MudTd DataLabel="Gross Profit">@(context.grosProfit)</MudTd>
+                </RowTemplate>
+                <FooterContent>
+                    <MudTFootRow>
+                        <MudTd></MudTd>
+                        <MudTd Style="font-weight: 600;">Grand Total</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.numberOfTransaction)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.itemTotal)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.qtyTotal)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.revenueTotal)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.shippingDiscount)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.productDiscount)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.totalDiscount)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.afterDiscount)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.cost)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.grosProfit)</MudTd>
+                    </MudTFootRow>
+                </FooterContent>
+            </MudTable>
+        </MudContainer>
+    </MudPaper>
 
-@code {
-	// Page On Load
-	protected override async Task OnInitializedAsync()
-	{
-		await GetStores();
-		await GetBrands();
-		await GetCategories();
-	}
+    @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+        await GetBrands();
+        await GetCategories();
+    }
 
-	// Disable Button
-	private bool DisableButton { get; set; }
+    // Disable Button
+    private bool DisableButton { get; set; }
 
-	// Filter
-	private AnalyticsFilterDTO Filter = new AnalyticsFilterDTO();
+    // Filter
+    private AnalyticsFilterDTO Filter = new AnalyticsFilterDTO();
 
-	// Table Customaization
-	private TableCommon tableCommon = new TableCommon();
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
 
-	// Table Elements
-	private AnalyticsDTO Elements = new AnalyticsDTO();
+    // Table Elements
+    private AnalyticsDTO Elements = new AnalyticsDTO();
 
-	// Get Analytics
-	private async Task GetAnalyticsByFilter()
-	{
-		DisableButton = true;
-		try
-		{
-			Elements = await _analytics.GetAnalyticsByFilter(Filter);
-			DisableButton = false;
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-			DisableButton = false;
-		}
-	}
+    // Get Analytics
+    private async Task GetAnalyticsByFilter()
+    {
+        DisableButton = true;
+        try
+        {
+            Elements = await _analytics.GetAnalyticsByFilter(Filter);
+            DisableButton = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            DisableButton = false;
+        }
+    }
 
-	// Stores
-	private List<StoreDTO> Stores = new List<StoreDTO>();
+    // Stores
+    private List<StoreDTO> Stores = new List<StoreDTO>();
 
-	// Get Stores
-	private async Task GetStores()
-	{
-		Stores = await _store.GetStoresAsync();
-	}
+    // Get Stores
+    private async Task GetStores()
+    {
+        Stores = await _store.GetStoresAsync();
+    }
 
-	// Brands
-	private List<BrandDTO> Brands = new List<BrandDTO>();
+    // Brands
+    private List<BrandDTO> Brands = new List<BrandDTO>();
 
-	// Get Brands
-	private async Task GetBrands()
-	{
-		Brands = await _brand.GetBrands();
-	}
+    // Get Brands
+    private async Task GetBrands()
+    {
+        Brands = await _brand.GetBrands();
+    }
 
-	// Categories
-	private List<OnlyChildCategoryDTO> Categories = new List<OnlyChildCategoryDTO>();
+    // Categories
+    private List<OnlyChildCategoryDTO> Categories = new List<OnlyChildCategoryDTO>();
 
-	// Get Categories
-	private async Task GetCategories()
-	{
-		Categories = await _category.GetOnlyChildCategory();
-	}
+    // Get Categories
+    private async Task GetCategories()
+    {
+        Categories = await _category.GetOnlyChildCategory();
+    }
 
 
-	// Show Web Details
+    // Show Web Details
     private void ShowWebDetails(string date)
     {
-		var parameters = new DialogParameters();
-		parameters.Add("businessDate", date);
+        var parameters = new DialogParameters();
+        parameters.Add("businessDate", date);
 
-        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth=true, CloseButton=true, MaxWidth=MaxWidth.Large };
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, MaxWidth = MaxWidth.Large };
         DialogService.Show<AnalyticsWebDetailsModal>("Web Sale Details", parameters, options);
     }
 
-	// outlet Details Modal
-	private async Task OutletDetailsModal(string date, int store)
-	{
-		var parameters = new DialogParameters();
-		parameters.Add("date", date);
-		parameters.Add("store", store);
+    // outlet Details Modal
+    private async Task OutletDetailsModal(string date, int store)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("date", date);
+        parameters.Add("store", store);
 
-		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<SalesReportPaymentTypeModal>("Payment Details", parameters, options).Result;
-	}
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<SalesReportPaymentTypeModal>("Payment Details", parameters, options).Result;
+    }
 }
