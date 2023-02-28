@@ -6,7 +6,7 @@
     <MudContainer Fixed="true">
         <MudGrid Class="mb-3 justify-center">
             <MudItem sm="3">
-                <MudTextField @bind-Value="SKU" Variant="Variant.Text" Label="SKU" />
+                <MudTextField @bind-Value="SKU" Variant="Variant.Text" Label="SKU/Product Code" />
             </MudItem>
             <MudItem sm="3">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetProduct" Disabled="String.IsNullOrEmpty(SKU)">Get</MudButton>
@@ -29,7 +29,7 @@
             <MudItem xs="6">
                 @if (!String.IsNullOrEmpty(Elements.image))
                 {
-                    <MudImage Src="@($"https://cscpguide.com/{Elements.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
+                    <MudImage Src="@($"https://localhost:7090/{Elements.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
                 }
             </MudItem>
         </MudGrid>

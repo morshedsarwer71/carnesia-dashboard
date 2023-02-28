@@ -14,10 +14,7 @@
 			</MudItem>
 		</MudGrid>
 
-		@if (!String.IsNullOrEmpty(Elements.image))
-		{
-			<MudImage Src="@($"https://cscpguide.com/{Elements.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
-		}
+		
 
 		<MudGrid>
 			<MudItem md="6">
@@ -36,7 +33,10 @@
 				</MudList>
 			</MudItem>
 			<MudItem md="6">
-				<MudImage Src="" Alt="" Elevation="25" Class="rounded-lg"/>
+				@if (!String.IsNullOrEmpty(Elements.image))
+				{
+					<MudImage Src="@($"https://localhost:7090/{Elements.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
+				}
 			</MudItem>
 		</MudGrid>
 

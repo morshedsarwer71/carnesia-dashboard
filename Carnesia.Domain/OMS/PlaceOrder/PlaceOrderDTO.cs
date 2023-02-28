@@ -13,6 +13,7 @@ namespace Carnesia.Domain.OMS.PlaceOrder
 
     public class PlaceOrderDetailsDTO
     {
+        public Guid uuidID { get; set; }
         public string voucherCode { get; set; }
         public string source { get; set; }
         public string address { get; set; }
@@ -31,6 +32,7 @@ namespace Carnesia.Domain.OMS.PlaceOrder
         public int deliveryType { get; set; }
         public int deliveryAddressID { get; set; }
         public decimal deliveryPrice { get; set; }
+        public bool isFreeDelivery { get; set; }
         public List<ProductTableDTO> orderProductsDTOs { get; set; }
         public List<PlaceOrderComboProductTableDTO> bogoComboDtos { get; set; }
     }

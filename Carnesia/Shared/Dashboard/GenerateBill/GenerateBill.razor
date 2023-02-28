@@ -6,6 +6,7 @@
 @inject IGenerateBill _generateBill
 @inject ISnackbar Snackbar
 @inject IJSRuntime IJS
+@inject ILocalStorageService _storage
 
 <MudPaper Class="pa-16 ma-2">
     <MudContainer Fixed="true">
@@ -233,6 +234,7 @@
             </div>
 
             <div class="mt-5 mx-auto" style="width: fit-content;">
+                @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SavePosOrder" Disabled="String.IsNullOrEmpty(Customer.phone)">Save Order</MudButton>*@
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCommentModal">Add Comment</MudButton>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePOS" Disabled="disableGenerate">Generate Bill</MudButton>
                 @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GotoPrint" Disabled="String.IsNullOrEmpty(trnCode)">Print Invoice</MudButton>*@
@@ -577,6 +579,10 @@
         POSDetails.membershipId = MembershipID;
         POSDetails.couponCode = Coupon;
         POSDetails.comment = Comment;
+        POSDetails.customerPhone = Customer.phone;
+        POSDetails.customerName = Customer.name;
+        POSDetails.customerAddress = Customer.address;
+        POSDetails.customerPhoneGet = customerPhoneNumber;
 
 
 
@@ -606,6 +612,37 @@
         POSData.items = Elements;
         POSData.posUID = UIDCollection;
         POSData.posPayment = PaymentTable;
+        POSData.uniqUuid = new Guid();
+    }
+
+    // Save Order
+    private async Task SavePosOrder()
+    {
+        try
+        {
+            var savedOrders = await _storage.GetItemAsync<List<GenerateBillPOSDTO>>("draft_pos");
+
+            var newSave = new List<GenerateBillPOSDTO>();
+
+            await AssignData();
+
+            if (savedOrders != null)
+            {
+                newSave.AddRange(savedOrders);
+            }
+
+            newSave.Add(POSData);
+
+            await _storage.SetItemAsync<List<GenerateBillPOSDTO>>("draft_pos", newSave);
+
+            await ResetFields();
+            StateHasChanged();
+        }
+        catch (Exception)
+        {
+            
+            throw;
+        }
     }
 
     private async Task GeneratePOS()

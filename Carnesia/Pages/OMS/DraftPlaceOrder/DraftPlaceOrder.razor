@@ -1,4 +1,4 @@
-﻿@page "/place-order"
+﻿@page "/place-order/{orderId}"
 
 @using Carnesia.Domain.OMS.PlaceOrder
 @using Carnesia.Domain.Dashboard.GenerateBill
@@ -200,31 +200,14 @@
 </MudPaper>
 
 @code {
+    [Parameter]
+    public string orderId { get; set; }
 
-    //// Page On Load
-    //protected override async Task OnInitializedAsync()
-    //{
-    //	//await GetProductAsSKU();
-    //}
-
-    //[JSInvokable]
-    //public async Task OnBeforeUnload()
-    //{
-    //    await IJS.InvokeAsync<object>(
-    //        "confirm",
-    //        "Are you sure you want to leave?");
-    //}
-
-    //protected async override Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //    if (firstRender)
-    //    {
-    //        await IJS.InvokeAsync<object>(
-    //            "window.addEventListener",
-    //            "beforeunload",
-    //            DotNetObjectReference.Create(this).InvokeAsync("OnBeforeUnload"));
-    //    }
-    //}
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDraft();
+    }
 
     // Source
     private string source { get; set; }
@@ -629,19 +612,119 @@
                     deliveryType = 1,
                     orderProductsDTOs = tempProducts,
                     bogoComboDtos = Combos,
-                    uuidID = Guid.NewGuid()
+                    uuidID = new Guid(orderId)
                 };
 
-            
+
 
             if (savedOrders != null)
             {
                 newSave.AddRange(savedOrders);
             }
 
+            newSave.RemoveAll(x => x.uuidID == new Guid(orderId));
+
             newSave.Add(orderDetails);
 
             await _storage.SetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders", newSave);
+        }
+        catch (Exception)
+        {
+            
+            throw;
+        }
+    }
+
+    // Load From Draft
+    private async Task LoadDraft()
+    {
+        try
+        {
+            var savedOrders = await _storage.GetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders");
+
+            var guidedOrderId = new Guid(orderId);
+
+            var newSave = savedOrders.FirstOrDefault(x => x.uuidID == guidedOrderId);
+
+            if (newSave == null)
+            {
+                Snackbar.Add("Order Not Found or Already Proccessed!", Severity.Error);
+
+                return;
+            }
+
+            Customer.name = newSave.customerName;
+            Customer.phone = newSave.customerPhone;
+            customerPhoneNumber = newSave.customerPhone;
+            Customer.address = newSave.address;
+            AutoAmount = newSave.autoApplyAmnt;
+            AutoId = newSave.autoApplyId;
+            Customer.id = newSave.customerId;
+            isFreeOrder = newSave.isFreeDelivery;
+            shipping = newSave.isFreeDelivery ? 0 : newSave.deliveryPrice;
+            Customer.comment = newSave.instructions;
+            source = newSave.source;
+            ZoneId = newSave.zoneId;
+            Coupon.coupon = newSave.voucherCode;
+            subTotal = newSave.totalPrice;
+            discount = newSave.promoPrice - newSave.autoApplyAmnt;
+
+            Elements.AddRange(newSave.orderProductsDTOs);
+            Combos.AddRange(newSave.bogoComboDtos);
+
+            foreach (var item in newSave.bogoComboDtos)
+            {
+                var tempProduct = new ProductTableDTO
+                    {
+                        quantity = item.quantity,
+                        bcCode = item.bcCode,
+                        isCombo = true,
+                        name = item.name,
+                        salesPrice = item.price,
+                    };
+
+                Elements.Add(tempProduct);
+            }
+
+
+            //var tempProducts = new List<ProductTableDTO>();
+            //tempProducts.AddRange(Elements.Where(x => x.isCombo == false));
+
+            //var orderDetails = new PlaceOrderDetailsDTO
+            //    {
+            //        customerName = Customer.name,
+            //        customerPhone = Customer.phone,
+            //        address = Customer.address,
+            //        autoApplyAmnt = AutoAmount,
+            //        autoApplyId = AutoId,
+            //        customerId = Customer.id,
+            //        deliveryPrice = isFreeOrder ? 0 : shipping,
+            //        grandTotalPrice = subTotal + (isFreeOrder ? 0 : shipping) - discount - AutoAmount,
+            //        instructions = Customer.comment,
+            //        paymentType = 1,
+            //        source = source,
+            //        zoneId = ZoneId,
+            //        voucherCode = Coupon.coupon,
+            //        totalPrice = subTotal,
+            //        deliveryAddressID = AddressID,
+            //        afterPromoPrice = subTotal - discount - AutoAmount,
+            //        promoPrice = discount + AutoAmount,
+            //        deliveryType = 1,
+            //        orderProductsDTOs = tempProducts,
+            //        bogoComboDtos = Combos,
+            //        uuidID = Guid.NewGuid()
+            //    };
+
+
+
+            //if (savedOrders != null)
+            //{
+            //    newSave.AddRange(savedOrders);
+            //}
+
+            //newSave.Add(orderDetails);
+
+            //await _storage.SetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders", newSave);
 
         }
         catch (Exception e)
@@ -711,6 +794,20 @@
             {
                 Snackbar.Add("Order placed successfully!", Severity.Success);
                 ResetCoupon();
+
+                var savedOrders = await _storage.GetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders");
+
+                var newSave = new List<PlaceOrderDetailsDTO>();
+
+                if (savedOrders != null)
+                {
+                    newSave.AddRange(savedOrders);
+                }
+
+                newSave.RemoveAll(x => x.uuidID == new Guid(orderId));
+
+                await _storage.SetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders", newSave);
+
                 return;
             }
 

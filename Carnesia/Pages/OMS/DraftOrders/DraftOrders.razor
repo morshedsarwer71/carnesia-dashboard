@@ -1,0 +1,75 @@
+﻿@page "/draft-orders"
+@using Carnesia.Domain.Common.POCO;
+@using Carnesia.Domain.OMS.PlaceOrder;
+@inject ILocalStorageService _storage
+@inject NavigationManager NavigationManager
+
+<MudPaper Class="ma-2 px-3 py-16">
+    <MudContainer Fixed="true">
+        <MudTable Items="@Elements" Dense="tableCommon.Dense" Hover="tableCommon.Hover" Bordered="tableCommon.Bordered" Striped="tableCommon.Striped" Filter="new Func<PlaceOrderDetailsDTO,bool>(FilterFunc1)">
+            <ToolBarContent>
+                <MudSpacer />
+                <MudSpacer />
+                <MudTextField @bind-Value="tableCommon.SearchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Customer Name</MudTh>
+                <MudTh>Customer Phone</MudTh>
+                <MudTh>Total Price</MudTh>
+                <MudTh>Complete Order</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Customer Name">@context.customerName</MudTd>
+                <MudTd DataLabel="Customer Phone">@context.customerPhone</MudTd>
+                <MudTd DataLabel="Total Price">@context.totalPrice</MudTd>
+                <MudTd DataLabel="Complete Order">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToPlaceOrder(context.uuidID)">Complete</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Table Content
+    private List<PlaceOrderDetailsDTO> Elements = new List<PlaceOrderDetailsDTO>();
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await _storage.GetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders");
+    }
+
+    // Table Search
+    private bool FilterFunc1(PlaceOrderDetailsDTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+    private bool FilterFunc(PlaceOrderDetailsDTO element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.customerName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.customerPhone.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    // Navigate To Place Order
+    private void NavigateToPlaceOrder(Guid uniqId)
+    {
+        NavigationManager.NavigateTo($"place-order/{uniqId}");
+    }
+}

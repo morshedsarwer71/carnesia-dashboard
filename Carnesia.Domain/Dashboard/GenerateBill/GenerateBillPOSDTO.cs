@@ -8,6 +8,7 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
 {
     public class GenerateBillPOSDTO
     {
+        public Guid uniqUuid { get; set; }
         public GenerateBillPOSTDetailsDTO pos { get; set; }
         public List<GenerateBillUIDDataDTO> items { get; set; }
         public List<GenerateBillComboProductDTO> comboItems { get; set; }
@@ -35,6 +36,10 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
         public string? comment { get; set; }
         public string? refNumber { get; set; }
         public string paymentType { get; set; } = "Cash";
+        public string customerPhoneGet { get; set; }
+        public string customerPhone { get; set; }
+        public string customerName { get; set; }
+        public string customerAddress { get; set; }
     }
 
     public class PosPaymentDTO
