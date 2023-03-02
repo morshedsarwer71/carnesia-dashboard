@@ -24,4 +24,13 @@ namespace Carnesia.Domain.WMS.ManageTO
         public bool isPrint { get; set; }
         public string? pickListId { get; set; }
     }
+
+    public class ManageToFilterDTO
+    {
+        public int status { get; set; } = 10;
+        public int sourceStore { get; set;}
+        public int destinationStore { get; set;}
+        public DateTime? fromDate { get; set;}
+        public DateTime? toDate { get; set;}
+    }
 }

@@ -12,6 +12,7 @@ using Carnesia.Domain.WMS.AssignCarrier;
 using Carnesia.Domain.WMS.InTransit;
 using Carnesia.Domain.MIS.Analytics;
 using Newtonsoft.Json;
+using Carnesia.Domain.WMS.PO.POCO;
 
 namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 {
@@ -23,11 +24,11 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 			_httpClient = httpClient;
 		}
 
-		public async Task<string> Acknowledgement(string toid)
+		public async Task<ReceiveToDTO> Acknowledgement(string toid)
 		{
 			try
 			{
-				var result = await _httpClient.GetStringAsync($"StockTransfers/confirmreceiveto/{toid}");
+				var result = await _httpClient.GetFromJsonAsync<ReceiveToDTO>($"StockTransfers/confirmreceiveto/{toid}");
 
 				return result;
 			}
@@ -125,7 +126,25 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 			}
 		}
 
-        public async Task<List<AssignCarrierDTO>> GetCarriers()
+		public async Task<List<ManageToDTO>> GetAllManageTo(ManageToFilterDTO filter)
+		{
+			try
+			{
+				var result = await _httpClient.PostAsJsonAsync("StockTransfers/filter", filter);
+
+				var json = await result.Content.ReadAsStringAsync();
+				var deserialized = JsonConvert.DeserializeObject<List<ManageToDTO>>(json);
+
+				return deserialized;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<List<AssignCarrierDTO>> GetCarriers()
         {
 			try
 			{

@@ -173,12 +173,12 @@
         {
             var result = await _manageTo.Acknowledgement(ToidShow);
 
-            if (result == "Success")
+            if (result.message == "Success")
             {
-                Snackbar.Add(result, Severity.Success);
+                Snackbar.Add(result.message, Severity.Success);
                 return;
             }
-            Snackbar.Add(result, Severity.Error);
+            Snackbar.Add(result.message, Severity.Error);
         }
         catch (Exception e)
         {

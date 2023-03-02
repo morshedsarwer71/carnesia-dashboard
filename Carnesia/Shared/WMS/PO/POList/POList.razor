@@ -6,29 +6,33 @@
 @inject IPurchaseOrder _order
 @inject IVendor _vendor
 @inject IJSRuntime IJS
+@inject ISnackbar Snackbar
 
 <MudPaper Class="py-16 px-3 ma-2" Elevation="1">
 	<MudContainer Fixed="true">
 		<MudGrid Class="justify-center align-baseline">
 			<MudItem md="2">
-				<MudTextField @bind-Value="filterInput.POID" Label="PO ID" Variant="Variant.Text" />
+				<MudTextField @bind-Value="filterInput.poid" Label="PO ID" Variant="Variant.Text" />
 			</MudItem>
 			<MudItem md="2">
 				<MudAutocomplete T="string" Label="Supplier" Value="filterInput.SupplierName" ValueChanged="(string s) => GetSupplierId(s)" SearchFunc="@SupplierSearch" ResetValueOnEmptyText="@true"/>
 			</MudItem>
 			<MudItem md="2">
-				<MudSelect @bind-Value="filterInput.Status" Label="Status" AnchorOrigin="Origin.BottomCenter">
+				<MudSelect @bind-Value="filterInput.status" Label="Status" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="5">Approved</MudSelectItem>
 					<MudSelectItem Value="6">Received</MudSelectItem>
 					<MudSelectItem Value="7">Partially Received</MudSelectItem>
 				</MudSelect>
 			</MudItem>
 			<MudItem md="2">
-				<MudDateRangePicker Label="Date range" @bind-DateRange="_dateRange" />
+				<MudDatePicker Label="From Date" @bind-Date="filterInput.fromDate" DateFormat="yyyy-MM-dd" />
+			</MudItem>
+			<MudItem md="2">
+				<MudDatePicker Label="To Date" @bind-Date="filterInput.toDate" DateFormat="yyyy-MM-dd" />
 			</MudItem>
 			<MudItem md="2">
 				<div>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Filter">Filter</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="FilterPoList">Filter</MudButton>
 				</div>
 			</MudItem>
 		</MudGrid>
@@ -75,7 +79,7 @@
 			<ChildRowContent>
 				@if (context.show)
 				{
-					<td colspan="8">
+					<td colspan="9">
 						<MudCard Elevation="0">
 							<MudCardContent Class="pa-0">
 								<MudTable Items="@context.products" Context="DetailsContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
@@ -156,7 +160,7 @@
 		if (!String.IsNullOrEmpty(supplierName))
 		{
 			var result = await _vendor.GetVendor(supplierName);
-			filterInput.Supplier = result.vendorId;
+			filterInput.supplier = result.vendorId;
 		}
 	}
 
@@ -167,35 +171,59 @@
 	// Search Function
 	private bool FilterCycleCheck(POListPoco item)
 	{
-        if (item.poCode.ToLower().Contains(searchTerm.ToLower()) || item.vendorName.ToLower().Contains(searchTerm.ToLower()) || item.poStatus.ToLower().Contains(searchTerm.ToLower()))
-        {
-            return true;
-        }
-        return false;
-    }
+		if (item.poCode.ToLower().Contains(searchTerm.ToLower()) || item.vendorName.ToLower().Contains(searchTerm.ToLower()) || item.poStatus.ToLower().Contains(searchTerm.ToLower()))
+		{
+			return true;
+		}
+		return false;
+	}
 
 	// Status Modal
-    private void OpenStatusDialog(string poCode)
-    {
-	    var parameters = new DialogParameters { ["poCode"]=poCode };
-        var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
-        DialogService.Show<POListUpdateStatusModal>("Change Status", options);
-    }
-
-	// Filter
-	private async Task Filter()
+	private void OpenStatusDialog(string poCode)
 	{
+		var parameters = new DialogParameters { ["poCode"]=poCode };
+		var options = new DialogOptions { CloseOnEscapeKey = false, FullWidth=true, CloseButton=true };
+		DialogService.Show<POListUpdateStatusModal>("Change Status", options);
+	}
+
+	// Filter PO List
+	private async Task FilterPoList()
+	{
+
+		if ((filterInput.fromDate != null && filterInput.toDate == null) || (filterInput.fromDate == null && filterInput.toDate != null))
+		{
+			Snackbar.Add("Please select both from date and to date!", Severity.Error);
+			return;
+		}
+
+		Loading = true;
+
 		try
 		{
-			filterInput.fromDate = _dateRange.Start.ToString();
-			filterInput.toDate = _dateRange.End.ToString();
-			poList =await _order.GetPoListQuery(filterInput.POID,filterInput.Supplier,filterInput.Status,filterInput.fromDate,filterInput.toDate);
+			poList = await _order.GetPoListQuery(filterInput);
+
+			Loading = false;
 		}
-		catch (Exception e)
+		catch (Exception)
 		{
-			
+			Loading = false;
 		}
 	}
+
+	// Filter
+	//private async Task Filter()
+	//{
+	//	try
+	//	{
+	//		filterInput.fromDate = _dateRange.Start.ToString();
+	//		filterInput.toDate = _dateRange.End.ToString();
+	//		poList =await _order.GetPoListQuery(filterInput.POID,filterInput.Supplier,filterInput.Status,filterInput.fromDate,filterInput.toDate);
+	//	}
+	//	catch (Exception e)
+	//	{
+			
+	//	}
+	//}
 
 	// View Details Modal
     private async Task ViewDetailsModal(string pocode)

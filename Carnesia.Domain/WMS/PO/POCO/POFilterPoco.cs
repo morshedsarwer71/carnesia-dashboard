@@ -8,12 +8,11 @@ namespace Carnesia.Domain.WMS.PO.POCO
 {
     public class POFilterPoco
     {
-        public string? POID { get; set; }
-        public int Supplier { get; set; }
+        public string? poid { get; set; }
+        public int supplier { get; set; }
         public string SupplierName { get; set; }
-        public int Status { get; set; } = 5;
-        public string fromDate { get; set; } 
-        public string toDate { get; set; } 
-        //public DateRange DateFromTo { get; set; }
+        public int status { get; set; } = 5;
+        public DateTime? fromDate { get; set; } 
+        public DateTime? toDate { get; set; }
     }
 }

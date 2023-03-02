@@ -27,7 +27,8 @@ namespace Carnesia.Application.WMS.PutAway.Poco
         public string? toCode { get; set; }
         public string? pickListCode { get; set; }
         public string? binId { get; set; }
-        public string? createdBy { get; set; }
+		public string? storeName { get; set; }
+		public string? createdBy { get; set; }
         public string createdAt { get; set; }
     }
 }

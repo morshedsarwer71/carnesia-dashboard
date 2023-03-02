@@ -6,10 +6,10 @@
     <MudContainer Fixed="true">
         
 
-        @if (!String.IsNullOrEmpty(Picklist.image))
+        @*@if (!String.IsNullOrEmpty(Picklist.image))
         {
-            <MudImage Src="@($"https://localhost:7090/{Picklist.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
-        }
+            <MudImage Src="@($"https://oshud.com/{Picklist.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
+        }*@
         
         <MudGrid Class="justify-center">
             <MudItem sm="3">
@@ -27,17 +27,19 @@
         </MudGrid>
         
         <MudGrid>
-            <MudItem xs="6">
+            <MudItem xs="8">
                 <MudText Typo="Typo.h3">Order ID: @orderIdShow</MudText>
                 <MudText Typo="Typo.h6">Customer Instruction: @Picklist.instructions</MudText>
                 <MudText Typo="Typo.h6">Expiry Date: @Picklist.expiryDate</MudText>
                 <MudText Typo="Typo.h6">Expiry Status: @Picklist.expStatus</MudText>
             </MudItem>
-            <MudItem xs="6">
-                @if (!String.IsNullOrEmpty(Picklist.image))
-                {
-                    <MudImage Src="@($"https://localhost:7090/{Picklist.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
-                }
+            <MudItem xs="4">
+                @*<div class="w-50 ml-auto mr-auto" >*@
+                    @if (!String.IsNullOrEmpty(Picklist.image))
+                    {
+                        <MudImage Fluid Src="@($"https://oshud.com/{Picklist.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
+                    }
+                @*</div>*@
             </MudItem>
         </MudGrid>
 

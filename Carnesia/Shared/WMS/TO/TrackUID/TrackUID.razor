@@ -17,7 +17,7 @@
 		
 
 		<MudGrid>
-			<MudItem md="6">
+			<MudItem md="8">
 				<MudList Clickable="false">
 					<MudListItem>UID: @Elements.uid</MudListItem>
 					<MudDivider />
@@ -32,10 +32,10 @@
 					<MudListItem>Age: @Elements.age Days</MudListItem>
 				</MudList>
 			</MudItem>
-			<MudItem md="6">
+			<MudItem md="4">
 				@if (!String.IsNullOrEmpty(Elements.image))
 				{
-					<MudImage Src="@($"https://localhost:7090/{Elements.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
+					<MudImage Src="@($"https://oshud.com/{Elements.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
 				}
 			</MudItem>
 		</MudGrid>
@@ -47,6 +47,7 @@
 				<MudTh>TO ID</MudTh>
 				<MudTh>Picklist ID</MudTh>
 				<MudTh>BIN</MudTh>
+				<MudTh>Store</MudTh>
 				<MudTh>Last Status</MudTh>
 				<MudTh>Status Updated By</MudTh>
 				<MudTh>Status Updated Date</MudTh>
@@ -57,6 +58,7 @@
 				<MudTd DataLabel="TO ID">@context.toCode</MudTd>
 				<MudTd DataLabel="Picklist ID">@context.pickListCode</MudTd>
 				<MudTd DataLabel="BIN">@context.binId</MudTd>
+				<MudTd DataLabel="Store">@context.storeName</MudTd>
 				<MudTd DataLabel="Last Status">@context.status</MudTd>
 				<MudTd DataLabel="Status Updated by">@context.createdBy</MudTd>
 				<MudTd DataLabel="Status Updated on">@context.createdAt</MudTd>

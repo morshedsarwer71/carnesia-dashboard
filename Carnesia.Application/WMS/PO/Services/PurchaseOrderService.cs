@@ -268,12 +268,16 @@ namespace Carnesia.Application.WMS.PO.Services
             }
         }
 
-        public async Task<List<POListPoco>> GetPoListQuery(string poCode, int supplierId, int statusId, string fromDate, string toDate)
+        public async Task<List<POListPoco>> GetPoListQuery(POFilterPoco filter)
         {
             try
             {
-                var res = await _httpClient.GetFromJsonAsync<List<POListPoco>>($"PurchaseOrders/approvedpobyparameter/{poCode}/{supplierId}/{statusId}/{fromDate}/{toDate}");
-                return res;
+                var res = await _httpClient.PostAsJsonAsync("PurchaseOrders/approvedpobyparameter", filter);
+
+				var json = await res.Content.ReadAsStringAsync();
+				var deserialized = JsonConvert.DeserializeObject<List<POListPoco>>(json);
+
+				return deserialized;
             }
             catch (Exception e)
             {

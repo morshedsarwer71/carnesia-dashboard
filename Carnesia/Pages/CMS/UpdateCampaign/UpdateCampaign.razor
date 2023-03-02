@@ -42,6 +42,7 @@
                     <MudTextField Lines="5" @bind-Value="campaign.description" Label="Description" Required="true" RequiredError="Description is required!"/>
                 </MudItem>
             </MudGrid>
+
             <div class="mt-5">
                 <InputFile id="fileInput" hidden accept=".webp" OnChange="UploadImage" />
 
@@ -56,6 +57,21 @@
             </div>
 
             <MudImage Src="@($"data:image/webp;base64,{campaign.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;"/>
+
+            <div class="mt-5">
+                <InputFile id="fileInputImageStart" hidden accept=".webp" OnChange="UploadStartsInImage" />
+
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Filled.CloudUpload"
+                           for="fileInputImageStart">
+                    Upload Starts In Images
+                </MudButton>
+                <MudText Class="mt-1">1080 * 420(.webp only. Max 100Kb)</MudText>
+            </div>
+
+            <MudImage Src="@($"data:image/webp;base64,{campaign.startsInBase64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;" />
 
             <div class="d-flex align-center justify-space-between mt-6">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="UpdateDetails">Update Campaign</MudButton>
@@ -186,6 +202,19 @@
         }
     }
 
+    // Upload Image
+    private async Task UploadStartsInImage(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            campaign.startsInBase64Attch = await _base64.ConvertToBase64(102000, 1080, 420, e);
+        }
+        catch (Exception error)
+        {
+            Snackbar.Add(error.Message, Severity.Error);
+        }
+    }
+
     // Update Campaign Details
     private async Task UpdateDetails()
     {
@@ -198,7 +227,8 @@
                     endDate = $"{campaign.endDate}T{EndTime}.000Z",
                     description = campaign.description,
                     isPublish = campaign.isPublish,
-                    base64Attch = campaign.base64Attch
+                    base64Attch = campaign.base64Attch,
+                    startsInBase64Attch = campaign.startsInBase64Attch
                 };
 
             var result = await _createCampaign.UpdateCampaignDetails(CampaignDetails, id);

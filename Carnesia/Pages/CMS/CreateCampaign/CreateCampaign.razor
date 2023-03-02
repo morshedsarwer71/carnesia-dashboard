@@ -115,6 +115,21 @@
 
             <MudImage Src="@($"data:image/webp;base64,{FormData.base64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;" />
 
+            <div class="mt-5">
+                <InputFile id="fileInputImageStart" hidden accept=".webp" OnChange="UploadStartsInImage" />
+
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Filled.CloudUpload"
+                           for="fileInputImageStart">
+                    Upload Starts In Images
+                </MudButton>
+                <MudText Class="mt-1">1080 * 420(.webp only. Max 100Kb)</MudText>
+            </div>
+
+            <MudImage Src="@($"data:image/webp;base64,{FormData.startsInBase64Attch}")" Alt="" Elevation="25" Class="rounded-lg mt-3" Style="width:200px;" />
+
             <div class="d-flex align-center justify-space-between mt-6">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" OnClick="CreateNewCampaign" Class="ml-auto">Submit</MudButton>
             </div>
@@ -314,6 +329,19 @@
         try
         {
             FormData.base64Attch = await _base64.ConvertToBase64(102000, 1080, 420, e);
+        }
+        catch (Exception error)
+        {
+            Snackbar.Add(error.Message, Severity.Error);
+        }
+    }
+
+    // Upload Image
+    private async Task UploadStartsInImage(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            FormData.startsInBase64Attch = await _base64.ConvertToBase64(102000, 1080, 420, e);
         }
         catch (Exception error)
         {

@@ -1,32 +1,48 @@
 ﻿@using Carnesia.Domain.WMS.ManageTO
 @using Carnesia.Domain.Common.POCO
+@using Carnesia.Domain.WMS.Store.Models;
 @inject IManageTo _manageTo
 @inject ISnackbar Snackbar
 @inject IJSRuntime IJS
+@inject IStore _store
 
 <MudPaper Class="px-3 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
 		<MudGrid Class="align-baseline justify-center">
 			<MudItem lg="2" md="4">
-				<MudDateRangePicker Label="Date Range" />
+				<MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" DateFormat="yyyy-MM-dd" />
 			</MudItem>
 			<MudItem lg="2" md="4">
-				<MudSelect T="string" Label="Status" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("Open")" />
-					<MudSelectItem Value="@("Picklist Created")" />
-					<MudSelectItem Value="@("Dispatched")" />
-					<MudSelectItem Value="@("Picked")" />
-					<MudSelectItem Value="@("Received")" />
+				<MudDatePicker Label="To Date" @bind-Date="Filter.toDate" DateFormat="yyyy-MM-dd" />
+			</MudItem>
+			<MudItem lg="2" md="4">
+				<MudSelect @bind-Value="Filter.status" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="10" >Open</MudSelectItem>
+					<MudSelectItem Value="9" >Picklisted</MudSelectItem>
+					<MudSelectItem Value="11" >Picked</MudSelectItem>
+					<MudSelectItem Value="6" >Received</MudSelectItem>
 				</MudSelect>
 			</MudItem>
 			<MudItem lg="2" md="4">
-				<MudAutocomplete T="string" Label="Source WH" ResetValueOnEmptyText="true" />
+				<MudSelect @bind-Value="Filter.sourceStore" Label="Source Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Store</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
 			</MudItem>
 			<MudItem lg="2" md="4">
-				<MudAutocomplete T="string" Label="Destination WH" ResetValueOnEmptyText="true" />
+				<MudSelect @bind-Value="Filter.destinationStore" Label="Destination Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">Select Store</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
 			</MudItem>
 			<MudItem lg="2" md="4">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetFilteredTos">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -95,6 +111,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await GetTos();
+		await GetStores();
 	}
 
 	// Loading
@@ -105,6 +122,9 @@
 
 	// Table Content
 	private List<ManageToDTO> Elements = new List<ManageToDTO>();
+
+	// Filter Class
+	private ManageToFilterDTO Filter = new ManageToFilterDTO();
 
 	// Get Manage To
 	private async Task GetTos()
@@ -119,6 +139,39 @@
 			Console.WriteLine(e.Message);
 			Loading = false;
 		}
+	}
+
+	// Filter To
+	// Get Manage To
+	private async Task GetFilteredTos()
+	{
+
+		if ((Filter.fromDate != null && Filter.toDate == null) || (Filter.fromDate == null && Filter.toDate != null))
+		{
+			Snackbar.Add("Please select both from date and to date!", Severity.Error);
+			return;
+		}
+
+		Loading = true;
+		try
+		{
+			Elements = await _manageTo.GetAllManageTo(Filter);
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+
+	// Stores
+	private List<StoreDTO> Stores = new List<StoreDTO>();
+
+	// Get Stores
+	private async Task GetStores()
+	{
+		Stores = await _store.GetStoresAsync();
 	}
 
 	// Generate Picklist ID

@@ -31,7 +31,7 @@ namespace Carnesia.Application.WMS.PO.Services
         Task<Response> PoApprove(string poCode);
         Task<AwaitingPoDetails> AwaitingPoDetails(string poCode);
         Task<List<POListPoco>> GetPoList();
-        Task<List<POListPoco>> GetPoListQuery(string poCode,int supplierId, int statusId, string fromDate, string toDate);
+        Task<List<POListPoco>> GetPoListQuery(POFilterPoco filter);
 
         Task<string> ApproveSelectedItems(string poCode, List<PoProductDTO> poProducts);
         Task<string> RemoveSelectedItems(string poCode, List<PoProductDTO> poProducts);

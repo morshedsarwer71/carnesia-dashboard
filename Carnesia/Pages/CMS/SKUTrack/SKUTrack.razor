@@ -14,7 +14,7 @@
         </MudGrid>
 
         <MudGrid>
-            <MudItem xs="6">
+            <MudItem xs="8">
                 <MudText Typo="Typo.h3">SKU: @Elements.sku</MudText>
                 <MudText Typo="Typo.h6">Product Name: @Elements.productName</MudText>
                 <MudText Typo="Typo.h6">Product Code: @Elements.productCode</MudText>
@@ -26,10 +26,10 @@
                 <MudText Typo="Typo.h6">Virtual Stock: @Elements.virtualStock</MudText>
                 <MudText Typo="Typo.h6">Physical Stock: @Elements.physicalStock</MudText>
             </MudItem>
-            <MudItem xs="6">
+            <MudItem xs="4">
                 @if (!String.IsNullOrEmpty(Elements.image))
                 {
-                    <MudImage Src="@($"https://localhost:7090/{Elements.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
+                    <MudImage Src="@($"https://oshud.com/{Elements.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
                 }
             </MudItem>
         </MudGrid>
