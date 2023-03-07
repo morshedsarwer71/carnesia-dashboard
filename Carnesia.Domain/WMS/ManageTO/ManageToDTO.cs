@@ -10,6 +10,7 @@ namespace Carnesia.Domain.WMS.ManageTO
     {
         public int toId { get; set; }
         public string createdDate { get; set; }
+        public string reasone { get; set; }
         public string toCode { get; set; }
         public string sourchWh { get; set; }
         public string destinationWh { get; set; }

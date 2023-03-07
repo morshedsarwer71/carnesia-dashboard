@@ -60,6 +60,7 @@
 				<MudTh>Received QTY.</MudTh>
 				<MudTh>Not Received QTY.</MudTh>
 				<MudTh>Picklist ID</MudTh>
+				<MudTh>Reasone</MudTh>
 				<MudTh>Action</MudTh>
 				<MudTh>Print</MudTh>
 			</HeaderContent>
@@ -78,6 +79,7 @@
 				<MudTd DataLabel="Picklist ID">
 					<p style="text-decoration: underline; cursor: pointer; color: blue;" @onclick="() => printPicklist(context.pickListId)">@context.pickListId</p>
 				</MudTd>
+					<MudTd DataLabel="Reasone">@context.reasone</MudTd>
 				<MudTd DataLabel="Action">
 					@if (context.pickListId == null && context.isPickList)
 					{

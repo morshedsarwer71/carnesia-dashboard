@@ -175,7 +175,7 @@
         </MudForm>
 
         <div class="d-flex justify-end mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Class="me-2" Disabled="String.IsNullOrEmpty(Customer.name)" OnClick="SaveAsDraft">Save Order</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Class="me-2" Disabled="String.IsNullOrEmpty(Customer.name) || DisableSaveOrder" OnClick="SaveAsDraft">Save Order</MudButton>
             @if (AddressID <= 0)
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Customer.id)" OnClick="AddCustomerAddressModal">Add Address</MudButton>
@@ -578,6 +578,8 @@
     }
 
     // Save Order As Draft
+    private bool DisableSaveOrder { get; set; }
+
     private async Task SaveAsDraft()
     {
         try
@@ -630,7 +632,7 @@
         }
         catch (Exception)
         {
-            
+
             throw;
         }
     }
@@ -807,7 +809,7 @@
                 newSave.RemoveAll(x => x.uuidID == new Guid(orderId));
 
                 await _storage.SetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders", newSave);
-
+                DisableSaveOrder = true;
                 return;
             }
 

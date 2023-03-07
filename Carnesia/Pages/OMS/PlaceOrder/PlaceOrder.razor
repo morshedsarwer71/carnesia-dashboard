@@ -175,7 +175,7 @@
         </MudForm>
 
         <div class="d-flex justify-end mt-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Class="me-2" Disabled="String.IsNullOrEmpty(Customer.name)" OnClick="SaveAsDraft">Save Order</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Class="me-2" Disabled="String.IsNullOrEmpty(Customer.name) || DisableSaveOrder" OnClick="SaveAsDraft">Save Order</MudButton>
             @if (AddressID <= 0)
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Customer.id)" OnClick="AddCustomerAddressModal">Add Address</MudButton>
@@ -595,6 +595,8 @@
     }
 
     // Save Order As Draft
+    private bool DisableSaveOrder { get; set; }
+
     private async Task SaveAsDraft()
     {
         try
@@ -632,7 +634,7 @@
                     uuidID = Guid.NewGuid()
                 };
 
-            
+
 
             if (savedOrders != null)
             {
@@ -642,6 +644,8 @@
             newSave.Add(orderDetails);
 
             await _storage.SetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders", newSave);
+            Snackbar.Add("Order saved successfully!", Severity.Success);
+            DisableSaveOrder = true;
 
         }
         catch (Exception e)
@@ -711,6 +715,7 @@
             {
                 Snackbar.Add("Order placed successfully!", Severity.Success);
                 ResetCoupon();
+                DisableSaveOrder = true;
                 return;
             }
 
