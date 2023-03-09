@@ -17,6 +17,7 @@
 			</MudItem>
 			<MudItem lg="2" md="4">
 				<MudSelect @bind-Value="Filter.status" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0" >All Status</MudSelectItem>
 					<MudSelectItem Value="10" >Open</MudSelectItem>
 					<MudSelectItem Value="9" >Picklisted</MudSelectItem>
 					<MudSelectItem Value="11" >Picked</MudSelectItem>
@@ -25,7 +26,7 @@
 			</MudItem>
 			<MudItem lg="2" md="4">
 				<MudSelect @bind-Value="Filter.sourceStore" Label="Source Store" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="0">Select Store</MudSelectItem>
+					<MudSelectItem Value="0">All Store</MudSelectItem>
 					@foreach (var item in Stores)
 					{
 						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
@@ -34,7 +35,7 @@
 			</MudItem>
 			<MudItem lg="2" md="4">
 				<MudSelect @bind-Value="Filter.destinationStore" Label="Destination Store" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="0">Select Store</MudSelectItem>
+					<MudSelectItem Value="0">All Store</MudSelectItem>
 					@foreach (var item in Stores)
 					{
 						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
@@ -43,6 +44,7 @@
 			</MudItem>
 			<MudItem lg="2" md="4">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetFilteredTos">Filter</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetTosAll">All</MudButton>
 			</MudItem>
 		</MudGrid>
 
@@ -137,6 +139,22 @@
 			Elements = await _manageTo.GetAllManageTo();
 			Loading = false;
 		}catch(Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+
+	// Get All Manage To
+	private async Task GetTosAll()
+	{
+		Loading = true;
+		try
+		{
+			Elements = await _manageTo.GetAllManageToAll();
+			Loading = false;
+		}
+		catch (Exception e)
 		{
 			Console.WriteLine(e.Message);
 			Loading = false;

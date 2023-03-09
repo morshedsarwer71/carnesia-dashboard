@@ -10,6 +10,7 @@ namespace Carnesia.Domain.WMS.POReport
     {
         public DateTime creationDate { get; set; }
         public string vendorName { get; set; }
+        public string poCode { get; set; }
         public string recvWarehouse { get; set; }
         public string sku { get; set; }
         public string productCode { get; set; }

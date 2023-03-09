@@ -20,5 +20,6 @@ namespace Carnesia.Domain.OMS.OrderTrack
         public string status { get; set; }
         public string updatedBy { get; set; }
         public DateTime updatedOn { get; set; }
+        public string? editHistory { get; set; }
     }
 }

@@ -16,5 +16,21 @@ namespace Carnesia.Domain.WMS.AllWarehouseStock
         public int totalPhysicalQty { get; set; }
         public int? totalVirualQty { get; set; }
         public string storeName { get; set; }
+		public int centralTotalPhysicalQty { get; set; }
+		public int? centralTotalVirualQty { get; set; }
+        public int mirpurTotalPhysicalQty { get; set; }
+		public int? mirpurTotalVirualQty { get; set; }
+        public int bashundharaCityTotalPhysicalQty { get; set; }
+        public int? bashundharaCityTotalVirualQty { get; set; }
+        public int baileyRoadTotalPhysicalQty { get; set; }
+        public int? baileyRoadTotalVirualQty { get; set; }
+        public int dhanmondiTotalPhysicalQty { get; set; }
+        public int? dhanmondiTotalVirualQty { get; set; }
+        public int khulsiTotalPhysicalQty { get; set; }
+        public int? khulsiTotalVirualQty { get; set; }
+        public int finlayTotalPhysicalQty { get; set; }
+        public int? finlayTotalVirualQty { get; set; }
+        public int sylhetKumarparaTotalPhysicalQty { get; set; }
+        public int? sylhetKumarparaTotalVirualQty { get; set; }
     }
 }

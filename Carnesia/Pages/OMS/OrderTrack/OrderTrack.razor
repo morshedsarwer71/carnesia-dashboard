@@ -26,11 +26,13 @@
                 <MudTh>Status</MudTh>
                 <MudTh>Updated By</MudTh>
                 <MudTh>Updated On</MudTh>
+                <MudTh>Edits</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Status">@context.status</MudTd>
                 <MudTd DataLabel="Updated By">@context.updatedBy</MudTd>
                 <MudTd DataLabel="Updated On">@context.updatedOn</MudTd>
+                <MudTd DataLabel="Edits">@context.editHistory</MudTd>
             </RowTemplate>
         </MudTable>
     </MudContainer>

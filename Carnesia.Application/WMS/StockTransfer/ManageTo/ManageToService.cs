@@ -126,7 +126,22 @@ namespace Carnesia.Application.WMS.StockTransfer.ManageTo
 			}
 		}
 
-		public async Task<List<ManageToDTO>> GetAllManageTo(ManageToFilterDTO filter)
+        public async Task<List<ManageToDTO>> GetAllManageToAll()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<ManageToDTO>>("StockTransfers/all");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<ManageToDTO>> GetAllManageTo(ManageToFilterDTO filter)
 		{
 			try
 			{

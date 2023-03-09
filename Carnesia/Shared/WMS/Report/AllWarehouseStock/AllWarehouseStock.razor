@@ -3,6 +3,10 @@
 @using Carnesia.Domain.Vendor.Models;
 @using Carnesia.Domain.WMS.AllWarehouseStock
 @using Carnesia.Domain.WMS.Store.Models;
+@using Syncfusion.XlsIO
+@using System.IO
+@using System.Data
+@inject Microsoft.JSInterop.IJSRuntime JS
 @inject IStore _store
 @inject IBrand _brand
 @inject ICategory _category
@@ -62,9 +66,9 @@
             </MudItem>
         </MudGrid>
 
-        @*<div class="d-flex justify-end mb-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
-        </div>*@
+        <div class="d-flex justify-end mb-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Info" Disabled="Elements.Count <= 0" OnClick="CreateDocument">Download CSV</MudButton>
+        </div>
 
         <MudTable RowsPerPage="25" Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
@@ -73,9 +77,22 @@
                 <MudTh>Product Code</MudTh>
                 <MudTh>MRP</MudTh>
                 <MudTh>Selling Price</MudTh>
-                <MudTh>Total Physical Qty</MudTh>
-                <MudTh>Total Virual Qty</MudTh>
-                <MudTh>Store Name</MudTh>
+                <MudTh>Central Physical Qty</MudTh>
+                <MudTh>Central Virual Qty</MudTh>
+                <MudTh>Mirpur Physical Qty</MudTh>
+                <MudTh>Mirpur Virual Qty</MudTh>
+                <MudTh>B. City Physical Qty</MudTh>
+                <MudTh>B. City Virual Qty</MudTh>
+                <MudTh>B. Road Physical Qty</MudTh>
+                <MudTh>B. Road Virual Qty</MudTh>
+                <MudTh>Dhanmondi Physical Qty</MudTh>
+                <MudTh>Dhanmondi Virual Qty</MudTh>
+                <MudTh>Finlay Physical Qty</MudTh>
+                <MudTh>Finlay Virual Qty</MudTh>
+                <MudTh>Khulsi Physical Qty</MudTh>
+                <MudTh>Khulsi Virual Qty</MudTh>
+                <MudTh>S. Kumarpara Physical Qty</MudTh>
+                <MudTh>S. Kumarpara Virual Qty</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="SKU">@context.sku</MudTd>
@@ -83,9 +100,22 @@
                 <MudTd DataLabel="Product Code">@context.productCode</MudTd>
                 <MudTd DataLabel="MRP">@context.mrp</MudTd>
                 <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
-                <MudTd DataLabel="Total Physical Qty">@context.totalPhysicalQty</MudTd>
-                <MudTd DataLabel="Total Virual Qty">@context.totalVirualQty</MudTd>
-                <MudTd DataLabel="Store Name">@context.storeName</MudTd>
+                <MudTd DataLabel="Central Physical Qty">@context.centralTotalPhysicalQty</MudTd>
+                <MudTd DataLabel="Central Virual Qty">@context.centralTotalVirualQty</MudTd>
+                <MudTd DataLabel="Mirpur Physical Qty">@context.mirpurTotalPhysicalQty</MudTd>
+                <MudTd DataLabel="Mirpur Virual Qty">@context.mirpurTotalVirualQty</MudTd>
+                <MudTd DataLabel="B. City Physical Qty">@context.bashundharaCityTotalPhysicalQty</MudTd>
+                <MudTd DataLabel="B. City Virual Qty">@context.bashundharaCityTotalVirualQty</MudTd>
+                <MudTd DataLabel="B. Road Physical Qty">@context.baileyRoadTotalPhysicalQty</MudTd>
+                <MudTd DataLabel="B. Road Virual Qty">@context.baileyRoadTotalVirualQty</MudTd>
+                <MudTd DataLabel="Dhanmondi Physical Qty">@context.dhanmondiTotalPhysicalQty</MudTd>
+                <MudTd DataLabel="Dhanmondi Virual Qty">@context.dhanmondiTotalVirualQty</MudTd>
+                <MudTd DataLabel="Finlay Physical Qty">@context.finlayTotalPhysicalQty</MudTd>
+                <MudTd DataLabel="Finlay Virual Qty">@context.finlayTotalVirualQty</MudTd>
+                <MudTd DataLabel="Khulsi Physical Qty">@context.khulsiTotalPhysicalQty</MudTd>
+                <MudTd DataLabel="Khulsi Virual Qty">@context.khulsiTotalVirualQty</MudTd>
+                <MudTd DataLabel="S. Kumarpara Physical Qty">@context.sylhetKumarparaTotalPhysicalQty</MudTd>
+                <MudTd DataLabel="S. Kumarpara Virual Qty">@context.sylhetKumarparaTotalVirualQty</MudTd>
             </RowTemplate>
             <PagerContent>
                 <MudTablePager />
@@ -121,7 +151,195 @@
         {
             var result = await _warehouse.GetWarehouseStock(Filter);
 
-            Elements.AddRange(result);
+            foreach (var item in result)
+            {
+                var isThere = Elements.FirstOrDefault(x => x.productCode == item.productCode);
+
+                if (isThere != null)
+                {
+                    if (item.storeName == "Central Warehouse")
+                    {
+                        isThere.centralTotalPhysicalQty = item.totalPhysicalQty;
+                        isThere.centralTotalVirualQty = item.totalVirualQty;
+                    }
+
+                    if (item.storeName == "Mirpur")
+                    {
+                        isThere.mirpurTotalPhysicalQty = item.totalPhysicalQty;
+                        isThere.mirpurTotalVirualQty = item.totalVirualQty;
+                    }
+
+                    if (item.storeName == "Bashundhara City")
+                    {
+                        isThere.bashundharaCityTotalPhysicalQty = item.totalPhysicalQty;
+                        isThere.bashundharaCityTotalVirualQty = item.totalVirualQty;
+                    }
+
+                    if (item.storeName == "Bailey Road")
+                    {
+                        isThere.baileyRoadTotalPhysicalQty = item.totalPhysicalQty;
+                        isThere.baileyRoadTotalVirualQty = item.totalVirualQty;
+                    }
+
+                    if (item.storeName == "Dhanmondi")
+                    {
+                        isThere.dhanmondiTotalPhysicalQty = item.totalPhysicalQty;
+                        isThere.dhanmondiTotalVirualQty = item.totalVirualQty;
+                    }
+
+                    if (item.storeName == "Khulsi")
+                    {
+                        isThere.khulsiTotalPhysicalQty = item.totalPhysicalQty;
+                        isThere.khulsiTotalVirualQty = item.totalVirualQty;
+                    }
+
+                    if (item.storeName == "Finlay")
+                    {
+                        isThere.finlayTotalPhysicalQty = item.totalPhysicalQty;
+                        isThere.finlayTotalVirualQty = item.totalVirualQty;
+                    }
+
+                    if (item.storeName == "Sylhet Kumarpara")
+                    {
+                        isThere.sylhetKumarparaTotalPhysicalQty = item.totalPhysicalQty;
+                        isThere.sylhetKumarparaTotalVirualQty = item.totalVirualQty;
+                    }
+                }
+
+                if (isThere == null)
+                {
+                    if (item.storeName == "Central Warehouse")
+                    {
+
+                        var newEntry = new AllwarehouseStockDTO
+                            {
+                                productCode = item.productCode,
+                                sku = item.sku,
+                                sellingPrice = item.sellingPrice,
+                                mrp = item.mrp,
+                                productName = item.productName,
+                                centralTotalPhysicalQty = item.totalPhysicalQty,
+                                centralTotalVirualQty = item.totalVirualQty
+                            };
+
+                        Elements.Add(newEntry);
+                    }
+
+                    if (item.storeName == "Mirpur")
+                    {
+                        var newEntry = new AllwarehouseStockDTO
+                            {
+                                productCode = item.productCode,
+                                sku = item.sku,
+                                sellingPrice = item.sellingPrice,
+                                mrp = item.mrp,
+                                productName = item.productName,
+                                mirpurTotalPhysicalQty = item.totalPhysicalQty,
+                                mirpurTotalVirualQty = item.totalVirualQty
+                            };
+
+                        Elements.Add(newEntry);
+                    }
+
+                    if (item.storeName == "Bashundhara City")
+                    {
+                        var newEntry = new AllwarehouseStockDTO
+                            {
+                                productCode = item.productCode,
+                                sku = item.sku,
+                                sellingPrice = item.sellingPrice,
+                                mrp = item.mrp,
+                                productName = item.productName,
+                                bashundharaCityTotalPhysicalQty = item.totalPhysicalQty,
+                                bashundharaCityTotalVirualQty = item.totalVirualQty
+                            };
+
+                        Elements.Add(newEntry);
+                    }
+
+                    if (item.storeName == "Bailey Road")
+                    {
+                        var newEntry = new AllwarehouseStockDTO
+                            {
+                                productCode = item.productCode,
+                                sku = item.sku,
+                                sellingPrice = item.sellingPrice,
+                                mrp = item.mrp,
+                                productName = item.productName,
+                                baileyRoadTotalPhysicalQty = item.totalPhysicalQty,
+                                baileyRoadTotalVirualQty = item.totalVirualQty
+                            };
+
+                        Elements.Add(newEntry);
+                    }
+
+                    if (item.storeName == "Dhanmondi")
+                    {
+                        var newEntry = new AllwarehouseStockDTO
+                            {
+                                productCode = item.productCode,
+                                sku = item.sku,
+                                sellingPrice = item.sellingPrice,
+                                mrp = item.mrp,
+                                productName = item.productName,
+                                dhanmondiTotalPhysicalQty = item.totalPhysicalQty,
+                                dhanmondiTotalVirualQty = item.totalVirualQty
+                            };
+
+                        Elements.Add(newEntry);
+                    }
+
+                    if (item.storeName == "Khulsi")
+                    {
+                        var newEntry = new AllwarehouseStockDTO
+                            {
+                                productCode = item.productCode,
+                                sku = item.sku,
+                                sellingPrice = item.sellingPrice,
+                                mrp = item.mrp,
+                                productName = item.productName,
+                                khulsiTotalPhysicalQty = item.totalPhysicalQty,
+                                khulsiTotalVirualQty = item.totalVirualQty
+                            };
+
+                        Elements.Add(newEntry);
+                    }
+
+                    if (item.storeName == "Finlay")
+                    {
+                        var newEntry = new AllwarehouseStockDTO
+                            {
+                                productCode = item.productCode,
+                                sku = item.sku,
+                                sellingPrice = item.sellingPrice,
+                                mrp = item.mrp,
+                                productName = item.productName,
+                                finlayTotalPhysicalQty = item.totalPhysicalQty,
+                                finlayTotalVirualQty = item.totalVirualQty
+                            };
+
+                        Elements.Add(newEntry);
+                    }
+
+                    if (item.storeName == "Sylhet Kumarpara")
+                    {
+                        var newEntry = new AllwarehouseStockDTO
+                            {
+                                productCode = item.productCode,
+                                sku = item.sku,
+                                sellingPrice = item.sellingPrice,
+                                mrp = item.mrp,
+                                productName = item.productName,
+                                sylhetKumarparaTotalPhysicalQty = item.totalPhysicalQty,
+                                sylhetKumarparaTotalVirualQty = item.totalVirualQty
+                            };
+
+                        Elements.Add(newEntry);
+                    }
+                }
+            }
+
+            //Elements.AddRange(result);
             Loading = false;
             Filter.previous += 25;
 
@@ -167,5 +385,69 @@
     private async Task GetCategories()
     {
         Categories = await _category.GetOnlyChildCategory();
+    }
+
+    // Create Document
+    private async Task CreateDocument()
+    {
+        using (ExcelEngine excelEngine = new ExcelEngine())
+        {
+            IApplication application = excelEngine.Excel;
+            application.DefaultVersion = ExcelVersion.Xlsx;
+
+            //Create a workbook.
+            IWorkbook workbook = application.Workbooks.Create(1);
+            IWorksheet worksheet = workbook.Worksheets[0];
+
+            //Initialize DataTable and data get from SampleDataTable method.
+            DataTable table = ParentDataTable();
+
+            //Export data from DataTable to Excel worksheet.
+            worksheet.ImportDataTable(table, true, 1, 1);
+
+            worksheet.UsedRange.AutofitColumns();
+
+            //Save the document as a stream and return the stream.
+            using (MemoryStream stream = new MemoryStream())
+            {
+                //Save the created Excel document to MemoryStream
+                workbook.SaveAs(stream);
+
+                //Download the excel file.
+                await JS.SaveAs("WarehouseStock.xlsx", stream.ToArray());
+            }
+        }
+    }
+
+    private DataTable ParentDataTable()
+    {
+        DataTable reports = new DataTable();
+        reports.Columns.Add("Product Code");
+        reports.Columns.Add("SKU");
+        reports.Columns.Add("Product Name");
+        reports.Columns.Add("MRP", typeof(decimal));
+        reports.Columns.Add("Selling Price", typeof(decimal));
+        reports.Columns.Add("Central P. QTY", typeof(int));
+        reports.Columns.Add("Central V. QTY", typeof(int));
+        reports.Columns.Add("Mirpur P. QTY", typeof(int));
+        reports.Columns.Add("Mirpur V. QTY", typeof(int));
+        reports.Columns.Add("B. City P. QTY", typeof(int));
+        reports.Columns.Add("B. City V. QTY", typeof(int));
+        reports.Columns.Add("B. Road P. QTY", typeof(int));
+        reports.Columns.Add("B. Road V. QTY", typeof(int));
+        reports.Columns.Add("Dhanmondi P. QTY", typeof(int));
+        reports.Columns.Add("Dhanmondi V. QTY", typeof(int));
+        reports.Columns.Add("Finlay P. QTY", typeof(int));
+        reports.Columns.Add("Finlay V. QTY", typeof(int));
+        reports.Columns.Add("Khulsi P. QTY", typeof(int));
+        reports.Columns.Add("Khulsi V. QTY", typeof(int));
+        reports.Columns.Add("S. Kumarpara P. QTY", typeof(int));
+        reports.Columns.Add("S. Kumarpara V. QTY", typeof(int));
+
+        foreach (var item in Elements)
+        {
+            reports.Rows.Add(item.productCode, item.sku, item.productName, item.mrp, item.sellingPrice, item.centralTotalPhysicalQty, item.centralTotalVirualQty, item.mirpurTotalPhysicalQty, item.mirpurTotalVirualQty, item.bashundharaCityTotalPhysicalQty, item.bashundharaCityTotalVirualQty, item.baileyRoadTotalPhysicalQty, item.baileyRoadTotalVirualQty, item.dhanmondiTotalPhysicalQty, item.dhanmondiTotalVirualQty, item.finlayTotalPhysicalQty, item.finlayTotalVirualQty, item.khulsiTotalPhysicalQty, item.khulsiTotalVirualQty, item.sylhetKumarparaTotalPhysicalQty, item.sylhetKumarparaTotalVirualQty);
+        }
+        return reports;
     }
 }

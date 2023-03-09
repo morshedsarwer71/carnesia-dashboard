@@ -65,6 +65,7 @@
         <MudTable RowsPerPage="25" Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh>Creation Date</MudTh>
+                <MudTh>PO Code</MudTh>
                 <MudTh>Supplier</MudTh>
                 <MudTh>Receiving Warehouse</MudTh>
                 <MudTh>SKU</MudTh>
@@ -79,6 +80,7 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Creation Date">@context.creationDate</MudTd>
+                <MudTd DataLabel="PO Code">@context.poCode</MudTd>
                 <MudTd DataLabel="Supplier">@context.vendorName</MudTd>
                 <MudTd DataLabel="Receiving Warehouse">@context.recvWarehouse</MudTd>
                 <MudTd DataLabel="SKU">@context.sku</MudTd>
