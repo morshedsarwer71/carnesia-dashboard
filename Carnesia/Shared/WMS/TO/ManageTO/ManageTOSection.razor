@@ -21,6 +21,7 @@
 					<MudSelectItem Value="10" >Open</MudSelectItem>
 					<MudSelectItem Value="9" >Picklisted</MudSelectItem>
 					<MudSelectItem Value="11" >Picked</MudSelectItem>
+					<MudSelectItem Value="24">Processed</MudSelectItem>
 					<MudSelectItem Value="6" >Received</MudSelectItem>
 				</MudSelect>
 			</MudItem>
@@ -166,7 +167,7 @@
 	private async Task GetFilteredTos()
 	{
 
-		if ((Filter.fromDate != null && Filter.toDate == null) || (Filter.fromDate == null && Filter.toDate != null))
+		if (Filter.toDate == null || Filter.fromDate == null)
 		{
 			Snackbar.Add("Please select both from date and to date!", Severity.Error);
 			return;

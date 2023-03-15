@@ -1,51 +1,78 @@
 ﻿@using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.WMS.TO.POCO
+@using Carnesia.Domain.WMS.Store.Models;
 @inject IDialogService DialogService
+@inject IStore _store
+@inject ICreateTo _createTo
+@inject ISnackbar Snackbar
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
-		<MudGrid Class="justify-center align-baseline mb-5">
-			<MudItem lg="2" md="4" sm="6">
-				<MudAutocomplete T="string" Label="Source Warehouse" @bind-Value="reStockFilter.SourceWH" SearchFunc="@AutoCompleteSearch" ResetValueOnEmptyText="true" />
+		<MudGrid Class="align-baseline mb-5">
+			<MudItem sm="3">
+				<MudSelect @bind-Value="Filter.sourceStoreId" Label="Source Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">All Store</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
 			</MudItem>
-
-			<MudItem lg="2" md="4" sm="6">
-				<MudAutocomplete T="string" Label="Destination Warehouse" @bind-Value="reStockFilter.DestinationWH" SearchFunc="@AutoCompleteSearch" ResetValueOnEmptyText="true" />
+			<MudItem sm="3">
+				<MudSelect @bind-Value="Filter.destinationStores" Label="Destination Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">All Store</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
 			</MudItem>
-			
-			<MudItem lg="2" md="4" sm="6">
-				<MudTextField @bind-Value="reStockFilter.SKU" Label="SKU" Variant="Variant.Text" />
+			<MudItem sm="3">
+				<MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" DateFormat="yyyy-MM-dd" />
 			</MudItem>
-			
-			<MudItem lg="2" md="4" sm="6">
-				<MudSelect T="string" @bind-Value="reStockFilter.Condition" Label="Condition" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("Less Than")" />
-					<MudSelectItem Value="@("Greater Than")" />
-					<MudSelectItem Value="@("Equals To")" />
+			<MudItem sm="3">
+				<MudDatePicker Label="To Date" @bind-Date="Filter.toDate" DateFormat="yyyy-MM-dd" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudTextField @bind-Value="Filter.sku" Label="SKU" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudSelect @bind-Value="Filter.condition" Label="Condition" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="@("<")" >Less Than</MudSelectItem>
+					<MudSelectItem Value="@(">")" >Greater Than</MudSelectItem>
+					<MudSelectItem Value="@("==")" >Equal To</MudSelectItem>
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="3">
+				<MudTextField @bind-Value="Filter.conditionVal" Label="Condition Value" Variant="Variant.Text" />
+			</MudItem>
+			<MudItem sm="3">
+				<MudSelect @bind-Value="Filter.stockSuggestion" Label="Stock Suggestion" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">All Store</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
 				</MudSelect>
 			</MudItem>
 
-			<MudItem lg="2" md="4" sm="6">
-				<MudTextField @bind-Value="reStockFilter.ConditionNumber" Label="Condition Value" Variant="Variant.Text" />
-			</MudItem>
-
-			<MudItem lg="2" md="4" sm="6">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+			<MudItem sm="3">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetData">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
 
-		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" MultiSelection="true" @bind-SelectedItems="SelectedStocks">
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Item Updated", Severity.Info))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" IsEditRowSwitchingBlocked="@true">
             <HeaderContent>
-                <MudTh></MudTh>
-                <MudTh>SKU</MudTh>
+                @*<MudTh></MudTh>*@
+                <MudTh>Product Code</MudTh>
                 <MudTh>Product Name</MudTh>
                 <MudTh>Source WH Stock</MudTh>
+                <MudTh>Destination WH Stock</MudTh>
                 <MudTh>Avg. Sale/Day</MudTh>
-                <MudTh>Quantity</MudTh>
-                <MudTh>Suggested Outlet</MudTh>
+                <MudTh>Suggested Quantity</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="">
+                @*<MudTd DataLabel="">
                     @if (!context.ShowDetails)
 					{
 						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.SKU)" />
@@ -54,15 +81,25 @@
 					{
 						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.SKU)" />
 					}
-                </MudTd>
-                <MudTd DataLabel="SKU">@context.SKU</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="Source WH Stock">@context.SourceWHStock</MudTd>
-                <MudTd DataLabel="Avg. Sale/Day">@context.AvgSale</MudTd>
-                <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
-                <MudTd DataLabel="Suggested Outlet">@context.Outlate</MudTd>
+                </MudTd>*@
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="Source WH Stock">@context.sourchWH</MudTd>
+                <MudTd DataLabel="Destination WH Stock">@context.desWH</MudTd>
+                <MudTd DataLabel="Avg. Sale/Day">@context.avgSalePerDay</MudTd>
+				<MudTd DataLabel="Suggested Quantity">@context.suggestedQty</MudTd>
             </RowTemplate>
-            <ChildRowContent>
+			<RowEditingTemplate>
+				<MudTd DataLabel="Product Code">@context.productCode</MudTd>
+				<MudTd DataLabel="Product Name">@context.productName</MudTd>
+				<MudTd DataLabel="Source WH Stock">@context.sourchWH</MudTd>
+				<MudTd DataLabel="Destination WH Stock">@context.desWH</MudTd>
+				<MudTd DataLabel="Avg. Sale/Day">@context.avgSalePerDay</MudTd>
+				<MudTd DataLabel="Suggested Quantity">
+					<MudTextField @bind-Value="@context.suggestedQty" Required />
+				</MudTd>
+			</RowEditingTemplate>
+            @*<ChildRowContent>
 				@if (context.ShowDetails)
 				{
 					<td colspan="8">
@@ -90,7 +127,7 @@
 						</MudCard>
 					</td>
 				}
-			</ChildRowContent>
+			</ChildRowContent>*@
             <PagerContent>
                 <MudTablePager />
             </PagerContent>
@@ -109,46 +146,71 @@
 	</MudContainer>
 </MudPaper>
 @code {
-    // Filter Input
-    private ReStockFilterPoco reStockFilter = new ReStockFilterPoco();
-
-    // Table Customaization
-    private TableCommon tableCommon = new TableCommon();
-
-    // Table Content
-    private IEnumerable<ReStockTablePoco> Elements = new List<ReStockTablePoco>();
-
-    // Selected Stocks
-    private HashSet<ReStockTablePoco> SelectedStocks = new HashSet<ReStockTablePoco>();
-
-
-	// Autocomplete Temp Data
-	private string[] states =
-    {
-        "Alabama", "Alaska", "American Samoa", "Arizona",
-        "Arkansas", "California", "Colorado", "Connecticut",
-        "Delaware", "District of Columbia", "Federated States of Micronesia",
-        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
-        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
-        "Louisiana", "Maine", "Marshall Islands",
-	};
-
-	// Autocomplete Search Function
-	private async Task<IEnumerable<string>> AutoCompleteSearch(string value)
-    {
-        // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
-
-        // if text is null or empty, show complete list
-        if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-	// Show Details
-	private void ShowBtnPress(string sku)
+	// Page On Load
+	protected override async Task OnInitializedAsync()
 	{
-		ReStockTablePoco tmpElements = Elements.First(f => f.SKU == sku);
-		tmpElements.ShowDetails = !tmpElements.ShowDetails;
+		await GetStores();
+	}
+
+	// Filter Input
+	private ReStockFilterPoco reStockFilter = new ReStockFilterPoco();
+
+	// Table Customaization
+	private TableCommon tableCommon = new TableCommon();
+
+	// Loading
+	private bool Loading { get; set; }
+
+	// Table Content
+	private List<ReStockTablePoco> Elements = new List<ReStockTablePoco>();
+	private ReStockTableFilterPoco Filter = new ReStockTableFilterPoco();
+
+	// Get Data
+	private async Task GetData()
+	{
+		if (!Filter.fromDate.HasValue || !Filter.toDate.HasValue)
+		{
+			Snackbar.Add("Please add both From and To Date!", Severity.Error);
+		}
+		Loading = true;
+		try
+		{
+			Elements = await _createTo.GetRestoks(Filter);
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+
+	// Before Edit
+	private ReStockTablePoco beforeEdit;
+
+	// Backup Item
+	private void BackupItem(object element)
+	{
+		beforeEdit = new()
+			{
+				suggestedQty = ((ReStockTablePoco)element).suggestedQty
+			};
+	}
+
+	// Reset Items If Edit Cancel
+	private void ResetItemToOriginalValues(object element)
+	{
+		((ReStockTablePoco)element).suggestedQty = beforeEdit.suggestedQty;
+	}
+
+
+	// Stores
+	private List<StoreDTO> Stores = new List<StoreDTO>();
+
+	// Get Stores
+	private async Task GetStores()
+	{
+		Stores = await _store.GetStoresAsync();
 	}
 }

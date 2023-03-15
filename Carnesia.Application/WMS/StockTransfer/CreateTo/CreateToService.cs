@@ -10,6 +10,7 @@ using System.Data;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using Newtonsoft.Json;
+using Carnesia.Domain.WMS.POReport;
 
 namespace Carnesia.Application.WMS.StockTransfer.CreateTo
 {
@@ -112,7 +113,25 @@ namespace Carnesia.Application.WMS.StockTransfer.CreateTo
             }
         }
 
-        public async Task<GetProductCreateToPoco> NewTo(NewToPoco to)
+		public async Task<List<ReStockTablePoco>> GetRestoks(ReStockTableFilterPoco filter)
+		{
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("StockTransfers/restock", filter);
+
+				var json = await result.Content.ReadAsStringAsync();
+				var data = JsonConvert.DeserializeObject<List<ReStockTablePoco>>(json);
+
+                return data;
+			}
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+		}
+
+		public async Task<GetProductCreateToPoco> NewTo(NewToPoco to)
         {
             try
             {

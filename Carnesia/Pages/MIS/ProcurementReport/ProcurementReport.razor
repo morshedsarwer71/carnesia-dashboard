@@ -29,7 +29,7 @@
                     <MudSelectItem Value="0">All Category</MudSelectItem>
                     @foreach (var item in Categories)
                     {
-                        <MudSelectItem Value="item.chilId">@item.childCatName</MudSelectItem>
+                        <MudSelectItem Value="item.id">@item.parentCat</MudSelectItem>
                     }
                 </MudSelect>
             </MudItem>
@@ -191,12 +191,12 @@
     }
 
     // Categories
-    private List<OnlyChildCategoryDTO> Categories = new List<OnlyChildCategoryDTO>();
+    private List<ParentCategoryDTO> Categories = new List<ParentCategoryDTO>();
 
     // Get Categories
     private async Task GetCategories()
     {
-        Categories = await _category.GetOnlyChildCategory();
+        Categories = await _category.GetCategories();
     }
 
     // Show Web Details

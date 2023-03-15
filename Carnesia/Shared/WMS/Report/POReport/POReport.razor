@@ -10,6 +10,9 @@
     <MudContainer Fixed="true">
         <MudGrid Class="mb-5">
             <MudItem lg="3" md="6">
+                <MudTextField @bind-Value="Filter.poCode" Label="PO Code" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem lg="3" md="6">
                 <MudSelect @bind-Value="Filter.storeId" Label="Outlet" AnchorOrigin="Origin.BottomCenter">
                     <MudSelectItem Value="0">All Outlet</MudSelectItem>
                     @foreach (var item in Stores)

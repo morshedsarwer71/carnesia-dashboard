@@ -81,7 +81,22 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
             }
         }
 
-		public async Task<List<PendingOrderDTO>> GetOrderDetails(OrderDetailsFilterDTO filter)
+        public async Task<List<PendingOrderDTO>> GetAllHoldedOrders()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<PendingOrderDTO>>("Oms/holdedorders");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<PendingOrderDTO>> GetOrderDetails(OrderDetailsFilterDTO filter)
 		{
 			try
 			{
@@ -122,6 +137,21 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
                 var data = JsonConvert.DeserializeObject<List<PendingOrderDTO>>(json);
 
                 return data;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> HoldOrder(HoldOrderDTO orders)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("Oms/holdorders", orders);
+
+                return result.IsSuccessStatusCode;
             }
             catch (Exception)
             {

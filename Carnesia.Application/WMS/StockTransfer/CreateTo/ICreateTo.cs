@@ -13,5 +13,6 @@ namespace Carnesia.Application.WMS.StockTransfer.CreateTo
 		Task<GetProductCreateToPoco> GetProduct(int source, int destination, string sku);
 		Task<BulkCreateToResponse> GetBulkProducts(int source, int destination, InputFileChangeEventArgs e);
 		Task<GetProductCreateToPoco> NewTo(NewToPoco to);
+		Task<List<ReStockTablePoco>> GetRestoks(ReStockTableFilterPoco filter);
 	}
 }

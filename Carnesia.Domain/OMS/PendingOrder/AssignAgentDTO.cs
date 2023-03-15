@@ -12,6 +12,11 @@ namespace Carnesia.Domain.OMS.PendingOrder
         public List<OrderIdsDTO> orders { get; set; }
     }
 
+    public class HoldOrderDTO
+    {
+        public string reasone { get; set; }
+        public List<OrderIdsDTO> orders { get; set; }
+    }
     public class OrderIdsDTO
     {
         public int orderId { get; set; }

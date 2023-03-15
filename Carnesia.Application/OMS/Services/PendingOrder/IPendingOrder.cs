@@ -12,8 +12,10 @@ namespace Carnesia.Application.OMS.Services.PendingOrder
     public interface IPendingOrder
     {
         Task<List<PendingOrderDTO>> GetAllPendingOrders();
+        Task<List<PendingOrderDTO>> GetAllHoldedOrders();
         Task<List<PendingOrderDTO>> GetPendingOrdersByFilter(PendingOrderFilterDTO filter);
         Task<bool> AssignAgent(AssignAgentDTO agent);
+        Task<bool> HoldOrder(HoldOrderDTO orders);
         Task<bool> CancelOrder(int orderId);
         Task<bool> VerifyOrder(int orderId);
         Task<List<AgentDTO>> GetAgents(string stuffType);

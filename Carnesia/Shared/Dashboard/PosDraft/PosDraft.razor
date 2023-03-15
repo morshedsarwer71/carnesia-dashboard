@@ -16,6 +16,7 @@
                 <MudTh>Customer Phone</MudTh>
                 <MudTh>Total Price</MudTh>
                 <MudTh>Complete Order</MudTh>
+                <MudTh>Remove</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Customer Name">@context.pos.customerName</MudTd>
@@ -23,6 +24,9 @@
                 <MudTd DataLabel="Total Price">@context.pos.total</MudTd>
                 <MudTd DataLabel="Complete Order">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToPlaceOrder(context.uniqUuid)">Complete</MudButton>
+                </MudTd>
+                <MudTd DataLabel="Remove Order">
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveOrder(context.uniqUuid)">Remove</MudButton>
                 </MudTd>
             </RowTemplate>
             <PagerContent>
@@ -64,6 +68,25 @@
         if (element.pos.customerName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
+    }
+
+    // Remove Draft
+    private async Task RemoveOrder(Guid uuid)
+    {
+        try
+        {
+            var result = await _storage.GetItemAsync<List<GenerateBillPOSDTO>>("draft_pos");
+
+            result.RemoveAll(x => x.uniqUuid == uuid);
+
+            await _storage.SetItemAsync<List<GenerateBillPOSDTO>>("draft_pos", result);
+            Elements = await _storage.GetItemAsync<List<GenerateBillPOSDTO>>("draft_pos");
+        }
+        catch (Exception)
+        {
+            
+            throw;
+        }
     }
 
     // Navigate To Place Order

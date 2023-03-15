@@ -17,6 +17,7 @@
                 <MudTh>Customer Phone</MudTh>
                 <MudTh>Total Price</MudTh>
                 <MudTh>Complete Order</MudTh>
+                <MudTh>Remove</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Customer Name">@context.customerName</MudTd>
@@ -24,6 +25,9 @@
                 <MudTd DataLabel="Total Price">@context.totalPrice</MudTd>
                 <MudTd DataLabel="Complete Order">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToPlaceOrder(context.uuidID)">Complete</MudButton>
+                </MudTd>
+                <MudTd DataLabel="Remove Order">
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveOrder(context.uuidID)">Remove</MudButton>
                 </MudTd>
             </RowTemplate>
             <PagerContent>
@@ -65,6 +69,25 @@
         if (element.customerPhone.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
+    }
+
+    // Remove Draft
+    private async Task RemoveOrder(Guid uuid)
+    {
+        try
+        {
+            var result = await _storage.GetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders");
+
+            result.RemoveAll(x => x.uuidID == uuid);
+
+            await _storage.SetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders", result);
+            Elements = await _storage.GetItemAsync<List<PlaceOrderDetailsDTO>>("draft_orders");
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
     // Navigate To Place Order

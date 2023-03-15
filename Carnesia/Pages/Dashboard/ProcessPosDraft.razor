@@ -1,5 +1,8 @@
-﻿@using Carnesia.Domain.Dashboard.GenerateBill
+﻿@page "/place-pos/{posID}"
+
+@using Carnesia.Domain.Dashboard.GenerateBill
 @using Carnesia.Domain.Common.POCO
+@using Carnesia.Shared.Dashboard.GenerateBill;
 @using Carnesia.Shared.Dashboard.GenerateBillV2
 @inject IJSRuntime JSRuntime
 @inject IDialogService DialogService
@@ -244,6 +247,15 @@
 </MudPaper>
 
 @code {
+    [Parameter]
+    public string posID { get; set; }
+
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDraft();
+    }
+
     // Div Ref
     protected ElementReference generateBill;
 
@@ -587,6 +599,7 @@
         var allCombos = Elements.Where(x => x.isCombo == true).ToList();
         POSData.combos = allCombos;
 
+
         foreach (var item in Elements)
         {
             if (item.isCombo)
@@ -612,7 +625,7 @@
         POSData.items = Elements;
         POSData.posUID = UIDCollection;
         POSData.posPayment = PaymentTable;
-        POSData.uniqUuid = Guid.NewGuid();
+        POSData.uniqUuid = new Guid(posID);
     }
 
     // Save Order
@@ -622,27 +635,87 @@
         {
             var savedOrders = await _storage.GetItemAsync<List<GenerateBillPOSDTO>>("draft_pos");
 
-            var newSave = new List<GenerateBillPOSDTO>();
+            savedOrders.RemoveAll(x => x.uniqUuid == new Guid(posID));
 
             await AssignData();
+            savedOrders.Add(POSData);
 
-            if (savedOrders != null)
-            {
-                newSave.AddRange(savedOrders);
-            }
+            //var newSave = new List<GenerateBillPOSDTO>();
 
-            newSave.Add(POSData);
 
-            await _storage.SetItemAsync<List<GenerateBillPOSDTO>>("draft_pos", newSave);
+            //if (savedOrders != null)
+            //{
+            //    newSave.AddRange(savedOrders);
+            //}
+
+            //newSave.Add(POSData);
+
+            await _storage.SetItemAsync<List<GenerateBillPOSDTO>>("draft_pos", savedOrders);
 
             await ResetFields();
             StateHasChanged();
-            Snackbar.Add("Order saved successfully!", Severity.Success);
         }
         catch (Exception)
         {
-            
+
             throw;
+        }
+    }
+
+    // Load From Draft
+    private async Task LoadDraft()
+    {
+        try
+        {
+            var savedOrders = await _storage.GetItemAsync<List<GenerateBillPOSDTO>>("draft_pos");
+
+            var guidedOrderId = new Guid(posID);
+
+            var newSave = savedOrders.FirstOrDefault(x => x.uniqUuid == guidedOrderId);
+
+            if (newSave == null)
+            {
+                Snackbar.Add("Order Not Found or Already Proccessed!", Severity.Error);
+
+                return;
+            }
+
+            TableItems = newSave.pos.items;
+            Customer.customerId = newSave.pos.customerId;
+            discount = newSave.pos.discount;
+            vatAmount = newSave.pos.vatAmount;
+            subTotal = newSave.pos.total;
+            usedCredit = newSave.pos.creditValue;
+            MembershipID = newSave.pos.membershipId;
+            Coupon = newSave.pos.couponCode;
+            Comment = newSave.pos.comment;
+            Customer.phone = newSave.pos.customerPhone;
+            Customer.name = newSave.pos.customerName;
+            Customer.address = newSave.pos.customerAddress;
+            customerPhoneNumber = newSave.pos.customerPhoneGet;
+            POSDetails.tobeCollected = newSave.pos.tobeCollected;
+
+            //foreach (var item in newSave.comboItems)
+            //{
+            //    Elements.Add(new GenerateBillUIDDataDTO
+            //    {
+            //        productCode = item.comboCode,
+            //        bcType = item.bcType,
+            //        price = item.price,
+            //        quantity = item.quantity,
+            //        isCombo = true,
+            //        totalPrice = item.quantity * item.price
+            //    });
+            //}
+            Elements.AddRange(newSave.items);
+            Elements.AddRange(newSave.combos);
+            UIDCollection.AddRange(newSave.posUID);
+            PaymentTable.AddRange(newSave.posPayment);
+        }
+        catch (Exception e)
+        {
+
+            Console.WriteLine(e.Message);
         }
     }
 
@@ -667,7 +740,9 @@
                 trnCode = result.trnCode;
                 Snackbar.Add(result.message, Severity.Success);
 
-
+                var savedOrders = await _storage.GetItemAsync<List<GenerateBillPOSDTO>>("draft_pos");
+                savedOrders.RemoveAll(x => x.uniqUuid == new Guid(posID));
+                await _storage.SetItemAsync<List<GenerateBillPOSDTO>>("draft_pos", savedOrders);
 
                 await GotoPrint(result.trnCode);
                 return;
@@ -803,3 +878,4 @@
         tmpElements.showDetails = !tmpElements.showDetails;
     }
 }
+

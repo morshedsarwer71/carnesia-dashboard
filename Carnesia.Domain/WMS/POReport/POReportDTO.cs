@@ -27,6 +27,7 @@ namespace Carnesia.Domain.WMS.POReport
     {
         public int storeId { get; set; }
         public string? productCode { get; set; }
+        public string? poCode { get; set; }
         public string? sku { get; set; }
         public string? productName { get; set; }
         public DateTime? poFromDate { get; set; }

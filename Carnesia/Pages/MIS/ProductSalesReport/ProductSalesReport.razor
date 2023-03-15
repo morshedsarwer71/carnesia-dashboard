@@ -43,7 +43,7 @@
                     <MudSelectItem Value="0">All Category</MudSelectItem>
                     @foreach (var item in Categories)
                     {
-                        <MudSelectItem Value="item.chilId">@item.childCatName</MudSelectItem>
+                        <MudSelectItem Value="item.id">@item.parentCat</MudSelectItem>
                     }
                 </MudSelect>
             </MudItem>
@@ -87,9 +87,18 @@
 
         <MudTable Items="@Elements.cmsRevenue" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
             <HeaderContent>
-                <MudTh>Date</MudTh>
-                <MudTh>Sales Date</MudTh>
-                <MudTh>Business Unit</MudTh>
+                @*<MudTh>Date</MudTh>*@
+                @*<MudTh>Sales Date</MudTh>*@
+                <MudTh>Child Category</MudTh>
+                <MudTh>Brand</MudTh>
+                <MudTh>Product Code</MudTh>
+                <MudTh>SKU</MudTh>
+                <MudTh>Product Name</MudTh>
+                <MudTh>Sold QTY.</MudTh>
+                <MudTh>Sold Amount</MudTh>
+                <MudTh>Total Cost</MudTh>
+                <MudTh>Profit</MudTh>
+                @*<MudTh>Business Unit</MudTh>
                 <MudTh>Transaction</MudTh>
                 <MudTh>Item Total</MudTh>
                 <MudTh>QTY Total</MudTh>
@@ -100,16 +109,23 @@
                 <MudTh>Revenue After Discount</MudTh>
                 <MudTh>Cost</MudTh>
                 <MudTh>Cancellation Amount</MudTh>
-                <MudTh>Gross Profit</MudTh>
+                <MudTh>Gross Profit</MudTh>*@
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Date">
-                    @*<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => ShowWebDetails(context.date)">*@
+                @*<MudTd DataLabel="Date">
                         @context.date
-                    @*</MudButton>*@
-                </MudTd>
-                <MudTd DataLabel="Sales Date">@context.salesDate</MudTd>
-                <MudTd DataLabel="Business Unit">@context.buisnessUnit</MudTd>
+                </MudTd>*@
+                @*<MudTd DataLabel="Sales Date">@context.salesDate</MudTd>*@
+                <MudTd DataLabel="Child Category">@context.salesDate</MudTd>
+                <MudTd DataLabel="Brand">@context.salesDate</MudTd>
+                <MudTd DataLabel="Product Code">@context.salesDate</MudTd>
+                <MudTd DataLabel="SKU">@context.salesDate</MudTd>
+                <MudTd DataLabel="Product Name">@context.salesDate</MudTd>
+                <MudTd DataLabel="Sold QTY.">@context.salesDate</MudTd>
+                <MudTd DataLabel="Sold Amount">@context.salesDate</MudTd>
+                <MudTd DataLabel="Total Cost">@context.salesDate</MudTd>
+                <MudTd DataLabel="Profit">@context.salesDate</MudTd>
+                @*<MudTd DataLabel="Business Unit">@context.buisnessUnit</MudTd>
                 <MudTd DataLabel="Transaction">@context.numberOfTransaction</MudTd>
                 <MudTd DataLabel="Item Total">@context.itemTotal</MudTd>
                 <MudTd DataLabel="QTY Total">@context.qtyTotal</MudTd>
@@ -120,7 +136,7 @@
                 <MudTd DataLabel="Revenue After Discount">@context.afterDiscount</MudTd>
                 <MudTd DataLabel="Cost">@context.cost</MudTd>
                 <MudTd DataLabel="Cancellation Amount">@context.cancellationAmount</MudTd>
-                <MudTd DataLabel="Gross Profit">@context.grosProfit</MudTd>
+                <MudTd DataLabel="Gross Profit">@context.grosProfit</MudTd>*@
             </RowTemplate>
             <FooterContent>
                 <MudTFootRow>
@@ -142,7 +158,7 @@
             </FooterContent>
         </MudTable>
 
-        <MudTable Class="mt-5" Items="@Elements.posRevenue" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
+        @*<MudTable Class="mt-5" Items="@Elements.posRevenue" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" CustomFooter="true">
             <HeaderContent>
                 <MudTh>Date</MudTh>
                 <MudTh>Sales Date</MudTh>
@@ -161,9 +177,7 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Date">
-                    @*<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => OutletDetailsModal(context.date, context.storeId)">*@
                         @context.date
-                    @*</MudButton>*@
                 </MudTd>
                 <MudTd DataLabel="Sales Date">@context.salesDate</MudTd>
                 <MudTd DataLabel="Business Unit">@context.buisnessUnit</MudTd>
@@ -197,7 +211,7 @@
                     <MudTd Style="font-weight: 600;">@Elements.posRevenue.Sum(x => x.grosProfit)</MudTd>
                 </MudTFootRow>
             </FooterContent>
-        </MudTable>
+        </MudTable>*@
     </MudContainer>
 </MudPaper>
 
@@ -267,11 +281,11 @@
     }
 
     // Categories
-    private List<OnlyChildCategoryDTO> Categories = new List<OnlyChildCategoryDTO>();
+    private List<ParentCategoryDTO> Categories = new List<ParentCategoryDTO>();
 
     // Get Categories
     private async Task GetCategories()
     {
-        Categories = await _category.GetOnlyChildCategory();
+        Categories = await _category.GetCategories();
     }
 }
