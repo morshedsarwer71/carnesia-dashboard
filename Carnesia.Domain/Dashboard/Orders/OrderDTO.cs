@@ -19,9 +19,21 @@ namespace Carnesia.Domain.Dashboard.Orders
         public decimal returnAmount { get; set; }
         public List<OrderPaymentDTO>? paymentMethod { get; set; }
         public string? orderCreatBy { get; set; }
+        public bool showDetails { get; set; }
+        public List<PosOrderDetailsDTO> orderDetails { get; set; }
     }
 
-	public class OrderPaymentDTO
+    public class PosOrderDetailsDTO
+    {
+        public string sku { get; set; }
+        public string productCode { get; set; }
+        public string productName { get; set; }
+        public decimal mrp { get; set; }
+        public int quantity { get; set; }
+        public decimal totalMrp { get; set; }
+    }
+
+    public class OrderPaymentDTO
     {
         public string PaymentType { get; set;}
     }

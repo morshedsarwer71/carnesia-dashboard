@@ -1,0 +1,90 @@
+﻿@page "/product-bulk-publish"
+@using Carnesia.Domain.CMS.ProductList;
+@inject IProductList _product
+@inject ISnackbar Snackbar
+
+<MudPaper Class="ma-2 px-3 py-16">
+    <MudContainer Fixed="true">
+        <div class="d-flex justify-end mb-3">
+            <a href="./BulkProductPublish.xlsx" download target="_top">
+                <MudButton Variant="Variant.Filled" Color="Color.Success">Download Template</MudButton>
+            </a>
+            <InputFile id="fileInput" hidden accept=".xlsx" OnChange="UploadFile" />
+            <MudButton HtmlTag="label"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Filled.CloudUpload"
+                       Class="ms-2"
+                       for="fileInput">
+                Upload File
+            </MudButton>
+        </div>
+
+        <MudTable Items="@Elements" Dense="true" Loading="Loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>Product Code</MudTh>
+                <MudTh>Product SKU</MudTh>
+                <MudTh>Is Publish</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Product Code">@context.productCode</MudTd>
+                <MudTd DataLabel="Product SKU">@context.productSku</MudTd>
+                <MudTd DataLabel="Is Publish">@(context.isPublish == 1 ? "Publish" : "Unpublish")</MudTd>
+            </RowTemplate>
+        </MudTable>
+
+        <div class="d-flex justify-end mt-3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="PublishProducts">Submit</MudButton>
+        </div>
+    </MudContainer>
+</MudPaper>
+
+    @code {
+    // Table Elements
+    private List<ProductBulkPublishDTO> Elements = new List<ProductBulkPublishDTO>();
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Publish
+    private async Task PublishProducts()
+    {
+        Loading = true;
+        try
+        {
+            var result = await _product.PublishBulkProducts(Elements);
+
+            if (result)
+            {
+                Snackbar.Add("Success!", Severity.Success);
+                Elements.Clear();
+                Loading = false;
+                return;
+            }
+            Snackbar.Add("Product not found!", Severity.Error);
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Loading = false;
+        }
+    }
+
+    // Upload .xlsx
+    private async Task UploadFile(InputFileChangeEventArgs e)
+    {
+        Loading = true;
+        try
+        {
+            Elements.Clear();
+            Elements = await _product.UploadXLSXFileForCategory(e);
+            Loading = false;
+        }
+        catch (Exception er)
+        {
+            Loading = false;
+            Console.WriteLine(er.Message);
+        }
+    }
+}

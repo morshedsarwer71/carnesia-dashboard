@@ -1,17 +1,23 @@
-﻿<MudPaper Class="px-3 py-16 ma-2">
+﻿@using Carnesia.Domain.AAF.Receivable.Outlet
+@using Carnesia.Domain.WMS.Store.Models;
+@inject IStore _store
+
+<MudPaper Class="px-3 py-16 ma-2">
     <MudContainer Fixed="true" >
         <MudGrid Class="justify-center">
             <MudItem sm="3">
-                <MudDatePicker Label="From Date" @bind-Date="date" />
+                <MudDatePicker Label="From Date" @bind-Date="filter.fromDate" />
             </MudItem>
             <MudItem sm="3">
-                <MudDatePicker Label="To Date" @bind-Date="date" />
+                <MudDatePicker Label="To Date" @bind-Date="filter.toDate" />
             </MudItem>
             <MudItem sm="3">
-                <MudSelect T="string" Label="Store" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Central Warehouse")" />
-                    <MudSelectItem Value="@("Dhanmondi")" />
-                    <MudSelectItem Value="@("Mirpur")" />
+                <MudSelect @bind-Value="filter.storeId" Label="Outlet" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Outlet</MudSelectItem>
+                    @foreach (var item in Stores)
+                    {
+                        <MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+                    }
                 </MudSelect>
             </MudItem>
         </MudGrid>
@@ -71,5 +77,27 @@
 </MudPaper>
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+    }
+
     private DateTime? date = DateTime.Today;
+
+    // Partial Receive Model
+    private OutletPartialReceiveDTO PartialReceive = new OutletPartialReceiveDTO();
+
+    // Order Filter
+    private OutletOrdersFilterDTO filter = new OutletOrdersFilterDTO();
+
+    // Stores
+    private List<StoreDTO> Stores = new List<StoreDTO>();
+
+    // Get Stores
+    private async Task GetStores()
+    {
+        Stores = await _store.GetStoresAsync();
+    }
+
 }

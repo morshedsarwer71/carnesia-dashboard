@@ -4,188 +4,186 @@
 @inject IJSRuntime IJS
 
 <MudPaper Class="py-16 px-3 ma-2">
-	<MudContainer Fixed="true">
-		<MudGrid>
-			<MudItem sm="3">
-				<MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" DateFormat="yyyy-MM-dd" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudDatePicker Label="To Date" @bind-Date="Filter.toDate" DateFormat="yyyy-MM-dd" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="Filter.phoneNumber" Placeholder="Customer Phone Number" Variant="Variant.Text" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="Filter.customerId" Placeholder="Customer Id" Variant="Variant.Text" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudTextField @bind-Value="Filter.trnCode" Placeholder="Order Id" Variant="Variant.Text" />
-			</MudItem>
-		</MudGrid>
+    <MudContainer Fixed="true">
+        <MudGrid>
+            <MudItem sm="3">
+                <MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" DateFormat="yyyy-MM-dd" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudDatePicker Label="To Date" @bind-Date="Filter.toDate" DateFormat="yyyy-MM-dd" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField @bind-Value="Filter.phoneNumber" Placeholder="Customer Phone Number" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField @bind-Value="Filter.customerId" Placeholder="Customer Id" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField @bind-Value="Filter.trnCode" Placeholder="Order Id" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
 
-		<div class="d-flex justify-end my-3">
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetOrdersBySearch">Filter</MudButton>
-		</div>
+        <div class="d-flex justify-end my-3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetOrdersBySearch">Filter</MudButton>
+        </div>
 
-		<MudTable Items="Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
-			<HeaderContent>
-				@*<MudTh></MudTh>*@
-				<MudTh>Order Time</MudTh>
-				<MudTh>Order ID</MudTh>
-				<MudTh>Customer ID</MudTh>
-				<MudTh>Customer Name</MudTh>
-				<MudTh>Address</MudTh>
-				<MudTh>Order Value(SP)</MudTh>
-				<MudTh>Store</MudTh>
-				<MudTh>Payment Methode</MudTh>
-				<MudTh>Status</MudTh>
-				<MudTh>Return Received Amount</MudTh>
-				<MudTh>Order Created By</MudTh>
-				<MudTh>Re-Print</MudTh>
-			</HeaderContent>
-			<RowTemplate>
-				@*<MudTd DataLabel="">
-					@if (!context.showDetails)
-					{
-					<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowDetails(context.orderID)" />
-					}
-					else if (context.showDetails)
-					{
-					<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowDetails(context.orderID)" />
-					}
-					</MudTd>*@
-				<MudTd DataLabel="Order Time">@context.orderDate</MudTd>
-				<MudTd DataLabel="Order ID">@context.orderId</MudTd>
-				<MudTd DataLabel="Customer ID">@context.customerId</MudTd>
-				<MudTd DataLabel="Customer Name">@context.customerName</MudTd>
-				<MudTd DataLabel="Address">@context.address</MudTd>
-				<MudTd DataLabel="Order Value(SP)">@context.orderValue</MudTd>
-				<MudTd DataLabel="Store">@context.store</MudTd>
-				<MudTd DataLabel="Payment Methode">
-					<MudList Dense="true">
-						<MudListItem Dense="true" Text="Payment Methode">
-							<NestedList>
-								@foreach (var item in context.paymentMethod)
-								{
-									<MudListItem Dense="true" Text="@item.PaymentType" Value="@item.PaymentType" />
-								}
-							</NestedList>
-						</MudListItem>
-					</MudList>
-				</MudTd>
-				<MudTd DataLabel="Status">@context.status</MudTd>
-				<MudTd DataLabel="Return Received Amount">@context.returnAmount</MudTd>
-				<MudTd DataLabel="Order Created By">@context.orderCreatBy</MudTd>
-				<MudTd DataLabel="Re-Print">
-					<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.orderId)">Re-Print Invoice</MudButton>
-				</MudTd>
-			</RowTemplate>
-			@*			<ChildRowContent>
-				@if (context.showDetails)
-				{
-				<td colspan="9">
-				<MudCard Elevation="0">
-				<MudCardContent Class="pa-0">
-				<MudTable Items="@context.details" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
-				<HeaderContent>
-				<MudTh>Product Code</MudTh>
-				<MudTh>SKU</MudTh>
-				<MudTh>Product Name</MudTh>
-				<MudTh>MRP</MudTh>
-				<MudTh>Selling Price</MudTh>
-				<MudTh>Quantity</MudTh>
-				<MudTh>Subtotal Value</MudTh>
-				</HeaderContent>
-				<RowTemplate>
-				<MudTd DataLabel="Product Code">@DetailsContext.productCode</MudTd>
-				<MudTd DataLabel="SKU">@DetailsContext.productSKU</MudTd>
-				<MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
-				<MudTd DataLabel="MRP">@DetailsContext.mrp</MudTd>
-				<MudTd DataLabel="Selling Price">@DetailsContext.sellingPrice</MudTd>
-				<MudTd DataLabel="Quantity">@DetailsContext.qty</MudTd>
-				<MudTd DataLabel="Subtotal Value">@(DetailsContext.qty * DetailsContext.sellingPrice)</MudTd>
-				</RowTemplate>
-				</MudTable>
-				</MudCardContent>
-				</MudCard>
-				</td>
-				}
-				</ChildRowContent>*@
-			<PagerContent>
-				<MudTablePager />
-			</PagerContent>
-		</MudTable>
-		<div class="d-flex flex-wrap mt-4">
-			<MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
-			<MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
-			<MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
-			<MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
-		</div>
-	</MudContainer>
+        <MudTable Items="Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh></MudTh>
+                <MudTh>Order Time</MudTh>
+                <MudTh>Order ID</MudTh>
+                <MudTh>Customer ID</MudTh>
+                <MudTh>Customer Name</MudTh>
+                <MudTh>Address</MudTh>
+                <MudTh>Order Value(SP)</MudTh>
+                <MudTh>Store</MudTh>
+                <MudTh>Payment Methode</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Return Received Amount</MudTh>
+                <MudTh>Order Created By</MudTh>
+                <MudTh>Re-Print</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="">
+                    @if (!context.showDetails)
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowDetails(context.orderId)" />
+                    }
+                    else if (context.showDetails)
+                    {
+                        <MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowDetails(context.orderId)" />
+                    }
+                </MudTd>
+                <MudTd DataLabel="Order Time">@context.orderDate</MudTd>
+                <MudTd DataLabel="Order ID">@context.orderId</MudTd>
+                <MudTd DataLabel="Customer ID">@context.customerId</MudTd>
+                <MudTd DataLabel="Customer Name">@context.customerName</MudTd>
+                <MudTd DataLabel="Address">@context.address</MudTd>
+                <MudTd DataLabel="Order Value(SP)">@context.orderValue</MudTd>
+                <MudTd DataLabel="Store">@context.store</MudTd>
+                <MudTd DataLabel="Payment Methode">
+                    <MudList Dense="true">
+                        <MudListItem Dense="true" Text="Payment Methode">
+                            <NestedList>
+                                @foreach (var item in context.paymentMethod)
+                                {
+                                    <MudListItem Dense="true" Text="@item.PaymentType" Value="@item.PaymentType" />
+                                }
+                            </NestedList>
+                        </MudListItem>
+                    </MudList>
+                </MudTd>
+                <MudTd DataLabel="Status">@context.status</MudTd>
+                <MudTd DataLabel="Return Received Amount">@context.returnAmount</MudTd>
+                <MudTd DataLabel="Order Created By">@context.orderCreatBy</MudTd>
+                <MudTd DataLabel="Re-Print">
+                    <MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="() => GotoPrint(context.orderId)">Re-Print Invoice</MudButton>
+                </MudTd>
+            </RowTemplate>
+            <ChildRowContent>
+                @if (context.showDetails)
+                {
+                    <td colspan="13">
+                        <MudCard Elevation="0">
+                            <MudCardContent Class="pa-0">
+                                <MudTable Items="@context.orderDetails" Bordered="true" Dense="true" Context="DetailsContext" Hover="true" Elevation="0">
+                                    <HeaderContent>
+                                        <MudTh>Product Code</MudTh>
+                                        <MudTh>SKU</MudTh>
+                                        <MudTh>Product Name</MudTh>
+                                        <MudTh>Selling Price</MudTh>
+                                        <MudTh>Quantity</MudTh>
+                                        <MudTh>Subtotal Value</MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate>
+                                        <MudTd DataLabel="Product Code">@DetailsContext.productCode</MudTd>
+                                        <MudTd DataLabel="SKU">@DetailsContext.sku</MudTd>
+                                        <MudTd DataLabel="Product Name">@DetailsContext.productName</MudTd>
+                                        <MudTd DataLabel="Selling Price">@DetailsContext.mrp</MudTd>
+                                        <MudTd DataLabel="Quantity">@DetailsContext.quantity</MudTd>
+                                        <MudTd DataLabel="Subtotal Value">@DetailsContext.totalMrp</MudTd>
+                                    </RowTemplate>
+                                </MudTable>
+                            </MudCardContent>
+                        </MudCard>
+                    </td>
+                }
+            </ChildRowContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+    </MudContainer>
 </MudPaper>
 
 @code {
-	// Page On Load
-	protected override async Task OnInitializedAsync()
-	{
-		await GetOrders();
-	}
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetOrders();
+    }
 
-	// LOading
-	private bool Loading { get; set; }
+    // LOading
+    private bool Loading { get; set; }
 
-	// Table Customaization
-	private TableCommon tableCommon = new TableCommon();
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
 
-	// Table Content
-	private List<OrderDTO> Elements = new List<OrderDTO>();
+    // Table Content
+    private List<OrderDTO> Elements = new List<OrderDTO>();
 
-	// Search Value
-	private OrderFilterDTO Filter = new OrderFilterDTO();
+    // Search Value
+    private OrderFilterDTO Filter = new OrderFilterDTO();
 
-	// Get Orders
-	private async Task GetOrders()
-	{
-		Loading = true;
-		try
-		{
-			Elements = await _orders.GetOrders();
-			Loading = false;
-		}
-		catch (Exception e)
-		{
-			Loading = false;
-			Console.WriteLine(e.Message);
-		}
-	}
+    // Get Orders
+    private async Task GetOrders()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _orders.GetOrders();
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
 
-	// Get Orders By Search
-	private async Task GetOrdersBySearch()
-	{
-		Loading = true;
-		try
-		{
+    // Get Orders By Search
+    private async Task GetOrdersBySearch()
+    {
+        Loading = true;
+        try
+        {
 
-			Elements = await _orders.GetOrdersBySearch(Filter);
-			Loading = false;
-		}
-		catch (Exception e)
-		{
-			Loading = false;
-			Console.WriteLine(e.Message);
-		}
-	}
+            Elements = await _orders.GetOrdersBySearch(Filter);
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
 
-	// Goto Print
-	private async Task GotoPrint(string trncode)
-	{
-		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print/{trncode}", "_blank" });
-	}
+    // Goto Print
+    private async Task GotoPrint(string trncode)
+    {
+        await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print/{trncode}", "_blank" });
+    }
 
-	// Show Details
-	//private void ShowDetails(string id)
-	//{
-	//	OrderDTO tmpElements = Elements.First(f => f.orderID == id);
-	//	tmpElements.showDetails = !tmpElements.showDetails;
-		//}
+    // Show Details
+    private void ShowDetails(string id)
+    {
+        OrderDTO tmpElements = Elements.First(f => f.orderId == id);
+        tmpElements.showDetails = !tmpElements.showDetails;
+    }
 }

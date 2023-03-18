@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Carnesia.Domain.CMS.ChildProduct;
 using Carnesia.Domain.CMS.ProductList;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Carnesia.Application.CMS.Services.ProductList
 {
@@ -18,5 +20,7 @@ namespace Carnesia.Application.CMS.Services.ProductList
         Task<List<ProductListV2DTO>> GetProductsBySearchV2(ProductListFilterV2DTO Filter);
         Task<List<ProductListV2DTO>> GetProductsForDownloadV2();
         Task<bool> DeleteProduct(int id);
+        Task<List<ProductBulkPublishDTO>> UploadXLSXFileForCategory(InputFileChangeEventArgs e);
+        Task<bool> PublishBulkProducts(List<ProductBulkPublishDTO> products);
     }
 }
