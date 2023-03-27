@@ -22,6 +22,21 @@ namespace Carnesia.Application.WMS.StockTransfer.CreateTo
             _httpClient = httpClient;
         }
 
+        public async Task<bool> AddRestoks(RestockVM RestockData)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("StockTransfers/addrestock", RestockData);
+
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<BulkCreateToResponse> GetBulkProducts(int source, int destination, InputFileChangeEventArgs e)
         {
             try

@@ -1,14 +1,15 @@
 ﻿@using Carnesia.Domain.WMS.UIDReport
 @using Carnesia.Domain.WMS.Store.Models
 @inject IStore _store
-@inject IReport _report
+@inject IPOReport _report
+@inject ISnackbar Snackbar
 
-<MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
+<MudPaper Class="px-3 py-16 ma-2">
     <MudContainer Fixed="true">
-        <MudGrid Class="justify-center align-baseline mb-5">
+        <MudGrid Class="align-baseline mb-5">
             <MudItem lg="3" md="6">
-                <MudSelect @bind-Value="Filter.statusId" Label="Warehouse" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="0">Select Warehouse</MudSelectItem>
+                <MudSelect @bind-Value="Filter.storeId" Label="Warehouse" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Warehouse</MudSelectItem>
                     @foreach (var item in Stores)
                     {
                         <MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
@@ -22,10 +23,11 @@
                 <MudDatePicker Label="Update From" @bind-Date="Filter.fromDate" />
             </MudItem>
             <MudItem lg="3" md="6">
-                <MudDatePicker Label="Update To" @bind-Date="Filter.toromDate" />
+                <MudDatePicker Label="Update To" @bind-Date="Filter.toDate" />
             </MudItem>
             <MudItem lg="3" md="6">
                 <MudSelect @bind-Value="Filter.statusId" Label="Status" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All Status</MudSelectItem>
                     <MudSelectItem Value="17">Generated</MudSelectItem>
                     <MudSelectItem Value="18">In Stock</MudSelectItem>
                     <MudSelectItem Value="11">Picked</MudSelectItem>
@@ -49,12 +51,12 @@
             <MudItem lg="3" md="6">
                 <MudDatePicker Label="PO Creation To" @bind-Date="Filter.toPo" />
             </MudItem>
-            @*<MudItem lg="3" md="6">
+            <MudItem lg="3" md="6">
             <MudDatePicker Label="PO Closed From" @bind-Date="Filter.fromClosedPo"/>
             </MudItem>
             <MudItem lg="3" md="6">
             <MudDatePicker Label="PO Closed To" @bind-Date="Filter.toClosedPo"/>
-            </MudItem>*@
+            </MudItem>
             <MudItem lg="3" md="6">
                 <MudTextField @bind-Value="Filter.productCode" Label="Product Code" Variant="Variant.Text" />
             </MudItem>
@@ -68,7 +70,7 @@
                 <MudTextField @bind-Value="Filter.oderCode" Label="Order ID" Variant="Variant.Text" />
             </MudItem>
             @*New*@
-            <MudItem lg="3" md="6">
+            @*<MudItem lg="3" md="6">
                 <MudSelect T="string" Label="Brand" AnchorOrigin="Origin.BottomCenter">
 
                 </MudSelect>
@@ -77,31 +79,31 @@
                 <MudSelect T="string" Label="Supplier" AnchorOrigin="Origin.BottomCenter">
 
                 </MudSelect>
-            </MudItem>
+            </MudItem>*@
         </MudGrid>
 
         <div class="my-5 d-flex justify-end">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReport">Filter</MudButton>
         </div>
 
-        <div class="d-flex justify-end mb-5">
+        @*<div class="d-flex justify-end mb-5">
             <MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
-        </div>
+        </div>*@
 
         <MudTable RowsPerPage="25" Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh>PO Created on</MudTh>
-                @*<MudTh>Po Closed on</MudTh>*@
-                <MudTh>Last UID Created On</MudTh>
+                <MudTh>Po Closed on</MudTh>
+                @*<MudTh>Last UID Created On</MudTh>
                 <MudTh>Brand Name</MudTh>
-                <MudTh>Supplier Name</MudTh>
+                <MudTh>Supplier Name</MudTh>*@
 
                 <MudTh>PO ID</MudTh>
-                <MudTh>Product Code</MudTh>
                 <MudTh>SKU</MudTh>
+                <MudTh>Product Code</MudTh>
                 <MudTh>Product Name</MudTh>
 
-                <MudTh>UID Created On</MudTh>
+                @*<MudTh>UID Created On</MudTh>*@
 
                 <MudTh>UID</MudTh>
                 <MudTh>Lifting Price</MudTh>
@@ -109,10 +111,10 @@
                 <MudTh>Expiry Status</MudTh>
                 <MudTh>Warehouse</MudTh>
 
-                <MudTh>MRP</MudTh>
+                @*<MudTh>MRP</MudTh>
                 <MudTh>Discount</MudTh>
                 <MudTh>Selling Price</MudTh>
-                <MudTh>Discount Type</MudTh>
+                <MudTh>Discount Type</MudTh>*@
 
                 <MudTh>Last Order</MudTh>
                 <MudTh>Last TO ID</MudTh>
@@ -121,23 +123,23 @@
                 <MudTh>Status Updated on</MudTh>
                 <MudTh>Team</MudTh>
                 <MudTh>Status Updated by</MudTh>
-                @*<MudTh>Last BIN</MudTh>*@
-                <MudTh>Bin Id</MudTh>
+                <MudTh>Last BIN</MudTh>
+                @*<MudTh>Bin Id</MudTh>*@
                 <MudTh>Bin Name</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="PO Created on">@context.poCreated</MudTd>
-                @*<MudTd DataLabel="Po Closed on">@context.poClosed</MudTd>*@
-                <MudTd DataLabel="Last UID Created On">@context.lastUidCreated</MudTd>
-                <MudTd DataLabel="Brand Name">@context.brandName</MudTd>
-                <MudTd DataLabel="Supplier Name">@context.supplierName</MudTd>
+                <MudTd DataLabel="Po Closed on">@context.poClosed</MudTd>
+                @*<MudTd DataLabel="Last UID Created On">@context.las</MudTd>*@
+                @*<MudTd DataLabel="Brand Name">@context.brandName</MudTd>*@
+                @*<MudTd DataLabel="Supplier Name">@context.supplierName</MudTd>*@
 
                 <MudTd DataLabel="PO ID">@context.poCode</MudTd>
                 <MudTd DataLabel="SKU">@context.sku</MudTd>
                 <MudTd DataLabel="Product Code">@context.productCode</MudTd>
                 <MudTd DataLabel="Product Name">@context.productName</MudTd>
 
-                <MudTd DataLabel="UID Created On">@context.uidCreated</MudTd>
+                @*<MudTd DataLabel="UID Created On">@context.uidCreated</MudTd>*@
 
                 <MudTd DataLabel="UID">@context.uid</MudTd>
                 <MudTd DataLabel="Lifting Price">@context.liftingPrice</MudTd>
@@ -145,10 +147,10 @@
                 <MudTd DataLabel="Expiry Status">@context.expStatus</MudTd>
                 <MudTd DataLabel="Warehouse">@context.warehouse</MudTd>
 
-                <MudTd DataLabel="MRP">@context.mrp</MudTd>
+                @*<MudTd DataLabel="MRP">@context.mrp</MudTd>
                 <MudTd DataLabel="Discount">@context.discount</MudTd>
                 <MudTd DataLabel="Selling Price">@context.sellingPrice</MudTd>
-                <MudTd DataLabel="Discount Type">@context.discountType</MudTd>
+                <MudTd DataLabel="Discount Type">@context.discountType</MudTd>*@
 
                 <MudTd DataLabel="Last Order">@context.lastOrder</MudTd>
                 <MudTd DataLabel="Last TO ID">@context.lastToCode</MudTd>
@@ -157,9 +159,9 @@
                 <MudTd DataLabel="Status Updated on">@context.lastUpdateDate</MudTd>
                 <MudTd DataLabel="Team">@context.team</MudTd>
                 <MudTd DataLabel="Status Updated by">@context.lastUpdateBy</MudTd>
-                @*<MudTd DataLabel="Last BIN">@context.lastBin</MudTd>*@
-                <MudTd DataLabel="Bin Id">@context.binId</MudTd>
-                <MudTd DataLabel="Bin Name">@context.binName</MudTd>
+                <MudTd DataLabel="Last BIN">@context.lastBin</MudTd>
+                @*<MudTd DataLabel="Bin Id">@context.lastBin</MudTd>*@
+                <MudTd DataLabel="Bin Name">@context.currentBin</MudTd>
 
             </RowTemplate>
             <PagerContent>
@@ -170,6 +172,12 @@
 </MudPaper>
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+    }
+
     // Loading
     private bool Loading { get; set; }
 
@@ -186,5 +194,28 @@
     private async Task GetStores()
     {
         Stores = await _store.GetStoresAsync();
+    }
+
+    // Get Report
+    private async Task GetReport()
+    {
+        //if (Filter.fromDate.HasValue == false || Filter.toromDate.HasValue == false)
+        //{
+        //    Snackbar.Add("Update Form Date and Update To Date are required!", Severity.Error);
+        //    return;
+        //}
+        Loading = true;
+        try
+        {
+            var result = await _report.GetUidReport(Filter);
+
+            Elements.AddRange(result);
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
     }
 }

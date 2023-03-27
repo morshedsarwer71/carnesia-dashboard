@@ -28,7 +28,7 @@
             <RowTemplate>
                 <MudTd DataLabel="Name">@context.name</MudTd>
                 <MudTd DataLabel="Image">
-                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://localhost:7090/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
+                    <MudImage @onclick="() => ShowImage(context.imageUrl)" Src="@($"https://oshud.com/{context.imageUrl}")" Alt="" Elevation="25" Class="rounded-lg" Style="width:100px" />
                 </MudTd>
                 <MudTd DataLabel="Publish">
                     <MudSwitch @bind-Checked="context.isPublished" Color="Color.Primary" @onclick="(() => TogglePublish(context.id)) " />

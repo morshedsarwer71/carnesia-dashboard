@@ -1,5 +1,6 @@
 ﻿using Carnesia.Domain.WMS.AllWarehouseStock;
 using Carnesia.Domain.WMS.POReport;
+using Carnesia.Domain.WMS.UIDReport;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,24 @@ namespace Carnesia.Application.WMS.Report.POReport
 
                 var json = await result.Content.ReadAsStringAsync();
                 var data = JsonConvert.DeserializeObject<List<POReportDTO>>(json);
+
+                return data;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<UIDReportDTO>> GetUidReport(UIDReportFilterDTO filter)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("wmsreport/uidreport", filter);
+
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<List<UIDReportDTO>>(json);
 
                 return data;
             }

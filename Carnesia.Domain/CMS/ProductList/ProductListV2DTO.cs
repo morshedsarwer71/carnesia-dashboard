@@ -26,6 +26,9 @@ namespace Carnesia.Domain.CMS.ProductList
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
         public bool isPublish { get; set; }
+        public string parentCat { get; set; }
+        public string childCat { get; set; }
+        public string grandChildCat { get; set; }
     }
 
     public class ProductListFilterV2DTO

@@ -9,59 +9,62 @@ namespace Carnesia.Domain.WMS.UIDReport
     public class UIDReportDTO
     {
         public string? poCreated { get; set; }
-        // public string? poClosed { get; set; }
-        public string? lastUidCreated { get; set; }
-        public string? brandName { get; set; }
-        public string? supplierName { get; set; }
-
-
+        public string poClosed { get; set; }
         public string poCode { get; set; }
         public string productCode { get; set; }
         public string sku { get; set; }
         public string productName { get; set; }
-
-        public string uidCreated { get; set; }
-
         public string uid { get; set; }
         public decimal liftingPrice { get; set; }
-        public string expDate { get; set; }
+        public string? expDate { get; set; }
         public string expStatus { get; set; }
         public string warehouse { get; set; }
-
-        public string mrp { get; set; }
-        public string discount { get; set; }
-        public string sellingPrice { get; set; }
-        public string discountType { get; set; }
-
         public string lastOrder { get; set; }
         public string? lastToCode { get; set; }
         public string? lastPickCode { get; set; }
         public string status { get; set; }
         public string lastUpdateDate { get; set; }
         public string team { get; set; }
-        public string lastUpdateBy { get; set; }
-        //public string lastBin { get; set; }
-        public string binId { get; set; }
-        public string binName { get; set; }
+        public string? lastUpdateBy { get; set; }
+        public int? lastBin { get; set; }
+        public string currentBin { get; set; }
     }
 
     public class UIDReportFilterDTO
     {
-        public int storeId { get; set; }
-        public string? poCode { get; set; }
-        public DateTime? fromDate { get; set; }
-        public DateTime? toromDate { get; set; }
-        public int statusId { get; set; }
-        public string? sku { get; set; }
-        public string? uid { get; set; }
-        public string? toCode { get; set; }
-        public string? oderCode { get; set; }
-        public string? productCode { get; set; }
-        public int teamId { get; set; }
-        public DateTime? fromPo { get; set; }
-        public DateTime? toPo { get; set; }
-        public DateTime? fromClosedPo { get; set; }
-        public DateTime? toClosedPo { get; set; }
+        //public int storeId { get; set; }
+        //public string? poCode { get; set; }
+        //public DateTime? fromDate { get; set; }
+        //public DateTime? toromDate { get; set; }
+        //public int statusId { get; set; }
+        //public string? sku { get; set; }
+        //public string? uid { get; set; }
+        //public string? toCode { get; set; }
+        //public string? oderCode { get; set; }
+        //public string? productCode { get; set; }
+        //public int teamId { get; set; }
+        //public DateTime? fromPo { get; set; }
+        //public DateTime? toPo { get; set; }
+        //public DateTime? fromClosedPo { get; set; }
+        //public DateTime? toClosedPo { get; set; }
 
-    }
+		public int storeId { get; set; }
+		public string? poCode { get; set; }
+		public DateTime? fromDate { get; set; }
+		public DateTime? toDate { get; set; }
+		public int statusId { get; set; }
+		public int brandId { get; set; }
+		public int vendorId { get; set; }
+		public string? sku { get; set; }
+		public string? uid { get; set; }
+		public string? toCode { get; set; }
+		public string? oderCode { get; set; }
+		public string? productCode { get; set; }
+		public int teamId { get; set; }
+		public DateTime? fromPo { get; set; }
+		public DateTime? toPo { get; set; }
+		public DateTime? fromClosedPo { get; set; }
+		public DateTime? toClosedPo { get; set; }
+
+	}
 }
