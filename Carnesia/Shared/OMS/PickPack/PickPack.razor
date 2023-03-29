@@ -8,7 +8,7 @@
 
         @*@if (!String.IsNullOrEmpty(Picklist.image))
         {
-            <MudImage Src="@($"https://oshud.com/{Picklist.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
+            <MudImage Src="@($"https://localhost:7090/{Picklist.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
         }*@
         
         <MudGrid Class="justify-center">
@@ -36,7 +36,7 @@
             @*<MudItem xs="4">
                     @if (!String.IsNullOrEmpty(Picklist.image))
                     {
-                        <MudImage Fluid Src="@($"https://oshud.com/{Picklist.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
+                        <MudImage Fluid Src="@($"https://localhost:7090/{Picklist.image}")" Alt="product Image" Elevation="25" Class="rounded-lg mt-3" />
                     }
             </MudItem>*@
         </MudGrid>
