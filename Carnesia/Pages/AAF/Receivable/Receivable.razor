@@ -6,6 +6,8 @@
             <MudButton Color="Color.Primary" Variant="CurrentPage == Outlet ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Outlet)">@Outlet</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == Ecommerce ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Ecommerce)">@Ecommerce</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == Invoices ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Invoices)">@Invoices</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == EcommerceInvoices ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(EcommerceInvoices)">@EcommerceInvoices</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == DueReceive ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DueReceive)">@DueReceive</MudButton>
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
@@ -22,11 +24,20 @@ else if (CurrentPage == Invoices)
 {
     <Carnesia.Shared.AAF.Receivable.Invoice.Invoice/>
 }
-
+else if (CurrentPage == DueReceive)
+{
+    <Carnesia.Shared.AAF.Receivable.DueReceive.DueReceive />
+}
+else if (CurrentPage == EcommerceInvoices)
+{
+    <Carnesia.Shared.AAF.Receivable.EcommerceInvoice.EcommerceInvoice />
+}
 @code {
     private string Outlet = "Outlet";
     private string Ecommerce = "E-Commerce";
-    private string Invoices = "Invoices";
+    private string Invoices = "Outlet Invoices";
+    private string EcommerceInvoices = "E-commerce Invoices";
+    private string DueReceive = "Due Receive";
 
     // Current Page
     private string CurrentPage { get; set; } = "Outlet";

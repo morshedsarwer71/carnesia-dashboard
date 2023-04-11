@@ -12,7 +12,7 @@
                 <MudTh>Received Amount</MudTh>
                 <MudTh>Lost</MudTh>
                 <MudTh>Receiving Pending</MudTh>
-                <MudTh>Store</MudTh>
+                @*<MudTh>Store</MudTh>*@
                 @*<MudTh>BU</MudTh>*@
                 @*<MudTh>View</MudTh>*@
             </HeaderContent>
@@ -33,33 +33,36 @@
                 <MudTd DataLabel="Received Amount">@context.receivedAmount</MudTd>
                 <MudTd DataLabel="Lost">@context.lost</MudTd>
                 <MudTd DataLabel="Receiving Pending">@context.receivePending</MudTd>
-                <MudTd DataLabel="Store">@context.store</MudTd>
+                @*<MudTd DataLabel="Store">@context.store</MudTd>*@
                 @*<MudTd DataLabel="BU">@context.bu</MudTd>*@
                 @*<MudTd DataLabel="View">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary">View</MudButton>
                 </MudTd>*@
-
             </RowTemplate>
             <ChildRowContent>
                 @if (context.ShowDetails)
                 {
-                    <td colspan="8">
+                    <td colspan="7">
                         <MudCard Elevation="0">
                              <MudCardContent Class="pa-0">
-                                 <MudTable Items="@context.orders" Context="DetailsContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
+                                 <MudTable Items="@context.ecommerceOrders" Context="DetailsContext" Dense="true" Striped="true" Hover="true" Elevation="0" CustomFooter="true">
                                     <HeaderContent>
                                         <MudTh>Order Date</MudTh>
                                         <MudTh>Order Id</MudTh>
-                                        <MudTh>Customer Id</MudTh>
                                         <MudTh>Customer Name</MudTh>
+                                        <MudTh>Phone</MudTh>
                                         <MudTh>Order Value</MudTh>
+                                        <MudTh>Receiveable</MudTh>
+                                        <MudTh>Received</MudTh>
                                     </HeaderContent>
                                     <RowTemplate>
                                         <MudTd DataLabel="Order Date">@DetailsContext.orderDate</MudTd>
-                                        <MudTd DataLabel="Order Id">@DetailsContext.orderId</MudTd>
-                                        <MudTd DataLabel="Customer Id">@DetailsContext.customerId</MudTd>
+                                        <MudTd DataLabel="Order Id">@DetailsContext.trnCode</MudTd>
                                         <MudTd DataLabel="Customer Name">@DetailsContext.customerName</MudTd>
+                                        <MudTd DataLabel="Phone">@DetailsContext.phoneNumber</MudTd>
                                         <MudTd DataLabel="Order Value">@DetailsContext.orderValue</MudTd>
+                                        <MudTd DataLabel="Receiveable">@DetailsContext.tobeCollected</MudTd>
+                                        <MudTd DataLabel="Received">@DetailsContext.amount</MudTd>
                                     </RowTemplate>
                                  </MudTable>
                              </MudCardContent>
@@ -93,7 +96,7 @@
         Loading = true;
         try
         {
-            Elements = await _bank.GetOutletInvoices();
+            Elements = await _bank.GetEcommerceInvoices();
             Loading = false;
         }
         catch (Exception)
@@ -102,11 +105,11 @@
             throw;
         }
     }
-
     // Show Details
     private void ShowBtnPress(string invoice)
     {
         InvoiceListDTO tmpElements = Elements.First(f => f.invoiceNumber == invoice);
         tmpElements.ShowDetails = !tmpElements.ShowDetails;
     }
+
 }

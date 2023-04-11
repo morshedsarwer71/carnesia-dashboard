@@ -1,75 +1,305 @@
-﻿<MudPaper Class="px-3 py-16 ma-2">
-    <MudContainer Fixed="true" >
+﻿@using Carnesia.Domain.AAF.Bank;
+@using Carnesia.Domain.AAF.Common;
+@using Carnesia.Domain.AAF.Receivable.Outlet;
+@using Carnesia.Domain.WMS.Store.Models;
+@inject IStore _store
+@inject ISnackbar Snackbar
+@inject IBank _bank
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
         <MudGrid Class="justify-center">
             <MudItem sm="3">
-                <MudDatePicker Label="From Date" @bind-Date="date" />
+                <MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" />
             </MudItem>
             <MudItem sm="3">
-                <MudDatePicker Label="To Date" @bind-Date="date" />
+                <MudDatePicker Label="To Date" @bind-Date="Filter.toDate" />
             </MudItem>
             <MudItem sm="3">
-                <MudSelect T="string" Label="Store" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Central Warehouse")" />
-                    <MudSelectItem Value="@("Dhanmondi")" />
-                    <MudSelectItem Value="@("Mirpur")" />
+                <MudSelect @bind-Value="Filter.storeId" Label="Store" AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var item in Stores)
+                    {
+                        <MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+                    }
                 </MudSelect>
             </MudItem>
         </MudGrid>
         <MudGrid Class="justify-center mt-3">
             <MudItem sm="9">
                 <div class="d-flex justify-end">
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled">View Orders</MudButton>
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="GetOrders">View Orders</MudButton>
                 </div>
             </MudItem>
         </MudGrid>
 
-        <MudGrid Class="justify-center mt-5 align-baseline">
-            <MudItem sm="3">
-                <MudSelect T="string" Label="Download Type" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Order")" />
-                    <MudSelectItem Value="@("Item With Order")" />
-                </MudSelect>
-            </MudItem>
-            <MudItem sm="3">
-                <div >
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled">Download CSV</MudButton>
-                </div>
-            </MudItem>
-        </MudGrid>
+        <MudTable RowsPerPage="25" Items="@Orders" T="OutletOrdersDTO" Hover="true" Dense="true" Loading="Loading" LoadingProgressColor="Color.Info" MultiSelection="true" @bind-SelectedItems="SelectedItems" OnRowClick="@ClickRow">
+            <HeaderContent>
+                <MudTh>Order Date</MudTh>
+                <MudTh>Order ID</MudTh>
+                <MudTh>Customer Name</MudTh>
+                <MudTh>Customer Phone</MudTh>
+                <MudTh>Total MRP</MudTh>
+                <MudTh>Total Sales Price</MudTh>
+                <MudTh>Discount</MudTh>
+                <MudTh>Grand Total</MudTh>
+                <MudTh>Coupon Code</MudTh>
+                <MudTh>Sold By</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Order Date">@context.orderDate</MudTd>
+                <MudTd DataLabel="Order ID">@context.orderId</MudTd>
+                <MudTd DataLabel="Customer Name">@context.customerName</MudTd>
+                <MudTd DataLabel="Customer Phone">@context.phoneNumber</MudTd>
+                <MudTd DataLabel="Total MRP">@context.mrp</MudTd>
+                <MudTd DataLabel="Total Sales Price">@context.salesAmount</MudTd>
+                <MudTd DataLabel="Discount">@context.discount</MudTd>
+                <MudTd DataLabel="Grand Total">@context.grandTotal</MudTd>
+                <MudTd DataLabel="Coupon Code">@context.couponCode</MudTd>
+                <MudTd DataLabel="Sold By">@context.soldBy</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+
+        @*<MudGrid Class="justify-center mt-5 align-baseline">
+        <MudItem sm="3">
+        <MudSelect T="string" Label="Download Type" AnchorOrigin="Origin.BottomCenter">
+        <MudSelectItem Value="@("Order")" />
+        <MudSelectItem Value="@("Item With Order")" />
+        </MudSelect>
+        </MudItem>
+        <MudItem sm="3">
+        <div>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled">Download CSV</MudButton>
+        </div>
+        </MudItem>
+        </MudGrid>*@
 
         <MudGrid Class="mt-5">
             <MudItem sm="6">
-                <MudSelect T="string" Label="Payment Methode" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Bkash")" />
-                    <MudSelectItem Value="@("Nagad")" />
+                <MudSelect @bind-Value="ReceiveDetails.paymentMethodId" Label="Payment Method" AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var item in paymentMethod)
+                    {
+                        <MudSelectItem Value="item.paymentId">@item.name</MudSelectItem>
+                    }
                 </MudSelect>
             </MudItem>
             <MudItem sm="6">
-                <MudSelect T="string" Label="Bank Name(If Any)" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("The City Bank Limited")" />
-                    <MudSelectItem Value="@("Mutual Trust Bank Limited")" />
+                <MudSelect @bind-Value="ReceiveDetails.bankId" Label="Bank Name(If Any)" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">Select Banks</MudSelectItem>
+                    @foreach (var item in Banks)
+                    {
+                        <MudSelectItem Value="item.id">@item.bankName</MudSelectItem>
+                    }
                 </MudSelect>
             </MudItem>
             <MudItem sm="6">
-                <MudSelect T="string" Label="Charge Type" AnchorOrigin="Origin.BottomCenter">
-                    <MudSelectItem Value="@("Courier Charge")" />
-                    <MudSelectItem Value="@("MFS")" />
-                    <MudSelectItem Value="@("POS Machine")" />
+                <MudSelect T="int" Value="1" Label="Charge Type" AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var item in chargeType)
+                    {
+                        <MudSelectItem Value="item.chargeId">@item.name</MudSelectItem>
+                    }
                 </MudSelect>
             </MudItem>
             <MudItem sm="6">
-                <MudTextField T="string" Label="Bnak/MFS Charge Amount" Variant="Variant.Text" />
+                <MudNumericField @bind-Value="ReceiveDetails.transCharge" Label="Bnak/MFS Charge Amount" Variant="Variant.Text" />
             </MudItem>
             <MudItem sm="6">
-                <MudTextField T="string" Label="Received" Variant="Variant.Text" />
+                <MudNumericField @bind-Value="ReceiveDetails.totalReceivedAmnt" Label="Received Amount" Variant="Variant.Text" />
             </MudItem>
+            <MudItem sm="6">
+                <MudNumericField @bind-Value="ReceiveDetails.totalInvoiceAmnt" ReadOnly="true" Label="Invoiced Amount" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="6">
+                <MudDatePicker Label="Transfer Date" @bind-Date="ReceiveDetails.transDateTemp" />
+            </MudItem>
+            <MudItem sm="6">
+                <MudTextField @bind-Value="ReceiveDetails.transReference" Label="Transfer Ref" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="6">
+                <MudTextField @bind-Value="ReceiveDetails.remarks" Label="Remaks" Variant="Variant.Text" />
+            </MudItem>
+            @*<MudItem sm="6">
+                <MudSelect @bind-Value="ReceiveDetails.buid" Label="BU Id" AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var item in Stores)
+                    {
+                        <MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>*@
         </MudGrid>
         <div class="d-flex justify-end mt-3">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Submit & Create Invoice</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="SelectedItems.Count <= 0" OnClick="MakeReceive">Submit & Create Invoice</MudButton>
         </div>
     </MudContainer>
 </MudPaper>
 
 @code {
-    private DateTime? date = DateTime.Today;
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+        await GetBanks();
+        await GetPaymentAndCharge();
+    }
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Filter
+    private OutletOrderFilterDTO Filter = new OutletOrderFilterDTO();
+
+    // Orders
+    private List<OutletOrdersDTO> Orders = new List<OutletOrdersDTO>();
+    private HashSet<OutletOrdersDTO> SelectedItems = new HashSet<OutletOrdersDTO>();
+    private List<ReceivableOrdersDTO> SelectedOrders = new List<ReceivableOrdersDTO>();
+
+    // Receive Details
+    private AccountsReceivableDTO ReceiveDetails = new AccountsReceivableDTO();
+
+
+    private async Task ClickRow(TableRowClickEventArgs<OutletOrdersDTO> args)
+    {
+        if (args.Row.IsChecked)
+        {
+            ReceiveDetails.totalInvoiceAmnt += args.Item.grandTotal;
+            StateHasChanged();
+            return;
+        }
+
+        ReceiveDetails.totalInvoiceAmnt -= args.Item.grandTotal;
+        StateHasChanged();
+    }
+
+
+    // Select Orders
+    private void SelectOrders()
+    {
+        SelectedOrders = new List<ReceivableOrdersDTO>();
+        foreach (var item in SelectedItems)
+        {
+            SelectedOrders.Add(new ReceivableOrdersDTO
+                {
+                    totalAmount = item.grandTotal,
+                    trnCode = item.orderId
+                });
+        }
+    }
+
+    // Reset
+    private async Task ResetFields()
+    {
+        Orders = new List<OutletOrdersDTO>();
+        SelectedItems = new HashSet<OutletOrdersDTO>();
+        SelectedOrders = new List<ReceivableOrdersDTO>();
+        ReceiveDetails = new AccountsReceivableDTO();
+
+        await GetOrders();
+    }
+
+    // Make Receive
+    private async Task MakeReceive()
+    {
+        try
+        {
+            SelectOrders();
+            ReceiveDetails.transDate = ReceiveDetails.transDateTemp.Value;
+
+            var OutletData = new OutletVM
+                {
+                    orders = SelectedOrders,
+                    receivableDto = ReceiveDetails
+                };
+
+            var result = await _bank.MakeOutletReceive(OutletData);
+
+            if (result)
+            {
+                Snackbar.Add("Invoice created successfully!", Severity.Success);
+                await ResetFields();
+                return;
+            }
+            Snackbar.Add("Invoice creation failed!", Severity.Error);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Snackbar.Add("Internal server error!", Severity.Error);
+        }
+    
+    }
+
+
+    // Banks
+    private List<BankDTO> Banks = new List<BankDTO>();
+
+    // Get All Banks
+    private async Task GetBanks()
+    {
+        try
+        {
+            Banks = await _bank.GetBanks();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    // Get Orders
+    private async Task GetOrders()
+    {
+        if (!Filter.fromDate.HasValue || !Filter.toDate.HasValue)
+        {
+            Snackbar.Add("Both from date and to date are requirted to get orders!", Severity.Error);
+            return;
+        }
+        Loading = true;
+        try
+        {
+            Orders = await _bank.GetOutletOrdersByFilter(Filter);
+            ReceiveDetails.buid = Filter.storeId;
+            Loading = false;
+        }
+        catch (Exception)
+        {
+
+            Loading = false;
+        }
+    }
+
+    // Stores
+    private List<StoreDTO> Stores = new List<StoreDTO>();
+
+    // Get Stores
+    private async Task GetStores()
+    {
+        Stores = await _store.GetStoresAsync();
+        Filter.storeId = 1;
+        StateHasChanged();
+    }
+
+    // Payment and Charge
+    private List<PaymentMethodDTO> paymentMethod = new List<PaymentMethodDTO>();
+    private List<PaymentMethodDTO> chargeType = new List<PaymentMethodDTO>();
+
+    // Get Payment and Charge
+    private async Task GetPaymentAndCharge()
+    {
+        try
+        {
+            paymentMethod = await _bank.GetPaymentMethod();
+            chargeType = await _bank.GetChargeType();
+
+            ReceiveDetails.paymentMethodId = 1;
+            ReceiveDetails.chargeTypeId = 1;
+
+            StateHasChanged();
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
 }

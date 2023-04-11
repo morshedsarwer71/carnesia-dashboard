@@ -1,0 +1,147 @@
+﻿@using Carnesia.Domain.AAF.Bank;
+@using Carnesia.Domain.AAF.Common;
+@using Carnesia.Domain.AAF.Receivable.DueReceive;
+@using Carnesia.Domain.WMS.Store.Models;
+@inject IBank _bank
+@inject ISnackbar Snacbar
+@inject IStore _store
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudGrid>
+            <MudItem sm="6">
+                <MudTextField Label="Invoice" @bind-Value="Receive.invoiceCode" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="6">
+                <MudNumericField @bind-Value="Receive.amount" Label="Amount" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="6">
+                <MudSelect @bind-Value="Receive.paymentMethodId" Label="Payment Method" AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var item in paymentMethod)
+                    {
+                        <MudSelectItem Value="item.paymentId">@item.name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="6">
+                <MudSelect @bind-Value="Receive.bankId" Label="Bank Name(If Any)" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">Select Banks</MudSelectItem>
+                    @foreach (var item in Banks)
+                    {
+                        <MudSelectItem Value="item.id">@item.bankName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="6">
+                <MudSelect T="int" Value="1" Label="Charge Type" AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var item in chargeType)
+                    {
+                        <MudSelectItem Value="item.chargeId">@item.name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="6">
+                <MudNumericField @bind-Value="Receive.transCharge" Label="Bnak/MFS Charge Amount" Variant="Variant.Text" />
+            </MudItem>
+            @*<MudItem sm="6">
+                <MudNumericField @bind-Value="Receive.totalInvoiceAmnt" Label="Invoiced Amount" Variant="Variant.Text" />
+            </MudItem>*@
+            <MudItem sm="6">
+                <MudDatePicker Label="Transfer Date" @bind-Date="Receive.transDate" />
+            </MudItem>
+            <MudItem sm="6">
+                <MudTextField @bind-Value="Receive.transReference" Label="Transfer Ref" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="6">
+                <MudTextField @bind-Value="Receive.remarks" Label="Remaks" Variant="Variant.Text" />
+            </MudItem>
+        </MudGrid>
+        <div class="d-flex justify-end mt-3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(Receive.invoiceCode) || Receive.amount <= 0" OnClick="MakeReceive">Receive</MudButton>
+        </div>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+        await GetBanks();
+        await GetPaymentAndCharge();
+    }
+
+    // Receive Data
+    private DueReceiveDTO Receive = new DueReceiveDTO();
+
+    // Make Receive
+    private async Task MakeReceive()
+    {
+        try
+        {
+            var result = await _bank.MakeDueReceive(Receive);
+
+            if (result)
+            {
+                Snacbar.Add("Due Received Successfully!", Severity.Success);
+                Receive = new DueReceiveDTO();
+                return;
+            }
+
+            Snacbar.Add("Due Received Failed!", Severity.Error);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Snacbar.Add("Internal Sertver Error!", Severity.Error);
+        }
+    }
+
+    // Banks
+    private List<BankDTO> Banks = new List<BankDTO>();
+
+    // Get All Banks
+    private async Task GetBanks()
+    {
+        try
+        {
+            Banks = await _bank.GetBanks();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    // Stores
+    private List<StoreDTO> Stores = new List<StoreDTO>();
+
+    // Get Stores
+    private async Task GetStores()
+    {
+        Stores = await _store.GetStoresAsync();
+    }
+
+    // Payment and Charge
+    private List<PaymentMethodDTO> paymentMethod = new List<PaymentMethodDTO>();
+    private List<PaymentMethodDTO> chargeType = new List<PaymentMethodDTO>();
+
+    // Get Payment and Charge
+    private async Task GetPaymentAndCharge()
+    {
+        try
+        {
+            paymentMethod = await _bank.GetPaymentMethod();
+            chargeType = await _bank.GetChargeType();
+
+            Receive.paymentMethodId = 1;
+            Receive.chargeTypeId = 1;
+
+            StateHasChanged();
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+}

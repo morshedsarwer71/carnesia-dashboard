@@ -1,4 +1,11 @@
 ﻿using Carnesia.Domain.AAF.Bank;
+using Carnesia.Domain.AAF.Common;
+using Carnesia.Domain.AAF.Receivable.DueReceive;
+using Carnesia.Domain.AAF.Receivable.Ecommerce;
+using Carnesia.Domain.AAF.Receivable.Invoice;
+using Carnesia.Domain.AAF.Receivable.Outlet;
+using Carnesia.Domain.WMS.POReport;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +59,146 @@ namespace Carnesia.Application.AAF.Bank
                 var result = await _httpClient.GetFromJsonAsync<List<BankDTO>>("accounting/banks");
 
                 return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<PaymentMethodDTO>> GetChargeType()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<PaymentMethodDTO>>("accounting/chargetype");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<InvoiceListDTO>> GetEcommerceInvoices()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<InvoiceListDTO>>("accounting/ecommerceinvoices");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<EcommerceListDTO>> GetEcommerceOrdersByFilter(EcommerceFilterDTO filter)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("accounting/ecommerceorders", filter);
+
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<List<EcommerceListDTO>>(json);
+
+                return data;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
+
+        public async Task<List<InvoiceListDTO>> GetOutletInvoices()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<InvoiceListDTO>>("accounting/outletinvoices");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<OutletOrdersDTO>> GetOutletOrdersByFilter(OutletOrderFilterDTO filter)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("accounting/outletorders", filter);
+
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<List<OutletOrdersDTO>>(json);
+
+                return data;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<PaymentMethodDTO>> GetPaymentMethod()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<PaymentMethodDTO>>("accounting/paymentmethod");
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> MakeDueReceive(DueReceiveDTO Receive)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("accounting/receivedbyinvoice", Receive);
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> MakeEcommerceReceive(List<EcommerceReceivableOrdersDTO> OutletData)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("accounting/accountsreceivableecommerce", OutletData);
+
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> MakeOutletReceive(OutletVM OutletData)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("accounting/accountsreceivable", OutletData);
+
+                return result.IsSuccessStatusCode;
             }
             catch (Exception)
             {

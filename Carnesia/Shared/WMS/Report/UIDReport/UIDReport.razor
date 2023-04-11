@@ -1,5 +1,9 @@
 ﻿@using Carnesia.Domain.WMS.UIDReport
 @using Carnesia.Domain.WMS.Store.Models
+@using Syncfusion.XlsIO
+@using System.IO
+@using System.Data
+@inject Microsoft.JSInterop.IJSRuntime JS
 @inject IStore _store
 @inject IPOReport _report
 @inject ISnackbar Snackbar
@@ -86,9 +90,11 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReport">Filter</MudButton>
         </div>
 
-        @*<div class="d-flex justify-end mb-5">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
-        </div>*@
+        <div class="d-flex justify-end mb-5">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CreateDocument" Disabled="Elements.Count <= 0">Download CSV</MudButton>
+        </div>
+
+
 
         <MudTable RowsPerPage="25" Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
@@ -217,5 +223,68 @@
             Loading = false;
             Console.WriteLine(e.Message);
         }
+    }
+
+    // Create Document
+    private async Task CreateDocument()
+    {
+        using (ExcelEngine excelEngine = new ExcelEngine())
+        {
+            IApplication application = excelEngine.Excel;
+            application.DefaultVersion = ExcelVersion.Xlsx;
+
+            //Create a workbook.
+            IWorkbook workbook = application.Workbooks.Create(1);
+            IWorksheet worksheet = workbook.Worksheets[0];
+
+            //Initialize DataTable and data get from SampleDataTable method.
+            DataTable table = ParentDataTable();
+
+            //Export data from DataTable to Excel worksheet.
+            worksheet.ImportDataTable(table, true, 1, 1);
+
+            worksheet.UsedRange.AutofitColumns();
+
+            //Save the document as a stream and return the stream.
+            using (MemoryStream stream = new MemoryStream())
+            {
+                //Save the created Excel document to MemoryStream
+                workbook.SaveAs(stream);
+
+                //Download the excel file.
+                await JS.SaveAs("UIDReport.xlsx", stream.ToArray());
+            }
+        }
+    }
+
+    private DataTable ParentDataTable()
+    {
+        DataTable reports = new DataTable();
+        reports.Columns.Add("PO Created On");
+        reports.Columns.Add("PO Closed On");
+        reports.Columns.Add("PO ID");
+        reports.Columns.Add("SKU");
+        reports.Columns.Add("Product Code");
+        reports.Columns.Add("Product Name");
+        reports.Columns.Add("UID");
+        reports.Columns.Add("Lifting Price", typeof(decimal));
+        reports.Columns.Add("Expiry Date");
+        reports.Columns.Add("Expiry Status");
+        reports.Columns.Add("Warehouse");
+        reports.Columns.Add("Last Order");
+        reports.Columns.Add("Last TO ID");
+        reports.Columns.Add("Last Picklist ID");
+        reports.Columns.Add("Status");
+        reports.Columns.Add("Status Updated On");
+        reports.Columns.Add("Team");
+        reports.Columns.Add("Status Updated By");
+        reports.Columns.Add("Last Bin");
+        reports.Columns.Add("Bin Name");
+
+        foreach (var item in Elements)
+        {
+            reports.Rows.Add(item.poCreated, item.poClosed, item.poCode, item.sku, item.productCode, item.productName, item.uid, item.liftingPrice, item.expDate, item.expStatus, item.warehouse, item.lastOrder, item.lastToCode, item.lastPickCode, item.status, item.lastUpdateDate, item.team, item.lastUpdateBy, item.lastBin, item.currentBin);
+        }
+        return reports;
     }
 }

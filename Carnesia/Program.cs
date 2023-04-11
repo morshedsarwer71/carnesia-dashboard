@@ -84,8 +84,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddHttpClient("RetailSuite", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7090/api/");
-    client.Timeout = TimeSpan.FromMinutes(10);
+    client.BaseAddress = new Uri("https://oshud.com/api/");
+    client.Timeout = TimeSpan.FromMinutes(50);
 }).AddHttpMessageHandler<AuthorizationMessageHandler>();
 
 builder.Services.RemoveAll<IHttpMessageHandlerBuilderFilter>();

@@ -11,10 +11,10 @@
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateBill ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateBill)">@GenerateBill</MudButton>
             @*<MudButton Color="Color.Primary" Variant="CurrentPage == DashBoard ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DashBoard)">@DashBoard</MudButton>*@
             <MudButton Color="Color.Primary" Variant="CurrentPage == SalesReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(SalesReport)">@SalesReport</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == CustomerProfile ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CustomerProfile)">@CustomerProfile</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateBill ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateBill)">@GenerateBill</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == PosDrafts ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PosDrafts)">@PosDrafts</MudButton>
             @*<MudButton Color="Color.Primary" Variant="CurrentPage == GenerateBillV2 ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateBillV2)">@GenerateBillV2</MudButton>*@
             <MudButton Color="Color.Primary" Variant="CurrentPage == Orders ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Orders)">@Orders</MudButton>
@@ -63,7 +63,7 @@ else if (CurrentPage == PosDrafts)
 
 
     // Current Page
-    public string CurrentPage { get; set; } = "Sales Report";
+    public string CurrentPage { get; set; } = "Generate Bill";
 
     // Change Current Page
     void ChangePage(string pageName)
