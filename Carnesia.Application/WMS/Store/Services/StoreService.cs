@@ -17,6 +17,21 @@ namespace Carnesia.Application.WMS.Store.Services
             _httpClient = httpClient;
         }
 
+        public async Task<string> CheckVatable()
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync("Stores/isvatable");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<StoreDTO> GetStore(string storeName)
         {
             try

@@ -28,6 +28,7 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
         public decimal vat { get; set; } = 0;
         public decimal vatAmount { get; set; }
         public decimal grandTotal { get; set; }
+        public decimal grandTotalWithVat { get; set; }
         public decimal creditValue { get; set; }
         public decimal rewardPoints { get; set; }
         public decimal tobeCollected { get; set; }

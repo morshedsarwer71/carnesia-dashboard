@@ -137,8 +137,8 @@
 		<h5>Discount: @Invoice.discount</h5>
 		<h5>Credit Used: @Invoice.creditUsed</h5>
 		<h5>Reward Value: @Invoice.rewardPoints</h5>
-		@*<h5>Vat(@Invoice.vat %): @Invoice.vatAmount</h5>*@
-		<h5>Grand Total: @Invoice.grandTotal</h5>
+		<h5>Vat(@Invoice.vat %): @Invoice.vatAmount</h5>
+		<h5>Grand Total: @(Invoice.grandTotal + Invoice.vatAmount)</h5>
 	</div>
 
 	<h5 style="text-align: center;">

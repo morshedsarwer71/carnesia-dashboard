@@ -12,5 +12,6 @@ namespace Carnesia.Application.WMS.Store.Services
         Task<List<StoreDTO>> GetStoresAsync();
         Task<string[]> GetStoreNameAsString();
         Task<StoreDTO> GetStore(string storeName);
+        Task<string> CheckVatable();
     }
 }
