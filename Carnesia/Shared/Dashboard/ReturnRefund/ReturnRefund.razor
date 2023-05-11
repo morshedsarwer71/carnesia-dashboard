@@ -71,13 +71,13 @@
                 <MudTd colspan="6" Style="text-align: end;">Reward Value:</MudTd>
                 <MudTd colspan="1" Style="text-align: end;">0</MudTd>
                 </MudTFootRow>*@
-                    @*<MudTFootRow>
-                <MudTd colspan="7" Style="text-align: end;">Vat(5%):</MudTd>
-                <MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
-                </MudTFootRow>*@
+                    <MudTFootRow>
+                        <MudTd colspan="8" Style="text-align: end;">Vat(@(vatPercent)%):</MudTd>
+                        <MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
+                    </MudTFootRow>
                     <MudTFootRow>
                         <MudTd colspan="8" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
-                        <MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round(subTotal, 2)</MudTd>
+                        <MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round(subTotal + vatAmount, 2)</MudTd>
                     </MudTFootRow>
                 </FooterContent>
             </MudTable>
@@ -113,12 +113,12 @@
                 </RowEditingTemplate>
             </MudTable>
             <div class="d-flex justify-end mt-5">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ReturnProducts" Disabled="Payments.Sum(x => x.takenRefundAmount) != Math.Round(subTotal, 2)">Submit & Return</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ReturnProducts" Disabled="Payments.Sum(x => x.takenRefundAmount) != Math.Round(subTotal + vatAmount, 2)">Submit & Return</MudButton>
             </div>
         </MudContainer>
     </MudPaper>
 
-    @code {
+@code {
 
     // Filter Value
     private string TRNCode { get; set; }
@@ -128,6 +128,7 @@
     // For Value Calculation
     private decimal subTotal { get; set; }
     private decimal vatAmount { get; set; }
+    private decimal vatPercent { get; set; }
     private int TableItems { get; set; }
 
     // Return
@@ -242,7 +243,8 @@
             Payments = result.payments;
             subTotal = Math.Round(Elements.Sum(e => e.soldQty * e.returnPrice), 2);
             TableItems = Elements.Count();
-            vatAmount = (subTotal / 100) * 5;
+            vatPercent = result.vat;
+            vatAmount = (subTotal / 100) * result.vat;
 
             UID = String.Empty;
 
@@ -264,7 +266,7 @@
 
         subTotal = Math.Round(Elements.Sum(e => e.soldQty * e.returnPrice), 2);
         TableItems = Elements.Count();
-        vatAmount = (subTotal / 100) * 5;
+        vatAmount = (subTotal / 100) * vatPercent;
     }
 
     // Return Products
@@ -275,9 +277,10 @@
         posDetails.total = subTotal;
         posDetails.items = TableItems;
         posDetails.quantities = Elements.Sum(e => e.soldQty);
-        posDetails.vat = 0;
-        posDetails.vatAmount = 0;
+        posDetails.vat = vatPercent;
+        posDetails.vatAmount = vatAmount;
         posDetails.grandTotal = subTotal;
+        posDetails.grandTotalWithVat = subTotal + vatAmount;
         posDetails.trnCode = TRNCodeShow;
 
         Return.pos = posDetails;

@@ -10,6 +10,7 @@
 @inject ISnackbar Snackbar
 @inject IJSRuntime IJS
 @inject ILocalStorageService _storage
+@inject IStore _store
 
 <MudPaper Class="pa-16 ma-2">
     <MudContainer Fixed="true">
@@ -114,10 +115,13 @@
                             <MudTd colspan="6" Style="text-align: end;">Reward Value:</MudTd>
                             <MudTd colspan="1" Style="text-align: end;">0</MudTd>
                         </MudTFootRow>
-                        @*<MudTFootRow>
-                    <MudTd colspan="5" Style="text-align: end;">Vat(5%):</MudTd>
-                    <MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
-                    </MudTFootRow>*@
+                        @if (isVatable == "true")
+                    {
+                        <MudTFootRow>
+                            <MudTd colspan="6" Style="text-align: end;">Vat(5%):</MudTd>
+                            <MudTd colspan="1" Style="text-align: end;">@Math.Round(vatAmount, 2)</MudTd>
+                        </MudTFootRow>
+                    }
                         <MudTFootRow>
                             <MudTd colspan="6" Style="text-align: end; font-weight: 600;">Grand Total:</MudTd>
                             <MudTd colspan="1" Style="text-align: end; font-weight: 600;">@Math.Round((subTotal - usedCredit - discount + vatAmount), 2)</MudTd>
@@ -254,6 +258,7 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadDraft();
+        await CheckVatable();
     }
 
     // Div Ref
@@ -281,6 +286,21 @@
     private decimal discount { get; set; }
     private decimal backupCredit { get; set; }
     private decimal usedCredit { get; set; }
+    private string isVatable { get; set; } = "false";
+
+    // Check Vatable
+    private async Task CheckVatable()
+    {
+        try
+        {
+            isVatable = await _store.CheckVatable();
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
 
     // Table Items
     private int TableItems { get; set; }
@@ -328,14 +348,14 @@
             return;
         }
         usedCredit = Customer.creditValue;
-        //GetVat();
+        GetVat();
     }
 
     private void ResetCredit()
     {
         Customer.creditValue = backupCredit;
         usedCredit = 0;
-        //GetVat();
+        GetVat();
     }
 
     // Table Customaization
@@ -375,6 +395,7 @@
                 await CheckInList(uid);
                 subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
                 TableItems = Elements.Count();
+                GetVat();
             }
         }
     }
@@ -442,6 +463,9 @@
                 isThere.quantity += 1;
                 isThere.totalPrice = isThere.quantity * isThere.price;
                 uid = String.Empty;
+
+                ResetCoupon();
+                ResetCredit();
                 return;
             }
 
@@ -461,6 +485,9 @@
 
             Elements.Add(newProduct);
             uid = String.Empty;
+
+            ResetCoupon();
+            ResetCredit();
         }
     }
 
@@ -546,7 +573,7 @@
             }
             Snackbar.Add("Coupon applied", Severity.Success);
             discount = result;
-            //GetVat();
+            GetVat();
         }
         catch (Exception)
         {
@@ -559,13 +586,16 @@
     {
         Coupon = String.Empty;
         discount = 0;
-        // GetVat();
+         GetVat();
     }
 
     // Get Vat
     private void GetVat()
     {
-        vatAmount = ((subTotal - discount - usedCredit) / 100) * 5;
+        if (isVatable == "true")
+        {
+            vatAmount = ((subTotal - discount - usedCredit) / 100) * 5;
+        }
     }
 
     // Generate POS
@@ -584,9 +614,11 @@
         POSDetails.customerId = Customer.customerId;
         POSDetails.discount = discount;
         POSDetails.vatAmount = vatAmount;
+        POSDetails.vat = isVatable == "true" ? 5 : 0;
         POSDetails.total = subTotal;
-        POSDetails.grandTotal = subTotal - discount - usedCredit + vatAmount;
-        POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
+        POSDetails.grandTotal = Math.Round(subTotal - discount - usedCredit, 2);
+        POSDetails.grandTotalWithVat = Math.Round(subTotal - discount - usedCredit + vatAmount, 2);
+        POSDetails.returnedAmnt = POSDetails.tobeCollected - Math.Round(subTotal - discount - usedCredit + vatAmount, 2);
         POSDetails.creditValue = usedCredit;
         POSDetails.membershipId = MembershipID;
         POSDetails.couponCode = Coupon;
@@ -768,7 +800,9 @@
 
         subTotal = Math.Round(Elements.Sum(e => e.totalPrice), 2);
         TableItems = Elements.Count();
-        //GetVat();
+        ResetCoupon();
+        ResetCredit();
+        GetVat();
     }
 
     // Goto Print
@@ -818,22 +852,22 @@
             return;
         }
 
-        POSDetails.tobeCollected += NewPayment.amount;
+        POSDetails.tobeCollected += Math.Round(NewPayment.amount, 2);
 
-        if (POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount) <= 0 || (subTotal - discount - usedCredit + vatAmount) <= 0)
+        if (POSDetails.tobeCollected - Math.Round((subTotal - discount - usedCredit + vatAmount), 2) <= 0 || Math.Round((subTotal - discount - usedCredit + vatAmount), 2) <= 0)
         {
             POSDetails.returnedAmnt = 0;
         }
         else
         {
-            POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
+            POSDetails.returnedAmnt = Math.Round(POSDetails.tobeCollected - Math.Round((subTotal - discount - usedCredit + vatAmount), 2), 2);
         }
 
         var cashPay = PaymentTable.FirstOrDefault(x => x.paymentType == "Cash");
 
         if (cashPay != null && NewPayment.paymentType == "Cash")
         {
-            cashPay.amount += NewPayment.amount;
+            cashPay.amount += Math.Round(NewPayment.amount, 2);
             cashPay.paymentRef = NewPayment.paymentRef;
             NewPayment = new PosPaymentDTO();
             return;
@@ -857,15 +891,15 @@
     {
         var result = PaymentTable.FirstOrDefault(x => x.id == paymentId);
 
-        POSDetails.tobeCollected -= result.amount;
+        POSDetails.tobeCollected -= Math.Round(result.amount, 2);
 
-        if (POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount) <= 0 || (subTotal - discount - usedCredit + vatAmount) <= 0)
+        if (POSDetails.tobeCollected - Math.Round((subTotal - discount - usedCredit + vatAmount), 2) <= 0 || Math.Round((subTotal - discount - usedCredit + vatAmount), 2) <= 0)
         {
             POSDetails.returnedAmnt = 0;
         }
         else
         {
-            POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
+            POSDetails.returnedAmnt = Math.Round(POSDetails.tobeCollected - Math.Round((subTotal - discount - usedCredit + vatAmount), 2));
         }
 
         PaymentTable.Remove(result);

@@ -610,9 +610,9 @@
         POSDetails.vatAmount = vatAmount;
         POSDetails.vat = isVatable == "true" ? 5 : 0;
         POSDetails.total = subTotal;
-        POSDetails.grandTotal = subTotal - discount - usedCredit;
-        POSDetails.grandTotalWithVat = subTotal - discount - usedCredit + vatAmount;
-        POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
+        POSDetails.grandTotal = Math.Round(subTotal - discount - usedCredit, 2);
+        POSDetails.grandTotalWithVat = Math.Round(subTotal - discount - usedCredit + vatAmount, 2);
+        POSDetails.returnedAmnt = POSDetails.tobeCollected - Math.Round(subTotal - discount - usedCredit + vatAmount, 2);
         POSDetails.creditValue = usedCredit;
         POSDetails.membershipId = MembershipID;
         POSDetails.couponCode = Coupon;
@@ -783,22 +783,22 @@
             return;
         }
 
-        POSDetails.tobeCollected += NewPayment.amount;
+        POSDetails.tobeCollected += Math.Round(NewPayment.amount, 2);
 
-        if (POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount) <= 0 || (subTotal - discount - usedCredit + vatAmount) <= 0)
+        if (POSDetails.tobeCollected - Math.Round((subTotal - discount - usedCredit + vatAmount), 2) <= 0 || Math.Round((subTotal - discount - usedCredit + vatAmount), 2) <= 0)
         {
             POSDetails.returnedAmnt = 0;
         }
         else
         {
-            POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
+            POSDetails.returnedAmnt = Math.Round(POSDetails.tobeCollected - Math.Round((subTotal - discount - usedCredit + vatAmount), 2), 2);
         }
 
         var cashPay = PaymentTable.FirstOrDefault(x => x.paymentType == "Cash");
 
         if (cashPay != null && NewPayment.paymentType == "Cash")
         {
-            cashPay.amount += NewPayment.amount;
+            cashPay.amount += Math.Round(NewPayment.amount, 2);
             cashPay.paymentRef = NewPayment.paymentRef;
             NewPayment = new PosPaymentDTO();
             return;
@@ -822,15 +822,15 @@
     {
         var result = PaymentTable.FirstOrDefault(x => x.id == paymentId);
 
-        POSDetails.tobeCollected -= result.amount;
+        POSDetails.tobeCollected -= Math.Round(result.amount, 2);
 
-        if (POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount) <= 0 || (subTotal - discount - usedCredit + vatAmount) <= 0)
+        if (POSDetails.tobeCollected - Math.Round((subTotal - discount - usedCredit + vatAmount), 2) <= 0 || Math.Round((subTotal - discount - usedCredit + vatAmount), 2) <= 0)
         {
             POSDetails.returnedAmnt = 0;
         }
         else
         {
-            POSDetails.returnedAmnt = POSDetails.tobeCollected - (subTotal - discount - usedCredit + vatAmount);
+            POSDetails.returnedAmnt = Math.Round(POSDetails.tobeCollected - Math.Round((subTotal - discount - usedCredit + vatAmount), 2));
         }
 
         PaymentTable.Remove(result);

@@ -1,4 +1,5 @@
-﻿using Carnesia.Domain.WMS.Store.Models;
+﻿using Carnesia.Domain.AAF.Stores;
+using Carnesia.Domain.WMS.Store.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,8 @@ namespace Carnesia.Application.WMS.Store.Services
         Task<string[]> GetStoreNameAsString();
         Task<StoreDTO> GetStore(string storeName);
         Task<string> CheckVatable();
+        Task<List<StoresDTO>> GetAllStores();
+        Task<List<StoresDTO>> GetAllTracks();
+        Task<string> ToggleVatable(int id);
     }
 }

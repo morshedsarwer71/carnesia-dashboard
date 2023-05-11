@@ -92,7 +92,6 @@ builder.Services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
 
 builder.Services.AddTransient<AuthorizationMessageHandler>();
 builder.Services.AddScoped(sp => sp.GetService<IHttpClientFactory>().CreateClient("RetailSuite"));
-
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();

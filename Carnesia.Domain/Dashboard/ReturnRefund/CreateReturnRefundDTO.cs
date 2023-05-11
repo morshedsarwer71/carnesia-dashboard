@@ -41,6 +41,7 @@ namespace Carnesia.Domain.Dashboard.ReturnRefund
         public decimal vat { get; set; }
         public decimal vatAmount { get; set; }
         public decimal grandTotal { get; set; }
+        public decimal grandTotalWithVat { get; set; }
         public string comment { get; set; }
         public string trnCode { get; set; }
     }

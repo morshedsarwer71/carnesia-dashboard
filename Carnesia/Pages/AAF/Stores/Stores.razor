@@ -1,0 +1,88 @@
+﻿@page "/stores"
+@using Carnesia.Domain.Common.POCO;
+@using Carnesia.Domain.AAF.Stores;
+@inject IStore _store
+@inject ISnackbar Snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>Store Name</MudTh>
+                <MudTh>Is Vatable</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Store Name">@context.name</MudTd>
+                <MudTd DataLabel="Is Vatable">
+                    <MudButton Variant="Variant.Filled" Color="context.isVatable ? Color.Success : Color.Error" OnClick="()=>ToggleVat(context.storeId)">
+                        @(context.isVatable ? "Vatable" : "Non-Vatable")
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+    }
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private List<StoresDTO> Elements = new List<StoresDTO>();
+
+    // Get Stores 
+    private async Task GetStores()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _store.GetAllStores();
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    // Change Vatable
+    private async Task ToggleVat(int id)
+    {
+        try
+        {
+            var result = await _store.ToggleVatable(id);
+
+            if (result == "Store vatable toggled successfully!")
+            {
+                Snackbar.Add(result, Severity.Success);
+                await GetStores();
+                return;
+            }
+            Snackbar.Add(result, Severity.Error);
+        }
+        catch (Exception)
+        {
+            
+            throw;
+        }
+    }
+}

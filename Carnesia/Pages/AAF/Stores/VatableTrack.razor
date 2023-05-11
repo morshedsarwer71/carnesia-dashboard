@@ -1,0 +1,65 @@
+﻿@page "/store-vattrack"
+@using Carnesia.Domain.AAF.Stores;
+@using Carnesia.Domain.Common.POCO;
+@inject IStore _store
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>Store Name</MudTh>
+                <MudTh>Type</MudTh>
+                <MudTh>Updated By</MudTh>
+                <MudTh>Updated At</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Store Name">@context.name</MudTd>
+                <MudTd DataLabel="Type">@context.type</MudTd>
+                <MudTd DataLabel="Updated By">@context.updateBy</MudTd>
+                <MudTd DataLabel="Updated At">@context.updatedAt</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+        <div class="d-flex flex-wrap mt-4">
+            <MudSwitch @bind-Checked="@tableCommon.Hover" Color="Color.Primary">Hover</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Striped" Color="Color.Tertiary">Striped</MudSwitch>
+            <MudSwitch @bind-Checked="@tableCommon.Bordered" Color="Color.Warning">Bordered</MudSwitch>
+        </div>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetTracks();
+    }
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Table Customaization
+    private TableCommon tableCommon = new TableCommon();
+
+    // Table Content
+    private List<StoresDTO> Elements = new List<StoresDTO>();
+
+    // Get Tracks
+    private async Task GetTracks()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _store.GetAllTracks();
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
+}
