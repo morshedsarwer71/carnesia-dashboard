@@ -8,138 +8,138 @@
 @inject IDialogService DialogService
 
 <MudPaper Class="px-3 py-16 ma-2">
-	<MudContainer Fixed="true">
-		<MudGrid Class="justify-center">
-			<MudItem sm="3">
-				<MudSelect @bind-Value="Filter.storeId" Label="Store" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="0">All</MudSelectItem>
-					@foreach (var item in Stores)
-					{
-						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
-					}
-				</MudSelect>
-			</MudItem>
-			<MudItem sm="3">
-				<MudDatePicker Label="From Date" DateFormat="yyyy-MM-dd" @bind-Date="Filter.fromDate" />
-			</MudItem>
-			<MudItem sm="3">
-				<MudDatePicker Label="To Date" DateFormat="yyyy-MM-dd" @bind-Date="Filter.toDate" />
-			</MudItem>
-		</MudGrid>
+    <MudContainer Fixed="true">
+        <MudGrid Class="justify-center">
+            <MudItem sm="3">
+                <MudSelect @bind-Value="Filter.storeId" Label="Store" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="0">All</MudSelectItem>
+                    @foreach (var item in Stores)
+                    {
+                        <MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="3">
+                <MudDatePicker Label="From Date" DateFormat="yyyy-MM-dd" @bind-Date="Filter.fromDate" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudDatePicker Label="To Date" DateFormat="yyyy-MM-dd" @bind-Date="Filter.toDate" />
+            </MudItem>
+        </MudGrid>
 
-		<MudGrid Class="justify-center mb-3">
-			<MudItem sm="9" Class="d-flex justify-end">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReport">Filter</MudButton>
-			</MudItem>
-		</MudGrid>
+        <MudGrid Class="justify-center mb-3">
+            <MudItem sm="9" Class="d-flex justify-end">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetReport">Filter</MudButton>
+            </MudItem>
+        </MudGrid>
 
-		<MudTable Items="@Elements" Hover="true" Striped="true" Dense="true" Bordered="true" Loading="Loading" LoadingProgressColor="Color.Info" CustomFooter="true">
-			<HeaderContent>
-				<MudTh>Outlet Name</MudTh>
-				<MudTh>Date</MudTh>
-				<MudTh>Total Orders</MudTh>
-				<MudTh>Total Items</MudTh>
-				<MudTh>Total QTY</MudTh>
-				<MudTh>Total Sales</MudTh>
-				<MudTh>Total Discount</MudTh>
-				<MudTh>Refund</MudTh>
-				@*<MudTh>Credit Issued</MudTh>*@
-				<MudTh>Reveniue After Discount</MudTh>
-				<MudTh>Grand Total</MudTh>
-				<MudTh>Received by Accounts</MudTh>
-				<MudTh>Accounts Receivable</MudTh>
-				<MudTh>Lost Amount</MudTh>
-			</HeaderContent>
-			<RowTemplate>
-				<MudTd DataLabel="Outlet Name">@context.storeName</MudTd>
-				<MudTd DataLabel="Date">@context.date.ToString("dd-MM-yyyy")</MudTd>
-				<MudTd DataLabel="Total Orders">@context.totalOrders</MudTd>
-				<MudTd DataLabel="Total Items">@context.totalItems</MudTd>
-				<MudTd DataLabel="Total QTY">@context.totalQty</MudTd>
-				<MudTd DataLabel="Total Sales">@context.totalSale</MudTd>
-				<MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
-				<MudTd DataLabel="Refund">@context.totalRefund</MudTd>
-				@*<MudTd DataLabel="Credit Issued">@context.creditUsed</MudTd>*@
-				<MudTd DataLabel="Reveniue After Discount">@(context.totalSale - context.totalDiscount)</MudTd>
-				<MudTd DataLabel="Grand Total">
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => DetailsModal(context.date.ToString("yyyy-MM-dd"), context.storeId))">@((context.totalSale - context.totalDiscount) - context.totalRefund)</MudButton>
-				</MudTd>
-				<MudTd DataLabel="Received by Accounts">@context.rcvdByAccountsAmnt</MudTd>
-				<MudTd DataLabel="Accounts Receivable">@(((context.totalSale - context.totalDiscount) - context.totalRefund) - context.rcvdByAccountsAmnt)</MudTd>
-				<MudTd DataLabel="Lost Amount">@context.lostAmount</MudTd>
-			</RowTemplate>
-			<FooterContent>
-				<MudTFootRow>
-					<MudTd Style="font-weight: 600;"></MudTd>
-					<MudTd Style="font-weight: 600;">Grand Total</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalOrders)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalItems)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalQty)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalSale)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalDiscount)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalRefund)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalSale - x.totalDiscount)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => (x.totalSale - x.totalDiscount) - x.totalRefund)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.rcvdByAccountsAmnt)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => ((x.totalSale - x.totalDiscount) - x.totalRefund) - x.rcvdByAccountsAmnt)</MudTd>
-					<MudTd Style="font-weight: 600;">@Elements.Sum(x => x.lostAmount)</MudTd>
-				</MudTFootRow>
-			</FooterContent>
-		</MudTable>
+        <MudTable Items="@Elements" Hover="true" Striped="true" Dense="true" Bordered="true" Loading="Loading" LoadingProgressColor="Color.Info" CustomFooter="true">
+            <HeaderContent>
+                <MudTh>Outlet Name</MudTh>
+                <MudTh>Date</MudTh>
+                <MudTh>Total Orders</MudTh>
+                <MudTh>Total Items</MudTh>
+                <MudTh>Total QTY</MudTh>
+                <MudTh>Total Sales</MudTh>
+                <MudTh>Total Discount</MudTh>
+                <MudTh>Refund</MudTh>
+                @*<MudTh>Credit Issued</MudTh>*@
+                <MudTh>Reveniue After Discount</MudTh>
+                <MudTh>Grand Total</MudTh>
+                <MudTh>Received by Accounts</MudTh>
+                <MudTh>Accounts Receivable</MudTh>
+                <MudTh>Lost Amount</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Outlet Name">@context.storeName</MudTd>
+                <MudTd DataLabel="Date">@context.date.ToString("dd-MM-yyyy")</MudTd>
+                <MudTd DataLabel="Total Orders">@context.totalOrders</MudTd>
+                <MudTd DataLabel="Total Items">@context.totalItems</MudTd>
+                <MudTd DataLabel="Total QTY">@context.totalQty</MudTd>
+                <MudTd DataLabel="Total Sales">@context.totalSale</MudTd>
+                <MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
+                <MudTd DataLabel="Refund">@context.totalRefund</MudTd>
+                @*<MudTd DataLabel="Credit Issued">@context.creditUsed</MudTd>*@
+                <MudTd DataLabel="Reveniue After Discount">@(context.totalSale + context.vatAmmount - context.totalDiscount)</MudTd>
+                    <MudTd DataLabel="Grand Total">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => DetailsModal(context.date.ToString("yyyy-MM-dd"), context.storeId))">@((context.totalSale + context.vatAmmount - context.totalDiscount) - context.totalRefund)</MudButton>
+                    </MudTd>
+                    <MudTd DataLabel="Received by Accounts">@context.rcvdByAccountsAmnt</MudTd>
+                    <MudTd DataLabel="Accounts Receivable">@(((context.totalSale + context.vatAmmount - context.totalDiscount) - context.totalRefund) - context.rcvdByAccountsAmnt)</MudTd>
+                    <MudTd DataLabel="Lost Amount">@context.lostAmount</MudTd>
+                </RowTemplate>
+                <FooterContent>
+                    <MudTFootRow>
+                        <MudTd Style="font-weight: 600;"></MudTd>
+                        <MudTd Style="font-weight: 600;">Grand Total</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalOrders)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalItems)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalQty)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalSale)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalDiscount)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalRefund)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => x.totalSale + x.vatAmmount - x.totalDiscount)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => (x.totalSale + x.vatAmmount - x.totalDiscount) - x.totalRefund)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => x.rcvdByAccountsAmnt)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => ((x.totalSale + x.vatAmmount - x.totalDiscount) - x.totalRefund) - x.rcvdByAccountsAmnt)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.Sum(x => x.lostAmount)</MudTd>
+                    </MudTFootRow>
+                </FooterContent>
+            </MudTable>
 
-	</MudContainer>
-</MudPaper>
+        </MudContainer>
+    </MudPaper>
 
-@code {
-	// Page On Load
-	protected override async Task OnInitializedAsync()
-	{
-		await GetStores();
-		//await GetReports();
-	}
+    @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStores();
+        //await GetReports();
+    }
 
-	// Loading
-	private bool Loading { get; set; }
+    // Loading
+    private bool Loading { get; set; }
 
-	// Filter
-	private SalesReportFilterDTO Filter = new SalesReportFilterDTO();
+    // Filter
+    private SalesReportFilterDTO Filter = new SalesReportFilterDTO();
 
-	// Table Element
-	private List<SalesReportDTO> Elements = new List<SalesReportDTO>();
+    // Table Element
+    private List<SalesReportDTO> Elements = new List<SalesReportDTO>();
 
-	// Stores
-	private List<StoreDTO> Stores = new List<StoreDTO>();
+    // Stores
+    private List<StoreDTO> Stores = new List<StoreDTO>();
 
-	// Get Stores
-	private async Task GetStores()
-	{
-		Stores = await _store.GetStoresAsync();
-	}
+    // Get Stores
+    private async Task GetStores()
+    {
+        Stores = await _store.GetStoresAsync();
+    }
 
-	// Get Sales Report
-	private async Task GetReport()
-	{
-		Loading = true;
-		try
-		{
-			Elements = await _dashboard.GetMISSalesReport(Filter);
-			Loading = false;
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-			Loading = false;
-		}
-	}
+    // Get Sales Report
+    private async Task GetReport()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _dashboard.GetMISSalesReport(Filter);
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Loading = false;
+        }
+    }
 
-	// Details Modal
-	private async Task DetailsModal(string date, int store)
-	{
-		var parameters = new DialogParameters();
-		parameters.Add("date", date);
-		parameters.Add("store", store);
+    // Details Modal
+    private async Task DetailsModal(string date, int store)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("date", date);
+        parameters.Add("store", store);
 
-		var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
-		var dialog = await DialogService.Show<SalesReportPaymentTypeModal>("Payment Details", parameters, options).Result;
-	}
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<SalesReportPaymentTypeModal>("Payment Details", parameters, options).Result;
+    }
 }

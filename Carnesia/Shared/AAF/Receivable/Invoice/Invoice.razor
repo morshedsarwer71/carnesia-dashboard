@@ -1,18 +1,33 @@
 ﻿@using Carnesia.Domain.AAF.Receivable.Invoice
 @inject IBank _bank
+@inject ISnackbar Snackbar
 
 <MudPaper Class="px-3 py-16 ma-2">
     <MudContainer Fixed="true">
+        <MudGrid Class="mb-3 align-baseline">
+            <MudItem sm="3">
+                <MudDatePicker Label="From Date" @bind-Date="Filter.fromDate" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudDatePicker Label="To Date" @bind-Date="Filter.toDate" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudTextField @bind-Value="Filter.invoice" Label="Invoice Number" Variant="Variant.Text" />
+            </MudItem>
+            <MudItem sm="3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetInvoicesByFilter">Filter</MudButton>
+            </MudItem>
+        </MudGrid>
         <MudTable RowsPerPage="25" Items="@Elements" Dense="true" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh></MudTh>
                 <MudTh>Date & Time</MudTh>
+                <MudTh>Store</MudTh>
                 <MudTh>Invoice Number</MudTh>
                 <MudTh>Invoice Amount</MudTh>
                 <MudTh>Received Amount</MudTh>
                 <MudTh>Lost</MudTh>
                 <MudTh>Receiving Pending</MudTh>
-                <MudTh>Store</MudTh>
                 @*<MudTh>BU</MudTh>*@
                 @*<MudTh>View</MudTh>*@
             </HeaderContent>
@@ -28,12 +43,12 @@
                     }
                 </MudTd>
                 <MudTd DataLabel="Date & Time">@context.dateTime</MudTd>
+                <MudTd DataLabel="Store">@context.store</MudTd>
                 <MudTd DataLabel="Invoice Number">@context.invoiceNumber</MudTd>
                 <MudTd DataLabel="Invoice Amount">@context.invoiceAmount</MudTd>
                 <MudTd DataLabel="Received Amount">@context.receivedAmount</MudTd>
                 <MudTd DataLabel="Lost">@context.lost</MudTd>
                 <MudTd DataLabel="Receiving Pending">@context.receivePending</MudTd>
-                <MudTd DataLabel="Store">@context.store</MudTd>
                 @*<MudTd DataLabel="BU">@context.bu</MudTd>*@
                 @*<MudTd DataLabel="View">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary">View</MudButton>
@@ -84,6 +99,9 @@
     // Loading
     private bool Loading { get; set; }
 
+    // Filter
+    private InvoiceFilterDTO Filter = new InvoiceFilterDTO();
+
     // Elements
     private List<InvoiceListDTO> Elements = new List<InvoiceListDTO>();
 
@@ -100,6 +118,26 @@
         {
             Loading = false;
             throw;
+        }
+    }
+
+    // Get Invoice By Filter
+    private async Task GetInvoicesByFilter()
+    {
+        if ((!Filter.fromDate.HasValue || !Filter.toDate.HasValue) && (String.IsNullOrEmpty(Filter.invoice)))
+        {
+            Snackbar.Add("Both from date and to date are requirted to get orders!", Severity.Error);
+            return;
+        }
+        Loading = true;
+        try
+        {
+            Elements = await _bank.GetOutletInvoicesByFilter(Filter);
+            Loading = false;
+        }
+        catch (Exception)
+        {
+            Loading = false;
         }
     }
 

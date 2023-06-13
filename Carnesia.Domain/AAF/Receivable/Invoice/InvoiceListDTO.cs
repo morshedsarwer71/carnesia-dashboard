@@ -22,4 +22,11 @@ namespace Carnesia.Domain.AAF.Receivable.Invoice
         public List<OrderDTO> orders { get; set; }
         public List<PendingOrderDTO> ecommerceOrders { get; set; }
     }
+
+    public class InvoiceFilterDTO
+    {
+        public DateTime? fromDate { get; set; }
+        public DateTime? toDate { get; set; }
+        public string invoice { get; set; }
+    }
 }

@@ -38,6 +38,20 @@ namespace Carnesia.Application.AAF.Bank
             }
         }
 
+        public async Task<string> CreateType(string url)
+        {
+            try
+            {
+                var result = await _httpClient.GetStringAsync(url);
+                return result.ToString();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<BankDTO> GetBank(int id)
         {
             try
@@ -122,6 +136,24 @@ namespace Carnesia.Application.AAF.Bank
                 var result = await _httpClient.GetFromJsonAsync<List<InvoiceListDTO>>("accounting/outletinvoices");
 
                 return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<InvoiceListDTO>> GetOutletInvoicesByFilter(InvoiceFilterDTO Filter)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("accounting/outletinvoicesbyfilter", Filter);
+
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<List<InvoiceListDTO>>(json);
+
+                return data;
             }
             catch (Exception)
             {

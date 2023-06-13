@@ -17,6 +17,7 @@ namespace Carnesia.Domain.Dashboard.SalesReport
         public decimal rcvdByAccountsAmnt { get; set; }
         public decimal pendingAmount { get; set; }
         public decimal lostAmount { get; set; }
+        public decimal vatAmmount { get; set; }
         public int totalItems { get; set; }
         public int totalQty { get; set; }
         public int totalOrders { get; set; }

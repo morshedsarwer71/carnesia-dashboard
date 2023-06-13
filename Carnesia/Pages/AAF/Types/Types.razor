@@ -1,0 +1,33 @@
+﻿@page "/types"
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == PaymentMethode ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PaymentMethode)">@PaymentMethode</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == ChargeType ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ChargeType)">@ChargeType</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if (CurrentPage == PaymentMethode)
+{
+    <Carnesia.Shared.AAF.Types.PaymentMethode />
+}
+else
+{
+    <Carnesia.Shared.AAF.Types.ChargeType />
+}
+
+@code {
+    private string PaymentMethode = "Payment Methode";
+    private string ChargeType = "Charge Type";
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Payment Methode";
+
+    // Change Current Page
+    void ChangePage(string pageName)
+    {
+        CurrentPage = pageName;
+    }
+}

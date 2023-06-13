@@ -1,0 +1,89 @@
+﻿@using Carnesia.Domain.AAF.Common;
+@inject IBank _bank
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <div class="d-flex justify-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenModal">Add New Charge Type</MudButton>
+        </div>
+        <MudTable RowsPerPage="25" Items="@Elements" Hover="true" Dense="true" Loading="Loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>Type Name</MudTh>
+                <MudTh>Type ID</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Type Name">@context.name</MudTd>
+                <MudTd DataLabel="Type ID">@context.chargeId</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCharge();
+    }
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Charge Type
+    private List<PaymentMethodDTO> Elements = new List<PaymentMethodDTO>();
+
+    // Get Charge Type
+    private async Task GetCharge()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _bank.GetChargeType();
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    // Add Modal
+    private async Task OpenModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new PaymentMethodDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<CreateNewTypes>("Add New Charge Type", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            PaymentMethodDTO newMethod = dialog.Data as PaymentMethodDTO;
+
+            try
+            {
+                var url = $"accounting/chargetype/{newMethod.name}/{newMethod.chargeId}";
+                var result = await _bank.CreateType(url);
+
+                if (result == "Success!")
+                {
+                    Snackbar.Add("New Type Created Successfully!", Severity.Success);
+                    await GetCharge();
+                }
+                Snackbar.Add(result, Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Internal server error!", Severity.Error);
+                throw;
+            }
+        }
+    }
+}
+

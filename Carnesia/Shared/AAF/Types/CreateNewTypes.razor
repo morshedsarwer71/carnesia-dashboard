@@ -1,0 +1,29 @@
+﻿@using Carnesia.Domain.AAF.Common;
+
+<MudDialog>
+	<DialogContent>
+		<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+			<MudTextField @bind-Value="FormData.name" Label="Type Name" Immediate="true" Required="true" RequiredError="Type Name is required!" />
+			<MudNumericField @bind-Value="FormData.chargeId" Label="Type ID" Immediate="true" Required="true" RequiredError="Type Id is required!" />
+
+			<div class="d-flex justify-end my-5">
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto" OnClick="Submit">Submit</MudButton>
+			</div>
+		</MudForm>
+	</DialogContent>
+</MudDialog>
+
+@code {
+	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+	[Parameter]
+	public PaymentMethodDTO FormData { get; set; } = new PaymentMethodDTO();
+
+	// Submit Close
+	void Submit() => MudDialog.Close(DialogResult.Ok<PaymentMethodDTO>(FormData));
+
+	// Form Ref
+	bool success;
+	string[] errors = { };
+	MudForm form;
+}

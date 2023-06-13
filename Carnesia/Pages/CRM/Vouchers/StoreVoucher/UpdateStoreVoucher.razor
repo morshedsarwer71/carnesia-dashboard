@@ -189,6 +189,14 @@
         {
             CreateStoreVoucherStoreDTO newStore = dialog.Data as CreateStoreVoucherStoreDTO;
 
+            var isThereStore = Stores.FirstOrDefault(x => x.storeId == newStore.storeId);
+
+            if (isThereStore != null)
+            {
+                Snackbar.Add("Store already added!", Severity.Error);
+                return;
+            }
+
             try
             {
                 var result = await _voucher.AddNewStore(Voucher.id, newStore);

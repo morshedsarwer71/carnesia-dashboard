@@ -1,0 +1,88 @@
+﻿@using Carnesia.Domain.AAF.Common;
+@inject IBank _bank
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <div class="d-flex justify-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenModal">Add New Payment Methode</MudButton>
+        </div>
+        <MudTable RowsPerPage="25" Items="@Elements" Hover="true" Dense="true" Loading="Loading" LoadingProgressColor="Color.Info" >
+            <HeaderContent>
+                <MudTh>Method Name</MudTh>
+                <MudTh>Method ID</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Method Name">@context.name</MudTd>
+                <MudTd DataLabel="Method ID">@context.paymentId</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        await GetPayment();
+    }
+
+    // Loading
+    private bool Loading { get; set; }
+
+    // Payment Methodes
+    private List<PaymentMethodDTO> Elements = new List<PaymentMethodDTO>();
+
+    // Get Payment Methode
+    private async Task GetPayment()
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _bank.GetPaymentMethod();
+            Loading = false;
+        }
+        catch (Exception e)
+        {
+            Loading = false;
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    // Add Modal
+    private async Task OpenModal()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("FormData", new PaymentMethodDTO());
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, CloseButton = true, };
+        var dialog = await DialogService.Show<CreateNewTypes>("Add New Payment Method", parameters, options).Result;
+
+        if (dialog.Data != null)
+        {
+            PaymentMethodDTO newMethod = dialog.Data as PaymentMethodDTO;
+
+            try
+            {
+                var url = $"accounting/paymentmethod/{newMethod.name}/{newMethod.chargeId}";
+                var result = await _bank.CreateType(url);
+
+                if (result == "Success!")
+                {
+                    Snackbar.Add("New Method Created Successfully!", Severity.Success);
+                    await GetPayment();
+                }
+                Snackbar.Add(result, Severity.Error);
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("Internal server error!", Severity.Error);
+                throw;
+            }
+        }
+    }
+}

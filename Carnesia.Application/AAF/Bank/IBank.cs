@@ -27,6 +27,8 @@ namespace Carnesia.Application.AAF.Bank
         Task<List<PaymentMethodDTO>> GetPaymentMethod();
         Task<List<PaymentMethodDTO>> GetChargeType();
         Task<List<InvoiceListDTO>> GetOutletInvoices();
+        Task<List<InvoiceListDTO>> GetOutletInvoicesByFilter(InvoiceFilterDTO Filter);
         Task<List<InvoiceListDTO>> GetEcommerceInvoices();
+        Task<string> CreateType(string url);
     }
 }

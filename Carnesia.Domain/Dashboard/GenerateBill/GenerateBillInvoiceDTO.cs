@@ -22,6 +22,7 @@ namespace Carnesia.Domain.Dashboard.GenerateBill
         public string trnCode { get; set; }
         public string outletAddress { get; set; }
         public string outletPhone { get; set; }
+        public string vatRegNumber { get; set; }
         public string orderDate { get; set; }
         public string customerName { get; set; }
         public string customerPhone { get; set; }

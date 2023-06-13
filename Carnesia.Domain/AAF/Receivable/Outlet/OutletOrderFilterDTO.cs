@@ -21,6 +21,8 @@ namespace Carnesia.Domain.AAF.Receivable.Outlet
 		public string couponCode { get; set; }
 		public decimal discount { get; set; }
 		public decimal grandTotal { get; set; }
+		public decimal grandTotalWithVat { get; set; }
+		public decimal vatAmount { get; set; }
 		public string soldBy { get; set; }
 		public decimal mrp { get; set; }
 		public decimal salesAmount { get; set; }

@@ -40,7 +40,9 @@
                 <MudTh>Total MRP</MudTh>
                 <MudTh>Total Sales Price</MudTh>
                 <MudTh>Discount</MudTh>
+                <MudTh>Vat Amount</MudTh>
                 <MudTh>Grand Total</MudTh>
+                <MudTh>Grand Total With Vat</MudTh>
                 <MudTh>Coupon Code</MudTh>
                 <MudTh>Sold By</MudTh>
             </HeaderContent>
@@ -52,7 +54,9 @@
                 <MudTd DataLabel="Total MRP">@context.mrp</MudTd>
                 <MudTd DataLabel="Total Sales Price">@context.salesAmount</MudTd>
                 <MudTd DataLabel="Discount">@context.discount</MudTd>
+                <MudTd DataLabel="Vat Amount">@context.vatAmount</MudTd>
                 <MudTd DataLabel="Grand Total">@context.grandTotal</MudTd>
+                <MudTd DataLabel="Grand Total With Vat">@context.grandTotalWithVat</MudTd>
                 <MudTd DataLabel="Coupon Code">@context.couponCode</MudTd>
                 <MudTd DataLabel="Sold By">@context.soldBy</MudTd>
             </RowTemplate>
@@ -162,12 +166,12 @@
     {
         if (args.Row.IsChecked)
         {
-            ReceiveDetails.totalInvoiceAmnt += args.Item.grandTotal;
+            ReceiveDetails.totalInvoiceAmnt += args.Item.grandTotalWithVat;
             StateHasChanged();
             return;
         }
 
-        ReceiveDetails.totalInvoiceAmnt -= args.Item.grandTotal;
+        ReceiveDetails.totalInvoiceAmnt -= args.Item.grandTotalWithVat;
         StateHasChanged();
     }
 
@@ -180,7 +184,7 @@
         {
             SelectedOrders.Add(new ReceivableOrdersDTO
                 {
-                    totalAmount = item.grandTotal,
+                    totalAmount = item.grandTotalWithVat,
                     trnCode = item.orderId
                 });
         }
