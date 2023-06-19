@@ -8,9 +8,18 @@
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            <MudButton Color="Color.Primary" Variant="CurrentPage == BinInscan ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinInscan)">@BinInscan</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == BinDetails ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinDetails)">@BinDetails</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == TrackUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(TrackUID)">@TrackUID</MudButton>
+            @if (role == "Admin" || role == "Inventory Associate - WH" || role == "Executive - WH" || role == "Sr.Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == BinInscan ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinInscan)">@BinInscan</MudButton>
+            }
+            @if (role == "Admin" || role == "Inventory Associate - WH" || role == "Executive - WH" || role == "Sr.Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == BinDetails ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinDetails)">@BinDetails</MudButton>
+            }
+            @if (role == "Admin" || role == "Inventory Associate - WH" || role == "Executive - WH" || role == "Sr.Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == TrackUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(TrackUID)">@TrackUID</MudButton>
+            }
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>

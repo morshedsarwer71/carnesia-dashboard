@@ -5,22 +5,49 @@
     <div class="d-flex justify-center mt-5">
         <MudText Class="border-2 px-4 py-1">MIS</MudText>
     </div>
-
-    <MudNavLink Href="/analytics" Match="NavLinkMatch.Prefix">Analytics</MudNavLink>
-    <MudNavLink Href="/sales-report" Match="NavLinkMatch.Prefix">Sales Report</MudNavLink>
-    <MudNavLink Href="/revenue-report" Match="NavLinkMatch.Prefix">Revenue Report</MudNavLink>
-    <MudNavLink Href="/product-sales-report" Match="NavLinkMatch.Prefix">Product Sales Report</MudNavLink>
-    <MudNavLink Href="/procurement-report" Match="NavLinkMatch.Prefix">Procurment Report</MudNavLink>
+    @if (role == "Admin" || role == "Head of Department - Ops" || role == "Management" || role == "Manager-Accounts" || role == "Senior Executive - Marketing" || role == "Executive - Marketing" || role == "Marketing Manager" || role == "Head of Marketing")
+    {
+        <MudNavLink Href="/analytics" Match="NavLinkMatch.Prefix">Analytics</MudNavLink>
+    }
+    @if (role == "Admin" || role == "Head of Department - Ops" || role == "Management" || role == "Manager - Accounts" || role == "Marketing Manager" || role == "Head of Marketing" || role == "Outlet Experience Manager" || role == "Outlet Experience Executive")
+    {
+        <MudNavLink Href="/sales-report" Match="NavLinkMatch.Prefix">Sales Report</MudNavLink>
+    }
+    @if (role == "Admin" || role == "Head of Department - Ops" || role == "Manager - Procurement" || role == "Management" || role == "Manager - Accounts" || role == "Marketing Manager" || role == "Head of Marketing" || role == "Outlet Experience Manager" || role == "Outlet Experience Executive")
+    {
+        <MudNavLink Href="/revenue-report" Match="NavLinkMatch.Prefix">Revenue Report</MudNavLink>
+    }
+    @if (role == "Admin" || role == "Head of Department - Ops" || role == "Executive - Procurement" || role == "Manager - Procurement" || role == "Management" || role == "Senior Executive -Marketing" || role == "Executive - Marketing" || role == "Marketing Manager" || role == "Head of Marketing")
+    {
+        <MudNavLink Href="/product-sales-report" Match="NavLinkMatch.Prefix">Product Sales Report</MudNavLink>
+    }
+    @if (role == "Admin" || role == "Head of Department - Ops" || role == "Executive - Procurement" || role == "Manager - Procurement" || role == "Management" || role == "Senior Executive -Marketing" || role == "Executive - Marketing" || role == "Marketing Manager" || role == "Head of Marketing" || role == "Outlet Experience Manager")
+    {
+        <MudNavLink Href="/procurement-report" Match="NavLinkMatch.Prefix">Procurment Report</MudNavLink>
+    }
 
     @*Accounts & Finance*@
     <div class="d-flex justify-center mt-5">
         <MudText Class="border-2 px-4 py-1">Accounts & Finance</MudText>
     </div>
 
-    <MudNavLink Href="/receivable" Match="NavLinkMatch.Prefix">Receivable</MudNavLink>
-    <MudNavLink Href="/bank" Match="NavLinkMatch.Prefix">Bank</MudNavLink>
-    <MudNavLink Href="/stores" Match="NavLinkMatch.Prefix">Stores</MudNavLink>
-    <MudNavLink Href="/store-vattrack" Match="NavLinkMatch.Prefix">Store Vat Track</MudNavLink>
+    @if (role == "Admin" || role == "Executive - Accounts" || role == "Manager - Accounts")
+    {
+        <MudNavLink Href="/receivable" Match="NavLinkMatch.Prefix">Receivable</MudNavLink>
+    }
+    @if (role == "Admin" || role == "Executive - Accounts" || role == "Manager - Accounts")
+    {
+        <MudNavLink Href="/bank" Match="NavLinkMatch.Prefix">Bank</MudNavLink>
+    }
+    @if (role == "Admin" || role == "Executive - Accounts" || role == "Manager - Accounts" || role == "Outlet Experience Manager" || role == "Outlet Experience Executive")
+    {
+        <MudNavLink Href="/stores" Match="NavLinkMatch.Prefix">Stores</MudNavLink>
+    }
+    @if (role == "Admin" || role == "Executive - Accounts" || role == "Manager - Accounts" || role == "Outlet Experience Manager" || role == "Outlet Experience Executive")
+    {
+        <MudNavLink Href="/store-vattrack" Match="NavLinkMatch.Prefix">Store Vat Track</MudNavLink>
+    }
+
 
     @*WMS*@
     <div class="d-flex justify-center mt-5">
@@ -29,7 +56,10 @@
 
     <MudNavGroup Title="Inbound Management" Expanded="false">
         <MudNavLink Href="/po-management" Match="NavLinkMatch.Prefix">PO Management</MudNavLink>
-        <MudNavLink Href="/stock-relocation" Match="NavLinkMatch.Prefix">Stock Relocation</MudNavLink>
+        @if (role == "Admin" || role == "Inventory Associate - WH" || role == "Executive - WH" || role == "Sr.Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+        {
+            <MudNavLink Href="/stock-relocation" Match="NavLinkMatch.Prefix">Stock Relocation</MudNavLink>
+        }
         <MudNavLink Href="/putaway" Match="NavLinkMatch.Prefix">Putaway</MudNavLink>
     </MudNavGroup>
 
@@ -48,7 +78,7 @@
         <MudNavLink Href="/update-uid" Match="NavLinkMatch.Prefix">Update UID</MudNavLink>
         @*<MudNavLink Href="/remove-uid" Match="NavLinkMatch.Prefix">Remove UID</MudNavLink>*@
     </MudNavGroup>
-    
+
     <MudNavLink Href="/report" Match="NavLinkMatch.Prefix">Report</MudNavLink>
 
     <MudNavLink Href="/bin-management" Match="NavLinkMatch.Prefix">BIN Management</MudNavLink>
@@ -56,7 +86,7 @@
     <MudNavGroup Title="Vendor Management" Expanded="false">
         <MudNavLink Href="/vendor" Match="NavLinkMatch.Prefix">Vendor</MudNavLink>
     </MudNavGroup>
-   
+
     @*CMS*@
     <div class="d-flex justify-center mt-5">
         <MudText Class="border-2 px-4 py-1">CMS</MudText>
@@ -187,3 +217,7 @@
         <MudNavLink Href="/hub-management" Match="NavLinkMatch.Prefix">Hub Management</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
+
+@code {
+    private string role { get; set; }
+}
