@@ -3,6 +3,9 @@
 @using Carnesia.Domain.OMS.ClosedOrder
 @using Carnesia.Shared.OMS.ClosedOrder
 @using Carnesia.Domain.OMS.PendingOrder
+@using Syncfusion.XlsIO
+@using System.IO
+@using System.Data
 @inject IDialogService DialogService
 @inject IClosedOrder _closedOrder
 @inject IPendingOrder _pendingOrder
@@ -12,16 +15,16 @@
 <MudPaper Class="px-3 py-16 ma-2">
 	<MudContainer Fixed="true">
 		<MudGrid Class="align-baseline mb-5">
-			<MudItem lg="2" md="4">
+			<MudItem md="4">
 				<MudTextField @bind-Value="OrderFilter.trnCode" Label="Order Id" Variant="Variant.Text" />
 			</MudItem>
-			<MudItem lg="2" md="4">
+			<MudItem md="4">
 				<MudTextField @bind-Value="OrderFilter.customerName" Label="Customer Name" Variant="Variant.Text" />
 			</MudItem>
-			<MudItem lg="2" md="4">
+			<MudItem md="4">
 				<MudTextField @bind-Value="OrderFilter.phoneNumber" Label="Phone Number" Variant="Variant.Text" />
 			</MudItem>
-			<MudItem lg="2" md="4">
+			<MudItem md="4">
 				<MudSelect @bind-Value="OrderFilter.area" Label="Shipphing Area" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="@("Inside Dhaka")" />
 					<MudSelectItem Value="@("Dhaka Suburb")" />
@@ -30,14 +33,20 @@
 					<MudSelectItem Value="@("Outside CTG City")" />
 				</MudSelect>
 			</MudItem>
-			<MudItem lg="2" md="4">
+			<MudItem md="4">
+				<MudDatePicker Label="Cancel Date From" @bind-Date="OrderFilter.fromCancelDate" />
+			</MudItem>
+			<MudItem md="4">
+				<MudDatePicker Label="Cancel Date To" @bind-Date="OrderFilter.toCancelDate" />
+			</MudItem>
+			<MudItem md="4">
 				<MudSelect @bind-Value="OrderFilter.statusId" Label="Status" AnchorOrigin="Origin.BottomCenter">
 					<MudSelectItem Value="23">Delivered</MudSelectItem>
 					<MudSelectItem Value="16">Returned</MudSelectItem>
 					<MudSelectItem Value="15">Cancelled</MudSelectItem>
 				</MudSelect>
 			</MudItem>
-			<MudItem lg="2" md="4">
+			<MudItem md="4">
 				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetOrders">Filter</MudButton>
 			</MudItem>
 		</MudGrid>
@@ -57,7 +66,7 @@
 		</MudGrid>
 
 		<div class="d-flex justify-end mb-5">
-			<MudButton Variant="Variant.Filled" Color="Color.Success">Download CSV</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="Elements.Count() <= 0" OnClick="CreateDocument">Download CSV</MudButton>
 		</div>
 
 		<MudTable RowsPerPage="25" Items="@Elements" Hover="true" MultiSelection="true" @bind-SelectedItems="@SelectedItems" HorizontalScrollbar="true" Loading="Loading" LoadingProgressColor="Color.Info" >
@@ -70,6 +79,7 @@
 				<MudTh>Payment Method</MudTh>
 				<MudTh>Payment Status</MudTh>
 				<MudTh>To Be Collected</MudTh>
+				<MudTh>Cancel Date</MudTh>
 				<MudTh>Customer Name</MudTh>
 				<MudTh>Customer Phone</MudTh>
 				<MudTh>Shipping Address</MudTh>
@@ -97,6 +107,7 @@
 				<MudTd DataLabel="Payment Method">@context.paymentMethod</MudTd>
 				<MudTd DataLabel="Payment Status">@context.paymentStatus</MudTd>
 				<MudTd DataLabel="To Be Collected">@context.tobeCollected</MudTd>
+				<MudTd DataLabel="Cancel Date">@context.cancelDate</MudTd>
 				<MudTd DataLabel="Customer Name">@context.customerName</MudTd>
 				<MudTd DataLabel="Customer Phone">@context.phoneNumber</MudTd>
 				<MudTd DataLabel="Shipping Address">@context.address</MudTd>
@@ -305,5 +316,60 @@
 	private async Task GotoPrint(string TRNCODE)
 	{
 		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print-web/{TRNCODE}", "_blank" });
+	}
+
+	// Create Document
+	private async Task CreateDocument()
+	{
+		using (ExcelEngine excelEngine = new ExcelEngine())
+		{
+			IApplication application = excelEngine.Excel;
+			application.DefaultVersion = ExcelVersion.Xlsx;
+
+			//Create a workbook.
+			IWorkbook workbook = application.Workbooks.Create(1);
+			IWorksheet worksheet = workbook.Worksheets[0];
+
+			//Initialize DataTable and data get from SampleDataTable method.
+			DataTable table = ParentDataTable();
+
+			//Export data from DataTable to Excel worksheet.
+			worksheet.ImportDataTable(table, true, 1, 1);
+
+			worksheet.UsedRange.AutofitColumns();
+
+			//Save the document as a stream and return the stream.
+			using (MemoryStream stream = new MemoryStream())
+			{
+				//Save the created Excel document to MemoryStream
+				workbook.SaveAs(stream);
+
+				//Download the excel file.
+				await IJS.SaveAs("Dispatch.xlsx", stream.ToArray());
+			}
+		}
+	}
+
+	private DataTable ParentDataTable()
+	{
+		DataTable reports = new DataTable();
+		reports.Columns.Add("Tracking");
+		reports.Columns.Add("Order Id");
+		reports.Columns.Add("Order Date");
+		reports.Columns.Add("Amount", typeof(decimal));
+		reports.Columns.Add("Payment Methode");
+		reports.Columns.Add("Payment Status");
+		reports.Columns.Add("To Be Collected", typeof(decimal));
+		reports.Columns.Add("Cancel date");
+		reports.Columns.Add("Customer Name");
+		reports.Columns.Add("Customer Phone");
+		reports.Columns.Add("Shipping Address");
+		reports.Columns.Add("Status");
+
+		foreach (var item in Elements)
+		{
+			reports.Rows.Add(item.trackingCode, item.orderId, item.orderDate, item.amount, item.paymentMethod, item.paymentStatus, item.tobeCollected, item.cancelDate, item.customerName, item.phoneNumber, item.address, item.status);
+		}
+		return reports;
 	}
 }

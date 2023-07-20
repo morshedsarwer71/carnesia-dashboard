@@ -1,11 +1,15 @@
 ﻿@using Carnesia.Domain.OMS.AssignDelivery.Dispatch
 @using Carnesia.Domain.OMS.PendingOrder
 @using Carnesia.Domain.OMS.Zones
+@using Syncfusion.XlsIO
+@using System.IO
+@using System.Data
 @inject IZones _zone
 @inject IAssignOrder _assignOrder
 @inject IDispatch _dispatch
 @inject ISnackbar Snackbar
 @inject IJSRuntime IJS
+
 
 
 <MudPaper Class="px-3 py-16 ma-2">
@@ -84,18 +88,9 @@
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="String.IsNullOrEmpty(DispatchDetails.phoneNumber) || String.IsNullOrEmpty(DispatchDetails.carrierName) || DispatchDetails.courierId <= 0" OnClick="CreateDispatch">Assign Carrier</MudButton>
 		</div>
 
-		<MudGrid Class="justify-center align-baseline mt-5">
-			<MudItem md="3" xs="6">
-				<MudSelect T="string" Label="Download Type" AnchorOrigin="Origin.BottomCenter">
-					<MudSelectItem Value="@("With SKU")" />
-					<MudSelectItem Value="@("Only Order")" />
-				</MudSelect>
-			</MudItem>
-			<MudItem md="3" xs="6">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Download CSV</MudButton>
-				<MudButton Variant="Variant.Filled" Color="Color.Info">Re-Print Invoice</MudButton>
-			</MudItem>
-		</MudGrid>
+		<div class="d-flex justify-end my-3">
+			<MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="CreateDocument" Disabled="Elements.Count() <= 0">Download CSV</MudButton>
+		</div>
 
 		<MudTable RowsPerPage="25" Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info" MultiSelection="false" @bind-SelectedItems="SelectedItems">
 			<HeaderContent>
@@ -342,5 +337,60 @@
 	private async Task GotoPrint(string TRNCODE)
 	{
 		await IJS.InvokeAsync<object>("open", new object[] { $"/invoice-print-web/{TRNCODE}", "_blank" });
+	}
+
+	// Create Document
+	private async Task CreateDocument()
+	{
+		using (ExcelEngine excelEngine = new ExcelEngine())
+		{
+			IApplication application = excelEngine.Excel;
+			application.DefaultVersion = ExcelVersion.Xlsx;
+
+			//Create a workbook.
+			IWorkbook workbook = application.Workbooks.Create(1);
+			IWorksheet worksheet = workbook.Worksheets[0];
+
+			//Initialize DataTable and data get from SampleDataTable method.
+			DataTable table = ParentDataTable();
+
+			//Export data from DataTable to Excel worksheet.
+			worksheet.ImportDataTable(table, true, 1, 1);
+
+			worksheet.UsedRange.AutofitColumns();
+
+			//Save the document as a stream and return the stream.
+			using (MemoryStream stream = new MemoryStream())
+			{
+				//Save the created Excel document to MemoryStream
+				workbook.SaveAs(stream);
+
+				//Download the excel file.
+				await IJS.SaveAs("Dispatch.xlsx", stream.ToArray());
+			}
+		}
+	}
+
+	private DataTable ParentDataTable()
+	{
+		DataTable reports = new DataTable();
+		reports.Columns.Add("Tracking");
+		reports.Columns.Add("Order Id");
+		reports.Columns.Add("Order Date");
+		reports.Columns.Add("Amount", typeof(decimal));
+		reports.Columns.Add("Payment Methode");
+		reports.Columns.Add("To Be Collected", typeof(decimal));
+		reports.Columns.Add("Customer Name");
+		reports.Columns.Add("Phone Number");
+		reports.Columns.Add("Address");
+		reports.Columns.Add("Instructions");
+		reports.Columns.Add("Verified On");
+		reports.Columns.Add("Status");
+
+		foreach (var item in Elements)
+		{
+			reports.Rows.Add(item.trackingCode, item.orderId, item.orderDate, item.amount, item.paymentMethod, item.tobeCollected, item.customerName, item.phoneNumber, item.address, item.instructions, item.verifiedDate, item.status);
+		}
+		return reports;
 	}
 }

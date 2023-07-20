@@ -4,6 +4,7 @@
 @using Carnesia.Shared.OMS.AssignDelivery.Dispatch
 @using Carnesia.Shared.OMS.AssignDelivery.DispatchedOrder
 @using Carnesia.Shared.OMS.AssignDelivery.AssignCourier
+@using Carnesia.Shared.OMS.AssignDelivery.BulkDeliverOrder
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
@@ -12,6 +13,7 @@
             <MudButton Color="Color.Primary" Variant="CurrentPage == Dispatch ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Dispatch)">@Dispatch</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == AssignCourier ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AssignCourier)">@AssignCourier</MudButton>
             <MudButton Color="Color.Primary" Variant="CurrentPage == DispatchedOrder ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DispatchedOrder)">@DispatchedOrder</MudButton>
+            <MudButton Color="Color.Primary" Variant="CurrentPage == BulkDeliveryOrder ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BulkDeliveryOrder)">@BulkDeliveryOrder</MudButton>
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
@@ -30,6 +32,10 @@ else if(CurrentPage == Dispatch)
 {
     <AssignCourier />
 }
+else if (CurrentPage == BulkDeliveryOrder)
+{
+    <BulkDeliverOrder />
+}
 
 @code {
     // Pages 
@@ -37,6 +43,7 @@ else if(CurrentPage == Dispatch)
     private string Dispatch = "Dispatch";
     private string DispatchedOrder = "Dispatched Order";
     private string AssignCourier = "Assign Courier";
+    private string BulkDeliveryOrder = "Bulk Deliver Order";
 
     // Current Page 
     private string CurrentPage { get; set; } = "All Orders";

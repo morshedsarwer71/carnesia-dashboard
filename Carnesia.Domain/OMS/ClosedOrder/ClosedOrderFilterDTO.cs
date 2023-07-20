@@ -13,5 +13,7 @@ namespace Carnesia.Domain.OMS.ClosedOrder
         public string? phoneNumber { get; set; }
         public string? area { get; set; }
         public int statusId { get; set; } = 23;
+        public DateTime? fromCancelDate { get; set; }
+        public DateTime? toCancelDate { get; set; }
     }
 }

@@ -1,0 +1,53 @@
+﻿@using Carnesia.Domain.OMS.PickPack;
+@inject IDispatch _dispatch
+
+<MudPaper Class="px-3 py-16 ma-2">
+    <MudContainer Fixed="true">
+        <div class="d-flex justify-end mb-3">
+            <a href="./BulkDeliverOrder.xlsx" download target="_top">
+                <MudButton Class="me-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowDownward" Style="background-color: yellowgreen; color: white;">
+                    Download CSV Template
+                </MudButton>
+            </a>
+
+            <InputFile id="fileInput" hidden OnChange="UploadFile" />
+            <MudButton HtmlTag="label"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Filled.CloudUpload"
+                       for="fileInput">
+                Upload File
+            </MudButton>
+        </div>
+        <MudTable Items="@Elements" Hover="true" Loading="Loading" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>Error Order Id and Reasone</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Error Order Id and Reasone">@context.message</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudContainer>
+</MudPaper>
+
+@code {
+    private List<PickPackDTO> Elements = new List<PickPackDTO>();
+    private bool Loading { get; set; }
+
+    private async Task UploadFile(InputFileChangeEventArgs e)
+    {
+        Loading = true;
+        try
+        {
+            Elements = await _dispatch.BulkDeliverOrder(e);
+            Loading = false;
+        }
+        catch (Exception)
+        {
+            Loading = false;
+            throw;
+        }
+
+
+    }
+}

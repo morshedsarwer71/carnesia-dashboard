@@ -11,6 +11,7 @@ namespace Carnesia.Domain.OMS.PendingOrder
         public int orderId { get; set; }
         public bool reviewTaken { get; set; }
         public string orderDate { get; set; }
+        public string? cancelDate { get; set; }
         public string trnCode { get; set; }
         public string? trackingCode { get; set; }
         public string? instructions { get; set; }
