@@ -109,7 +109,7 @@
                     <MudTd DataLabel="Total Discount">@context.totalDiscount</MudTd>
                     <MudTd DataLabel="Revenue After Discount">@context.afterDiscount</MudTd>
                     <MudTd DataLabel="Cost">@context.cost</MudTd>
-                    <MudTd DataLabel="Gross Profit">@context.grosProfit</MudTd>
+                    <MudTd DataLabel="Gross Profit">@(context.afterDiscount - context.cost)</MudTd>
                 </RowTemplate>
                 <FooterContent>
                     <MudTFootRow>
@@ -124,7 +124,7 @@
                         <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.totalDiscount)</MudTd>
                         <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.afterDiscount)</MudTd>
                         <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.cost)</MudTd>
-                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.grosProfit)</MudTd>
+                        <MudTd Style="font-weight: 600;">@Elements.cmsRevenue.Sum(x => x.afterDiscount - x.cost)</MudTd>
                     </MudTFootRow>
                 </FooterContent>
             </MudTable>
