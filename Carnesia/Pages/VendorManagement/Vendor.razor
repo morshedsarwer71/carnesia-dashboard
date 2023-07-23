@@ -7,16 +7,30 @@
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            <MudButton Color="Color.Primary" Variant="CurrentPage == VendorList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(VendorList)">
-                @VendorList
-            </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == NewVendor ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(NewVendor)">@NewVendor</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == BulkVendorUpload ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BulkVendorUpload)">
-                @BulkVendorUpload
-            </MudButton>
-             <MudButton Color="Color.Primary" Variant="CurrentPage == Payable ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Payable)">
-                @Payable
-            </MudButton>
+            @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - Procurement", "Management", "Executive-Accounts", "Manager-Accounts", "Marketing Manager", "Head of Marketing" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == VendorList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(VendorList)">
+                    @VendorList
+                </MudButton>
+            }
+            @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - Procurement" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == NewVendor ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(NewVendor)">@NewVendor</MudButton>
+            }
+            @if (new List<string> { "Admin", "Head of Department - Ops" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == BulkVendorUpload ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BulkVendorUpload)">
+                    @BulkVendorUpload
+                </MudButton>
+            }
+
+            @if (new List<string> { "Admin", "Management", "Executive-Accounts", "Manager-Accounts" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == Payable ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Payable)">
+                    @Payable
+                </MudButton>
+            }
+
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
@@ -25,21 +39,24 @@
 {
     <VendorList />
 }
-else if(CurrentPage == NewVendor)
+else if (CurrentPage == NewVendor)
 {
     <NewVendor />
 }
-else if(CurrentPage == BulkVendorUpload)
+else if (CurrentPage == BulkVendorUpload)
 {
     <BulkVendorUpload />
 }
-else if(CurrentPage == Payable)
+else if (CurrentPage == Payable)
 {
     <Payable />
 }
 
 
 @code {
+    // Role
+    private string role { get; set; }
+
     // Pages
     private string VendorList = "Vendor List";
     private string NewVendor = "New Vendor";

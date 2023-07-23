@@ -6,11 +6,22 @@
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH"}.Contains(role))
+            {
+                
             <MudButton Color="Color.Primary" Variant="CurrentPage == CreateTo ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateTo)">Create TO</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == OrderPickup ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(OrderPickup)">
-                Order Pickup
-            </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == Restock ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Restock)">Re-Stock</MudButton>
+            }
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == OrderPickup ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(OrderPickup)">
+                    Order Pickup
+                </MudButton>
+            }
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == Restock ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Restock)">Re-Stock</MudButton>
+            }
+            
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
@@ -29,6 +40,9 @@ else if(CurrentPage == Restock)
 }
 
 @code {
+    // Role
+    private string role { get; set; }
+
     // Pages
     private string CreateTo = "Create TO";
     private string OrderPickup = "Order Pickup";

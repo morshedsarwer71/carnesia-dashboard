@@ -12,13 +12,17 @@
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
             <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateBill ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateBill)">@GenerateBill</MudButton>
-            @*<MudButton Color="Color.Primary" Variant="CurrentPage == DashBoard ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DashBoard)">@DashBoard</MudButton>*@
-            @*<MudButton Color="Color.Primary" Variant="CurrentPage == SalesReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(SalesReport)">@SalesReport</MudButton>*@
-            <MudButton Color="Color.Primary" Variant="CurrentPage == CustomerProfile ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CustomerProfile)">@CustomerProfile</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == PosDrafts ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PosDrafts)">@PosDrafts</MudButton>
-            @*<MudButton Color="Color.Primary" Variant="CurrentPage == GenerateBillV2 ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateBillV2)">@GenerateBillV2</MudButton>*@
-            <MudButton Color="Color.Primary" Variant="CurrentPage == Orders ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Orders)">@Orders</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == ReturnAndRefund ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReturnAndRefund)">@ReturnAndRefund</MudButton>
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
+            {
+                @*<MudButton Color="Color.Primary" Variant="CurrentPage == DashBoard ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DashBoard)">@DashBoard</MudButton>*@
+                @*<MudButton Color="Color.Primary" Variant="CurrentPage == SalesReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(SalesReport)">@SalesReport</MudButton>*@
+                <MudButton Color="Color.Primary" Variant="CurrentPage == CustomerProfile ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CustomerProfile)">@CustomerProfile</MudButton>
+                <MudButton Color="Color.Primary" Variant="CurrentPage == PosDrafts ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PosDrafts)">@PosDrafts</MudButton>
+                @*<MudButton Color="Color.Primary" Variant="CurrentPage == GenerateBillV2 ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateBillV2)">@GenerateBillV2</MudButton>*@
+                <MudButton Color="Color.Primary" Variant="CurrentPage == Orders ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Orders)">@Orders</MudButton>
+                <MudButton Color="Color.Primary" Variant="CurrentPage == ReturnAndRefund ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReturnAndRefund)">@ReturnAndRefund</MudButton>
+            }
+            
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
@@ -51,6 +55,9 @@ else if (CurrentPage == PosDrafts)
 }
 
 @code {
+    // Role
+    private string role { get; set; }
+
     // Pages
     public string DashBoard = "Dashboard";
     public string SalesReport = "Sales Report";

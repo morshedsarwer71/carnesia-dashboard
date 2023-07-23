@@ -8,21 +8,27 @@
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            <MudButton Color="Color.Primary" Variant="CurrentPage == CreatePicklist ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreatePicklist)">
-                @CreatePicklist
-            </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == GeneratedPicklist ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GeneratedPicklist)">
-                @GeneratedPicklist
-            </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == DirectOrderPrint ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DirectOrderPrint)">
-                @DirectOrderPrint
-            </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == PicklistReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PicklistReport)">
-                @PicklistReport
-            </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == PickPack ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PickPack)">
-                @PickPack
-            </MudButton>
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == CreatePicklist ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreatePicklist)">
+                    @CreatePicklist
+                </MudButton>
+                <MudButton Color="Color.Primary" Variant="CurrentPage == GeneratedPicklist ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GeneratedPicklist)">
+                    @GeneratedPicklist
+                </MudButton>
+                <MudButton Color="Color.Primary" Variant="CurrentPage == DirectOrderPrint ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(DirectOrderPrint)">
+                    @DirectOrderPrint
+                </MudButton>
+                <MudButton Color="Color.Primary" Variant="CurrentPage == PicklistReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PicklistReport)">
+                    @PicklistReport
+                </MudButton>
+            }
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == PickPack ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PickPack)">
+                    @PickPack
+                </MudButton>
+            }
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
@@ -47,6 +53,9 @@ else if(CurrentPage == PickPack)
     <GeneratedPicklist />
 }
 @code {
+    // Role
+    private string role { get; set; }
+
     // Pages 
     private string CreatePicklist = "Create Picklist";
     private string DirectOrderPrint = "Direct Order Print";
