@@ -1,4 +1,6 @@
-﻿<MudNavMenu>
+﻿@inject ILocalStorageService _storage
+
+<MudNavMenu>
     <MudNavLink Href="/dashboard" Match="NavLinkMatch.All">Dashboard</MudNavLink>
 
     @*MIS*@
@@ -288,5 +290,6 @@
 </MudNavMenu>
 
 @code {
+
     private string role { get; set; }
 }
