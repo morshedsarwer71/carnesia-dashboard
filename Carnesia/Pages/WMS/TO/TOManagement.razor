@@ -2,6 +2,7 @@
 @using Carnesia.Shared.WMS.TO.CreateTo
 @using Carnesia.Shared.WMS.TO.OrderPickup
 @using Carnesia.Shared.WMS.TO.ReStock
+@inject ILocalStorageService _storage
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
@@ -40,6 +41,12 @@ else if(CurrentPage == Restock)
 }
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
+
     // Role
     private string role { get; set; }
 

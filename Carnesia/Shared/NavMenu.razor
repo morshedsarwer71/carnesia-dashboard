@@ -291,5 +291,11 @@
 
 @code {
 
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
+
     private string role { get; set; }
 }

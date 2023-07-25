@@ -4,6 +4,7 @@
 @using Carnesia.Shared.OMS.PicklistReport
 @using Carnesia.Shared.OMS.PickPack
 @using Carnesia.Shared.OMS.GeneratedPicklist
+@inject ILocalStorageService _storage
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
@@ -53,6 +54,12 @@ else if(CurrentPage == PickPack)
     <GeneratedPicklist />
 }
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
+
     // Role
     private string role { get; set; }
 

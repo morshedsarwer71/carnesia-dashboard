@@ -7,6 +7,7 @@
 @using Carnesia.Shared.Dashboard.ReturnRefund
 @using Carnesia.Shared.Dashboard.Dashboard
 @using Carnesia.Shared.Dashboard.SalesReport
+@inject ILocalStorageService _storage
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
@@ -55,6 +56,12 @@ else if (CurrentPage == PosDrafts)
 }
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
+
     // Role
     private string role { get; set; }
 

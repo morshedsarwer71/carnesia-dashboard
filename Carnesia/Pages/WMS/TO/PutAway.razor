@@ -2,6 +2,7 @@
 @using Carnesia.Shared.WMS.TO.BinInscan
 @using Carnesia.Shared.WMS.TO.BinDetails
 @using Carnesia.Shared.WMS.TO.TrackUID
+@inject ILocalStorageService _storage
 
 @attribute [Authorize]
 
@@ -38,6 +39,11 @@ else if(CurrentPage == TrackUID)
 }
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
 
     // Role 
     private string role { get; set; }

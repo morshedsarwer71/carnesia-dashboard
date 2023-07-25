@@ -3,6 +3,7 @@
 @using Carnesia.Shared.VendorManagement.NewVendor
 @using Carnesia.Shared.VendorManagement.BulkVendorUpload
 @using Carnesia.Shared.VendorManagement.Payable
+@inject ILocalStorageService _storage
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
@@ -54,6 +55,11 @@ else if (CurrentPage == Payable)
 
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
     // Role
     private string role { get; set; }
 
