@@ -232,6 +232,11 @@
 	// Get Orders
 	private async Task GetOrders()
 	{
+		if ((OrderFilter.fromCancelDate.HasValue && !OrderFilter.toCancelDate.HasValue) || (!OrderFilter.fromCancelDate.HasValue && OrderFilter.toCancelDate.HasValue))
+		{
+			Snackbar.Add("Both date field for cancel are required!", Severity.Error);
+			return;
+		}
 		Loading = true;
 		try
 		{
