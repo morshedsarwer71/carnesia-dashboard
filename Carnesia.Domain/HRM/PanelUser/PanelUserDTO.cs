@@ -20,5 +20,6 @@ namespace Carnesia.Domain.HRM.PanelUser
         public int designationId { get; set; }
         public string team { get; set; }
         public string jobDescription { get; set; }
+        public string userID { get; set; }
     }
 }

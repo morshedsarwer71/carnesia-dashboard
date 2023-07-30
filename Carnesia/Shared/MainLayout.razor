@@ -78,6 +78,7 @@
     {
         await _storage.RemoveItemAsync("access_token");
         await _storage.RemoveItemAsync("expiry_date");
+        await _storage.RemoveItemAsync("role");
 
         Snackbar.Add("Successfully Logged Out!", Severity.Success);
 

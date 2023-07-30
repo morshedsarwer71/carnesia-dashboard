@@ -2,33 +2,54 @@
 @using Carnesia.Shared.WMS.TO.BinInscan
 @using Carnesia.Shared.WMS.TO.BinDetails
 @using Carnesia.Shared.WMS.TO.TrackUID
+@inject ILocalStorageService _storage
 
 @attribute [Authorize]
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            <MudButton Color="Color.Primary" Variant="CurrentPage == BinInscan ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinInscan)">@BinInscan</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == BinDetails ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinDetails)">@BinDetails</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == TrackUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(TrackUID)">@TrackUID</MudButton>
+            @if (role == "Admin" || role == "Inventory Associate - WH" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == BinInscan ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinInscan)">@BinInscan</MudButton>
+            }
+            @if (role == "Admin" || role == "Inventory Associate - WH" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == BinDetails ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinDetails)">@BinDetails</MudButton>
+            }
+            @if (role == "Admin" || role == "Inventory Associate - WH" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == TrackUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(TrackUID)">@TrackUID</MudButton>
+            }
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
-
-@if (CurrentPage == BinInscan)
+@if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Inventory Associate - WH" }.Contains(role))
 {
-    <BinInscan />
-}
-else if(CurrentPage == BinDetails)
-{
-    <BinDetails />
-}
-else if(CurrentPage == TrackUID)
-{
-    <TrackUID />
+    if (CurrentPage == BinInscan)
+    {
+        <BinInscan />
+    }
+    else if (CurrentPage == BinDetails)
+    {
+        <BinDetails />
+    }
+    else if (CurrentPage == TrackUID)
+    {
+        <TrackUID />
+    }
 }
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
+
+    // Role 
+    private string role { get; set; }
+
     // Pages
     private string BinInscan = "Bin Inscan";
     private string BinDetails = "Bin Details";

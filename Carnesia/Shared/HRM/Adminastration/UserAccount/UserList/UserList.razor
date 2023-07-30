@@ -2,6 +2,8 @@
 @using Carnesia.Domain.HRM.PanelUser
 @inject IPanelUser _panelUser
 @inject ISnackbar Snackbar
+@inject ILocalStorageService _storage
+@inject NavigationManager NavigationManager
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
@@ -21,6 +23,7 @@
 				<MudTh>Store</MudTh>
 				<MudTh>Role</MudTh>
 				<MudTh>Team</MudTh>
+				<MudTh>Update User</MudTh>
 				<MudTh>Active</MudTh>
 			</HeaderContent>
 			<RowTemplate>
@@ -33,6 +36,9 @@
 				<MudTd DataLabel="Store">@context.storeName</MudTd>
 				<MudTd DataLabel="Role">@context.roleType</MudTd>
 				<MudTd DataLabel="Team">@context.team</MudTd>
+				<MudTd DataLabel="Update User">
+					<MudButton Color="Color.Warning" Variant="Variant.Filled" Disabled="@(new List<string>{ "Admin", "Manager-HR", "Executive-HR" }.Contains(role) != true)" OnClick="() => NavigateToUpdate(context.id)">Update</MudButton>
+				</MudTd>
 				@*<MudTd DataLabel="Action">@context.isActive</MudTd>*@
 				<MudTd DataLabel="Publish">
                     <MudSwitch @bind-Checked="@context.isActive" Color="Color.Primary" @onclick="(() => ToggleUser(context.id))"/>			
@@ -56,9 +62,18 @@
 	// Page On Load
 	protected override async Task OnInitializedAsync()
 	{
+		role = await _storage.GetItemAsStringAsync("role");
 		await GetUsers();
 	}
 
+	// Role
+	private string role { get; set; }
+
+	// Navigate To Campaign Update
+	private void NavigateToUpdate(string id)
+	{
+		NavigationManager.NavigateTo($"update-user/{id}");
+	}
 
 	// Table Customization
 	private TableCommon tableCommon = new TableCommon();

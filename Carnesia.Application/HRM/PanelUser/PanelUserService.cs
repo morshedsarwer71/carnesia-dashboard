@@ -31,7 +31,22 @@ namespace Carnesia.Application.HRM.PanelUser
             }
         }
 
-        public async Task<List<PanelUserListDTO>> GetUsers()
+		public async Task<PanelUserDTO> GetUserData(string userID)
+		{
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<PanelUserDTO>($"Authentication/system-user-data/{userID}");
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+		}
+
+		public async Task<List<PanelUserListDTO>> GetUsers()
         {
             try
             {
@@ -77,5 +92,20 @@ namespace Carnesia.Application.HRM.PanelUser
             }
 
         }
-    }
+
+		public async Task<bool> UpdateUser(PanelUserDTO user)
+		{
+            try
+            {
+                var result = await _httpClient.PutAsJsonAsync("Authentication/system-user", user);
+
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+		}
+	}
 }

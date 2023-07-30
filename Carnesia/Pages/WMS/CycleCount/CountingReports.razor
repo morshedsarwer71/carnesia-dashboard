@@ -5,22 +5,35 @@
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate"}.Contains(role))
+            {
             <MudButton Color="Color.Primary" Variant="CurrentPage == Projects ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Projects)">@Projects</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == Initiate ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Initiate)">@Initiate</MudButton>
+            }
+            @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH"}.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == Initiate ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Initiate)">@Initiate</MudButton>
+            }
+            
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
 
-@if(CurrentPage == Initiate)
+@if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
 {
-    <Initiate />
-}
-else if(CurrentPage == Projects)
-{
-    <Projects />
+    if (CurrentPage == Initiate)
+    {
+        <Initiate />
+    }
+    else if (CurrentPage == Projects)
+    {
+        <Projects />
+    }
 }
 
 @code {
+    // Role
+    private string role { get; set; }
+
     // Pages
     private string Initiate = "Initiate";
     private string Projects = "Projects";

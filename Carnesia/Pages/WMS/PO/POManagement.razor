@@ -9,60 +9,86 @@
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            <MudButton Color="Color.Primary" Variant="CurrentPage == CreatePO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreatePO)">Create PO</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == AwaitingApproval ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AwaitingApproval)">
-                Awaiting Approval
-            </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == ReceivePO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReceivePO)">Receive PO</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateUID)">Generate UID</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == BulkUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BulkUID)">Bulk UID</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == PurchaseOrderList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PurchaseOrderList)">
-                Purchase Order List
-            </MudButton>
+            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH" || role == "Executive - Procurement" || role == "Manager - Procurement" || role == "Senior Executive - Marketing")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == CreatePO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreatePO)">Create PO</MudButton>
+            }
+            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH" || role == "Executive - Procurement" || role == "Manager - Procurement" || role == "Senior Executive - Marketing")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == AwaitingApproval ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AwaitingApproval)">
+                    Awaiting Approval
+                </MudButton>
+            }
+            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == ReceivePO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReceivePO)">Receive PO</MudButton>
+            }
+            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateUID)">Generate UID</MudButton>
+            }
+            @if (role == "Admin" || role == "Head of Department - Ops" || role == "Manager - WH")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == BulkUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BulkUID)">Bulk UID</MudButton>
+            }
+            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH" || role == "Executive - Procurement" || role == "Manager - Procurement" || role == "Management" || role == "Executive - Accounts" || role == "Manager - Accounts" || role == "Senior Executive - Marketing" || role == "Executive - Marketing" || role == "Head of Marketing")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == PurchaseOrderList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PurchaseOrderList)">
+                    Purchase Order List
+                </MudButton>
+            }
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
 
-@if(CurrentPage == CreatePO)
+@if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Senior Executive - Marketing", "Management", "Executive - Accounts", "Manager - Accounts", "Executive - Marketing", "Head of Marketing" }.Contains(role))
 {
-    <CreatePO />
+    if (CurrentPage == CreatePO)
+    {
+        <CreatePO />
+    }
+    else if (CurrentPage == PurchaseOrderList)
+    {
+        <POList />
+    }
+    else if (CurrentPage == ReceivePO)
+    {
+        <ReceivePo />
+    }
+    else if (CurrentPage == AwaitingApproval)
+    {
+        <AwaitingApproval />
+    }
+    else if (CurrentPage == GenerateUID)
+    {
+        <GenerateUID />
+    }
+    else if (CurrentPage == BulkUID)
+    {
+        <BulkUID />
+    }
 }
-else if(CurrentPage == PurchaseOrderList)
-{
-    <POList />
-}
-else if(CurrentPage == ReceivePO)
-{
-    <ReceivePo />
-}
-else if(CurrentPage == AwaitingApproval)
-{
-    <AwaitingApproval />
-}
-else if(CurrentPage == GenerateUID)
-{
-    <GenerateUID />
-}
-else if(CurrentPage == BulkUID)
-{
-    <BulkUID />
-}
+
+
 
 @code {
     // Pages
-    public string CreatePO = "Create PO";
-    public string AwaitingApproval = "Awaiting Approval";
-    public string ReceivePO = "Receive PO";
-    public string PurchaseOrderList = "Purchase Order List";
-    public string GenerateUID = "Generate UID";
-    public string BulkUID = "Bulk UID";
+    private string CreatePO { get; set; } = "Create PO";
+    private string AwaitingApproval { get; set; } = "Awaiting Approval";
+    private string ReceivePO { get; set; } = "Receive PO";
+    private string PurchaseOrderList { get; set; } = "Purchase Order List";
+    private string GenerateUID { get; set; } = "Generate UID";
+    private string BulkUID { get; set; } = "Bulk UID";
 
     // Current Page
-    public string CurrentPage { get; set; } = "Create PO";
+    private string CurrentPage { get; set; } = "Create PO";
 
     // Change Current Page
     void ChangePage(string pageName)
     {
         CurrentPage = pageName;
     }
+
+    // Role
+    private string role { get; set; }
 }

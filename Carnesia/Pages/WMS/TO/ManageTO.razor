@@ -4,45 +4,75 @@
 @using Carnesia.Shared.WMS.TO.ReceiveTo
 @using Carnesia.Shared.WMS.TO.AssignCarrier
 @using Carnesia.Shared.WMS.TO.InTransit
+@inject ILocalStorageService _storage
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            <MudButton Color="Color.Primary" Variant="CurrentPage == ManageTo ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ManageTo)">@ManageTo</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == OutScan ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(OutScan)">@OutScan</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == ReceiveTO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReceiveTO)">@ReceiveTO</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == AssignCarrier ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AssignCarrier)">
-                @AssignCarrier
-            </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == InTransit ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(InTransit)">
-                @InTransit
-            </MudButton>
+            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == ManageTo ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ManageTo)">@ManageTo</MudButton>
+            }
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+
+                <MudButton Color="Color.Primary" Variant="CurrentPage == OutScan ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(OutScan)">@OutScan</MudButton>
+            }
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+
+                <MudButton Color="Color.Primary" Variant="CurrentPage == ReceiveTO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReceiveTO)">@ReceiveTO</MudButton>
+            }
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == AssignCarrier ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AssignCarrier)">
+                    @AssignCarrier
+                </MudButton>
+            }
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == InTransit ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(InTransit)">
+                    @InTransit
+                </MudButton>
+            }
+
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
-
-@if(CurrentPage == ManageTo)
+@if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Inventory Associate - WH" }.Contains(role))
 {
-    <ManageTOSection />
-}
-else if(CurrentPage == OutScan)
-{
-    <OutScan />
-}
-else if(CurrentPage == ReceiveTO)
-{
-    <ReceiveTo />
-}
-else if(CurrentPage == AssignCarrier)
-{
-    <AssignCarrier />
-}
-else if(CurrentPage == InTransit)
-{
-    <InTransit />
+    if (CurrentPage == ManageTo)
+    {
+        <ManageTOSection />
+    }
+    else if (CurrentPage == OutScan)
+    {
+        <OutScan />
+    }
+    else if (CurrentPage == ReceiveTO)
+    {
+        <ReceiveTo />
+    }
+    else if (CurrentPage == AssignCarrier)
+    {
+        <AssignCarrier />
+    }
+    else if (CurrentPage == InTransit)
+    {
+        <InTransit />
+    }
 }
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
+
+    // Role
+    private string role { get; set; }
+
     // Pages
     private string ManageTo = "Manage TO";
     private string OutScan = "Out Scan";

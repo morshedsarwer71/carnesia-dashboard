@@ -2,33 +2,57 @@
 @using Carnesia.Shared.WMS.TO.CreateTo
 @using Carnesia.Shared.WMS.TO.OrderPickup
 @using Carnesia.Shared.WMS.TO.ReStock
+@inject ILocalStorageService _storage
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+                
             <MudButton Color="Color.Primary" Variant="CurrentPage == CreateTo ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreateTo)">Create TO</MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == OrderPickup ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(OrderPickup)">
-                Order Pickup
-            </MudButton>
-            <MudButton Color="Color.Primary" Variant="CurrentPage == Restock ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Restock)">Re-Stock</MudButton>
+            }
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == OrderPickup ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(OrderPickup)">
+                    Order Pickup
+                </MudButton>
+            }
+            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            {
+                <MudButton Color="Color.Primary" Variant="CurrentPage == Restock ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Restock)">Re-Stock</MudButton>
+            }
+            
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
 
-@if(CurrentPage == CreateTo)
+@if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
 {
-    <CreateTo />
-}
-else if(CurrentPage == OrderPickup)
-{
-    <OrderPickup />
-}
-else if(CurrentPage == Restock)
-{
-    <ReStock />
+    if (CurrentPage == CreateTo)
+    {
+        <CreateTo />
+    }
+    else if (CurrentPage == OrderPickup)
+    {
+        <OrderPickup />
+    }
+    else if (CurrentPage == Restock)
+    {
+        <ReStock />
+    }
 }
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
+
+    // Role
+    private string role { get; set; }
+
     // Pages
     private string CreateTo = "Create TO";
     private string OrderPickup = "Order Pickup";

@@ -48,6 +48,7 @@
 				var data = await result.Content.ReadFromJsonAsync<SuccessResult>();
 
 				await _storage.SetItemAsStringAsync("access_token", data.token);
+				await _storage.SetItemAsStringAsync("role", data.role);
 				await _storage.SetItemAsync<DateTime>("expiry_date", data.expiration);
 
 				Snackbar.Add("Login Successfully!", Severity.Success);
@@ -73,6 +74,7 @@
 	private class SuccessResult
 	{
 		public string token { get; set; }
+		public string role { get; set; }
 		public DateTime expiration { get; set; }
 	}
 }
