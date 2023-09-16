@@ -18,6 +18,12 @@ namespace Carnesia.Domain.WMS.Projects
         public string createdBy { get; set; }
     }
 
+    public class ProjectFilterDTO
+    {
+        public int storeId { get; set; }
+        public int statusId { get; set; }
+    }
+
     public class UpdateProjectDTO
 	{
         public int id { get; set; }

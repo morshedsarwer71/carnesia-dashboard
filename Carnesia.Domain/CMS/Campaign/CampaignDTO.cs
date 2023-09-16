@@ -23,6 +23,7 @@ namespace Carnesia.Domain.CMS.Campaign
         public string imageFileUrl { get; set; }
         public string imageWebUrl { get; set; }
         public string base64Attch { get; set; }
+        public int stockType { get; set; }
         public string? startsInBase64Attch { get; set; }
         public List<CampaignProductDTO> products { get; set; }
         public List<CampaignComboProductDTO> combos { get; set; }

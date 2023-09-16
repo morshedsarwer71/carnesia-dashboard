@@ -16,5 +16,6 @@ namespace Carnesia.Domain.CMS.Campaign
         public bool isPublish { get; set; } = false;
         public string base64Attch { get; set; }
         public string? startsInBase64Attch { get; set; }
+        public int stockType { get; set; } = 1;
     }
 }

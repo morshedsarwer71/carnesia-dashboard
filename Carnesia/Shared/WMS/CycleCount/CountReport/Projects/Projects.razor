@@ -2,14 +2,37 @@
 
 @using Carnesia.Domain.Common.POCO
 @using Carnesia.Domain.WMS.Projects
+@using Carnesia.Domain.WMS.Store.Models;
 @inject IProjects _project
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject IJSRuntime IJS
+@inject IStore _store
 @inject NavigationManager Navigation
 
 <MudPaper Class="ma-2 px-3 py-16">
 	<MudContainer Fixed="true">
+		@*<MudGrid>
+			<MudItem sm="6">
+				<MudSelect @bind-Value="Filter.storeId" Label="Store" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">All Stores</MudSelectItem>
+					@foreach (var item in Stores)
+					{
+						<MudSelectItem Value="item.storeId">@item.storeName</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			<MudItem sm="6">
+				<MudSelect @bind-Value="Filter.statusId" Label="Status" AnchorOrigin="Origin.BottomCenter">
+					<MudSelectItem Value="0">All Status</MudSelectItem>
+					<MudSelectItem Value="10">Open</MudSelectItem>
+					<MudSelectItem Value="30">Close</MudSelectItem>
+				</MudSelect>
+			</MudItem>
+		</MudGrid>
+		<div class="my-3 d-flex justify-end">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetFiltereProjects">Filter</MudButton>
+		</div>*@
 		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="Loading" LoadingProgressColor="Color.Info" Filter="new Func<ProjectsDTO,bool>(FilterFuncInitial)">
 			<ToolBarContent>
 				<MudSpacer />
@@ -61,6 +84,7 @@
 	// Page On Load
 	protected override async Task OnInitializedAsync()
 	{
+		//await GetStores();
 		await GetAllProjects();
 	}
 
@@ -72,6 +96,9 @@
 
 	// Table Content
 	private List<ProjectsDTO> Elements = new List<ProjectsDTO>();
+
+	// Filter
+	private ProjectFilterDTO Filter = new ProjectFilterDTO();
 
 	// Get All Projects
 	private async Task GetAllProjects()
@@ -87,6 +114,31 @@
 			Console.WriteLine(e.Message);
 			Loading = false;
 		}
+	}
+
+	// Get Filtered Projects
+	private async Task GetFiltereProjects()
+	{
+		Loading = true;
+		try
+		{
+			Elements = await _project.GetFilteredProjects(Filter);
+			Loading = false;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+			Loading = false;
+		}
+	}
+
+	// Stores
+	private List<StoreDTO> Stores = new List<StoreDTO>();
+
+	// Get Stores
+	private async Task GetStores()
+	{
+		Stores = await _store.GetStoresAsync();
 	}
 
 	// Update Project Type

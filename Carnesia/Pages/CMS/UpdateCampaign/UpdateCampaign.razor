@@ -38,6 +38,12 @@
                 <MudItem sm="6">
                     <MudTimePicker Label="End Time" @bind-Time="EndTime" />
                 </MudItem>
+                <MudItem sm="6">
+                    <MudSelect @bind-Value="campaign.stockType" Label="Stock Type" Required="true" RequiredError="Stock type is required!" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="1">Free Stock</MudSelectItem>
+                        <MudSelectItem Value="2">Limited Stock</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
                 <MudItem sm="11">
                     <MudTextField Lines="5" @bind-Value="campaign.description" Label="Description" Required="true" RequiredError="Description is required!"/>
                 </MudItem>
@@ -228,7 +234,8 @@
                     description = campaign.description,
                     isPublish = campaign.isPublish,
                     base64Attch = campaign.base64Attch,
-                    startsInBase64Attch = campaign.startsInBase64Attch
+                    startsInBase64Attch = campaign.startsInBase64Attch,
+                    stockType = campaign.stockType
                 };
 
             var result = await _createCampaign.UpdateCampaignDetails(CampaignDetails, id);

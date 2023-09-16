@@ -1,15 +1,16 @@
 ﻿@page "/counting-report"
 @using Carnesia.Shared.WMS.CycleCount.CountReport.Initiate
 @using Carnesia.Shared.WMS.CycleCount.CountReport.Projects
+@inject ILocalStorageService _storage
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate"}.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
             {
             <MudButton Color="Color.Primary" Variant="CurrentPage == Projects ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Projects)">@Projects</MudButton>
             }
-            @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH"}.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
                 <MudButton Color="Color.Primary" Variant="CurrentPage == Initiate ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(Initiate)">@Initiate</MudButton>
             }
@@ -18,7 +19,7 @@
     </MudContainer>
 </MudPaper>
 
-@if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
+@if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
 {
     if (CurrentPage == Initiate)
     {
@@ -31,6 +32,12 @@
 }
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
+
     // Role
     private string role { get; set; }
 

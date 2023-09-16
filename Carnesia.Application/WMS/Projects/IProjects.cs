@@ -12,6 +12,7 @@ namespace Carnesia.Application.WMS.Projects
     {
         Task<bool> NewProjects(InitiateDTO initiate);
         Task<List<ProjectsDTO>> GetAllProjects();
+        Task<List<ProjectsDTO>> GetFilteredProjects(ProjectFilterDTO filter);
         Task<bool> UpdateProject(UpdateProjectDTO project);
         Task<ProjectsDetailsHeadDTO> CompleteProject(string projectId);
 

@@ -91,6 +91,7 @@
 
 	private async Task UIDEnter(KeyboardEventArgs e)
 	{
+		await Task.Delay(1000);
 		if (e.Code == "Enter" || e.Code == "NumpadEnter")
 		{
 			if (!String.IsNullOrEmpty(UID) && UID.Length == 15 && !String.IsNullOrEmpty(PickListShow))

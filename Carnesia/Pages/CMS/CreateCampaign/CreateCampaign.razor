@@ -44,6 +44,12 @@
                         }
                     </MudSelect>
                 </MudItem>*@
+                <MudItem sm="6">
+                    <MudSelect @bind-Value="FormData.stockType" Label="Stock Type" Required="true" RequiredError="Stock type is required!" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem Value="1" >Free Stock</MudSelectItem>
+                        <MudSelectItem Value="2" >Limited Stock</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
                 <MudItem xs="12">
                     <MudTextField Lines="5" @bind-Value="FormData.description" Label="Description" Required="true" RequiredError="Description is required!" />
                 </MudItem>

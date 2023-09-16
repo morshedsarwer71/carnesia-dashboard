@@ -49,19 +49,29 @@
 
     private ProfileDTO Profile = new ProfileDTO();
 
+    // Access 
+    private string accessKey { get; set; }
+    private DateTime expiryDate { get; set; }
+
     protected async override Task OnInitializedAsync()
     {
 
-        if (await _storage.ContainKeyAsync("access_token"))
+        accessKey = await _storage.GetItemAsStringAsync("access_token");
+        expiryDate = await _storage.GetItemAsync<DateTime>("expiry_date");
+
+        if (!String.IsNullOrEmpty(accessKey) && expiryDate > DateTime.Now)
         {
-            //Get Profile
             Profile = await _iprofile.GetProfile();
         }
 
         //Navigate
         base.OnInitialized();
-        if (!await _storage.ContainKeyAsync("access_token"))
+        if (String.IsNullOrEmpty(accessKey) || expiryDate < DateTime.Now)
         {
+            await _storage.RemoveItemAsync("access_token");
+            await _storage.RemoveItemAsync("expiry_date");
+            await _storage.RemoveItemAsync("role");
+
             NavigationManager.NavigateTo("/");
         }
     }

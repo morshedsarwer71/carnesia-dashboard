@@ -134,8 +134,8 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		poList = await _order.GetPoList();
 		await GetVendors();
+		poList = await _order.GetPoList();
 		Loading = false;
 	}
 

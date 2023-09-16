@@ -25,6 +25,22 @@
 </MudPaper>
 
 @code {
+	// On Load
+	protected async override Task OnInitializedAsync()
+	{
+		accessKey = await _storage.GetItemAsStringAsync("access_token");
+		expiryDate = await _storage.GetItemAsync<DateTime>("expiry_date");
+
+		if (!String.IsNullOrEmpty(accessKey) && expiryDate > DateTime.Now)
+		{
+			NavigationManager.NavigateTo("/dashboard");
+		}
+	}
+
+	// Access
+	private string accessKey { get; set; }
+	private DateTime expiryDate { get; set; }
+
 	// Button Disable
 	private bool DisableButton { get; set; }
 	// Form Ref
@@ -51,7 +67,7 @@
 				await _storage.SetItemAsStringAsync("role", data.role);
 				await _storage.SetItemAsync<DateTime>("expiry_date", data.expiration);
 
-				Snackbar.Add("Login Successfully!", Severity.Success);
+				Snackbar.Add("Login successfull!", Severity.Success);
 
 				DisableButton = false;
 
@@ -64,7 +80,6 @@
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine(e.Message);
 			DisableButton = false;
 			Snackbar.Add("Internal server error!", Severity.Error);
 		}

@@ -31,4 +31,8 @@
     <ProjectReference Include="..\Carnesia.Domain\Carnesia.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Shared\WMS\TO\NewFolder\" />
+  </ItemGroup>
+
 </Project>

@@ -8,8 +8,8 @@ namespace Carnesia.Domain.WMS.TO.POCO
 {
     public class OrderPickupDetailsTablePoco
     {
-        public string Outlet { get; set; }
-        public int Stock { get; set; }
-        public int RequestQTY { get; set; }
+        public string outlet { get; set; }
+        public int stock { get; set; }
+        public int requestQTY { get; set; }
     }
 }

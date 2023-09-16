@@ -157,6 +157,23 @@ namespace Carnesia.Application.WMS.Projects
             }
         }
 
+		public async Task<List<ProjectsDTO>> GetFilteredProjects(ProjectFilterDTO filter)
+		{
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("cyclecount/getfilteredprojects", filter);
+                var json = await result.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<List<ProjectsDTO>>(json);
+
+                return data;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+		}
+
 		public async Task<ProjectsDetailsHeadDTO> GetPoAuditBin(string pCode, string po, string bin)
 		{
             try

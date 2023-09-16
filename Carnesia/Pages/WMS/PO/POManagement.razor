@@ -5,33 +5,26 @@
 @using Carnesia.Shared.WMS.PO.AwaitingApproval
 @using Carnesia.Shared.WMS.PO.GenerateUID
 @using Carnesia.Shared.WMS.PO.BulkUID
+@inject ILocalStorageService _storage
 
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH" || role == "Executive - Procurement" || role == "Manager - Procurement" || role == "Senior Executive - Marketing")
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
                 <MudButton Color="Color.Primary" Variant="CurrentPage == CreatePO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(CreatePO)">Create PO</MudButton>
+                <MudButton Color="Color.Primary" Variant="CurrentPage == AwaitingApproval ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AwaitingApproval)">Awaiting Approval</MudButton>
             }
-            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH" || role == "Executive - Procurement" || role == "Manager - Procurement" || role == "Senior Executive - Marketing")
-            {
-                <MudButton Color="Color.Primary" Variant="CurrentPage == AwaitingApproval ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AwaitingApproval)">
-                    Awaiting Approval
-                </MudButton>
-            }
-            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
                 <MudButton Color="Color.Primary" Variant="CurrentPage == ReceivePO ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(ReceivePO)">Receive PO</MudButton>
             }
-            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
                 <MudButton Color="Color.Primary" Variant="CurrentPage == GenerateUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(GenerateUID)">Generate UID</MudButton>
-            }
-            @if (role == "Admin" || role == "Head of Department - Ops" || role == "Manager - WH")
-            {
                 <MudButton Color="Color.Primary" Variant="CurrentPage == BulkUID ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BulkUID)">Bulk UID</MudButton>
             }
-            @if (role == "Admin" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH" || role == "Executive - Procurement" || role == "Manager - Procurement" || role == "Management" || role == "Executive - Accounts" || role == "Manager - Accounts" || role == "Senior Executive - Marketing" || role == "Executive - Marketing" || role == "Head of Marketing")
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
                 <MudButton Color="Color.Primary" Variant="CurrentPage == PurchaseOrderList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(PurchaseOrderList)">
                     Purchase Order List
@@ -41,7 +34,7 @@
     </MudContainer>
 </MudPaper>
 
-@if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Senior Executive - Marketing", "Management", "Executive - Accounts", "Manager - Accounts", "Executive - Marketing", "Head of Marketing" }.Contains(role))
+@if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Executive - Marketing" }.Contains(role))
 {
     if (CurrentPage == CreatePO)
     {
@@ -72,6 +65,12 @@
 
 
 @code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
+
     // Pages
     private string CreatePO { get; set; } = "Create PO";
     private string AwaitingApproval { get; set; } = "Awaiting Approval";

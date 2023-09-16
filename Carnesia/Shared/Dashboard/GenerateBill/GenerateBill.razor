@@ -365,6 +365,7 @@
 
     private async Task AddProduct(KeyboardEventArgs e)
     {
+        await Task.Delay(1000);
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
             if (!String.IsNullOrEmpty(uid))

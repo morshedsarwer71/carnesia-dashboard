@@ -85,6 +85,7 @@
 	private async Task RelocateProduct()
 	{
 		Loading = true;
+		await Task.Delay(1000);
 		if (String.IsNullOrEmpty(UID) || String.IsNullOrEmpty(BinNumberShow))
 		{
 			Snackbar.Add("Please add both UID & Bin Number!", Severity.Error);

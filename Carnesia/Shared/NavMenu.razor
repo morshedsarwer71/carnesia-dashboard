@@ -1,132 +1,136 @@
 ﻿@inject ILocalStorageService _storage
 
 <MudNavMenu>
+    @*<div class="d-flex justify-center mt-5">
+        <MudText Class="border-2 px-4 py-1">App</MudText>
+    </div>*@
     <MudNavLink Href="/dashboard" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+    @*<MudNavLink Href="/pos" Match="NavLinkMatch.All">POS</MudNavLink>*@
 
     @*MIS*@
-    @if (new List<string> { "Admin", "Head of Department - Ops", "Management", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive", "Manager - Procurement", "Executive - Procurement", "Senior Executive - Marketing" }.Contains(role))
+    @if (new List<string> { "Admin", "Head of Department - Ops", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive", "Executive - Procurement", "Manager - Procurement", "Manager - WH" }.Contains(role))
     {
         <div class="d-flex justify-center mt-5">
             <MudText Class="border-2 px-4 py-1">MIS</MudText>
         </div>
     }
 
-    @if (role == "Admin" || role == "Head of Department - Ops" || role == "Management" || role == "Manager-Accounts" || role == "Senior Executive - Marketing" || role == "Executive - Marketing" || role == "Marketing Manager" || role == "Head of Marketing")
+    @if (new List<string> { "Admin", "Head of Department - Ops", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
     {
         <MudNavLink Href="/analytics" Match="NavLinkMatch.Prefix">Analytics</MudNavLink>
     }
-    @if (role == "Admin" || role == "Head of Department - Ops" || role == "Management" || role == "Manager - Accounts" || role == "Marketing Manager" || role == "Head of Marketing" || role == "Outlet Experience Manager" || role == "Outlet Experience Executive")
+    @if (new List<string> { "Admin", "Head of Department - Ops", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive" }.Contains(role))
     {
         <MudNavLink Href="/sales-report" Match="NavLinkMatch.Prefix">Sales Report</MudNavLink>
     }
-    @if (role == "Admin" || role == "Head of Department - Ops" || role == "Manager - Procurement" || role == "Management" || role == "Manager - Accounts" || role == "Marketing Manager" || role == "Head of Marketing" || role == "Outlet Experience Manager" || role == "Outlet Experience Executive")
+    @if (new List<string> { "Admin", "Head of Department - Ops", "Executive - Procurement", "Manager - Procurement", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive" }.Contains(role))
     {
         <MudNavLink Href="/revenue-report" Match="NavLinkMatch.Prefix">Revenue Report</MudNavLink>
     }
-    @if (role == "Admin" || role == "Head of Department - Ops" || role == "Executive - Procurement" || role == "Manager - Procurement" || role == "Management" || role == "Senior Executive - Marketing" || role == "Executive - Marketing" || role == "Marketing Manager" || role == "Head of Marketing")
+    @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
     {
         <MudNavLink Href="/product-sales-report" Match="NavLinkMatch.Prefix">Product Sales Report</MudNavLink>
     }
-    @if (role == "Admin" || role == "Head of Department - Ops" || role == "Executive - Procurement" || role == "Manager - Procurement" || role == "Management" || role == "Senior Executive - Marketing" || role == "Executive - Marketing" || role == "Marketing Manager" || role == "Head of Marketing" || role == "Outlet Experience Manager")
+    @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
     {
         <MudNavLink Href="/procurement-report" Match="NavLinkMatch.Prefix">Procurment Report</MudNavLink>
     }
 
     @*Accounts & Finance*@
-    @if (new List<string> { "Admin", "Executive - Accounts", "Manager - Accounts", "Outlet Experience Manager", "Outlet Experience Executive" }.Contains(role))
+    @if (new List<string> { "Admin", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Executive-Accounts", "Manager-Accounts", "Manager-HR", "Executive-HR", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
     {
         <div class="d-flex justify-center mt-5">
             <MudText Class="border-2 px-4 py-1">Accounts & Finance</MudText>
         </div>
     }
 
-    @if (role == "Admin" || role == "Executive - Accounts" || role == "Manager - Accounts")
+    @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH", "Management", "Executive-Accounts", "Manager-Accounts", "Manager-HR", "Executive-HR", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
     {
         <MudNavLink Href="/receivable" Match="NavLinkMatch.Prefix">Receivable</MudNavLink>
     }
-    @if (role == "Admin" || role == "Executive - Accounts" || role == "Manager - Accounts")
+    @if (new List<string> { "Admin", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Executive-Accounts", "Manager-Accounts", "Manager-HR", "Executive-HR", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
     {
         <MudNavLink Href="/bank" Match="NavLinkMatch.Prefix">Bank</MudNavLink>
-    }
-    @if (role == "Admin" || role == "Executive - Accounts" || role == "Manager - Accounts" || role == "Outlet Experience Manager" || role == "Outlet Experience Executive")
-    {
         <MudNavLink Href="/stores" Match="NavLinkMatch.Prefix">Stores</MudNavLink>
-    }
-    @if (role == "Admin" || role == "Executive - Accounts" || role == "Manager - Accounts" || role == "Outlet Experience Manager" || role == "Outlet Experience Executive")
-    {
         <MudNavLink Href="/store-vattrack" Match="NavLinkMatch.Prefix">Store Vat Track</MudNavLink>
     }
 
 
     @*WMS*@
-    @*@if (new List<string> { "Admin", "Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Senior Executive - Marketing", "Management", "Executive - Accounts", "Manager - Accounts", "Executive - Marketing", "Head of Marketing", "Inventory Associate - WH", "Sr. Executive - WH", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Executive - CMS" }.Contains(role))
-    {*@
-    <div class="d-flex justify-center mt-5">
-        <MudText Class="border-2 px-4 py-1">WMS</MudText>
-    </div>
-    @*}*@
-    @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Senior Executive - Marketing", "Management", "Executive - Accounts", "Manager - Accounts", "Executive - Marketing", "Head of Marketing", "Inventory Associate - WH" }.Contains(role))
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Executive - Marketing", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate", "Executive - CS", "Executive - CRM", "Executive - CMS", "Executive-Accounts", "Manager-Accounts" }.Contains(role))
+    {
+        <div class="d-flex justify-center mt-5">
+            <MudText Class="border-2 px-4 py-1">WMS</MudText>
+        </div>
+    }
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Executive - Marketing", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
     {
         <MudNavGroup Title="Inbound Management" Expanded="false">
-            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Senior Executive - Marketing", "Management", "Executive - Accounts", "Manager - Accounts", "Executive - Marketing", "Head of Marketing" }.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Executive - Marketing" }.Contains(role))
             {
                 <MudNavLink Href="/po-management" Match="NavLinkMatch.Prefix">PO Management</MudNavLink>
             }
-            @if (role == "Admin" || role == "Inventory Associate - WH" || role == "Executive - WH" || role == "Sr. Executive - WH" || role == "Head of Department - Ops" || role == "Manager - WH")
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
                 <MudNavLink Href="/stock-relocation" Match="NavLinkMatch.Prefix">Stock Relocation</MudNavLink>
             }
-            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Inventory Associate - WH" }.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
             {
                 <MudNavLink Href="/putaway" Match="NavLinkMatch.Prefix">Putaway</MudNavLink>
             }
         </MudNavGroup>
     }
 
-    @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Inventory Associate - WH" }.Contains(role))
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
     {
         <MudNavGroup Title="Stock Transfer" Expanded="false">
-            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
                 <MudNavLink Href="/create-to" Match="NavLinkMatch.Prefix">Create TO</MudNavLink>
             }
-            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Inventory Associate - WH" }.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
             {
                 <MudNavLink Href="/manage-to" Match="NavLinkMatch.Prefix">Manage TO</MudNavLink>
             }
+            @*@if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Inventory Associate - WH" }.Contains(role))
+        {
+        <MudNavLink Href="/to-suggestions" Match="NavLinkMatch.Prefix">To Suggestions</MudNavLink>
+        }*@
         </MudNavGroup>
     }
 
+    @*<MudNavGroup Title="Return Management" Expanded="false">
+    <MudNavLink Href="/return-acknowledgement" Match="NavLinkMatch.Prefix">Return Acknowledgement</MudNavLink>
+    <MudNavLink Href="/vendor-return" Match="NavLinkMatch.Prefix">Vendor Return</MudNavLink>
+    </MudNavGroup>*@
 
-    <MudNavGroup Title="Return Management" Expanded="false">
-        <MudNavLink Href="/return-acknowledgement" Match="NavLinkMatch.Prefix">Return Acknowledgement</MudNavLink>
-        <MudNavLink Href="/vendor-return" Match="NavLinkMatch.Prefix">Vendor Return</MudNavLink>
-    </MudNavGroup>
-
-    @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
     {
         <MudNavGroup Title="Cycle Count" Expanded="false">
-            <MudNavLink Href="/counting-report" Match="NavLinkMatch.Prefix">Counting Project</MudNavLink>
-            @if (new List<string> { "Admin", "Head of Department - Ops" }.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
+            {
+                <MudNavLink Href="/counting-report" Match="NavLinkMatch.Prefix">Counting Project</MudNavLink>
+            }
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
                 <MudNavLink Href="/update-uid" Match="NavLinkMatch.Prefix">Update UID</MudNavLink>
             }
             @*<MudNavLink Href="/remove-uid" Match="NavLinkMatch.Prefix">Remove UID</MudNavLink>*@
         </MudNavGroup>
     }
-    @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS", "Outlet Experience Manager", "Customer Service Associate" }.Contains(role))
     {
         <MudNavLink Href="/report" Match="NavLinkMatch.Prefix">Report</MudNavLink>
     }
 
-    @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
     {
         <MudNavLink Href="/bin-management" Match="NavLinkMatch.Prefix">BIN Management</MudNavLink>
     }
-    @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - Procurement", "Management", "Executive-Accounts", "Manager-Accounts", "Marketing Manager", "Head of Marketing" }.Contains(role))
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Executive-Accounts", "Manager-Accounts", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
     {
         <MudNavGroup Title="Vendor Management" Expanded="false">
-            @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - Procurement", "Management", "Executive-Accounts", "Manager-Accounts", "Marketing Manager", "Head of Marketing" }.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Executive-Accounts", "Manager-Accounts", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
                 <MudNavLink Href="/vendor" Match="NavLinkMatch.Prefix">Vendor</MudNavLink>
             }
@@ -138,10 +142,10 @@
     <div class="d-flex justify-center mt-5">
         <MudText Class="border-2 px-4 py-1">CMS</MudText>
     </div>
-    @if (new List<string> { "Admin", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
+    @if (new List<string> { "Admin", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
     {
         <MudNavGroup Title="Home Page" Expanded="false">
-            @if (new List<string> { "Admin", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
+            @if (new List<string> { "Admin", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
             {
                 <MudNavLink Href="/full-width-banner" Match="NavLinkMatch.Prefix">Full Width Banner</MudNavLink>
                 <MudNavLink Href="/gif-banner" Match="NavLinkMatch.Prefix">Gif Banner</MudNavLink>
@@ -158,15 +162,15 @@
         <MudNavLink Href="/brand" Match="NavLinkMatch.Prefix">Brand</MudNavLink>
         <MudNavLink Href="/banner-brand" Match="NavLinkMatch.Prefix">Brand Banner</MudNavLink>
     </MudNavGroup>
-    @if (new List<string> { "Admin", "Head of Department - Ops", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
+    @if (new List<string> { "Admin", "Head of Department - Ops", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
     {
         <MudNavGroup Title="Campaign Management" Expanded="false">
-            @if (new List<string> { "Admin", "Head of Department - Ops", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
+            @if (new List<string> { "Admin", "Head of Department - Ops", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
             {
                 <MudNavLink Href="/create-campaign" Match="NavLinkMatch.Prefix">Create Campaign</MudNavLink>
                 <MudNavLink Href="/campaign-list" Match="NavLinkMatch.Prefix">Campaign List</MudNavLink>
             }
-            @if (new List<string> { "Admin", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
+            @if (new List<string> { "Admin", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
             {
                 <MudNavLink Href="/campaign-carousel" Match="NavLinkMatch.Prefix">Campaign Carousel</MudNavLink>
                 <MudNavLink Href="/campaign-section" Match="NavLinkMatch.Prefix">Campaign Section</MudNavLink>
@@ -183,7 +187,7 @@
     }
 
 
-    @if (new List<string> { "Admin", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
+    @if (new List<string> { "Admin", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
     {
         <MudNavGroup Title="Payment Offer" Expanded="false">
             <MudNavLink Href="/side-text" Match="NavLinkMatch.Prefix">Side Text</MudNavLink>
@@ -196,14 +200,14 @@
         </MudNavGroup>
     }
 
-    @if (new List<string> { "Admin", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Executive - Marketing" }.Contains(role))
+    @if (new List<string> { "Admin", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
     {
         <MudNavGroup Title="Product Management" Expanded="false">
-            @if (new List<string> { "Admin", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
+            @if (new List<string> { "Admin", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
             {
                 <MudNavLink Href="/category" Match="NavLinkMatch.Prefix">Category</MudNavLink>
             }
-            @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
+            @if (new List<string> { "Admin", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
             {
                 <MudNavLink Href="/parent-product" Match="NavLinkMatch.Prefix">Parent Product</MudNavLink>
                 <MudNavLink Href="/bulk-parent-product" Match="NavLinkMatch.Prefix">Bulk Parent Product</MudNavLink>
@@ -214,25 +218,14 @@
                 <MudNavLink Href="/bulk-category-upload" Match="NavLinkMatch.Prefix">Bulk Category Upload</MudNavLink>
                 <MudNavLink Href="/product-list" Match="NavLinkMatch.Prefix">Product List</MudNavLink>
                 <MudNavLink Href="/product-quick-setting" Match="NavLinkMatch.Prefix">Product Quick Settings</MudNavLink>
-            }
-            @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
-            {
-                <MudNavLink Href="/product-list" Match="NavLinkMatch.Prefix">Product List</MudNavLink>
-            }
-            @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
-            {
-                <MudNavLink Href="/product-quick-setting" Match="NavLinkMatch.Prefix">Product Quick Settings</MudNavLink>
-            }
-            @if (new List<string> { "Admin", "Senior Executive - Marketing", "Marketing Manager", "Head of Marketing" }.Contains(role))
-            {
                 <MudNavLink Href="/product-approve" Match="NavLinkMatch.Prefix">Product Approve</MudNavLink>
+                <MudNavLink Href="/sku-track" Match="NavLinkMatch.Prefix">Track SKU</MudNavLink>
             }
-            <MudNavLink Href="/sku-track" Match="NavLinkMatch.Prefix">Track SKU</MudNavLink>
         </MudNavGroup>
     }
 
 
-    @if (new List<string> { "Admin", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
+    @if (new List<string> { "Admin", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
     {
         <MudNavGroup Title="Blog Management" Expanded="false">
             <MudNavLink Href="/create-blogpost" Match="NavLinkMatch.Prefix">Create Blog</MudNavLink>
@@ -245,7 +238,7 @@
 
 
     @*CRM*@
-    @if (new List<string> { "Admin", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing" }.Contains(role))
+    @if (new List<string> { "Admin", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
     {
         <div class="d-flex justify-center mt-5">
             <MudText Class="border-2 px-4 py-1">CRM</MudText>
@@ -263,71 +256,71 @@
 
 
     @*OMS*@
-    @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Inventory Associate - WH" }.Contains(role))
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS", "Executive - Procurement", "Manager - Procurement" }.Contains(role))
     {
         <div class="d-flex justify-center mt-5">
             <MudText Class="border-2 px-4 py-1">OMS</MudText>
         </div>
     }
-    @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing" }.Contains(role))
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
     {
         <MudNavGroup Title="Order Management" Expanded="false">
-            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing" }.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
             {
                 <MudNavLink Href="/pending-order" Match="NavLinkMatch.Prefix">Pending Order</MudNavLink>
                 <MudNavLink Href="/hold-order" Match="NavLinkMatch.Prefix">Hold Order</MudNavLink>
                 <MudNavLink Href="/order-details" Match="NavLinkMatch.Prefix">Order Details</MudNavLink>
                 <MudNavLink Href="/closed-orders" Match="NavLinkMatch.Prefix">Closed Orders</MudNavLink>
-            }
-            @if (new List<string> { "Admin", "Head of Department - Ops", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing" }.Contains(role))
-            {
                 <MudNavLink Href="/place-order" Match="NavLinkMatch.Prefix">Place Order</MudNavLink>
                 <MudNavLink Href="/draft-orders" Match="NavLinkMatch.Prefix">Draft Orders</MudNavLink>
+                <MudNavLink Href="/order-track" Match="NavLinkMatch.Prefix">Order Track</MudNavLink>
             }
-
-            <MudNavLink Href="/order-track" Match="NavLinkMatch.Prefix">Order Track</MudNavLink>
         </MudNavGroup>
     }
 
-    @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Inventory Associate - WH" }.Contains(role))
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing" }.Contains(role))
     {
         <MudNavGroup Title="Order Processing" Expanded="false">
             <MudNavLink Href="/picklist" Match="NavLinkMatch.Prefix">Picklist</MudNavLink>
         </MudNavGroup>
     }
-    @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing" }.Contains(role))
     {
         <MudNavGroup Title="Outbound" Expanded="false">
             <MudNavLink Href="/assign-delivery" Match="NavLinkMatch.Prefix">Assign Delivery</MudNavLink>
             <MudNavLink Href="/manage-run" Match="NavLinkMatch.Prefix">Manage Run</MudNavLink>
         </MudNavGroup>
         <MudNavLink Href="/return-management" Match="NavLinkMatch.Prefix">Return Management</MudNavLink>
-        <MudNavLink Href="/zones" Match="NavLinkMatch.Prefix">Zones</MudNavLink>
         <MudNavGroup Title="Report" Expanded="false">
             <MudNavLink Href="/all-orders" Match="NavLinkMatch.Prefix">All Orders</MudNavLink>
             <MudNavLink Href="/tat-report" Match="NavLinkMatch.Prefix">TAT Report</MudNavLink>
             <MudNavLink Href="/feedback-report" Match="NavLinkMatch.Prefix">Feedback Report</MudNavLink>
         </MudNavGroup>
     }
+    @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS" }.Contains(role))
+    {
+        <MudNavLink Href="/zones" Match="NavLinkMatch.Prefix">Zones</MudNavLink>
+    }
 
     @*HRM*@
-    @if (new List<string> { "Admin", "Manager-HR", "Executive-HR", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+    @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH", "Manager - Procurement", "Management", "Manager-HR", "Executive-HR", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH" }.Contains(role))
     {
         <div class="d-flex justify-center mt-5">
             <MudText Class="border-2 px-4 py-1">HRM</MudText>
         </div>
-
+    }
+    @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH", "Manager - Procurement", "Management", "Manager-HR", "Executive-HR", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH" }.Contains(role))
+    {
         <MudNavGroup Title="Adminastration" Expanded="false">
-            @if (new List<string> { "Admin", "Manager-HR", "Executive-HR" }.Contains(role))
+            @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH", "Manager - Procurement", "Management", "Manager-HR", "Executive-HR", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
                 <MudNavLink Href="/user-account" Match="NavLinkMatch.Prefix">User Account</MudNavLink>
             }
-            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH" }.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Management", "Marketing Manager", "Head of Marketing" }.Contains(role))
             {
                 <MudNavLink Href="/fleet-management" Match="NavLinkMatch.Prefix">Fleet Management</MudNavLink>
                 <MudNavLink Href="/hub-management" Match="NavLinkMatch.Prefix">Hub Management</MudNavLink>
             }
-
         </MudNavGroup>
     }
 </MudNavMenu>

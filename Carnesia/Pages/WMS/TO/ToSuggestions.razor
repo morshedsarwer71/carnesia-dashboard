@@ -1,0 +1,40 @@
+﻿@page "/to-suggestions"
+@inject ILocalStorageService _storage
+
+<MudPaper Elevation="0">
+    <MudContainer Class="mt-5 d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+            <MudButton Color="Color.Primary" Variant="CurrentPage == OrderPickup ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(OrderPickup)">@OrderPickup</MudButton>
+        </MudButtonGroup>
+    </MudContainer>
+</MudPaper>
+
+@if(CurrentPage == OrderPickup)
+{
+    <Carnesia.Shared.WMS.TO.OrderPickup.OrderPickup />
+}
+
+@code {
+    // Page On Load
+    protected override async Task OnInitializedAsync()
+    {
+        role = await _storage.GetItemAsStringAsync("role");
+    }
+
+    // Role
+    private string role { get; set; }
+
+    // Pages
+    private string OrderPickup = "Order Pickup";
+    
+
+    // Current Page
+    private string CurrentPage { get; set; } = "Order Pickup";
+
+
+    // Change Page
+    private void ChangePage(string page)
+    {
+        CurrentPage = page;
+    }
+}

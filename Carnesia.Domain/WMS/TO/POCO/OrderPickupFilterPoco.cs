@@ -8,8 +8,9 @@ namespace Carnesia.Domain.WMS.TO.POCO
 {
     public class OrderPickupFilterPoco
     {
-        public string SearchOrder { get; set; }
-        public string Outlet { get; set; }
-        public string ItemCode { get; set; }
+        public string orderId { get; set; }
+        public string outlet { get; set; }
+        public string productCode { get; set; }
+        public string sku { get; set; }
     }
 }

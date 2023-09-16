@@ -4,23 +4,27 @@
 
 <MudPaper Class="px-16 pb-16 pt-10 ma-2 mt-10">
 	<MudContainer Fixed="true">
-		<MudGrid Class="justify-center align-baseline mb-5">
+		<MudGrid Class="align-baseline mb-5">
 			<MudItem md="3" sm="6">
-				<MudTextField @bind-Value="orderPickupFilter.SearchOrder" Label="Search Order" Variant="Variant.Text" />
+				<MudTextField @bind-Value="orderPickupFilter.orderId" Label="Order Id" Variant="Variant.Text" />
 			</MudItem>
 
 			<MudItem md="3" sm="6">
-				<MudAutocomplete T="string" Label="Suggested Outlet" @bind-Value="orderPickupFilter.Outlet" SearchFunc="@AutoCompleteSearch" ResetValueOnEmptyText="true" />
+				<MudAutocomplete T="string" Label="Suggested Outlet" @bind-Value="orderPickupFilter.outlet" SearchFunc="@AutoCompleteSearch" ResetValueOnEmptyText="true" />
 			</MudItem>
 
 			<MudItem md="3" sm="6">
-				<MudTextField @bind-Value="orderPickupFilter.ItemCode" Label="Item Code" Variant="Variant.Text" />
+				<MudTextField @bind-Value="orderPickupFilter.sku" Label="SKU" Variant="Variant.Text" />
 			</MudItem>
 
-			<MudItem md="3" sm="6">
-				<MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+            <MudItem md="3" sm="6">
+				<MudTextField @bind-Value="orderPickupFilter.productCode" Label="Product Code" Variant="Variant.Text" />
 			</MudItem>
 		</MudGrid>
+
+        <div class="d-flex justify-end mt-3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Filter</MudButton>
+        </div>
 
         <div>
             <MudText Typo="Typo.subtitle1">Total Quantity Added: 430</MudText>
@@ -39,20 +43,20 @@
                 <MudTd DataLabel="">
                     @if (!context.ShowDetails)
 					{
-						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.SKU)" />
+						<MudIconButton Icon="@Icons.Material.Filled.Add" aria-label="Show" OnClick="() => ShowBtnPress(context.sku)" />
 					}
 					else if (context.ShowDetails)
 					{
-						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.SKU)" />
+						<MudIconButton Icon="@Icons.Filled.Minimize" aria-label="Hide" OnClick="() => ShowBtnPress(context.sku)" />
 					}
                 </MudTd>
-                <MudTd DataLabel="SKU">@context.SKU</MudTd>
-                <MudTd DataLabel="Product Name">@context.ProductName</MudTd>
-                <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
-                <MudTd DataLabel="Suggested Outlet">@context.Outlets</MudTd>
+                <MudTd DataLabel="SKU">@context.sku</MudTd>
+                <MudTd DataLabel="Product Name">@context.productName</MudTd>
+                <MudTd DataLabel="Quantity">@context.quantity</MudTd>
+                <MudTd DataLabel="Suggested Outlet">@context.outlets</MudTd>
                 <MudTd DataLabel="Order IDs">
                     <MudMenu Icon="@Icons.Filled.RemoveRedEye">
-                        @foreach (var ID in context.OrderIds)
+                        @foreach (var ID in context.orderIds)
                         {
                             <MudMenuItem>@ID</MudMenuItem>
                         }
@@ -65,7 +69,7 @@
 					<td colspan="17">
 						<MudCard Elevation="0">
 							<MudCardContent Class="pa-0">
-								<MudTable Items="@context.Details" Context="DetailsContext" Hover="true" Elevation="0">
+								<MudTable Items="@context.details" Context="DetailsContext" Hover="true" Elevation="0">
 								   <HeaderContent>
 										<MudTh>Outlet</MudTh>
 										<MudTh>Stock</MudTh>
@@ -73,9 +77,9 @@
 										<MudTh>Action</MudTh>
 								   </HeaderContent>
 								   <RowTemplate>
-										<MudTd DataLabel="Outlet">@DetailsContext.Outlet</MudTd>
-										<MudTd DataLabel="Stock">@DetailsContext.Stock</MudTd>
-										<MudTd DataLabel="Request QTY">@DetailsContext.RequestQTY</MudTd>
+										<MudTd DataLabel="Outlet">@DetailsContext.outlet</MudTd>
+										<MudTd DataLabel="Stock">@DetailsContext.stock</MudTd>
+										<MudTd DataLabel="Request QTY">@DetailsContext.requestQTY</MudTd>
 										<MudTd DataLabel="Action">
                                             <MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
                                         </MudTd>
@@ -143,7 +147,7 @@
     	// Show Details
 	private void ShowBtnPress(string sku)
 	{
-		OrderPickupTablePoco tmpElements = Elements.First(f => f.SKU == sku);
+		OrderPickupTablePoco tmpElements = Elements.First(f => f.sku == sku);
 		tmpElements.ShowDetails = !tmpElements.ShowDetails;
 	}
 }

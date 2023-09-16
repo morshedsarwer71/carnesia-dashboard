@@ -134,6 +134,7 @@
     private async Task AddProductsByUID()
     {
         Loading = true;
+        await Task.Delay(1000);
         try
         {
             var result = await _manageTo.ReceiveToByUID(ToidShow, UID);

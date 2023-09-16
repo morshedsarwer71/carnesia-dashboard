@@ -8,30 +8,27 @@
 <MudPaper Elevation="0">
     <MudContainer Class="mt-5 d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
-            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate"}.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS", "Outlet Experience Manager", "Customer Service Associate" }.Contains(role))
             {
                 <MudButton Color="Color.Primary" Variant="CurrentPage == AllWarehouseStock ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(AllWarehouseStock)">
-                @AllWarehouseStock
-            </MudButton>
+                    @AllWarehouseStock
+                </MudButton>
             }
-            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate"}.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager", "Customer Service Associate" }.Contains(role))
             {
-            <MudButton Color="Color.Primary" Variant="CurrentPage == BinList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinList)">@BinList</MudButton>
+                <MudButton Color="Color.Primary" Variant="CurrentPage == BinList ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(BinList)">@BinList</MudButton>
             }
-            @if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing"}.Contains(role))
+            @if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Marketing Manager", "Head of Marketing", "Outlet Experience Manager" }.Contains(role))
             {
-            <MudButton Color="Color.Primary" Variant="CurrentPage == POReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(POReport)">@POReport</MudButton>
-            }
-            @if (new List<string> { "Admin", "Head of Department - Ops", "Manager - WH"}.Contains(role))
-            {
-            <MudButton Color="Color.Primary" Variant="CurrentPage == UIDReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(UIDReport)">@UIDReport</MudButton>
+                <MudButton Color="Color.Primary" Variant="CurrentPage == POReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(POReport)">@POReport</MudButton>
+                <MudButton Color="Color.Primary" Variant="CurrentPage == UIDReport ? Variant.Filled : Variant.Outlined" OnClick="() => ChangePage(UIDReport)">@UIDReport</MudButton>
             }
 
         </MudButtonGroup>
     </MudContainer>
 </MudPaper>
 
-@if (new List<string> { "Admin", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Executive-Accounts", "Manager-Accounts", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS", "Outlet Experience Manager", "Outlet Experience Executive", "Retail Team Leader", "Customer Service Associate" }.Contains(role))
+@if (new List<string> { "Admin", "Inventory Associate - WH", "Executive - WH", "Sr. Executive - WH", "Head of Department - Ops", "Manager - WH", "Executive - Procurement", "Manager - Procurement", "Management", "Senior Executive - Marketing", "Executive - Marketing", "Executive - CS", "Executive - CRM", "Marketing Manager", "Head of Marketing", "Executive - CMS", "Outlet Experience Manager", "Customer Service Associate" }.Contains(role))
 {
     if (CurrentPage == AllWarehouseStock)
     {
