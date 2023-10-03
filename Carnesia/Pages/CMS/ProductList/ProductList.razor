@@ -17,7 +17,7 @@
 
 <MudPaper Class="py-16 px-3 ma-2">
 	<MudContainer Fixed="true">
-		<MudGrid>
+		@*<MudGrid>
 			<MudItem sm="2">
 				<MudTextField @bind-Value="Filter.sku" Label="SKU" />
 			</MudItem>
@@ -42,11 +42,17 @@
 					<MudSelectItem Value="false">Unpublish</MudSelectItem>
 				</MudSelect>
 			</MudItem>
-		</MudGrid>
+		</MudGrid>*@
 		<div class="d-flex justify-end my-3">
 			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SearchProducts">Filter</MudButton>
 		</div>
-		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="_loading" LoadingProgressColor="Color.Info">
+		<MudTable RowsPerPage="25" Items="@Elements" Dense="@tableCommon.Dense" Hover="@tableCommon.Hover" Bordered="@tableCommon.Bordered" Striped="@tableCommon.Striped" Loading="_loading" LoadingProgressColor="Color.Info" 
+		Filter="new Func<ProductListV2DTO,bool>(FilterFuncInitial)">
+			<ToolBarContent>
+				<MudSpacer />
+				<MudSpacer />
+				<MudTextField @bind-Value="tableCommon.SearchTerm" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+			</ToolBarContent>
 			<HeaderContent>
 				<MudTh>Product Name</MudTh>
 				<MudTh>SKU</MudTh>
@@ -346,5 +352,21 @@
 			reports.Rows.Add(item.productName, item.parentName, item.sku, item.productCode, item.brand, item.origin, item.productTy, item.mrp, item.discountType, item.discount, item.salesPrice);
 		}
 		return reports;
+	}
+
+	// Table Search
+	private bool FilterFuncInitial(ProductListV2DTO element) => FilterFunc(element, tableCommon.SearchTerm);
+
+	private bool FilterFunc(ProductListV2DTO element, string searchString)
+	{
+		if (string.IsNullOrWhiteSpace(searchString))
+			return true;
+		if (element.productName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		if (element.productCode.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		if (element.sku.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		return false;
 	}
 }
