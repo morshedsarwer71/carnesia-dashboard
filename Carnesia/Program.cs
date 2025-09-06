@@ -84,7 +84,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddHttpClient("RetailSuite", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7090/api/");
+    client.BaseAddress = new Uri("https://api.retailsuite.store/api/");
     client.Timeout = TimeSpan.FromMinutes(50);
 }).AddHttpMessageHandler<AuthorizationMessageHandler>();
 
@@ -162,5 +162,5 @@ builder.Services.AddScoped<IProfile, ProfileService>();
 builder.Services.AddScoped<IBank, BankService>();
 builder.Services.AddScoped<IWarehouseStock, WarehouseStockService>();
 builder.Services.AddScoped<IPOReport, POReportService>();
-builder.Services.AddSyncfusionBlazor(option => { option.IgnoreScriptIsolation = true; });
+//builder.Services.AddSyncfusionBlazor(option => { option.IgnoreScriptIsolation = true; });
 await builder.Build().RunAsync();

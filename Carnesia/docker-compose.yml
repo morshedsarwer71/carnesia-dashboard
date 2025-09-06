@@ -1,0 +1,15 @@
+services:
+  carnesia:
+    restart: always
+    build:
+      context: ..
+      dockerfile: Carnesia/Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_URLS=http://+:5001
+      - ASPNETCORE_ENVIRONMENT=Development
+    deploy:
+      resources:
+        limits:
+          memory: 512M
