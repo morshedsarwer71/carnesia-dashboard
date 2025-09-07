@@ -81,7 +81,8 @@
 		catch (Exception e)
 		{
 			DisableButton = false;
-			Snackbar.Add("Internal server error!", Severity.Error);
+			// Snackbar.Add("Internal server error!", Severity.Error);
+			Snackbar.Add(e.Message, Severity.Error);
 		}
 	}
 
